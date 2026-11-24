@@ -11,7 +11,10 @@ How the flight intelligence app grows from a static showcase into a full-stack p
 
 - **Each phase ships.** It ends deployed, with an updated README, so the project is always presentable.
 - **One phase at a time.** Ideas for later phases go in the backlog at the bottom, not into the current phase.
-- **Phases are built as Spec Kit features.** Each feature runs `/speckit-specify` → `/speckit-plan` → `/speckit-tasks` → `/speckit-implement`, and its spec lists what is out of scope.
+- **Phases are built as Spec Kit features.** Each feature runs `/speckit-specify` → `/speckit-clarify` → `/speckit-plan` → `/speckit-tasks` → `/speckit-analyze` → `/speckit-implement`, and its spec lists what is out of scope.
+- **Every feature is independently reviewed before merging** by a new `feature-reviewer` agent with no prior context ([.claude/agents/feature-reviewer.md](../.claude/agents/feature-reviewer.md)).
+
+**Feature count:** 9 features for the portfolio core (Phases 0–3), 10 through Phase 4. Each feature has one spec, one implementation plan and one task list.
 - **Free data only until Phase 5.** Use BTS on-time data, schedules derived from it, and OpenSky. No paid APIs.
 - **Statistical honesty.** Every number shown has a defined meaning, a sample size and a data period. Sparse data shows "insufficient data" instead of a number.
 
@@ -59,7 +62,14 @@ How the flight intelligence app grows from a static showcase into a full-stack p
 - Every number on screen traces back to the pipeline output.
 - The README has a GIF, the link and a methodology summary.
 
-**Spec Kit features:** `showcase-data-pipeline`, `showcase-explorer-ui`
+**Spec Kit features**
+
+| Feature | Delivers |
+|---|---|
+| `showcase-data-pipeline` | BTS → itineraries → slack distributions → validated JSON; Pydantic models and generated TypeScript types |
+| `web-foundation` | Vite/React scaffold, the full automated test setup (unit, component, Playwright end-to-end and visual in Docker, axe, Lighthouse CI), CI that blocks merges on failure, and a deployed placeholder page |
+| `explorer-core` | Map, list and timeline with synced selection; selection in the URL. Deployable on its own |
+| `explorer-insights` | Risk visuals, transfer-time slider, landing example, "How the numbers work" page |
 
 ---
 
