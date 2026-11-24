@@ -1,0 +1,5 @@
+# Claude Code local settings (may contain personal permissions/credentials)
+.claude/settings.local.json
+
+# Raw downloaded data (see docs/adr/0009-data-storage-and-git.md)
+data/raw/
