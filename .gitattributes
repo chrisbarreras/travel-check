@@ -1,0 +1,18 @@
+# Store and check out text files with LF line endings on every platform,
+# so Windows development and Linux CI produce identical files.
+* text=auto eol=lf
+
+# Binary files: never convert or diff as text
+*.parquet binary
+*.duckdb  binary
+*.png     binary
+*.jpg     binary
+*.jpeg    binary
+*.gif     binary
+*.webp    binary
+*.ico     binary
+*.pdf     binary
+*.zip     binary
+*.pmtiles binary
+*.woff    binary
+*.woff2   binary
