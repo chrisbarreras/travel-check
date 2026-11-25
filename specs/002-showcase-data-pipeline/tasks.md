@@ -23,12 +23,12 @@ description: "Task list for the showcase data pipeline"
 
 **Purpose**: freeze Phase 0, add the Phase 1 configuration and the shared contract folders.
 
-- [ ] T001 Tag the commit that produced `reports/phase0/` as `phase0-final` (research R15), and record the tag in the evidence line of docs/adr/0012-phase0-go-no-go.md and in README.md
-- [ ] T002 Write docs/adr/0014-schedule-slot-itinerary-identity.md (itineraries identified by schedule slot, research R1; layover limits applied only through daily matching with a lossless bound pre-filter, research R2), mark ADR-0004's identity and median-layover rules and the related parts of ADR-0013 as superseded by ADR-0014, and add it to docs/adr/README.md (constitution: changing an ADR's decision requires a superseding ADR)
-- [ ] T003 [P] Create config/phase1.toml from config/phase0.toml with the new keys of contracts/config.md (`[itineraries] identity`, `slot_window_min`; `[showcase]`; `[insights]`; `[notes]`), without the removed median-layover rule
-- [ ] T004 [P] Create config/disruption_notes.toml with the July 2024 CrowdStrike outage and other events in July 2024 – June 2025 that affected a showcase airline or hub and are documented by an official source (DOT, FAA or NWS), each with that `https` source (research R12)
-- [ ] T005 [P] Create shared/schemas/, shared/types/ and shared/test-cases/ with a README.md each stating that the files are generated or shared and never edited by hand; add `site-data/` and `shared/` to .gitattributes LF rules
-- [ ] T006 [P] Extend .github/workflows/pipeline.yml with Node.js 20 setup and a `uv run flight-pipeline schemas --check` step (research R6)
+- [X] T001 Tag the commit that produced `reports/phase0/` as `phase0-final` (research R15), and record the tag in the evidence line of docs/adr/0012-phase0-go-no-go.md and in README.md
+- [X] T002 Write docs/adr/0014-schedule-slot-itinerary-identity.md (itineraries identified by schedule slot, research R1; layover limits applied only through daily matching with a lossless bound pre-filter, research R2), mark ADR-0004's identity and median-layover rules and the related parts of ADR-0013 as superseded by ADR-0014, and add it to docs/adr/README.md (constitution: changing an ADR's decision requires a superseding ADR)
+- [X] T003 [P] Create config/phase1.toml from config/phase0.toml with the new keys of contracts/config.md (`[itineraries] identity`, `slot_window_min`; `[showcase]`; `[insights]`; `[notes]`), without the removed median-layover rule
+- [X] T004 [P] Create config/disruption_notes.toml with the July 2024 CrowdStrike outage and other events in July 2024 – June 2025 that affected a showcase airline or hub and are documented by an official source (DOT, FAA or NWS), each with that `https` source (research R12)
+- [X] T005 [P] Create shared/schemas/, shared/types/ and shared/test-cases/ with a README.md each stating that the files are generated or shared and never edited by hand; add `site-data/` and `shared/` to .gitattributes LF rules
+- [X] T006 [P] Extend .github/workflows/pipeline.yml with Node.js 20 setup and a `uv run flight-pipeline schemas --check` step (research R6)
 
 ---
 

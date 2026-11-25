@@ -1,0 +1,135 @@
+# Phase 1 showcase data pipeline: pinned configuration.
+# Schema: specs/002-showcase-data-pipeline/contracts/config.md (extends specs/001 contracts/config.md).
+# Same pinned sources as Phase 0 (config/phase0.toml, frozen at the git tag phase0-final).
+# Every value is required; there are no hidden defaults.
+
+seed = 20261124
+
+[paths]
+# Relative paths resolve against the repository root (the parent of this file's directory).
+raw_dir = "data/raw"
+derived_dir = "data/derived/phase1"
+reports_dir = "reports/phase1"
+
+[period]
+# One period for every source (amendment 1, research R11): 12 months in whole quarters.
+start = "2024-07"                 # inclusive, YYYY-MM
+end   = "2025-06"
+
+[sources.ontime]
+url_pattern = "https://www.transtats.bts.gov/PREZIP/On_Time_Marketing_Carrier_On_Time_Performance_Beginning_January_2018_{year}_{month}.zip"
+overrides = {}                    # "YYYY-MM" = "full URL" for irregular file names
+
+[sources.ontime.checksums]
+# sha256 of each monthly zip, pinned after first download (task T083)
+"2024-07" = "b1b2dac29ad2d1e3bc52d5151ca43b1ee0d3e0e1c2a941b974f68bef3dd186ad"
+"2024-08" = "1ca5f66b20a55ab993e10f51ce8c652abd4f56336dc77e8c6b6e86e7c33c6b8e"
+"2024-09" = "c88adb575631d9a64def7b353916203cf4ca621ab08a5c72595320c9b2959558"
+"2024-10" = "163f6d93d0c4d2e7f6b5d78dfa35e68f462125de16dcb4fc34a80b897c7bf62b"
+"2024-11" = "e4fc261ea95a7e32d9d6bff8dc22eec53dca752f786f4edc13b5c27f48e88105"
+"2024-12" = "86b6fccb118ac9c8df435b9aeb674f1053873d48cf958248457d03557c263a3f"
+"2025-01" = "0feaabdbc9e4bd851ef717f342678cdcc5ea0822dd706359aab030bb1a5d1c24"
+"2025-02" = "080ad48e2826a6b4c3f39690f75a08dea9ad4e0831ff82958656cdb61693dd15"
+"2025-03" = "ad3f46a598bd529588bfcc004731b893b27999a681804a07a3841b2904d66d48"
+"2025-04" = "88b88ae1a9b49a03cb82c835481ac8dcf86ff2d378614655638889866767608f"
+"2025-05" = "261fb75b956abedca34a27db3ae7221437e1a2ce349b5ee9a49ec267d7555b29"
+"2025-06" = "0cb4038a49962ab92cba33f9840a8eec9671ef19a5afeedfa27998984476b609"
+
+[sources.db1b]
+url_pattern = "https://www.transtats.bts.gov/PREZIP/Origin_and_Destination_Survey_DB1BMarket_{year}_{quarter}.zip"
+
+[sources.db1b.checksums]
+# "YYYY-Q" = sha256 of each quarterly zip, pinned after first download (task T083)
+"2024-3" = "b67439c62446f8bc98dfdca72e1cd05a5727d92bd9ffd57e744d459094cc55cf"
+"2024-4" = "e129d9f32abc0c920abfe485a109af95cb8862af80073ab17c400a3b0cc04145"
+"2025-1" = "6541728831788264d4c7da33ba20eb69d1e65d3bf97f75c32ae79e7084725b41"
+"2025-2" = "e137271888e48ff2b6eb404d0f2ea532b3266aba64362249b42d05858ad87db2"
+
+[sources.t100]
+manual_file = "data/raw/t100/t100_segment.csv"   # used when scripted download fails
+checksum = "35fc4d07c70740e6c7369602a6f5668118fa2605e3df9ec9f1d6928b55e4af1f"  # sha256 of the combined CSV (2024-07 to 2025-06)
+
+[timezones]
+# "IATA" = { tz = "America/...", source = "..." } for airports missing from airportsdata
+overrides = { PBI = { tz = "America/New_York", source = "Palm Beach International (KPBI), West Palm Beach, Florida: US Eastern time; absent from airportsdata 20261123" } }
+
+[hubs]
+candidate_pool_size = 30
+airline_share_min = 0.05
+eligible_itineraries_min = 15
+weights = { airlines = 1.0, departures = 1.0, passengers = 1.0 }
+count = 7                         # allowed 5–8
+major_networks = ["AA", "DL", "UA", "WN", "AS"]
+winter_months = [12, 1, 2]
+spring_months = [3, 4, 5]
+summer_months = [6, 7, 8]
+autumn_months = [9, 10, 11]
+min_winter_peak = 2
+min_summer_peak = 2
+
+[itineraries]
+identity = "schedule"              # ADR-0014: schedule slots, not flight numbers
+slot_window_min = 30              # departure-time window of a schedule slot
+min_connection_default_min = 30
+min_connection_partner_min = 45
+min_connection_by_hub = {}        # "IATA" = minutes
+max_layover_min = 240
+recurrence_threshold = 0.60       # connection-level: share of days the two flights connect
+partners = [["AA", "AS"]]
+min_sold_passengers = 30          # sampled DB1B passengers on the routing over the period
+carrier_map = {}                  # DB1B selling-airline code -> on-time marketing code
+
+[feasibility]
+boarding_cutoff_min = 15
+min_sample_days = 30
+
+[selection]
+od_pairs_count = 15               # allowed 10–15
+regional_share_min = 0.5
+max_pairs_per_hub = 3
+
+[comparison]
+travel_time_tolerance_min = 60
+departure_window_min = 180
+showcase_gap = 0.10
+ci_level = 0.95
+bootstrap_resamples = 10000
+go_min_examples = 3
+go_min_hubs = 2
+
+[sensitivity]
+min_connection_min = [20, 30, 45]
+boarding_cutoff_min = [10, 15, 20]
+recurrence_threshold = [0.50, 0.60, 0.75]
+
+[quality]
+clock_mismatch_max_share = 0.01   # fail the run above this share
+
+[runtime]
+limit_min = 30                    # SC-008; `run` warns and records `runtime_exceeded` above this
+
+[showcase]
+routes_min = 8
+routes_max = 12
+itineraries_per_route_max = 12
+max_share_route = 0.333           # of showcase comparisons
+max_share_airline = 0.5
+max_share_hub = 0.5
+regional_share_min = 0.5          # of selected routes, when enough exist
+cross_hub_share_min = 0.5         # of showcase comparisons (SC-002)
+size_budget_kb = 2048             # gzip-compressed published files
+landing_budget_kb = 150           # gzip-compressed index.json + landing.json (SC-007 proxy)
+output_dir = "site-data/showcase"
+
+[insights]
+faster_min_saving_min = 15
+faster_margin = 0.02              # lower bound of the paired 95% CI no worse than -2 points
+faster_departure_window_min = 180
+buffer_share = 0.95
+buffer_round_min = 5
+monthly_min_sample = 20
+schedule_change_min_shift_min = 10
+schedule_change_min_days = 7
+
+[notes]
+disruption_file = "config/disruption_notes.toml"
