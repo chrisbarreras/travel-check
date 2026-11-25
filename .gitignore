@@ -21,3 +21,6 @@ __pycache__/
 Thumbs.db
 *.tmp
 *.swp
+
+# marimo session cache (created when the notebook is opened)
+__marimo__/
