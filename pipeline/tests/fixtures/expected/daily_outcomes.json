@@ -1,40 +1,109 @@
 {
   "_note": "Hand-computed for the default scenario (min connection 30, boarding cutoff 15: feasible when raw slack >= 45). Slack = outbound actual gate departure - inbound actual gate arrival (UTC). Percentiles use the 'lower' discrete rule: sorted ascending, value at index floor(q * (n - 1)).",
-  "CMH-ORD-SAN:AA3100+AA1500": {
+  "CMH-ORD-SAN:AA0800+AA0950": {
     "days": {
-      "2026-01-05": {"raw_slack_min": 95, "outcome": "feasible"},
-      "2026-01-06": {"raw_slack_min": 40, "outcome": "insufficient_time"},
-      "2026-01-07": {"raw_slack_min": 45, "outcome": "feasible"},
-      "2026-01-08": {"raw_slack_min": null, "outcome": "cancelled"},
-      "2026-01-09": {"raw_slack_min": null, "outcome": "cancelled"},
-      "2026-01-10": {"raw_slack_min": null, "outcome": "diverted"},
-      "2026-01-12": {"raw_slack_min": -28, "outcome": "insufficient_time"},
-      "2026-01-13": {"raw_slack_min": 90, "outcome": "feasible"}
+      "2026-01-05": {
+        "raw_slack_min": 95,
+        "outcome": "feasible"
+      },
+      "2026-01-06": {
+        "raw_slack_min": 40,
+        "outcome": "insufficient_time"
+      },
+      "2026-01-07": {
+        "raw_slack_min": 45,
+        "outcome": "feasible"
+      },
+      "2026-01-08": {
+        "raw_slack_min": null,
+        "outcome": "cancelled"
+      },
+      "2026-01-09": {
+        "raw_slack_min": null,
+        "outcome": "cancelled"
+      },
+      "2026-01-10": {
+        "raw_slack_min": null,
+        "outcome": "diverted"
+      },
+      "2026-01-12": {
+        "raw_slack_min": -28,
+        "outcome": "insufficient_time"
+      },
+      "2026-01-13": {
+        "raw_slack_min": 90,
+        "outcome": "feasible"
+      }
     },
     "result": {
-      "paired_days": 8, "excluded_not_connecting": 0, "excluded_quality": 2,
-      "count_feasible": 3, "count_insufficient_time": 2, "count_cancelled": 2, "count_diverted": 1,
-      "slack_min": -28, "slack_p10": -28, "slack_p50": 45, "slack_p90": 90,
-      "rate_if_min_sample_5": 0.375
+      "paired_days": 8,
+      "excluded_not_connecting": 0,
+      "excluded_quality": 2,
+      "count_feasible": 3,
+      "count_insufficient_time": 2,
+      "count_cancelled": 2,
+      "count_diverted": 1,
+      "slack_min": -28,
+      "slack_p10": -28,
+      "slack_p50": 45,
+      "slack_p90": 90,
+      "rate_if_min_sample_5": 0.375,
+      "excluded_end_of_period": 0
     }
   },
-  "CMH-ORD-PHX:AA2200+AA2300": {
+  "CMH-ORD-PHX:AA2200+AA0030": {
     "days": {
-      "2026-01-05": {"raw_slack_min": 125, "outcome": "feasible"},
-      "2026-01-06": {"raw_slack_min": 30, "outcome": "insufficient_time"},
-      "2026-01-07": {"raw_slack_min": 125, "outcome": "feasible"},
-      "2026-01-08": {"raw_slack_min": 125, "outcome": "feasible"},
-      "2026-01-09": {"raw_slack_min": 125, "outcome": "feasible"},
-      "2026-01-10": {"raw_slack_min": 125, "outcome": "feasible"},
-      "2026-01-11": {"raw_slack_min": 125, "outcome": "feasible"},
-      "2026-01-12": {"raw_slack_min": 125, "outcome": "feasible"},
-      "2026-01-13": {"raw_slack_min": 125, "outcome": "feasible"}
+      "2026-01-05": {
+        "raw_slack_min": 125,
+        "outcome": "feasible"
+      },
+      "2026-01-06": {
+        "raw_slack_min": 30,
+        "outcome": "insufficient_time"
+      },
+      "2026-01-07": {
+        "raw_slack_min": 125,
+        "outcome": "feasible"
+      },
+      "2026-01-08": {
+        "raw_slack_min": 125,
+        "outcome": "feasible"
+      },
+      "2026-01-09": {
+        "raw_slack_min": 125,
+        "outcome": "feasible"
+      },
+      "2026-01-10": {
+        "raw_slack_min": 125,
+        "outcome": "feasible"
+      },
+      "2026-01-11": {
+        "raw_slack_min": 125,
+        "outcome": "feasible"
+      },
+      "2026-01-12": {
+        "raw_slack_min": 125,
+        "outcome": "feasible"
+      },
+      "2026-01-13": {
+        "raw_slack_min": 125,
+        "outcome": "feasible"
+      }
     },
     "result": {
-      "paired_days": 9, "excluded_not_connecting": 1, "excluded_quality": 0,
-      "count_feasible": 8, "count_insufficient_time": 1, "count_cancelled": 0, "count_diverted": 0,
-      "slack_min": 30, "slack_p10": 30, "slack_p50": 125, "slack_p90": 125,
-      "rate_if_min_sample_5": 0.888889
+      "paired_days": 9,
+      "excluded_not_connecting": 0,
+      "excluded_quality": 0,
+      "count_feasible": 8,
+      "count_insufficient_time": 1,
+      "count_cancelled": 0,
+      "count_diverted": 0,
+      "slack_min": 30,
+      "slack_p10": 30,
+      "slack_p50": 125,
+      "slack_p90": 125,
+      "rate_if_min_sample_5": 0.888889,
+      "excluded_end_of_period": 1
     }
   },
   "dst_slack": {

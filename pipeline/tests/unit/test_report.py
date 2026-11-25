@@ -129,6 +129,7 @@ def result_row(itinerary: str, paired: int, feasible: int, **kw: Any) -> Any:
         paired_days=paired,
         excluded_not_connecting=1,
         excluded_quality=2,
+        excluded_end_of_period=0,
         feasibility_rate=round(feasible / paired, 6) if ok else None,
         status="ok" if ok else "insufficient_data",
         count_feasible=feasible,
@@ -419,8 +420,9 @@ def exclusion_rows() -> list[Any]:
             origin="CMH",
             dest="SAN",
             candidates=40,
-            excluded_layover=25,
+            excluded_bounds=20,
             excluded_unsold=9,
+            excluded_not_connecting=5,
             excluded_recurrence=2,
             qualifying=4,
         )
@@ -431,7 +433,7 @@ def test_exclusions_section_counts_each_rule_per_pair() -> None:
     from flight_pipeline.report import exclusions_section
 
     text = exclusions_section(exclusion_rows(), min_sold_passengers=30, recurrence_threshold=0.6)
-    assert "| CMH-SAN | 40 | 25 | 9 | 2 | 4 |" in text
+    assert "| CMH-SAN | 40 | 20 | 9 | 5 | 2 | 4 |" in text
     assert "at least 30 sampled passengers" in text
     assert "60% of days" in text
 
@@ -493,7 +495,7 @@ def test_showcase_section_names_missing_settings() -> None:
 
 
 def breakdown_inputs() -> tuple[list[Any], dict[str, Any]]:
-    from flight_pipeline.models import Itinerary, PatternKey
+    from flight_pipeline.models import Itinerary
 
     def it(iid: str, travel: int) -> Itinerary:
         od, legs = iid.split(":")
@@ -504,18 +506,18 @@ def breakdown_inputs() -> tuple[list[Any], dict[str, Any]]:
             origin=o,
             hub=h,
             dest=d,
-            inbound=PatternKey(
-                marketing_airline=l1[:2], flight_number=int(l1[2:]), origin=o, dest=h
-            ),
-            outbound=PatternKey(
-                marketing_airline=l2[:2], flight_number=int(l2[2:]), origin=h, dest=d
-            ),
+            inbound_slot=f"{l1[:2]}-{o}-{h}-0{l1[2:]}00",
+            outbound_slot=f"{l2[:2]}-{h}-{d}-1{l2[2:]}00",
+            airline_in=l1[:2],
+            airline_out=l2[:2],
             partner_connection=l1[:2] != l2[:2],
             median_layover_min=60,
             median_travel_min=travel,
             median_dep_local_min=480,
             connect_share=1.0,
+            eligible_days=300,
             sold_passengers=40,
+            routing_itineraries=1,
         )
 
     ids = {

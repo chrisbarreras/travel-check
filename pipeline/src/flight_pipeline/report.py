@@ -215,8 +215,9 @@ def exclusions_section(
         [
             "Pair",
             "Candidates",
-            "Layover outside limits",
+            "Times can never connect",
             "Routing not sold",
+            "Never connect within the layover limits",
             "Connect on too few days",
             "Qualifying",
         ],
@@ -224,8 +225,9 @@ def exclusions_section(
             [
                 f"{r.origin}-{r.dest}",
                 r.candidates,
-                r.excluded_layover,
+                r.excluded_bounds,
                 r.excluded_unsold,
+                r.excluded_not_connecting,
                 r.excluded_recurrence,
                 r.qualifying,
             ]
@@ -235,13 +237,15 @@ def exclusions_section(
     return "\n\n".join(
         [
             "## Itinerary rules applied",
-            "For each selected pair, candidates are flight pairs through a selected hub, sold "
-            "by the same airline or a partner pair, with each flight scheduled on most days. "
-            "The rules then remove, in order: a median scheduled layover outside the limits; "
-            "a routing not sold, meaning DB1B does not show at least "
-            f"{min_sold_passengers} sampled passengers on that routing and pair of selling "
-            "airlines over the period; and flights that connect "
-            f"on fewer than {round(recurrence_threshold * 100)}% of days in the period.",
+            "For each selected pair, candidates are pairs of regular schedules (an airline's "
+            "flights on a route at about the same time of day, whatever their flight numbers) "
+            "through a selected hub, sold by the same airline or a partner pair, each "
+            "scheduled on most days. The rules then remove, in order: pairs whose times can "
+            "never give a layover within the limits; a routing not sold, meaning DB1B does not "
+            f"show at least {min_sold_passengers} sampled passengers on that routing and pair "
+            "of selling airlines over the period; pairs whose flights never connect within the "
+            "layover limits on any day; and flights that connect on fewer than "
+            f"{round(recurrence_threshold * 100)}% of days in the period.",
             body,
         ]
     )
@@ -545,7 +549,7 @@ def routing_itineraries(itineraries: Sequence[Itinerary]) -> dict[str, int]:
     so they are shared by all of these itineraries."""
 
     def key(i: Itinerary) -> tuple[str, str, str, str, str]:
-        return (i.origin, i.hub, i.dest, i.inbound.marketing_airline, i.outbound.marketing_airline)
+        return (i.origin, i.hub, i.dest, i.airline_in, i.airline_out)
 
     counts: dict[tuple[str, str, str, str, str], int] = {}
     for i in itineraries:

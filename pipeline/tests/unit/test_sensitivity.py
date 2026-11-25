@@ -39,7 +39,7 @@ def run_scenarios(con: duckdb.DuckDBPyConnection, pairs: list[tuple[str, str]]) 
     return evaluate_scenarios(
         con,
         "flights",
-        "patterns",
+        "slots",
         ["ORD"],
         pairs,
         rules(min_sold_passengers=10),  # CMH:ORD:DEN AA:AA has 12
@@ -67,14 +67,15 @@ def test_itineraries_rebuilt_per_recurrence_for_selected_pairs_only(
 ) -> None:
     run_scenarios(con, [("CMH", "DEN"), ("CMH", "SAN")])
     assert ids_for(con, "mct30_cut15_rec60") == [
-        "CMH-ORD-DEN:AA3100+AA1510",
-        "CMH-ORD-DEN:UA7000+UA7003",
-        "CMH-ORD-DEN:UA7002+UA7003",
-        "CMH-ORD-SAN:AA3100+AA1500",
-        "CMH-ORD-SAN:AA3100+AA1506",
+        "CMH-ORD-DEN:AA0800+AA1030",
+        "CMH-ORD-DEN:UA0800+UA1000",
+        "CMH-ORD-DEN:UA0900+UA1000",
+        "CMH-ORD-DEN:WN1000+WN1200",
+        "CMH-ORD-SAN:AA0800+AA0950",
+        "CMH-ORD-SAN:AA0800+AA1220",
     ]
-    assert "CMH-ORD-DEN:AA3100+AA1508" in ids_for(con, "mct30_cut15_rec50")
-    assert "CMH-ORD-DEN:AA3100+AA1510" not in ids_for(con, "mct30_cut15_rec75")
+    assert "CMH-ORD-DEN:AA0800+AA1000" in ids_for(con, "mct30_cut15_rec50")
+    assert "CMH-ORD-DEN:AA0800+AA1030" not in ids_for(con, "mct30_cut15_rec75")
     # no itinerary outside the selected pairs is evaluated (hub and pair selection fixed)
     all_ids = {r[0] for r in con.execute("SELECT itinerary_id FROM results_all").fetchall()}
     assert not any(i.startswith(("CMH-ORD-SEA", "CMH-ORD-PHX")) for i in all_ids)
@@ -93,7 +94,7 @@ def test_minimum_connection_scenario_changes_rule_and_threshold(
     rate = {
         s: con.execute(
             "SELECT count_feasible FROM results_all WHERE scenario_id = ? "
-            "AND itinerary_id = 'CMH-ORD-SAN:AA3100+AA1500'",
+            "AND itinerary_id = 'CMH-ORD-SAN:AA0800+AA0950'",
             [s],
         ).fetchone()
         for s in ("mct20_cut15_rec60", "mct30_cut15_rec60", "mct45_cut15_rec60")
@@ -106,7 +107,7 @@ def test_default_daily_outcomes_kept(con: duckdb.DuckDBPyConnection) -> None:
     run_scenarios(con, [("CMH", "SAN")])
     n = con.execute(
         "SELECT count(*) FROM classified_default WHERE status = 'paired' "
-        "AND itinerary_id = 'CMH-ORD-SAN:AA3100+AA1500'"
+        "AND itinerary_id = 'CMH-ORD-SAN:AA0800+AA0950'"
     ).fetchone()
     assert n == (8,)
 
@@ -114,12 +115,12 @@ def test_default_daily_outcomes_kept(con: duckdb.DuckDBPyConnection) -> None:
 def test_pairs_without_itineraries_in_a_scenario_reported(
     con: duckdb.DuckDBPyConnection,
 ) -> None:
-    missing = run_scenarios(con, [("CMH", "DEN"), ("CMH", "SAN")])
-    # At 45 min, UA7002 + UA7003 connects on 2 of 10 days and UA7000 + UA7003 (40 min) not at
-    # all, so CMH-DEN has only AA1510 (60%); at 75% it has no itinerary.
-    assert "CMH-DEN (mct45_cut15_rec75)" in missing
-    assert "CMH-DEN (mct30_cut15_rec75)" not in missing  # UA7002 + UA7003 connects daily
-    assert not any(m.startswith("CMH-SAN") for m in missing)
+    missing = run_scenarios(con, [("CMH", "DEN"), ("CMH", "TPA")])
+    # CMH-TPA has no itinerary through ORD in any scenario; CMH-DEN always has WN's daily
+    # connection (100 min), so it is never reported.
+    assert "CMH-TPA (mct30_cut15_rec60)" in missing
+    assert sum(m.startswith("CMH-TPA") for m in missing) == 27
+    assert not any(m.startswith("CMH-DEN") for m in missing)
 
 
 # --- Reversal flags ----------------------------------------------------------------------
@@ -186,7 +187,7 @@ def test_partner_itinerary_threshold_changes_across_scenarios(
     feasible = {
         sid: con.execute(
             "SELECT count_feasible FROM results_all WHERE scenario_id = ? "
-            "AND itinerary_id = 'CMH-ORD-SEA:AA3100+AS700'",
+            "AND itinerary_id = 'CMH-ORD-SEA:AA0800+AS0930'",
             [sid],
         ).fetchone()
         for sid in ("mct20_cut15_rec60", "mct30_cut15_rec60", "mct45_cut15_rec60")
@@ -209,9 +210,10 @@ def test_recurrence_scenarios_apply_to_connection_share(
     con: duckdb.DuckDBPyConnection,
 ) -> None:
     run_scenarios(con, [("CMH", "DEN")])
-    # UA7000 + UA7001 connect on 5 of 10 days: qualifies at 50% only
-    assert "CMH-ORD-DEN:UA7000+UA7001" in ids_for(con, "mct30_cut15_rec50")
-    assert "CMH-ORD-DEN:UA7000+UA7001" not in ids_for(con, "mct30_cut15_rec60")
+    # UA7001's 10:20 slot flies on 5 of 10 days; with UA7002 it connects on all 5: 50%,
+    # so it qualifies at the 50% threshold only.
+    assert "CMH-ORD-DEN:UA0800+UA1020" in ids_for(con, "mct30_cut15_rec50")
+    assert "CMH-ORD-DEN:UA0800+UA1020" not in ids_for(con, "mct30_cut15_rec60")
 
 
 def test_settings_compared_counts_distinct_connection_and_cutoff_settings() -> None:

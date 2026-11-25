@@ -67,7 +67,7 @@ def scenario_rules(rules: Itineraries, mct: int, default_mct: int | None = None)
 def evaluate_scenarios(
     con: duckdb.DuckDBPyConnection,
     flights: str,
-    patterns: str,
+    slots: str,
     hubs: Sequence[str],
     pairs: Sequence[tuple[str, str]],
     rules: Itineraries,
@@ -97,7 +97,7 @@ def evaluate_scenarios(
         r = scenario_rules(rules, mct, rules.min_connection_default_min)
         build_itineraries(
             con,
-            patterns,
+            slots,
             hubs,
             r,
             "_sc_it",
@@ -110,7 +110,7 @@ def evaluate_scenarios(
         available = {
             (o, d) for o, d in con.execute("SELECT DISTINCT origin, dest FROM _sc_it").fetchall()
         }
-        daily_slack(con, flights, "_sc_it", r, period, "_sc_slack")
+        daily_slack(con, flights, "_sc_it_days", "_sc_slack")
         for cutoff in sorted(sens.boarding_cutoff_min):
             sid = scenario_id(mct, cutoff, rec)
             missing += [f"{p} ({sid})" for p in pairs_without_itineraries(pairs, available)]

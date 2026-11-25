@@ -20,6 +20,13 @@ Design (so the expected results follow from the design, not from the pipeline):
   period, above the minimum of 30), except UA through DEN to BOS (5 per quarter, 20 in all),
   which is excluded as not sold. A few legs have no recorded selling airline.
 - The period is July 2024 to June 2025, the configured period.
+- Phase 1 (specs/002): WN flies the same schedules under alternating flight numbers (odd and
+  even days), so only schedule-slot identity sees its itineraries; DL flies nonstops from CMH
+  and TUL to every destination; and on AA's hubs CMH has a second inbound bank, 60 minutes
+  later, so CMH routes have more itineraries and dominate the showcase unless curation caps
+  them. The second bank's layover is the 30-minute minimum, so its connections are tight and
+  mostly fail. Six outbound banks (only the first connects) keep the hubs the busiest
+  airports, so the candidate pool is still the 8 hubs.
 """
 
 from __future__ import annotations
@@ -73,10 +80,11 @@ QUARTERS = ((2024, 3), (2024, 4), (2025, 1), (2025, 2))
 UNSOLD = ("UA", "DEN", "BOS")  # sold below the minimum
 DAYS = 365
 IN_BLOCK, OUT_BLOCK, LAYOVER = 100, 150, 90
-BANK_OFFSETS_MIN = (0, 300, 480, 660)  # only the first bank connects (max layover 240)
+BANK_OFFSETS_MIN = (0, 300, 480, 660, 780, 900)  # only the first bank connects (max 240)
 NONSTOP_ORIGINS = ("CMH", "TUL")
 NONSTOP_BLOCK = 200
 SECOND_BANK = {"CMH": 60}  # an extra inbound leaving this many minutes after the first
+SECOND_BANK_AIRLINE = "AA"  # only on this airline's hubs, so origins stay smaller than hubs
 RENUMBERING = "WN"  # flies the same schedules under alternating flight numbers
 
 
@@ -111,7 +119,7 @@ def write_year(raw_dir: Path, seed: int = 7) -> None:
             for origin in sorted(ORIGINS):
                 n += 1
                 numbers[(airline, hub, origin)] = n
-                if origin in SECOND_BANK:
+                if origin in SECOND_BANK and airline == SECOND_BANK_AIRLINE:
                     n += 1
                     numbers[(airline, hub, origin + "2")] = n
             for dest in sorted(DESTS):
@@ -129,7 +137,7 @@ def write_year(raw_dir: Path, seed: int = 7) -> None:
                 p = weather_probability(hub, day.month)
                 for origin, tz in sorted(ORIGINS.items()):
                     banks = [(origin, dep_utc)]
-                    if origin in SECOND_BANK:
+                    if origin in SECOND_BANK and airline == SECOND_BANK_AIRLINE:
                         later = dep_utc + dt.timedelta(minutes=SECOND_BANK[origin])
                         banks.append((origin + "2", later))
                     for bank_key, dep in banks:

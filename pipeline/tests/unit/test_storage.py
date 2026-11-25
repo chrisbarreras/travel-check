@@ -5,7 +5,7 @@ from pathlib import Path
 
 import duckdb
 
-from flight_pipeline.models import HubCandidate, Itinerary, PatternKey, SeasonShares
+from flight_pipeline.models import FlightNumberShare, HubCandidate, ScheduleSlot, SeasonShares
 from flight_pipeline.storage import models_to_table, table_hash, write_table
 
 
@@ -39,28 +39,25 @@ def test_models_round_trip_through_parquet(tmp_path: Path) -> None:
     assert rows[0][2] == {"winter": 0.2, "spring": None, "summer": 0.1, "autumn": 0.0}
 
 
-def test_nested_pattern_keys() -> None:
+def test_nested_lists_of_structs() -> None:
     con = duckdb.connect()
-    leg_in = PatternKey(marketing_airline="AA", flight_number=1, origin="CMH", dest="ORD")
-    leg_out = PatternKey(marketing_airline="AA", flight_number=2, origin="ORD", dest="SAN")
-    it = Itinerary(
-        itinerary_id="CMH-ORD-SAN:AA1+AA2",
+    slot = ScheduleSlot(
+        slot_id="WN-CMH-ORD-1000",
+        marketing_airline="WN",
         origin="CMH",
-        hub="ORD",
-        dest="SAN",
-        inbound=leg_in,
-        outbound=leg_out,
-        partner_connection=False,
-        median_layover_min=60,
-        median_travel_min=300,
-        median_dep_local_min=480,
-        connect_share=0.9,
-        sold_passengers=40,
+        dest="ORD",
+        ref_dep_local_min=600,
+        min_dep_local_min=600,
+        max_dep_local_min=600,
+        scheduled_days=10,
+        recurrence=1.0,
+        flight_numbers=[
+            FlightNumberShare(flight_number="WN1001", share_of_days=0.5),
+            FlightNumberShare(flight_number="WN2001", share_of_days=0.5),
+        ],
     )
-    models_to_table(con, "i", Itinerary, [it])
-    assert con.execute("SELECT inbound.flight_number, outbound.dest FROM i").fetchall() == [
-        (1, "SAN")
-    ]
+    models_to_table(con, "s", ScheduleSlot, [slot])
+    assert con.execute("SELECT flight_numbers[2].flight_number FROM s").fetchall() == [("WN2001",)]
 
 
 def test_identical_tables_give_identical_bytes_and_hashes(tmp_path: Path) -> None:

@@ -1,149 +1,34 @@
 {
-  "_note": "Hub ORD, period 2026-01-05..2026-01-14 (10 days), default rules: min connection 30 (partner 45), max 240, recurrence 0.60 (connection-level), min sold passengers 30 against db1b_sample.csv. Layover and travel are scheduled minutes. median_layover_min and median_travel_min are medians of the daily scheduled values on the days the two flights connect (UTC).",
-  "days_in_period": 10,
-  "hubs": [
-    "ORD"
-  ],
-  "patterns": {
-    "AA3100 CMH-ORD": {
-      "scheduled_days": 10,
-      "recurrence": 1.0
-    },
-    "AA1500 ORD-SAN": {
-      "scheduled_days": 10,
-      "recurrence": 1.0
-    },
-    "AA1508 ORD-DEN": {
-      "scheduled_days": 5,
-      "recurrence": 0.5
-    },
-    "AA1510 ORD-DEN": {
-      "scheduled_days": 6,
-      "recurrence": 0.6
-    },
-    "AA2300 ORD-PHX": {
-      "scheduled_days": 10,
-      "recurrence": 1.0
-    },
-    "UA7000 CMH-ORD": {
-      "scheduled_days": 10,
-      "recurrence": 1.0
-    },
-    "UA7001 ORD-DEN": {
-      "scheduled_days": 10,
-      "recurrence": 1.0
-    },
-    "UA7002 CMH-ORD": {
-      "scheduled_days": 10,
-      "recurrence": 1.0
-    },
-    "UA7003 ORD-DEN": {
-      "scheduled_days": 10,
-      "recurrence": 1.0
-    }
-  },
+  "_note": "Hand-computed itineraries (specs/002 research R1-R2, ADR-0014) for hub ORD over 2026-01-05..2026-01-14 (10 days): min connection 30 (partner 45), max 240, recurrence 0.60, min sold passengers 30 against db1b_sample.csv. Itineraries are slot pairs; layover and travel are medians of daily scheduled values on connecting days.",
+  "hubs": ["ORD"],
   "itineraries": [
-    {
-      "itinerary_id": "CMH-ORD-DEN:UA7000+UA7003",
-      "partner_connection": false,
-      "median_layover_min": 40,
-      "median_travel_min": 240,
-      "median_dep_local_min": 540,
-      "connect_share": 0.6,
-      "sold_passengers": 60
-    },
-    {
-      "itinerary_id": "CMH-ORD-DEN:UA7002+UA7003",
-      "partner_connection": false,
-      "median_layover_min": 40,
-      "median_travel_min": 240,
-      "median_dep_local_min": 480,
-      "connect_share": 1.0,
-      "sold_passengers": 60
-    },
-    {
-      "itinerary_id": "CMH-ORD-PHX:AA2200+AA2300",
-      "partner_connection": false,
-      "median_layover_min": 125,
-      "median_travel_min": 400,
-      "median_dep_local_min": 1320,
-      "connect_share": 0.9,
-      "sold_passengers": 50
-    },
-    {
-      "itinerary_id": "CMH-ORD-SAN:AA3100+AA1500",
-      "partner_connection": false,
-      "median_layover_min": 90,
-      "median_travel_min": 440,
-      "median_dep_local_min": 480,
-      "connect_share": 1.0,
-      "sold_passengers": 35
-    },
-    {
-      "itinerary_id": "CMH-ORD-SAN:AA3100+AA1506",
-      "partner_connection": false,
-      "median_layover_min": 240,
-      "median_travel_min": 590,
-      "median_dep_local_min": 480,
-      "connect_share": 1.0,
-      "sold_passengers": 35
-    },
-    {
-      "itinerary_id": "CMH-ORD-SEA:AA3100+AS700",
-      "partner_connection": true,
-      "median_layover_min": 70,
-      "median_travel_min": 420,
-      "median_dep_local_min": 480,
-      "connect_share": 1.0,
-      "sold_passengers": 40
-    }
+    {"itinerary_id": "CMH-ORD-DEN:UA0800+UA1000", "partner_connection": false, "median_layover_min": 40, "median_travel_min": 240, "median_dep_local_min": 480, "connect_share": 1.0, "eligible_days": 10, "sold_passengers": 60, "routing_itineraries": 2},
+    {"itinerary_id": "CMH-ORD-DEN:UA0900+UA1000", "partner_connection": false, "median_layover_min": 40, "median_travel_min": 240, "median_dep_local_min": 540, "connect_share": 0.6, "eligible_days": 10, "sold_passengers": 60, "routing_itineraries": 2},
+    {"itinerary_id": "CMH-ORD-DEN:WN1000+WN1200", "partner_connection": false, "median_layover_min": 100, "median_travel_min": 300, "median_dep_local_min": 600, "connect_share": 1.0, "eligible_days": 10, "sold_passengers": 45, "routing_itineraries": 1},
+    {"itinerary_id": "CMH-ORD-PHX:AA2200+AA0030", "partner_connection": false, "median_layover_min": 125, "median_travel_min": 400, "median_dep_local_min": 1320, "connect_share": 1.0, "eligible_days": 9, "sold_passengers": 50, "routing_itineraries": 1},
+    {"itinerary_id": "CMH-ORD-SAN:AA0800+AA0950", "partner_connection": false, "median_layover_min": 90, "median_travel_min": 440, "median_dep_local_min": 480, "connect_share": 1.0, "eligible_days": 10, "sold_passengers": 35, "routing_itineraries": 2},
+    {"itinerary_id": "CMH-ORD-SAN:AA0800+AA1220", "partner_connection": false, "median_layover_min": 240, "median_travel_min": 590, "median_dep_local_min": 480, "connect_share": 1.0, "eligible_days": 10, "sold_passengers": 35, "routing_itineraries": 2},
+    {"itinerary_id": "CMH-ORD-SEA:AA0800+AS0930", "partner_connection": true, "median_layover_min": 70, "median_travel_min": 420, "median_dep_local_min": 480, "connect_share": 1.0, "eligible_days": 10, "sold_passengers": 40, "routing_itineraries": 1}
   ],
   "excluded_examples": {
-    "CMH-ORD-SEA:AA3100+AS702": "partner layover 40 < 45",
-    "CMH-ORD-SAN:AA3100+AA1502": "layover 20 < 30",
-    "CMH-ORD-SAN:AA3100+AA1504": "layover 250 > 240",
-    "CMH-ORD-DEN:AA3100+AA1508": "AA1508 recurrence 0.5 < 0.6",
-    "CMH-ORD-SAN:DL5000+UA6000": "different marketing airlines, same operator OO, not partners",
-    "CMH-ORD-DEN:AA3100+AA1510": "sold routing CMH:ORD:DEN AA:AA has 12 sampled passengers < 30",
-    "CMH-ORD-DEN:UA7000+UA7001": "layover 60 and sold (60 passengers), but the flights connect on 5 of 10 days: 0.5 < 0.6"
+    "CMH-ORD-SAN:AA0800+AA0840": "20 min scheduled, below the 30 min minimum: never connects",
+    "CMH-ORD-SAN:AA0800+AA1230": "250 min, above the 240 min maximum: never connects",
+    "CMH-ORD-SEA:AA0800+AS0900": "40 min, below the 45 min partner minimum: never connects",
+    "CMH-ORD-DEN:AA0800+AA1030": "sold routing CMH:ORD:DEN AA:AA has 12 sampled passengers < 30",
+    "CMH-ORD-SAN:UA0800+UA0830": "no sold UA:UA routing CMH:ORD:SAN",
+    "CMH-ORD-SAN:UA0900+UA0830": "the bound pre-filter: every combination of times is outside the limits",
+    "CMH-ORD-PHX:AA2200+AA0030 day 10": "the outbound would leave after the loaded data: excluded at the end of the period, not counted as not connecting"
   },
-  "with_min_sold_10_and_recurrence_0_50_also": [
-    "CMH-ORD-DEN:AA3100+AA1508",
-    "CMH-ORD-DEN:UA7000+UA7001"
-  ],
   "od_exclusions": {
-    "_note": "Candidates: airline-compatible pattern pairs through ORD, each pattern scheduled on >= 60% of days (inbound AA3100, AA2200, DL5000, UA7000, UA7002).",
-    "CMH-DEN": {
-      "candidates": 6,
-      "excluded_layover": 1,
-      "excluded_unsold": 1,
-      "excluded_recurrence": 2,
-      "qualifying": 2
-    },
-    "CMH-PHX": {
-      "candidates": 2,
-      "excluded_layover": 1,
-      "excluded_unsold": 0,
-      "excluded_recurrence": 0,
-      "qualifying": 1
-    },
-    "CMH-SAN": {
-      "candidates": 10,
-      "excluded_layover": 8,
-      "excluded_unsold": 0,
-      "excluded_recurrence": 0,
-      "qualifying": 2
-    },
-    "CMH-SEA": {
-      "candidates": 4,
-      "excluded_layover": 3,
-      "excluded_unsold": 0,
-      "excluded_recurrence": 0,
-      "qualifying": 1
-    }
+    "_note": "Candidates: airline-compatible slot pairs through ORD, each slot scheduled on >= 60% of days.",
+    "CMH-DEN": {"candidates": 5, "excluded_bounds": 1, "excluded_unsold": 1, "excluded_not_connecting": 0, "excluded_recurrence": 0, "qualifying": 3},
+    "CMH-PHX": {"candidates": 2, "excluded_bounds": 1, "excluded_unsold": 0, "excluded_not_connecting": 0, "excluded_recurrence": 0, "qualifying": 1},
+    "CMH-SAN": {"candidates": 10, "excluded_bounds": 5, "excluded_unsold": 1, "excluded_not_connecting": 2, "excluded_recurrence": 0, "qualifying": 2},
+    "CMH-SEA": {"candidates": 4, "excluded_bounds": 2, "excluded_unsold": 0, "excluded_not_connecting": 1, "excluded_recurrence": 0, "qualifying": 1}
   },
-  "schedule_change": {
-    "CMH-ORD-DEN:UA7002+UA7003": "pattern medians give a 100 min layover (08:20 arrival, 10:00 departure); daily layovers are 40 on 8 days and 100 on 2, median 40, so the itinerary is tight (40 < 30 + 15)",
-    "CMH-ORD-DEN:UA7000+UA7003": "connects only on d5-d10 (40 min), 6 of 10 days"
+  "with_min_sold_10_also": {"CMH-ORD-DEN:AA0800+AA1030": {"connect_share": 0.6, "median_layover_min": 130}},
+  "with_recurrence_0_75": {
+    "excluded_recurrence": ["CMH-ORD-DEN:UA0900+UA1000"],
+    "note": "both slots run every day, but the flights connect on 6 of 10 days: 0.6 < 0.75"
   }
 }

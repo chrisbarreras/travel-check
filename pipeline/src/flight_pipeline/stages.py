@@ -34,7 +34,7 @@ from flight_pipeline.hubs import (
     count_eligible,
     select_hubs,
 )
-from flight_pipeline.itineraries import build_itineraries, build_patterns
+from flight_pipeline.itineraries import build_itineraries
 from flight_pipeline.models import (
     Airport,
     ComparablePair,
@@ -46,16 +46,21 @@ from flight_pipeline.models import (
     Itinerary,
     ItineraryResult,
     Manifest,
+    NonstopMedian,
     OdExclusions,
     OdSelection,
     OdSelectionMeta,
     QualitySummary,
     ScenarioSummary,
+    ScheduleSlot,
     SensitivityMeta,
     SensitivityScenario,
+    SlotChange,
+    SlotDay,
     SoldRoutingsSummary,
     validate_scenarios,
 )
+from flight_pipeline.nonstop import nonstop_medians
 from flight_pipeline.od_selection import od_candidates, select_od_pairs, selection_shortfalls
 from flight_pipeline.prepare.db1b import unmapped_airlines
 from flight_pipeline.providers.timezones import AirportsDataTimezones
@@ -87,6 +92,7 @@ from flight_pipeline.sensitivity import (
     scenarios,
     settings_compared,
 )
+from flight_pipeline.slots import build_slots
 from flight_pipeline.storage import (
     models_to_table,
     read_models,
@@ -140,15 +146,35 @@ def load_flights(con: duckdb.DuckDBPyConnection, cfg: Config) -> None:
     read_table(con, derived(cfg, "sold_routings.parquet"), "sold_routings")
 
 
+def load_slots(con: duckdb.DuckDBPyConnection, cfg: Config) -> None:
+    for name in ("slots", "slots_days", "slots_changes"):
+        read_table(con, derived(cfg, f"{name}.parquet"), name)
+
+
 def stage_select_hubs(con: duckdb.DuckDBPyConnection, cfg: Config) -> str:
     load_flights(con, cfg)
     read_table(con, derived(cfg, "passengers.parquet"), "passengers")
     pool = candidate_pool(con, "flights", cfg.hubs.candidate_pool_size)
     metrics = candidate_metrics(con, "flights", "passengers", pool, cfg.hubs)
-    build_patterns(con, "flights", cfg.period.dates(), "patterns")
+    build_slots(con, "flights", cfg.period.dates(), cfg.itineraries.slot_window_min, "slots")
+    write_table(con, "slots", derived(cfg, "slots.parquet"), ScheduleSlot, ["slot_id"])
+    write_table(
+        con,
+        "slots_days",
+        derived(cfg, "slots_days.parquet"),
+        SlotDay,
+        ["slot_id", "service_date"],
+    )
+    write_table(
+        con,
+        "slots_changes",
+        derived(cfg, "slots_changes.parquet"),
+        SlotChange,
+        ["slot_id", "change_date"],
+    )
     build_itineraries(
         con,
-        "patterns",
+        "slots",
         pool,
         cfg.itineraries,
         "pool_itineraries",
@@ -202,11 +228,14 @@ def stage_select_hubs(con: duckdb.DuckDBPyConnection, cfg: Config) -> str:
 def stage_build(con: duckdb.DuckDBPyConnection, cfg: Config) -> str:
     """Itineraries through the selected hubs and the origin/destination pair selection."""
     load_flights(con, cfg)
-    hubs = read_json(derived(cfg, "hub_selection.json"), HubSelectionMeta)["selected"]
-    build_patterns(con, "flights", cfg.period.dates(), "patterns")
+    hub_meta = read_json(derived(cfg, "hub_selection.json"), HubSelectionMeta)
+    hubs, pool = hub_meta["selected"], hub_meta["pool"]
+    load_slots(con, cfg)
+    nonstop_medians(con, "flights", cfg.period.dates(), "nonstop")
+    write_table(con, "nonstop", derived(cfg, "nonstop.parquet"), NonstopMedian, ["origin", "dest"])
     build_itineraries(
         con,
-        "patterns",
+        "slots",
         hubs,
         cfg.itineraries,
         "itineraries",
@@ -224,7 +253,9 @@ def stage_build(con: duckdb.DuckDBPyConnection, cfg: Config) -> str:
         cfg.comparison.departure_window_min,
         "comparable_all",
     )
-    rows = select_od_pairs(od_candidates(con, "itineraries", "comparable_all"), hubs, cfg.selection)
+    rows = select_od_pairs(
+        od_candidates(con, "itineraries", "comparable_all"), hubs, cfg.selection, pool=pool
+    )
     models_to_table(con, "od_selection", OdSelection, rows)
     write_table(con, "od_selection", derived(cfg, "od_selection.parquet"), OdSelection, ["rank"])
     con.execute("CREATE OR REPLACE TEMP TABLE _chosen (origin VARCHAR, dest VARCHAR)")
@@ -271,13 +302,13 @@ def stage_analyze(con: duckdb.DuckDBPyConnection, cfg: Config) -> str:
     pairs = [(r.origin, r.dest) for r in od_rows if r.selected]
     read_table(con, derived(cfg, "itineraries.parquet"), "itineraries")
     period = cfg.period.dates()
-    build_patterns(con, "flights", period, "patterns")
+    load_slots(con, cfg)
     defaults = _defaults(cfg)
     default_id = scenario_id(*defaults)
     missing = evaluate_scenarios(
         con,
         "flights",
-        "patterns",
+        "slots",
         hubs,
         pairs,
         cfg.itineraries,
@@ -434,6 +465,10 @@ def stage_analyze(con: duckdb.DuckDBPyConnection, cfg: Config) -> str:
 
 DERIVED_TABLES = (
     "flights.parquet",
+    "slots.parquet",
+    "slots_days.parquet",
+    "slots_changes.parquet",
+    "nonstop.parquet",
     "passengers.parquet",
     "sold_routings.parquet",
     "airports.parquet",
@@ -686,7 +721,7 @@ def stage_report(
         "INSERT INTO _sel_hubs VALUES (?)", [(s.airport,) for s in selection if s.selected]
     )
     coverage = airline_coverage(
-        [i.inbound.marketing_airline for i in itineraries],
+        [i.airline_in for i in itineraries],
         {
             str(a): int(n)
             for a, n in con.execute(

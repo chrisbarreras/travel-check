@@ -10,7 +10,7 @@ from __future__ import annotations
 
 import datetime as dt
 import re
-from typing import Annotated, Any, Literal
+from typing import Annotated, Any, Literal, cast
 
 from pydantic import BaseModel, ConfigDict, Field, ValidationInfo, field_validator, model_validator
 
@@ -48,8 +48,10 @@ class _Model(BaseModel):
 
 
 def _ctx(info: ValidationInfo, key: str) -> Any:
-    context: Any = info.context
-    return context.get(key) if isinstance(context, dict) else None
+    context: object = info.context
+    if isinstance(context, dict):
+        return cast("dict[str, Any]", context).get(key)
+    return None
 
 
 # --- Common parts ------------------------------------------------------------------------

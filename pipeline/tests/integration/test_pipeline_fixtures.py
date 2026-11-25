@@ -9,10 +9,33 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
+import duckdb
 import pytest
 
 from flight_pipeline.cli import main
 from flight_pipeline.models import Finding
+
+
+def itinerary_layovers(root: Path) -> dict[str, int]:
+    path = (root / "derived" / "itineraries.parquet").as_posix()
+    rows = (
+        duckdb.connect()
+        .execute(f"SELECT itinerary_id, median_layover_min FROM read_parquet('{path}')")
+        .fetchall()
+    )
+    return {i: int(v) for i, v in rows}
+
+
+def test_renumbering_airline_has_itineraries(finished: Path) -> None:
+    # WN alternates flight numbers daily: only schedule-slot identity sees it (SC-001)
+    path = (finished / "derived" / "itineraries.parquet").as_posix()
+    n = (
+        duckdb.connect()
+        .execute(f"SELECT count(*) FROM read_parquet('{path}') WHERE airline_in = 'WN'")
+        .fetchone()
+    )
+    assert n is not None
+    assert n[0] > 0
 
 
 def finding(root: Path) -> Finding:
@@ -57,7 +80,10 @@ def test_pairs_and_results_follow_design(finished: Path) -> None:
     f = finding(finished)
     assert len(f.od_pairs) == 10
     assert all(p.regional_origin for p in f.od_pairs)
-    rates = {r.itinerary_id: r for r in f.default_results}
+    layover = itinerary_layovers(finished)
+    # the CMH second bank is scheduled at the 30-minute minimum (tight by design): compare
+    # weather hubs on the first bank's 90-minute connections only
+    rates = {r.itinerary_id: r for r in f.default_results if layover[r.itinerary_id] >= 60}
     assert all(r.status == "ok" for r in rates.values())
     reliable = [
         r.feasibility_rate
@@ -122,14 +148,17 @@ def test_sold_routing_rules_follow_design(finished: Path) -> None:
     assert {(e.origin, e.dest) for e in f.od_exclusions} == {(p.origin, p.dest) for p in f.od_pairs}
     for e in f.od_exclusions:
         assert e.excluded_recurrence == 0  # every first-bank connection works every day
-        assert e.excluded_layover > 0  # the later banks are outside the layover limit
+        assert e.excluded_bounds > 0  # the later banks can never connect within the limit
         assert e.qualifying > 0
     # UA through DEN to BOS is sold below the minimum: never an itinerary
     assert not any(
         ":UA" in r.itinerary_id and "-DEN-BOS:" in r.itinerary_id for r in f.default_results
     )
+    layover = itinerary_layovers(finished)
     for p in f.showcase_examples:
-        assert p.settings_compared == 9
+        tight = min(layover[p.itinerary_a], layover[p.itinerary_b]) < 45
+        # tight second-bank connections cannot be compared at a 45-minute minimum
+        assert p.settings_compared == (6 if tight else 9)
     text = (finished / "reports" / "summary.md").read_text(encoding="utf-8")
     assert "## Itinerary rules applied" in text
     assert "DB1B quarters 2024-3 to 2025-2" in text

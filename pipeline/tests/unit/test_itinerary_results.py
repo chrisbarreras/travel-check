@@ -51,7 +51,7 @@ def test_lower_percentile_rule(values: list[int], q: float, expected: int | None
     assert lower_percentile(values, q) == expected
 
 
-@pytest.mark.parametrize("itinerary", ["CMH-ORD-SAN:AA3100+AA1500", "CMH-ORD-PHX:AA2200+AA2300"])
+@pytest.mark.parametrize("itinerary", ["CMH-ORD-SAN:AA0800+AA0950", "CMH-ORD-PHX:AA2200+AA0030"])
 def test_results_match_hand_computed(con: duckdb.DuckDBPyConnection, itinerary: str) -> None:
     exp = EXPECTED[itinerary]["result"]
     row = results(con, 30)[itinerary]
@@ -61,23 +61,23 @@ def test_results_match_hand_computed(con: duckdb.DuckDBPyConnection, itinerary: 
 def test_below_minimum_sample_is_insufficient_data_without_rate(
     con: duckdb.DuckDBPyConnection,
 ) -> None:
-    row = results(con, 30)["CMH-ORD-SAN:AA3100+AA1500"]
+    row = results(con, 30)["CMH-ORD-SAN:AA0800+AA0950"]
     assert row["status"] == "insufficient_data"
     assert row["feasibility_rate"] is None
 
 
 def test_rate_reported_at_or_above_minimum_sample(con: duckdb.DuckDBPyConnection) -> None:
     rows = results(con, 5)
-    for itinerary in ("CMH-ORD-SAN:AA3100+AA1500", "CMH-ORD-PHX:AA2200+AA2300"):
+    for itinerary in ("CMH-ORD-SAN:AA0800+AA0950", "CMH-ORD-PHX:AA2200+AA0030"):
         assert rows[itinerary]["status"] == "ok"
         assert rows[itinerary]["feasibility_rate"] == pytest.approx(
             EXPECTED[itinerary]["result"]["rate_if_min_sample_5"], abs=1e-6
         )
     # exactly at the minimum: 8 paired days with min_sample 8 is enough
-    at_min = results(con, 8)["CMH-ORD-SAN:AA3100+AA1500"]
+    at_min = results(con, 8)["CMH-ORD-SAN:AA0800+AA0950"]
     assert at_min["status"] == "ok"
     assert at_min["feasibility_rate"] is not None
-    assert results(con, 9)["CMH-ORD-SAN:AA3100+AA1500"]["status"] == "insufficient_data"
+    assert results(con, 9)["CMH-ORD-SAN:AA0800+AA0950"]["status"] == "insufficient_data"
 
 
 def test_every_row_carries_period_and_scenario(con: duckdb.DuckDBPyConnection) -> None:
