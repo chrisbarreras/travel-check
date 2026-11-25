@@ -16,7 +16,7 @@ How the flight intelligence app grows from a static showcase into a full-stack p
 
 **Feature count:** 9 features for the portfolio core (Phases 0–3), 10 through Phase 4. Each feature has one spec, one implementation plan and one task list.
 - **Free data only until Phase 5.** Use BTS on-time data, schedules derived from it, and OpenSky. No paid APIs.
-- **Statistical honesty.** Every number shown has a defined meaning, a sample size and a data period. Sparse data shows "insufficient data" instead of a number.
+- **Statistical honesty.** Every number shown has a defined meaning, a sample size and a data period. Sparse data shows "insufficient data" instead of a rate; a few observed days may be reported as labelled raw counts with their uncertainty, never as a percentage (constitution, Principle I).
 
 ---
 
@@ -101,7 +101,7 @@ How the flight intelligence app grows from a static showcase into a full-stack p
   - **each flight's own history**, from BTS on-time data, even when the connection itself was not analyzed
   - **similar connections at the hub**: a hub-level figure for the same layover length and time of day (for example "afternoon connections at Atlanta with a 45–60 minute layover worked on 85% of days"), marked as not specific to these flights; a new statistic with its own definition and minimum sample
   - **covered alternatives** on the same route
-  - **honest small-sample feedback**: when a connection has too few days for a rate, raw counts with a clear label (for example "didn't work on 4 of the 7 days we saw — too few days to give a rate"), with an uncertainty range and only above a small floor (for example at least 5 days); never a percentage. **Requires amending constitution Principle I first**, which today requires "insufficient data" instead of any number below the minimum sample
+  - **honest small-sample feedback**: when a connection has too few days for a rate, raw counts with a clear label (for example "didn't work on 4 of the 7 days we saw — too few days to give a rate"), with an uncertainty range and only above a small floor (for example at least 5 days); never a percentage, ranking or comparison (constitution v1.2.0, Principle I)
 - **Itineraries with two or more stops.** The same method extended: an itinerary works on a day only when every connection works that day; sold routings come from DB1B markets with three or more coupons; each connection must recur, and the layover limits apply to each. Bounded to sold routings to keep the number of candidates manageable; results report each connection's contribution to failures
 - Connection-risk calculation moves to the API, using the same method and shared test cases as the Phase 1 browser version.
 - More hubs and a longer data period.
