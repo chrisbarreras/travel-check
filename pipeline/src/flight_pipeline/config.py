@@ -226,6 +226,8 @@ class Itineraries(_Strict):
     partners: list[list[str]]
     min_sold_passengers: Annotated[int, Field(ge=0)]
     carrier_map: dict[str, str]
+    identity: Literal["schedule"]
+    slot_window_min: Annotated[int, Field(ge=10, le=90)]
 
     @field_validator("carrier_map")
     @classmethod
@@ -297,6 +299,43 @@ class Runtime(_Strict):
     limit_min: Annotated[float, Field(gt=0)]
 
 
+class Showcase(_Strict):
+    routes_min: Annotated[int, Field(ge=1)]
+    routes_max: Annotated[int, Field(ge=1)]
+    itineraries_per_route_max: Annotated[int, Field(ge=2)]
+    max_share_route: Annotated[float, Field(gt=0.0, le=1.0)]
+    max_share_airline: Annotated[float, Field(gt=0.0, le=1.0)]
+    max_share_hub: Annotated[float, Field(gt=0.0, le=1.0)]
+    regional_share_min: Share
+    cross_hub_share_min: Share
+    size_budget_kb: Annotated[int, Field(ge=1)]
+    landing_budget_kb: Annotated[int, Field(ge=1)]
+    output_dir: str
+
+    @model_validator(mode="after")
+    def _routes_range(self) -> Showcase:
+        if self.routes_min > self.routes_max:
+            raise ValueError("routes_min must not exceed routes_max")
+        if self.landing_budget_kb > self.size_budget_kb:
+            raise ValueError("landing_budget_kb must not exceed size_budget_kb")
+        return self
+
+
+class Insights(_Strict):
+    faster_min_saving_min: Annotated[int, Field(ge=1)]
+    faster_margin: Annotated[float, Field(ge=0.0, le=0.2)]
+    faster_departure_window_min: Annotated[int, Field(ge=0, le=720)]
+    buffer_share: Annotated[float, Field(gt=0.5, lt=1.0)]
+    buffer_round_min: Annotated[int, Field(ge=1, le=60)]
+    monthly_min_sample: Annotated[int, Field(ge=1)]
+    schedule_change_min_shift_min: Annotated[int, Field(ge=1)]
+    schedule_change_min_days: Annotated[int, Field(ge=1)]
+
+
+class Notes(_Strict):
+    disruption_file: str
+
+
 class Config(_Strict):
     seed: int
     paths: Paths
@@ -311,6 +350,9 @@ class Config(_Strict):
     sensitivity: Sensitivity
     quality: Quality
     runtime: Runtime
+    showcase: Showcase
+    insights: Insights
+    notes: Notes
     repo_root: Path = Field(exclude=True)
 
     @model_validator(mode="after")
@@ -376,3 +418,64 @@ def load_config(path: Path) -> Config:
     except tomllib.TOMLDecodeError as exc:
         raise ConfigError(f"config file is not valid TOML: {exc}") from exc
     return parse_config(data, path.parent.parent)
+
+
+# --- Disruption notes (specs/002 research R12) -------------------------------------------
+
+
+class DisruptionNote(_Strict):
+    """A known event shown beside measured values; never used in a calculation."""
+
+    note_id: str
+    start: dt.date
+    end: dt.date
+    airlines: list[str]
+    airports: list[str]
+    text: str
+    source_url: str
+
+    @model_validator(mode="after")
+    def _valid(self) -> DisruptionNote:
+        if self.end < self.start:
+            raise ValueError(f"note {self.note_id}: end is before start")
+        if not self.airlines and not self.airports:
+            raise ValueError(f"note {self.note_id}: needs at least one airline or airport")
+        if not self.text.strip():
+            raise ValueError(f"note {self.note_id}: text is empty")
+        if not self.source_url.startswith("https://"):
+            raise ValueError(f"note {self.note_id}: source must be an https URL")
+        return self
+
+
+def load_disruption_notes(path: Path, period: tuple[dt.date, dt.date]) -> list[DisruptionNote]:
+    """Read and validate the curated disruption notes, sorted by start date and id."""
+    try:
+        with path.open("rb") as f:
+            data = tomllib.load(f)
+    except FileNotFoundError as exc:
+        raise ConfigError(f"disruption notes file not found: {path}") from exc
+    except tomllib.TOMLDecodeError as exc:
+        raise ConfigError(f"disruption notes file is not valid TOML: {exc}") from exc
+    notes: list[DisruptionNote] = []
+    for entry in data.get("note", []):
+        if "source" not in entry:
+            raise ConfigError(f"note {entry.get('id', '?')}: source is required")
+        try:
+            note = DisruptionNote(
+                note_id=entry.get("id", ""),
+                start=entry.get("start"),
+                end=entry.get("end"),
+                airlines=entry.get("airlines", []),
+                airports=entry.get("airports", []),
+                text=entry.get("text", ""),
+                source_url=entry["source"],
+            )
+        except ValidationError as exc:
+            raise ConfigError(f"invalid disruption note: {_format_errors(exc)}") from exc
+        if note.start < period[0] or note.end > period[1]:
+            raise ConfigError(f"note {note.note_id}: dates must lie inside the data period")
+        notes.append(note)
+    ids = [n.note_id for n in notes]
+    if len(set(ids)) != len(ids):
+        raise ConfigError("duplicate disruption note id")
+    return sorted(notes, key=lambda n: (n.start, n.note_id))

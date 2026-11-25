@@ -66,13 +66,13 @@ Phase 0's DailyOutcome, ItineraryResult, ComparablePair, SensitivityScenario and
 | `schedule` | Schedule | Reference local departure and arrival, median layover and travel time, nonstop comparison |
 | `result` | Rate | Default-assumption result (below) |
 | `failures` | FailureBreakdown | `too_little_time`, `cancelled`, `diverted`, `dominant` |
-| `daily` | DailySeries | Columnar: `day_offset[]`, `slack_min[]` (null when cancelled or diverted), `outcome[]` (`F` feasible, `T` too little time, `C` cancelled, `D` diverted) |
+| `daily` | DailySeries | Columnar: `day_offset[]`, `slack_min[]` (null when cancelled or diverted), `outcome` as one string of codes, one per day (`F` feasible, `T` too little time, `C` cancelled, `D` diverted) |
 | `excluded_days` | ExcludedDays | `not_connecting`, `quality`, `end_of_period` |
 | `monthly` | list[MonthRate] | 12 entries: `month`, `status` (`ok`, `insufficient_data`, `no_flights`), `rate` or null, `paired_days`, `note_ids[]` |
 | `buffer` | Buffer | `share` (0.95), `needed_layover_min`, `actual_layover_min`, `operated_days` |
 | `faster_alternatives` | list[Alternative] | Research R8; empty list means none |
 | `connecting_options` | list[ConnectingOption] | Research R9 |
-| `schedule_warnings` | ScheduleWarnings | `connect_share`, `changes[]` (`date`, `leg`, `from_local`, `to_local`) |
+| `schedule_warnings` | ScheduleWarnings | `connect_share`, `changes[]` (`date`, `leg`, `from_local_min`, `to_local_min`) |
 | `find` | FindParams | `origin`, `dest`, `airlines[]`, `legs[]` (`flight_number`, `share_of_days`) |
 | `tight_layover` | bool | Median layover below minimum connection time plus cutoff |
 | `sold` | SoldRouting | `passengers`, `routing_itineraries` |
@@ -80,7 +80,7 @@ Phase 0's DailyOutcome, ItineraryResult, ComparablePair, SensitivityScenario and
 Results under the other assumption scenarios (minimum connection time, cutoff, recurrence) stay internal (`itinerary_results.parquet`). The published data carries the default result, the daily series for the transfer-time slider, and, per comparison, `settings_compared` and `missing_settings_note`.
 
 ### Rate
-`status` (`ok` or `insufficient_data`), `rate` (float 0–1, or null when insufficient), `paired_days`, `count_feasible`, `period`, `definition` (`connection_feasibility`). **Validation:** `rate` is null exactly when `status` is `insufficient_data`; `paired_days` ≥ minimum when `ok`.
+`status` (`ok` or `insufficient_data`), `rate` (float 0–1, or null when insufficient), `paired_days`, `count_feasible`, `definition` (`connection_feasibility`). The data period is the containing file's `period` (every rate in a file shares it). **Validation:** `rate` is null exactly when `status` is `insufficient_data`; `paired_days` ≥ minimum when `ok`.
 
 ### ShowcaseComparison
 `comparison_id`, `itinerary_a` (higher rate), `itinerary_b`, `difference` and `ci_low`/`ci_high` (points, whole numbers in display, 6 decimals stored), `shared_days`, `settings_compared`, `missing_settings_note`, `cross_hub`, `landing` (bool).

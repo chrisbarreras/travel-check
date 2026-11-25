@@ -273,7 +273,7 @@ def _parser() -> argparse.ArgumentParser:
     )
     for name, help_text, monthly in commands:
         p = sub.add_parser(name, help=help_text)
-        p.add_argument("--config", type=Path, default=Path("../config/phase0.toml"))
+        p.add_argument("--config", type=Path, default=Path("../config/phase1.toml"))
         if monthly:
             p.add_argument(
                 "--month",

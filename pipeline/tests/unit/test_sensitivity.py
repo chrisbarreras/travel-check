@@ -20,7 +20,7 @@ REPO = Path(__file__).resolve().parents[3]
 
 
 def test_27_scenarios_with_deterministic_ids_and_one_default() -> None:
-    cfg = load_config(REPO / "config" / "phase0.toml")
+    cfg = load_config(REPO / "config" / "phase1.toml")
     sc = scenarios(cfg.sensitivity, (30, 15, 0.60))
     assert len(sc) == 27
     assert len({s.scenario_id for s in sc}) == 27

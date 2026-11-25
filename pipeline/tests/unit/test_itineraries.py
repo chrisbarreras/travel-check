@@ -34,6 +34,8 @@ def rules(**overrides: Any) -> Itineraries:
         "partners": [["AA", "AS"]],
         "min_sold_passengers": 30,
         "carrier_map": {},
+        "identity": "schedule",
+        "slot_window_min": 30,
     }
     base.update(overrides)
     return Itineraries.model_validate(base)
