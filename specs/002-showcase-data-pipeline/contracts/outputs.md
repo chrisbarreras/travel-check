@@ -18,7 +18,8 @@ What the Phase 1 explorer reads. Shapes are defined once in `flight_pipeline.sho
 
 - **Stable bytes:** sorted keys, no insignificant whitespace, UTF-8, LF endings, floats rounded to 6 decimals; identical inputs give identical bytes (FR-025).
 - **Validation:** every file is validated against its model when written, and the run stops on failure (FR-011).
-- **Size:** the gzip-compressed total of `index.json`, `landing.json` and `routes/*.json` is at most `[showcase] size_budget_kb` (default 2048); the run fails above it, reporting each file's size (FR-015).
+- **Size:** the gzip-compressed total of `index.json`, `landing.json` and `routes/*.json` is at most `[showcase] size_budget_kb` (default 2048), and `index.json` plus `landing.json` together at most `[showcase] landing_budget_kb` (default 150, the load-time proxy for SC-007 until the explorer's Lighthouse checks exist); the run fails above either, reporting each file's size (FR-015).
+- **Attribution:** `index.json` carries the required data attributions, which the explorer displays.
 - **Honest values:** every rate is a `Rate` with status, sample and period; `insufficient_data` carries no rate (FR-013). Field names and texts use historical wording; no field is named or described as a probability or chance (FR-014).
 - **Explicit absence:** empty `faster_alternatives`, `connecting_options` without a `better` entry, and an empty `changes` list all mean "none applies"; the explorer shows that, not an empty space (SC-005).
 - **Coverage:** `index.json` carries `coverage` (FR-015a).

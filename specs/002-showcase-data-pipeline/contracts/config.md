@@ -21,6 +21,7 @@ max_share_airline = 0.5
 max_share_hub = 0.5
 regional_share_min = 0.5         # of selected routes, when enough exist
 size_budget_kb = 2048            # gzip-compressed published files
+landing_budget_kb = 150          # gzip-compressed landing.json; the load-time proxy for SC-007
 output_dir = "site-data/showcase"
 
 [insights]

@@ -31,7 +31,7 @@ Phase 0's results stay frozen at the tag `phase0-final` (R15); Phase 1 runs from
 
 **Performance Goals**: full run, excluding downloads, under 30 minutes on the 4-core reference machine (SC-008); estimate 10–15 minutes on the development machine (R16).
 
-**Constraints**: deterministic byte-identical outputs; no network in tests; free pinned BTS sources only; UTC for all measured times (ADR-0008); published data within 2 MB compressed (SC-007).
+**Constraints**: deterministic byte-identical outputs; no network in tests; free pinned BTS sources only; UTC for all measured times (ADR-0008); published data within 2 MB compressed, and the first view (`index.json` plus `landing.json`) within 150 KB compressed as the load-time proxy (SC-007).
 
 **Scale/Scope**: about 7.7 million flight records; 30 candidate hubs, 5–8 selected; 8–12 showcase routes with up to 12 itineraries each (about 100 itineraries × 365 days of slack).
 

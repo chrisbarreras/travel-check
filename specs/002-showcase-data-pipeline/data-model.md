@@ -47,6 +47,7 @@ Phase 0's DailyOutcome, ItineraryResult, ComparablePair, SensitivityScenario and
 | `routes` | list[RouteSummary] | One per showcase route |
 | `landing` | LandingRef | Route and comparison IDs, selection reason |
 | `definitions` | list[Definition] | `key`, `text`, `methodology_anchor`: every measure the files use |
+| `attribution` | list[Attribution] | `source`, `text`, `licence`, `url`: BTS (on-time, DB1B, T-100), airportsdata and tzdata; the explorer displays them (constitution, data licences) |
 | `manifest` | ManifestRef | Code version, config checksum, generated date |
 
 ### Coverage
@@ -75,6 +76,8 @@ Phase 0's DailyOutcome, ItineraryResult, ComparablePair, SensitivityScenario and
 | `find` | FindParams | `origin`, `dest`, `airlines[]`, `legs[]` (`flight_number`, `share_of_days`) |
 | `tight_layover` | bool | Median layover below minimum connection time plus cutoff |
 | `sold` | SoldRouting | `passengers`, `routing_itineraries` |
+
+Results under the other assumption scenarios (minimum connection time, cutoff, recurrence) stay internal (`itinerary_results.parquet`). The published data carries the default result, the daily series for the transfer-time slider, and, per comparison, `settings_compared` and `missing_settings_note`.
 
 ### Rate
 `status` (`ok` or `insufficient_data`), `rate` (float 0–1, or null when insufficient), `paired_days`, `count_feasible`, `period`, `definition` (`connection_feasibility`). **Validation:** `rate` is null exactly when `status` is `insufficient_data`; `paired_days` ≥ minimum when `ok`.

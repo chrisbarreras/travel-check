@@ -33,7 +33,8 @@ Decisions for the open technical questions in [plan.md](plan.md). Each has the d
   2. Each route scores by its strongest cross-hub showcase difference (falling back to same-hub), with ties broken by number of showcase comparisons and then by route code.
   3. Routes are added in score order while the caps hold: at most one third of showcase comparisons from one route, at most half from one airline or hub; a route that would break a cap is skipped. Selection stops at the configured maximum (12) and must reach the minimum (8) or the run reports a shortfall.
   4. At least half of the selected routes must have a regional origin (outside the candidate pool) when enough exist; otherwise the shortfall is reported.
-  5. The landing example is the highest-scoring cross-hub comparison whose lower itinerary is not tight and which was compared at every setting.
+  5. At least half of the showcase comparisons must be cross-hub (SC-002). When the selection falls short, routes whose comparisons are mostly same-hub are swapped for the next eligible routes with cross-hub comparisons while the other caps hold; if it still falls short, the shortfall is reported with the share reached.
+  6. The landing example is the highest-scoring cross-hub comparison whose lower itinerary is not tight and which was compared at every setting.
 - **Rationale:** reproducible, explainable, and it enforces the balance requirements directly.
 - **Alternatives:** hand-picked routes (not reproducible, not reviewable); optimization solver (opaque; unnecessary at this size).
 
