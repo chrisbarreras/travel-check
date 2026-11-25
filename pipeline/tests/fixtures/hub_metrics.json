@@ -1,0 +1,29 @@
+{
+  "_note": "Hand-built candidate metrics for hub selection (User Story 1). Rules under test: hubs.count = 5, equal weights, networks AA DL UA WN AS, >= 2 winter-peak and >= 2 summer-peak hubs, hubs above and below the pool median weather share, eligibility minimum 15 itineraries. Scaling is min-max across the pool: airlines (1..3) -> (n-1)/2; departures (200..1000) -> (d-200)/800; passengers (0..1000, SEA missing -> 0) -> p/1000.",
+  "candidates": [
+    {"airport": "PHX", "airlines": ["AA", "UA", "WN"], "departures": 1000, "passengers": 1000, "weather_share": 0.02, "peak": "summer", "eligible_itineraries": 5},
+    {"airport": "ATL", "airlines": ["AA", "DL", "WN"], "departures": 1000, "passengers": 800, "weather_share": 0.03, "peak": "summer", "eligible_itineraries": 50},
+    {"airport": "ORD", "airlines": ["AA", "UA", "WN"], "departures": 800, "passengers": 1000, "weather_share": 0.05, "peak": "summer", "eligible_itineraries": 40},
+    {"airport": "DFW", "airlines": ["AA", "WN"], "departures": 800, "passengers": 800, "weather_share": 0.02, "peak": "summer", "eligible_itineraries": 30},
+    {"airport": "LAS", "airlines": ["UA", "WN"], "departures": 600, "passengers": 600, "weather_share": 0.01, "peak": "summer", "eligible_itineraries": 25},
+    {"airport": "CLT", "airlines": ["AA"], "departures": 600, "passengers": 600, "weather_share": 0.025, "peak": "winter", "eligible_itineraries": 20},
+    {"airport": "DEN", "airlines": ["UA", "WN"], "departures": 400, "passengers": 350, "weather_share": 0.04, "peak": "winter", "eligible_itineraries": 30},
+    {"airport": "SEA", "airlines": ["AS", "DL"], "departures": 400, "passengers": null, "weather_share": 0.015, "peak": "autumn", "eligible_itineraries": 15},
+    {"airport": "MSP", "airlines": ["DL"], "departures": 200, "passengers": 400, "weather_share": 0.045, "peak": "winter", "eligible_itineraries": 15},
+    {"airport": "BOS", "airlines": ["DL"], "departures": 200, "passengers": 200, "weather_share": 0.035, "peak": "winter", "eligible_itineraries": 16}
+  ],
+  "expected": {
+    "scores": {"PHX": 3.0, "ATL": 2.8, "ORD": 2.75, "DFW": 2.05, "LAS": 1.6, "CLT": 1.1, "DEN": 1.1, "SEA": 0.75, "MSP": 0.4, "BOS": 0.2},
+    "ranks": ["PHX", "ATL", "ORD", "DFW", "LAS", "CLT", "DEN", "SEA", "MSP", "BOS"],
+    "eligible": {"PHX": false, "ATL": true, "ORD": true, "DFW": true, "LAS": true, "CLT": true, "DEN": true, "SEA": true, "MSP": true, "BOS": true},
+    "median_weather_share": 0.0275,
+    "_walkthrough": [
+      "Top 5 eligible by rank: ATL, ORD, DFW, LAS, CLT (PHX ranks first but is ineligible).",
+      "AS coverage unmet; only SEA (eligible) has AS. Lowest-ranked selected hub not needed by any constraint: CLT is needed (only 1 winter hub, 2 required); LAS is not (UA via ORD, WN via ATL/ORD, 4 summer hubs, other below-median hubs). Swap LAS -> SEA.",
+      "Winter: 1 of 2. Best eligible winter candidate: DEN. Removable: SEA needed (AS), CLT needed (winter); DFW not needed. Swap DFW -> DEN.",
+      "Now: summer ATL+ORD = 2; above median ATL, ORD, DEN; below median CLT, SEA. All constraints met."
+    ],
+    "selected": {"ATL": "score", "ORD": "score", "CLT": "score", "SEA": "airline_coverage:AS", "DEN": "weather_winter"},
+    "unmet": []
+  }
+}

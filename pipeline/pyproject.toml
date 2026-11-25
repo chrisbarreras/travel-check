@@ -1,0 +1,54 @@
+[project]
+name = "flight-pipeline"
+version = "0.1.0"
+description = "Phase 0 BTS connection feasibility experiment: data pipeline and analysis library"
+readme = "README.md"
+requires-python = ">=3.13,<3.14"
+dependencies = [
+    "airportsdata>=20250101",
+    "altair>=6.3.0",
+    "duckdb>=1.1",
+    "httpx>=0.27",
+    "marimo>=0.9",
+    "numpy>=2.1",
+    "pydantic>=2.9",
+    "tzdata>=2026.6",
+]
+
+[project.scripts]
+flight-pipeline = "flight_pipeline.cli:main"
+
+[dependency-groups]
+dev = [
+    "hypothesis>=6.112",
+    "pyright>=1.1.385",
+    "pytest>=8.3",
+    "ruff>=0.7",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/flight_pipeline"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py313"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "SIM", "RUF", "PT", "DTZ"]
+
+[tool.pyright]
+include = ["src", "tests"]
+pythonVersion = "3.13"
+typeCheckingMode = "standard"
+strict = ["src"]
+venvPath = "."
+venv = ".venv"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra --strict-markers"

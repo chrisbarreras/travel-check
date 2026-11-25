@@ -1,0 +1,24 @@
+{
+  "_note": "Hand-computed from db1b_sample.csv. Only 2-coupon rows count; legs with '--' are not counted; passengers are summed over quarters.",
+  "quarters": ["2025-4", "2026-1"],
+  "two_coupon_passengers": 239,
+  "unknown_airline_passengers": 8,
+  "unknown_airline_share": 0.033473,
+  "sold_routings": [
+    ["CMH", "ORD", "DEN", "AA", "AA", 12],
+    ["CMH", "ORD", "DEN", "UA", "UA", 60],
+    ["CMH", "ORD", "PHX", "AA", "AA", 50],
+    ["CMH", "ORD", "SAN", "AA", "AA", 35],
+    ["CMH", "ORD", "SAN", "DL", "UA", 30],
+    ["CMH", "ORD", "SAN", "US", "AA", 4],
+    ["CMH", "ORD", "SEA", "AA", "AS", 40]
+  ],
+  "with_carrier_map_US_to_AA": [
+    ["CMH", "ORD", "DEN", "AA", "AA", 12],
+    ["CMH", "ORD", "DEN", "UA", "UA", 60],
+    ["CMH", "ORD", "PHX", "AA", "AA", 50],
+    ["CMH", "ORD", "SAN", "AA", "AA", 39],
+    ["CMH", "ORD", "SAN", "DL", "UA", 30],
+    ["CMH", "ORD", "SEA", "AA", "AS", 40]
+  ]
+}

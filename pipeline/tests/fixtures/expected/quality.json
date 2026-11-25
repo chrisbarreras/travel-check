@@ -1,0 +1,20 @@
+{
+  "_note": "Hand-derived from the case list in ../README.md.",
+  "rows_read": 172,
+  "flags": {
+    "duplicate": ["i1_out_d9"],
+    "conflicting_duplicate": ["i1_in_d10", "i1_in_d10_conflict"],
+    "missing_actual_times": ["i1_in_d7"],
+    "clock_time_mismatch": ["clock_mismatch"]
+  },
+  "counts": {
+    "duplicate": 1,
+    "conflicting_duplicate": 2,
+    "missing_actual_times": 1,
+    "clock_time_mismatch": 1
+  },
+  "flight_rows": 172,
+  "weather_affected": ["i1_in_d4", "i1_in_d8"],
+  "cancelled": 4,
+  "diverted": 1
+}

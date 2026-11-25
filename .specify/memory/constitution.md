@@ -44,7 +44,9 @@ lets every change be verified without manual effort.
 - Work MUST follow the phases in `docs/roadmap.md`, one phase at a time.
 - Every spec MUST include an out-of-scope list. New ideas go to the roadmap backlog, not into the
   current feature.
-- A phase is done only when it is deployed and its README and docs are updated.
+- A phase is done only when its README and docs are updated and, if the phase has a deployable
+  deliverable (a site, API or service), that deliverable is deployed. Phases without one, such as
+  analysis-only experiments, are done when their roadmap exit criterion is met.
 
 **Rationale:** a finished, deployed slice is worth more than an ambitious unfinished system,
 especially for a portfolio.
@@ -87,8 +89,8 @@ path open.
 - Technology choices MUST follow the ADRs in `docs/adr/`. Changing one requires a new ADR that
   supersedes it.
 - Only free data sources may be used until Phase 5.
-- Data licenses MUST be respected, and required attributions (for example OpenFlights and the
-  basemap provider) MUST be displayed.
+- Data licenses MUST be respected, and required attributions (for example BTS, airportsdata and
+  the basemap provider) MUST be displayed.
 - Secrets, credentials and personal data MUST NOT be committed to the repository.
 - Raw data MUST stay out of git. The pipeline MUST be able to rebuild all derived data from pinned
   configuration.
@@ -124,4 +126,4 @@ path open.
   Complexity Tracking section.
 - The independent reviewer MUST check compliance with every principle for each feature.
 
-**Version**: 1.0.0 | **Ratified**: 2026-11-24 | **Last Amended**: 2026-11-24
+**Version**: 1.1.0 | **Ratified**: 2026-11-24 | **Last Amended**: 2026-11-24

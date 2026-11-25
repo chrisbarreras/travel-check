@@ -1,6 +1,6 @@
 # ADR-0008: Store times in UTC; convert to local only for display
 
-- **Status:** Accepted
+- **Status:** Accepted; time-zone source superseded by [ADR-0011](0011-airport-timezone-source.md)
 - **Date:** 2026-11-24
 
 ## Context

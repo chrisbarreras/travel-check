@@ -3,3 +3,21 @@
 
 # Raw downloaded data (see docs/adr/0009-data-storage-and-git.md)
 data/raw/
+
+# Derived data, rebuilt by the pipeline (ADR-0009)
+data/derived/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+.hypothesis/
+
+# OS / editors
+.DS_Store
+Thumbs.db
+*.tmp
+*.swp
