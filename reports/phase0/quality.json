@@ -1,0 +1,139 @@
+{
+  "by_month": {
+    "2024-07": {
+      "cancelled": 19574,
+      "clock_time_mismatch": 7,
+      "conflicting_duplicate": 0,
+      "diverted": 2432,
+      "duplicate": 0,
+      "invalid_schedule": 0,
+      "missing_actual_times": 0,
+      "rows": 676807
+    },
+    "2024-08": {
+      "cancelled": 13434,
+      "clock_time_mismatch": 3,
+      "conflicting_duplicate": 0,
+      "diverted": 2174,
+      "duplicate": 0,
+      "invalid_schedule": 0,
+      "missing_actual_times": 0,
+      "rows": 660638
+    },
+    "2024-09": {
+      "cancelled": 3670,
+      "clock_time_mismatch": 1,
+      "conflicting_duplicate": 0,
+      "diverted": 939,
+      "duplicate": 0,
+      "invalid_schedule": 0,
+      "missing_actual_times": 0,
+      "rows": 621649
+    },
+    "2024-10": {
+      "cancelled": 6314,
+      "clock_time_mismatch": 9,
+      "conflicting_duplicate": 0,
+      "diverted": 747,
+      "duplicate": 0,
+      "invalid_schedule": 0,
+      "missing_actual_times": 0,
+      "rows": 656283
+    },
+    "2024-11": {
+      "cancelled": 2804,
+      "clock_time_mismatch": 9,
+      "conflicting_duplicate": 0,
+      "diverted": 908,
+      "duplicate": 0,
+      "invalid_schedule": 0,
+      "missing_actual_times": 0,
+      "rows": 614597
+    },
+    "2024-12": {
+      "cancelled": 4579,
+      "clock_time_mismatch": 7,
+      "conflicting_duplicate": 0,
+      "diverted": 1752,
+      "duplicate": 0,
+      "invalid_schedule": 0,
+      "missing_actual_times": 0,
+      "rows": 631944
+    },
+    "2025-01": {
+      "cancelled": 18740,
+      "clock_time_mismatch": 7,
+      "conflicting_duplicate": 0,
+      "diverted": 1316,
+      "duplicate": 0,
+      "invalid_schedule": 0,
+      "missing_actual_times": 0,
+      "rows": 599013
+    },
+    "2025-02": {
+      "cancelled": 8541,
+      "clock_time_mismatch": 8,
+      "conflicting_duplicate": 0,
+      "diverted": 1149,
+      "duplicate": 0,
+      "invalid_schedule": 0,
+      "missing_actual_times": 0,
+      "rows": 559577
+    },
+    "2025-03": {
+      "cancelled": 7581,
+      "clock_time_mismatch": 37,
+      "conflicting_duplicate": 0,
+      "diverted": 1798,
+      "duplicate": 0,
+      "invalid_schedule": 0,
+      "missing_actual_times": 0,
+      "rows": 664932
+    },
+    "2025-04": {
+      "cancelled": 5291,
+      "clock_time_mismatch": 11,
+      "conflicting_duplicate": 0,
+      "diverted": 1443,
+      "duplicate": 0,
+      "invalid_schedule": 0,
+      "missing_actual_times": 0,
+      "rows": 644084
+    },
+    "2025-05": {
+      "cancelled": 7549,
+      "clock_time_mismatch": 3,
+      "conflicting_duplicate": 0,
+      "diverted": 1898,
+      "duplicate": 0,
+      "invalid_schedule": 0,
+      "missing_actual_times": 0,
+      "rows": 667586
+    },
+    "2025-06": {
+      "cancelled": 11905,
+      "clock_time_mismatch": 12,
+      "conflicting_duplicate": 0,
+      "diverted": 2599,
+      "duplicate": 0,
+      "invalid_schedule": 2,
+      "missing_actual_times": 0,
+      "rows": 674177
+    }
+  },
+  "clock_checked": 7542150,
+  "clock_mismatch": 114,
+  "clock_mismatch_max_share": 0.01,
+  "clock_mismatch_share": 1.5e-05,
+  "sched_arr_mismatch": 556,
+  "totals": {
+    "cancelled": 109982,
+    "clock_time_mismatch": 114,
+    "conflicting_duplicate": 0,
+    "diverted": 19155,
+    "duplicate": 0,
+    "invalid_schedule": 2,
+    "missing_actual_times": 0,
+    "rows": 7671287
+  }
+}

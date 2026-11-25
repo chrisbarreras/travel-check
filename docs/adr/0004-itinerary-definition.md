@@ -1,6 +1,6 @@
 # ADR-0004: What counts as an itinerary
 
-- **Status:** Accepted
+- **Status:** Accepted; recurrence rule superseded, and a sold-routing rule added, by [ADR-0013](0013-sold-routings-and-connection-recurrence.md)
 - **Date:** 2026-11-24
 
 ## Context

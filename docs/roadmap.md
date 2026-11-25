@@ -24,6 +24,8 @@ How the flight intelligence app grows from a static showcase into a full-stack p
 
 **Goal:** confirm, using real BTS data, that reliability differences between realistic itineraries are large enough to be worth showing.
 
+**Status:** complete. Decision **GO** ([ADR-0012](adr/0012-phase0-go-no-go.md)). 81 showcase examples in 9 origin/destination pairs across 5 hubs, every itinerary a routing sold in DB1B whose flights connect on at least 60% of days ([ADR-0013](adr/0013-sold-routings-and-connection-recurrence.md)). Data: July 2024 to June 2025, 12 months so seasonal weather could be measured (scope grew from "a few months").
+
 **Scope**
 - Download a few months of BTS on-time data for 5–8 hubs.
 - Build itineraries using the rules in [ADR-0004](adr/0004-itinerary-definition.md).
@@ -154,6 +156,8 @@ How the flight intelligence app grows from a static showcase into a full-stack p
 | `docs/methodology.md` | How every number is computed, plus validation results | Phase 1 (first version), Phase 3 (full) |
 
 ## Backlog (not assigned to a phase)
+
+- Phase 0 follow-ups from the final review (review.md, round 11): a test that `verify` fails on a hand-edited committed report or a changed config/package; days at the end of the period whose outbound falls past the loaded data should be excluded rather than counted as not connecting; label the notebook's sold-passenger column as a routing total; let `verify` extract DB1B into its temporary directory; run the forbidden-wording check on the whole summary; include code identity in the manifest's runtime provenance
 
 - International routes and itineraries with two or more stops
 - Nearby alternate airports in recovery options

@@ -1,0 +1,18 @@
+{
+  "_note": "Hand-computed UTC instants per FixtureCase. Jan 2026 offsets: CMH -5, ORD -6, SAN/SEA -8, DEN -7, PHX -7. Format YYYY-MM-DDTHH:MM (UTC).",
+  "i1_in_d1": {"sched_dep": "2026-01-05T13:00", "sched_arr": "2026-01-05T14:20", "actual_dep": "2026-01-05T13:00", "actual_arr": "2026-01-05T14:20", "sched_dep_local_min": 480, "sched_arr_local_min": 500},
+  "i1_in_d3": {"sched_dep": "2026-01-07T13:00", "sched_arr": "2026-01-07T14:20", "actual_dep": "2026-01-07T13:40", "actual_arr": "2026-01-07T15:05"},
+  "i1_in_d8": {"sched_dep": "2026-01-12T13:00", "sched_arr": "2026-01-12T14:20", "actual_dep": "2026-01-12T15:00", "actual_arr": "2026-01-12T16:20"},
+  "i1_out_d1": {"sched_dep": "2026-01-05T15:50", "sched_arr": "2026-01-05T20:20", "actual_dep": "2026-01-05T15:55", "actual_arr": "2026-01-05T20:25"},
+  "i1_in_d4": {"sched_dep": "2026-01-08T13:00", "sched_arr": "2026-01-08T14:20", "actual_dep": null, "actual_arr": null},
+  "i1_in_d6": {"sched_dep": "2026-01-10T13:00", "sched_arr": "2026-01-10T14:20", "actual_dep": null, "actual_arr": null},
+  "aa2200_d1": {"sched_dep": "2026-01-06T03:00", "sched_arr": "2026-01-06T04:25", "actual_dep": "2026-01-06T03:00", "actual_arr": "2026-01-06T04:25", "sched_dep_local_min": 1320, "sched_arr_local_min": 1345},
+  "aa2200_d2": {"sched_dep": "2026-01-07T03:00", "sched_arr": "2026-01-07T04:25", "actual_dep": "2026-01-07T04:35", "actual_arr": "2026-01-07T06:00"},
+  "aa2300_d3": {"sched_dep": "2026-01-07T06:30", "sched_arr": "2026-01-07T09:40", "actual_dep": "2026-01-07T06:30", "actual_arr": "2026-01-07T09:40", "sched_dep_local_min": 30, "sched_arr_local_min": 160},
+  "dst_spring_in": {"sched_dep": "2026-03-08T06:30", "sched_arr": "2026-03-08T07:50", "actual_dep": "2026-03-08T06:30", "actual_arr": "2026-03-08T07:50"},
+  "dst_spring_out": {"sched_dep": "2026-03-08T08:20", "sched_arr": "2026-03-08T10:20", "actual_dep": "2026-03-08T08:20", "actual_arr": "2026-03-08T10:20"},
+  "dst_fall_in": {"sched_dep": "2025-11-02T04:30", "sched_arr": "2025-11-02T05:50", "actual_dep": "2025-11-02T04:30", "actual_arr": "2025-11-02T05:50"},
+  "dst_fall_out": {"sched_dep": "2025-11-02T08:10", "sched_arr": "2025-11-02T10:10", "actual_dep": "2025-11-02T08:10", "actual_arr": "2025-11-02T10:10"},
+  "t2400": {"sched_dep": "2026-01-08T07:00", "sched_arr": "2026-01-08T08:15", "actual_dep": "2026-01-08T07:00", "actual_arr": "2026-01-08T08:15", "sched_dep_local_min": 0, "sched_arr_local_min": 15},
+  "t0000": {"sched_dep": "2026-01-08T07:00", "sched_arr": "2026-01-08T08:15", "actual_dep": "2026-01-08T07:00", "actual_arr": "2026-01-08T08:15", "sched_dep_local_min": 0}
+}
