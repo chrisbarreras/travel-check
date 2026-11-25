@@ -24,6 +24,7 @@ Every input is pinned by checksum in [config/phase0.toml](config/phase0.toml), s
 |---|---|
 | [docs/roadmap.md](docs/roadmap.md) | Phases 0–5 and their features |
 | [docs/methodology.md](docs/methodology.md) | How every number is defined and computed |
+| [docs/design.md](docs/design.md) | Visual and interaction direction for the explorer |
 | [docs/adr/](docs/adr/README.md) | Architecture decision records |
 | [specs/](specs/) | Spec Kit feature specifications, plans, tasks and reviews |
 | [pipeline/](pipeline/) | Python data pipeline (`flight_pipeline`) and its tests |

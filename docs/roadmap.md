@@ -46,14 +46,28 @@ How the flight intelligence app grows from a static showcase into a full-stack p
 **Goal:** a visually striking, real-data demo that a reviewer understands within seconds.
 
 **Scope**
-- A Python pipeline that precomputes curated itineraries and statistics into static JSON, validated against Pydantic models that the future API will reuse ([ADR-0007](adr/0007-pydantic-schema-source-of-truth.md)), with TypeScript types generated from them.
+- A Python pipeline that precomputes curated itineraries and statistics into static JSON, validated against Pydantic models that the future API will reuse ([ADR-0007](adr/0007-pydantic-schema-source-of-truth.md)), with TypeScript types generated from them. It carries the Phase 0 requirements from [ADR-0012](adr/0012-phase0-go-no-go.md):
+  - identify itineraries by schedule (airline, route and departure-time window), not only by flight number, so airlines that renumber flights (Southwest) are covered
+  - apply the layover limits through the daily schedule matching only
+  - report travel time against the median nonstop time
+  - prefer cross-hub showcase examples, and keep any one market from dominating
+  - a stricter definition of "regional origin" (outside the candidate pool)
+- Traveler insights for every curated itinerary, from data the pipeline already produces (evidence in the Phase 0 results):
+  - **faster alternatives** with connection feasibility shown to be no more than a configured margin worse (an equivalence test on the paired confidence interval), with the 60-minute comparability cap lifted for this comparison and the interval shown with every suggestion
+  - **which connecting flight to take**: the outbound options at the hub ranked for a given inbound flight
+  - **buffer recommendation**: the scheduled layover needed to have connected on, for example, 95% of days
+  - **failure-type breakdown** (too little time, cancelled, diverted) with what helps for each
+  - **monthly view**, with known disruption events labelled separately from measured values
+  - **schedule-pattern warnings**: connections that exist only on some days, and schedule changes during the period
+  - a **"Find this itinerary"** link that opens a prefilled search on Google Flights or the airline's site (no fare data is fetched or stored)
 - A React + Vite + MapLibre frontend with:
   - a map with curved route lines, an itinerary list and a timeline, with selection kept in sync
   - risk badges and delay-distribution visuals, with risk never shown by color alone
   - a transfer-time slider that recomputes connection risk in the browser from stored slack distributions ([ADR-0006](adr/0006-risk-as-slack-distributions.md))
   - the selection stored in the URL, so links open on a specific example ([ADR-0010](adr/0010-url-selection-state.md))
   - a landing view that opens on one striking example
-  - a layout that works on phones
+  - panels for the traveler insights above
+  - a layout that works on phones, following [`docs/design.md`](design.md)
 - A "How the numbers work" page (first version of `docs/methodology.md`).
 - Deployment as a static site; a README with a GIF and the live link.
 
@@ -68,10 +82,10 @@ How the flight intelligence app grows from a static showcase into a full-stack p
 
 | Feature | Delivers |
 |---|---|
-| `showcase-data-pipeline` | BTS → itineraries → slack distributions → validated JSON; Pydantic models and generated TypeScript types |
+| `showcase-data-pipeline` | BTS → itineraries (schedule-based identity, ADR-0012 requirements) → slack distributions and traveler-insight data → validated JSON; Pydantic models and generated TypeScript types |
 | `web-foundation` | Vite/React scaffold, the full automated test setup (unit, component, Playwright end-to-end and visual in Docker, axe, Lighthouse CI), CI that blocks merges on failure, and a deployed placeholder page |
 | `explorer-core` | Map, list and timeline with synced selection; selection in the URL. Deployable on its own |
-| `explorer-insights` | Risk visuals, transfer-time slider, landing example, "How the numbers work" page |
+| `explorer-insights` | Risk visuals, transfer-time slider, traveler-insight panels and "Find this itinerary" links, landing example, "How the numbers work" page |
 
 ---
 
@@ -82,7 +96,7 @@ How the flight intelligence app grows from a static showcase into a full-stack p
 **Scope**
 - A FastAPI backend reading precomputed DuckDB/Parquet data and serving the same response shape as the Phase 1 JSON.
 - A TypeScript client generated from the API schema (`openapi-typescript`), so frontend and backend share types.
-- Search across any origin/destination pair among the covered airports.
+- Search across any origin/destination pair among the covered airports, with two entry points designed in the Phase 1 mockup: standard browse controls (from, to, date, filters for airline, hub, departure time and minimum connection feasibility) and a paste box that reads flight numbers from text copied from another site or a confirmation email; plus a link format such as `/check?flights=DL988,DL1497&date=2025-03-14`. Must handle codeshare numbers, flights with no history in the data period (say so, never guess) and future dates (compared with the same month's history only).
 - Connection-risk calculation moves to the API, using the same method and shared test cases as the Phase 1 browser version.
 - More hubs and a longer data period.
 - GitHub Actions CI running tests, type checks and builds; the API deployed as a container.
@@ -156,7 +170,7 @@ How the flight intelligence app grows from a static showcase into a full-stack p
 | Document | Purpose | Started in |
 |---|---|---|
 | `.specify/memory/constitution.md` | Project-wide rules for all specs | Before Phase 0 |
-| `docs/design.md` | Visual direction: palette, typography, map style, motion, accessibility | Before Phase 1 |
+| [`docs/design.md`](design.md) | Visual direction: palette, typography, map style, motion, accessibility | Before Phase 1 |
 | `docs/architecture.md` | One-page system overview and data flow | Phase 1 |
 | [`docs/adr/`](adr/README.md) | Lasting decisions; ADR-0001 to 0010 recorded before Phase 0 | Before Phase 0 |
 | `docs/methodology.md` | How every number is computed, plus validation results | Phase 1 (first version), Phase 3 (full) |
@@ -165,15 +179,8 @@ How the flight intelligence app grows from a static showcase into a full-stack p
 
 - Phase 0 follow-ups from the final review (review.md, round 11): a test that `verify` fails on a hand-edited committed report or a changed config/package; days at the end of the period whose outbound falls past the loaded data should be excluded rather than counted as not connecting; label the notebook's sold-passenger column as a routing total; let `verify` extract DB1B into its temporary directory; run the forbidden-wording check on the whole summary; include code identity in the manifest's runtime provenance
 
-- **Faster alternatives with no worse connection feasibility.** For a chosen itinerary, show comparable itineraries that are meaningfully shorter and whose connection feasibility is shown, by the paired confidence interval, to be no more than a set margin worse (for example 2 or 5 points). This is an equivalence test, not merely "no significant difference". Phase 0 data already supports it: within the 15 analyzed markets, 58 comparable pairs save 30 minutes or more with the shorter itinerary at most 2 points worse (49 of them robust to every assumption scenario). Needs: comparability no longer capped at 60 minutes of travel-time difference, the margin as a configured and documented threshold, and the interval shown with every suggestion, not just a verdict. Candidate phases: curated examples in Phase 1 (`explorer-insights`), any covered route with Phase 2 `route-search`
-- **Which connecting flight to take.** Within one route, airline and hub, the choice of connecting flight changes connection feasibility a lot (LGA-ATL-MCO on Delta: 72% to 97% across flight pairs). Rank the outbound options at the hub for a given inbound flight. Needs: data already in the itinerary results
 - **Time-of-day guidance.** Phase 0: connections whose first flight leaves before 10:00 were feasible on 93% of days, 10:00-15:00 on 92%, after 15:00 on 84% (235 itineraries, mostly Delta). Show "earlier connections are more reliable on this route" only where the route's own data supports it. Needs: a per-route test before any advice is shown, since the Phase 0 figure is an association across markets
-- **Seasonal and event view.** Feasibility by month was mostly 92-94% but 83% in July 2024 (7.6% of days cancelled, likely the CrowdStrike outage that hit Delta), 88% in January 2025 (likely winter storms) and 3.4% cancelled in October 2024 (likely Hurricane Milton in Orlando markets). Show each connection's monthly pattern, and flag when a single event dominates a year. Needs: monthly results per itinerary, event labels kept separate from the measured numbers
-- **Advice by failure type.** Of 6,027 failed connection days in Phase 0, 74% had too little time, 21% a cancellation, 4% a diversion. Say which risk dominates for each itinerary and what helps (a longer layover or another outbound for time; rebooking options for cancellations, with Phase 3 recovery). Needs: the separate failure counts, already computed
-- **Buffer recommendation.** From each itinerary's slack distribution, state the layover needed to have connected on, for example, 95% of days. Closely related to the Phase 1 transfer-time slider ([ADR-0006](adr/0006-risk-as-slack-distributions.md)); phrased as a recommendation. Needs: slack distributions, already stored
-- **"Find this itinerary" deep links.** A button on each itinerary that opens a prefilled search (route, date, flight numbers) on Google Flights or the airline's site. Free, needs no fare data, contract or licence, and lets travelers see real prices and book where they usually do; the app never sees prices. Candidate: Phase 1 `explorer-insights`
-- **Check an itinerary found on another site.** Entry points, simplest first: a paste box that reads flight numbers, airports and date from copied text or a confirmation email; a link format such as `/check?flights=DL988,DL1497&date=2025-03-14` (selection in the URL, [ADR-0010](adr/0010-url-selection-state.md)); a bookmarklet that reads the current page; the Phase 5 browser extension adding a "Check reliability" button to search results; sharing from a phone when installed as a web app; trip import by forwarded email or TripIt (needs accounts); links or embedded badges from partner sites. Must handle codeshare numbers (foreign marketing numbers are not in BTS data), flights with no history in the data period (new, renumbered or changed: say so, never guess), and future dates (compare with history only). Candidate: paste box and link format with Phase 2 `route-search`; bookmarklet as a cheap test before the extension
-- **Schedule-pattern warnings.** Flag connections that exist only on some days (connection share below 100%) and connections whose flights changed schedule during the period, so travelers aren't surprised when booking. Needs: daily schedule matching, already used for connection-level recurrence
+- **Check an itinerary found on another site, beyond Phase 2's paste box and link format.** Further entry points: a bookmarklet that reads the current page; the Phase 5 browser extension adding a "Check reliability" button to search results; sharing from a phone when installed as a web app; trip import by forwarded email or TripIt (needs accounts); links or embedded badges from partner sites. Must handle codeshare numbers (foreign marketing numbers are not in BTS data), flights with no history in the data period (new, renumbered or changed: say so, never guess), and future dates (compare with history only). A bookmarklet is a cheap test before the extension
 - International routes and itineraries with two or more stops
 - Nearby alternate airports in recovery options
 - Personalized transfer assumptions (mobility needs, checked bags, separate tickets)
