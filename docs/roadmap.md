@@ -138,7 +138,13 @@ How the flight intelligence app grows from a static showcase into a full-stack p
 - Accounts and saved trips, adding Postgres for user data.
 - Alerts for tracked trips.
 - A browser extension that adds risk ratings to existing flight search sites.
-- Fare data from a licensed provider (written data-rights terms required first).
+- Fare data from a licensed provider (written data-rights terms required first). Options, from least to most commitment:
+  - affiliate or metasearch APIs (for example Skyscanner partner API, Kayak affiliate, Travelpayouts): fares or cached fares, booking happens elsewhere; partner approval needed and terms limit how prices are stored and shown
+  - booking APIs that aggregate airline content (for example Duffel, Travelfusion): live offers with exact flight numbers, fares and baggage rules, and booking; the app becomes a seller of travel (payments, card-data security, refunds, schedule changes, customer service, state seller-of-travel registration)
+  - global distribution systems (Amadeus, Sabre, Travelport): the broadest content; production access normally needs travel-agency accreditation (IATA or ARC) and commercial contracts
+  - never scraping airline or metasearch sites (terms of service, and the constitution's data-licence rule)
+
+  Recommended start: an affiliate or metasearch API for prices; a booking API only if user research shows people want to book in the app. Fare offers carry flight numbers, so they join directly to the reliability data (for example "this ticket costs $20 more and connects far more often"); offers with no matching history must say so.
 - User interviews and a willingness-to-pay test.
 
 **Exit criteria:** defined when this phase starts.
@@ -165,6 +171,7 @@ How the flight intelligence app grows from a static showcase into a full-stack p
 - **Seasonal and event view.** Feasibility by month was mostly 92-94% but 83% in July 2024 (7.6% of days cancelled, likely the CrowdStrike outage that hit Delta), 88% in January 2025 (likely winter storms) and 3.4% cancelled in October 2024 (likely Hurricane Milton in Orlando markets). Show each connection's monthly pattern, and flag when a single event dominates a year. Needs: monthly results per itinerary, event labels kept separate from the measured numbers
 - **Advice by failure type.** Of 6,027 failed connection days in Phase 0, 74% had too little time, 21% a cancellation, 4% a diversion. Say which risk dominates for each itinerary and what helps (a longer layover or another outbound for time; rebooking options for cancellations, with Phase 3 recovery). Needs: the separate failure counts, already computed
 - **Buffer recommendation.** From each itinerary's slack distribution, state the layover needed to have connected on, for example, 95% of days. Closely related to the Phase 1 transfer-time slider ([ADR-0006](adr/0006-risk-as-slack-distributions.md)); phrased as a recommendation. Needs: slack distributions, already stored
+- **"Find this itinerary" deep links.** A button on each itinerary that opens a prefilled search (route, date, flight numbers) on Google Flights or the airline's site. Free, needs no fare data, contract or licence, and lets travelers see real prices and book where they usually do; the app never sees prices. Candidate: Phase 1 `explorer-insights`
 - **Schedule-pattern warnings.** Flag connections that exist only on some days (connection share below 100%) and connections whose flights changed schedule during the period, so travelers aren't surprised when booking. Needs: daily schedule matching, already used for connection-level recurrence
 - International routes and itineraries with two or more stops
 - Nearby alternate airports in recovery options
