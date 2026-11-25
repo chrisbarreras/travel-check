@@ -12,14 +12,24 @@ secondary.
 - Connection success, on-time arrival, cancellation and recovery MUST remain separate measures.
   They MUST NOT be merged into a single opaque score.
 - When a sample is below the configured minimum size, the UI MUST show "insufficient data" instead
-  of a number. Values MUST NOT be displayed with more precision than the data supports.
+  of a rate. Values MUST NOT be displayed with more precision than the data supports.
+- Below the minimum sample, the UI MAY give honest small-sample feedback as raw observed counts
+  (for example "didn't work on 4 of the 7 days we saw"), but only when all of these hold:
+  - the number of observed days is at least the configured small-sample floor;
+  - the statement is labelled as a small sample that is too small for a rate;
+  - it is shown with a plain-language uncertainty range for how often it would happen (for
+    example "roughly between 3 and 8 in 10 days");
+  - it is never expressed as a single percentage, and never ranked, compared with other results,
+    or used to qualify a showcase example, a suggestion or a go/no-go criterion.
 - Results MUST be described as connection feasibility, never as observed passenger outcomes
   (ADR-0005).
 - Model claims MUST be backed by chronological holdout testing, with calibration results published
   in `docs/methodology.md`.
 
 **Rationale:** the product's entire value is trustworthy reliability numbers. A precise-looking
-but unsupported number is worse than no number.
+but unsupported number is worse than no number. Hiding a small but clear pattern is also a
+failure of honesty, so a few observed days may be reported as what they are: a count, labelled
+as too few for a rate, with its uncertainty.
 
 ### II. Automated Verification (NON-NEGOTIABLE)
 
@@ -126,4 +136,4 @@ path open.
   Complexity Tracking section.
 - The independent reviewer MUST check compliance with every principle for each feature.
 
-**Version**: 1.1.0 | **Ratified**: 2026-11-24 | **Last Amended**: 2026-11-24
+**Version**: 1.2.0 | **Ratified**: 2026-11-24 | **Last Amended**: 2026-11-25

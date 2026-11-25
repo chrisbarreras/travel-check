@@ -57,6 +57,7 @@ Both fonts are SIL Open Font License, served from Google Fonts or self-hosted.
 - **Insight panels**, each with an icon and heading: *Faster, just as reliable*; *Better connecting flight*; *Buffer you needed*; *Why it didn't work*; *By month*; *About this itinerary* (connecting days, sold-routing note, how to read the number). A panel with nothing to suggest says so plainly.
 - **Failure bar:** too little time (solid), cancelled (striped), diverted (light), always with the counts in text.
 - **Month chart:** 12 bars, each labelled with its value; months with no flights show a dash. Known events (for example the July 2024 CrowdStrike outage) appear as a separate note, never inside the measured values.
+- **Small-sample note:** below the minimum sample, instead of a rate: "Didn't work on 4 of the 7 days we saw. Too few days to give a rate; it could be roughly between 3 and 8 in 10 days." Muted styling with an info icon, never a meter, badge or percentage, and never in rankings, comparisons or suggestions (constitution, Principle I). Below the small-sample floor, only "insufficient data".
 - **"Find this itinerary":** a primary link button that opens a prefilled search in a new tab, with a note that prices come from that site and the app neither sees nor stores them.
 - **Search controls:** labelled selects, date input and checkboxes; segmented buttons for departure-time ranges; a paste box with example chips and a status message (`role="status"`) for found, partial and no-history results.
 
