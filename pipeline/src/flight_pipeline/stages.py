@@ -9,7 +9,7 @@ import json
 import os
 import statistics
 import sys
-from collections.abc import Mapping
+from collections.abc import Mapping, Sequence
 from dataclasses import asdict, replace
 from importlib import metadata
 from pathlib import Path
@@ -19,11 +19,12 @@ import duckdb
 from pydantic import TypeAdapter
 
 from flight_pipeline.compare import (
+    BootstrapTask,
     comparable_candidates,
     go_criteria,
     is_showcase,
     order_pair,
-    paired_bootstrap,
+    paired_bootstraps,
     shared_days,
     tight_itineraries,
 )
@@ -191,6 +192,7 @@ def stage_select_hubs(con: duckdb.DuckDBPyConnection, cfg: Config) -> str:
         flights="flights",
         sold="sold_routings",
         period=cfg.period.dates(),
+        days=False,
     )
     eligible = count_eligible(con, "pool_itineraries", pool)
     metrics = [replace(m, eligible_itineraries=eligible[m.airport]) for m in metrics]
@@ -252,22 +254,10 @@ def stage_build(con: duckdb.DuckDBPyConnection, cfg: Config) -> str:
         flights="flights",
         sold="sold_routings",
         period=cfg.period.dates(),
+        days=False,
     )
     write_table(
         con, "itineraries", derived(cfg, "itineraries.parquet"), Itinerary, ["itinerary_id"]
-    )
-    con.execute(
-        "CREATE OR REPLACE TABLE itinerary_days AS SELECT itinerary_id, service_date, "
-        "match_status, CASE WHEN match_status_ok THEN "
-        "CAST((epoch(out_dep) - epoch(in_arr)) // 60 AS INTEGER) END AS sched_layover_min "
-        "FROM itineraries_days"
-    )
-    write_table(
-        con,
-        "itinerary_days",
-        derived(cfg, "itinerary_days.parquet"),
-        ItineraryDay,
-        ["itinerary_id", "service_date"],
     )
     comparable_candidates(
         con,
@@ -296,6 +286,7 @@ def stage_build(con: duckdb.DuckDBPyConnection, cfg: Config) -> str:
         OdExclusions,
         ["origin", "dest"],
     )
+    _write_itinerary_days(con, cfg, hubs, chosen_pairs)
     shortfalls = selection_shortfalls(rows, cfg.selection)
     write_json(derived(cfg, "od_selection.json"), {"shortfalls": shortfalls}, OdSelectionMeta)
     chosen = [r for r in rows if r.selected]
@@ -305,6 +296,51 @@ def stage_build(con: duckdb.DuckDBPyConnection, cfg: Config) -> str:
         f"built {n_it[0] if n_it else 0} itineraries through {len(hubs)} hubs; "
         f"selected {len(chosen)} origin/destination pairs "
         f"({sum(r.regional_origin for r in chosen)} regional){note}"
+    )
+
+
+def _write_itinerary_days(
+    con: duckdb.DuckDBPyConnection,
+    cfg: Config,
+    hubs: Sequence[str],
+    pairs: Sequence[tuple[str, str]],
+) -> None:
+    """itinerary_days.parquet for the selected pairs only: their daily matching, rebuilt for
+    those pairs (the full year's matching of every itinerary is too large to keep). The
+    rebuilt itineraries must equal the full build's for those pairs."""
+    build_itineraries(
+        con,
+        "slots",
+        hubs,
+        cfg.itineraries,
+        "chosen_itineraries",
+        flights="flights",
+        sold="sold_routings",
+        period=cfg.period.dates(),
+        od_pairs=list(pairs),
+    )
+    differing = con.execute(
+        "SELECT count(*) FROM ((SELECT * FROM chosen_itineraries EXCEPT ALL "
+        "SELECT i.* FROM itineraries i JOIN _chosen c USING (origin, dest)) UNION ALL "
+        "(SELECT i.* FROM itineraries i JOIN _chosen c USING (origin, dest) EXCEPT ALL "
+        "SELECT * FROM chosen_itineraries))"
+    ).fetchone()
+    if differing and differing[0]:
+        raise RuntimeError(
+            f"rebuilt itineraries of the selected pairs differ in {differing[0]} rows"
+        )
+    con.execute(
+        "CREATE OR REPLACE TABLE itinerary_days AS SELECT itinerary_id, service_date, "
+        "match_status, CASE WHEN match_status_ok THEN "
+        "CAST((epoch(out_dep) - epoch(in_arr)) // 60 AS INTEGER) END AS sched_layover_min "
+        "FROM chosen_itineraries_days"
+    )
+    write_table(
+        con,
+        "itinerary_days",
+        derived(cfg, "itinerary_days.parquet"),
+        ItineraryDay,
+        ["itinerary_id", "service_date"],
     )
 
 
@@ -413,21 +449,24 @@ def stage_analyze(con: duckdb.DuckDBPyConnection, cfg: Config) -> str:
     ).fetchall():
         days.setdefault(iid, {})[day] = outcome == "feasible"
     base = rates.get(default_id, {})
+    ordered = [order_pair(x, y, base.get(x), base.get(y)) for x, y, *_ in raw_pairs]
+    tasks: list[BootstrapTask] = [
+        (
+            days.get(a, {}),
+            days.get(b, {}),
+            cfg.comparison.bootstrap_resamples,
+            cfg.comparison.ci_level,
+            cfg.seed,
+            f"{a}|{b}",
+        )
+        for a, b in ordered
+        if status.get(a, False) and status.get(b, False)
+    ]
+    intervals = dict(zip((t[5] for t in tasks), paired_bootstraps(tasks), strict=True))
     out_pairs: list[ComparablePair] = []
-    for x, y, travel_diff, dep_diff_ in raw_pairs:
-        a, b = order_pair(x, y, base.get(x), base.get(y))
+    for (x, y, travel_diff, dep_diff_), (a, b) in zip(raw_pairs, ordered, strict=True):
         ra, rb = base.get(a), base.get(b)
-        sufficient = status.get(a, False) and status.get(b, False)
-        low, high = (None, None)
-        if sufficient:
-            low, high = paired_bootstrap(
-                days.get(a, {}),
-                days.get(b, {}),
-                cfg.comparison.bootstrap_resamples,
-                cfg.comparison.ci_level,
-                cfg.seed,
-                f"{a}|{b}",
-            )
+        low, high = intervals.get(f"{a}|{b}", (None, None))
         diff = None if ra is None or rb is None else round(ra - rb, 6)
         common = shared_days(days.get(a, {}), days.get(b, {}))
         sensitive = flags[(x, y)]
@@ -605,12 +644,16 @@ def stage_insights(con: duckdb.DuckDBPyConnection, cfg: Config) -> str:
         read_models(con, derived(cfg, "daily_outcomes.parquet"), DailyOutcome), results
     )
     matched: dict[str, list[ItineraryDay]] = {}
-    for x in read_models(con, derived(cfg, "itinerary_days.parquet"), ItineraryDay):
+    for x in read_models(
+        con, derived(cfg, "itinerary_days.parquet"), ItineraryDay, only=("itinerary_id", ids)
+    ):
         if x.itinerary_id in ids:
             matched.setdefault(x.itinerary_id, []).append(x)
     slot_ids = {s for i in its for s in (i.inbound_slot, i.outbound_slot)}
     slot_days: dict[str, list[tuple[dt.date, int]]] = {}
-    for d in read_models(con, derived(cfg, "slots_days.parquet"), SlotDay):
+    for d in read_models(
+        con, derived(cfg, "slots_days.parquet"), SlotDay, only=("slot_id", slot_ids)
+    ):
         if d.slot_id in slot_ids:
             slot_days.setdefault(d.slot_id, []).append((d.service_date, d.dep_local_min))
     joins: dict[str, list[tuple[dt.date, int, int]]] = {}

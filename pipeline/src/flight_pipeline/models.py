@@ -427,7 +427,8 @@ class CuratedComparisonRow(_Model):
 
 
 class ItineraryDay(_Model):
-    """derived itinerary_days.parquet: the default daily matching (specs/002 research R2),
+    """derived itinerary_days.parquet: the default daily matching of the selected pairs
+    (specs/002 research R2),
     with the day's scheduled layover when the flights connect."""
 
     itinerary_id: str

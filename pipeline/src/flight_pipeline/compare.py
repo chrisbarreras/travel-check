@@ -6,12 +6,14 @@ from __future__ import annotations
 import datetime as dt
 import hashlib
 from collections.abc import Mapping, Sequence
+from concurrent.futures import ProcessPoolExecutor
 
 import duckdb
 import numpy as np
 
 from flight_pipeline.config import Itineraries
 from flight_pipeline.models import Itinerary
+from flight_pipeline.storage import worker_count
 
 
 def tight_itineraries(
@@ -131,6 +133,26 @@ def paired_bootstrap(
     alpha = 1.0 - ci_level
     low, high = np.percentile(diffs, [100 * alpha / 2, 100 * (1 - alpha / 2)])
     return round(float(low), 6), round(float(high), 6)
+
+
+# Arguments of one paired_bootstrap call: a, b, resamples, ci_level, seed, key.
+type BootstrapTask = tuple[Mapping[dt.date, bool], Mapping[dt.date, bool], int, float, int, str]
+
+_PARALLEL_MIN_TASKS = 64
+
+
+def _run_bootstrap(task: BootstrapTask) -> tuple[float | None, float | None]:
+    return paired_bootstrap(*task)
+
+
+def paired_bootstraps(tasks: Sequence[BootstrapTask]) -> list[tuple[float | None, float | None]]:
+    """``paired_bootstrap`` for every task, in order, spread over worker processes. Each
+    task draws from its own stream seeded by its key, so the results equal sequential calls."""
+    workers = min(worker_count(), len(tasks) // _PARALLEL_MIN_TASKS)
+    if workers <= 1:
+        return [paired_bootstrap(*t) for t in tasks]
+    with ProcessPoolExecutor(max_workers=workers) as pool:
+        return list(pool.map(_run_bootstrap, tasks, chunksize=max(1, len(tasks) // (8 * workers))))
 
 
 # --- Showcase rules and go criterion (FR-029, FR-030) ------------------------------------

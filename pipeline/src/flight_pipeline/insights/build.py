@@ -4,8 +4,9 @@ from __future__ import annotations
 
 import datetime as dt
 from collections.abc import Mapping, Sequence
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 
+from flight_pipeline.compare import paired_bootstraps
 from flight_pipeline.config import Config, DisruptionNote
 from flight_pipeline.insights.alternatives import (
     Bootstrap,
@@ -103,12 +104,28 @@ def build_insights(
     notes: Sequence[DisruptionNote],
     cfg: Config,
 ) -> InsightsFile:
+    """Insights for every itinerary in ``data``. A first pass collects every paired
+    interval needed; they are computed in parallel, then the second pass uses them."""
     boot = Bootstrap(
         resamples=cfg.comparison.bootstrap_resamples,
         ci_level=cfg.comparison.ci_level,
         seed=cfg.seed,
         min_shared_days=cfg.feasibility.min_sample_days,
     )
+    recorder = replace(boot, pending=[])
+    _build(data, slots, notes, cfg, recorder)
+    tasks = recorder.pending or []
+    cache = dict(zip((t[5] for t in tasks), paired_bootstraps(tasks), strict=True))
+    return _build(data, slots, notes, cfg, replace(boot, cache=cache))
+
+
+def _build(
+    data: Mapping[str, ItineraryData],
+    slots: Mapping[str, SlotData],
+    notes: Sequence[DisruptionNote],
+    cfg: Config,
+    boot: Bootstrap,
+) -> InsightsFile:
     facts = {k: facts_of(d) for k, d in sorted(data.items())}
     by_route: dict[tuple[str, str], list[Facts]] = {}
     for f in facts.values():

@@ -4,9 +4,9 @@ from __future__ import annotations
 
 import datetime as dt
 from collections.abc import Mapping, Sequence
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
-from flight_pipeline.compare import dep_diff, paired_bootstrap, shared_days
+from flight_pipeline.compare import BootstrapTask, dep_diff, paired_bootstrap, shared_days
 from flight_pipeline.showcase.models import Alternative, ConnectingOption, Rate
 
 
@@ -25,12 +25,22 @@ class Facts:
     days: Mapping[dt.date, bool]  # paired days at the default assumptions: feasible or not
 
 
+def _no_cache() -> dict[str, tuple[float | None, float | None]]:
+    return {}
+
+
 @dataclass(frozen=True)
 class Bootstrap:
+    """Bootstrap settings. ``cache`` holds intervals computed ahead (by key); with ``pending``
+    set, intervals are not computed but their tasks recorded there (and treated as missing),
+    so that a first pass can collect every task for ``paired_bootstraps``."""
+
     resamples: int
     ci_level: float
     seed: int
     min_shared_days: int
+    cache: Mapping[str, tuple[float | None, float | None]] = field(default_factory=_no_cache)
+    pending: list[BootstrapTask] | None = None
 
 
 def _interval(
@@ -43,7 +53,7 @@ def _interval(
     common = shared_days(other.days, this.days)
     if common < boot.min_shared_days:
         return None
-    low, high = paired_bootstrap(
+    task: BootstrapTask = (
         other.days,
         this.days,
         boot.resamples,
@@ -51,6 +61,13 @@ def _interval(
         boot.seed,
         f"{purpose}|{other.itinerary_id}|{this.itinerary_id}",
     )
+    if task[5] in boot.cache:
+        low, high = boot.cache[task[5]]
+    elif boot.pending is not None:
+        boot.pending.append(task)
+        return None
+    else:
+        low, high = paired_bootstrap(*task)
     if low is None or high is None:
         return None
     return low, high, common

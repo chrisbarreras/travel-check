@@ -245,3 +245,47 @@ def test_bounds_never_drop_a_pair_that_can_connect(
 def test_bounds_drop_a_pair_that_cannot_connect() -> None:
     assert not bounds_allow([1345], [590], 30, 240)  # 685 min at best
     assert bounds_allow([500], [590], 30, 240)
+
+
+# --- Hub-by-hub matching and the optional daily table -------------------------------------
+
+
+def _rows(con: duckdb.DuckDBPyConnection, table: str) -> list[tuple[Any, ...]]:
+    return con.execute(f"SELECT * FROM {table} ORDER BY ALL").fetchall()
+
+
+def test_without_days_gives_the_same_itineraries(con: duckdb.DuckDBPyConnection) -> None:
+    build(con, hubs=["ORD", "DEN"])
+    with_days = (_rows(con, "itineraries"), _rows(con, "itineraries_exclusions"))
+    con.execute("DROP TABLE itineraries_days")
+    build_itineraries(
+        con,
+        "slots",
+        ["ORD", "DEN"],
+        rules(),
+        "itineraries",
+        flights="flights",
+        sold="sold",
+        period=PERIOD,
+        days=False,
+    )
+    assert (_rows(con, "itineraries"), _rows(con, "itineraries_exclusions")) == with_days
+    assert not con.execute(
+        "SELECT count(*) FROM duckdb_tables() WHERE table_name = 'itineraries_days'"
+    ).fetchone()[0]  # pyright: ignore[reportOptionalSubscript]
+
+
+def test_hub_by_hub_matching_equals_one_hub_at_a_time(con: duckdb.DuckDBPyConnection) -> None:
+    build(con, hubs=["ORD", "DEN"])
+    together = (_rows(con, "itineraries"), _rows(con, "itineraries_days"))
+    parts: list[list[tuple[Any, ...]]] = [[], []]
+    for hub in ("DEN", "ORD"):
+        build(con, hubs=[hub])
+        parts[0] += _rows(con, "itineraries")
+        parts[1] += _rows(con, "itineraries_days")
+    assert together == (sorted(parts[0]), sorted(parts[1]))
+
+
+def test_no_matching_hub_still_creates_empty_tables(con: duckdb.DuckDBPyConnection) -> None:
+    assert build(con, hubs=["ZZZ"]) == []
+    assert _rows(con, "itineraries_days") == []

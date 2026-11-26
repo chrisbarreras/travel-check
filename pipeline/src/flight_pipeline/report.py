@@ -158,10 +158,11 @@ def airline_section(rows: Sequence[AirlineCoverage], *, recurrence_threshold: fl
             ),
             "**No itineraries:** "
             + (", ".join(missing) if missing else "none")
-            + ". An itinerary is identified by flight number, and each flight must be "
-            f"scheduled on at least {round(recurrence_threshold * 100)}% of days, so an airline "
-            "that reassigns flight numbers often (Southwest does) can sell many connections "
-            "without any qualifying itinerary.",
+            + ". An itinerary pairs two schedule slots (an airline's flights on a route at "
+            "about the same time of day, whatever their flight numbers), each scheduled on at "
+            f"least {round(recurrence_threshold * 100)}% of days, so an airline whose departure "
+            "times vary by day of week or season (Southwest's do) has fewer itineraries than "
+            "its sold passengers suggest.",
         ]
     )
 
@@ -327,9 +328,10 @@ LIMITATIONS = (
     "sampled passengers than the minimum and be left out. DB1B records the selling airline, "
     "not the flight numbers, so a sold routing qualifies every flight pair on it that meets "
     "the other rules.",
-    "Itineraries are identified by flight number. Airlines that reassign flight numbers "
-    "often, such as Southwest, have few flights scheduled on most days under one number, so "
-    "their connections are largely missing; the report lists itineraries per airline.",
+    "Itineraries are identified by schedule slot, whatever the flight numbers, but each slot "
+    "must be scheduled on most days. Airlines whose departure times vary by day of week or "
+    "season, such as Southwest, therefore have fewer itineraries than their sold passengers "
+    "suggest; the report lists itineraries per airline.",
 )
 
 CI_METHOD = (

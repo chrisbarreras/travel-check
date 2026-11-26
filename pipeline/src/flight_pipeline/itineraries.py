@@ -78,15 +78,19 @@ def _rule_tables(
 
 
 def _slot_instances(con: duckdb.DuckDBPyConnection, flights: str, slots: str) -> None:
-    """``_slot_inst``: one row per slot flight-day with scheduled UTC instants, the local
-    arrival minute and the flight's identity (for quality and actual times later)."""
+    """``_slot_inst``: one row per flight-day of a candidate's slot (``_cand``) with scheduled
+    UTC instants, the local arrival minute and the flight's identity (for quality and actual
+    times later)."""
     con.execute(
         f"""
         CREATE OR REPLACE TEMP TABLE _slot_inst AS
         SELECT d.slot_id, d.service_date, d.marketing_airline, d.flight_number, d.origin, d.dest,
                min(f.sched_dep_utc) AS sched_dep, min(f.sched_arr_utc) AS sched_arr,
                min(f.sched_arr_local_min) AS arr_local
-        FROM {slots}_days d
+        FROM (
+            SELECT * FROM {slots}_days
+            WHERE slot_id IN (SELECT in_slot FROM _cand UNION SELECT out_slot FROM _cand)
+        ) d
         JOIN {flights} f
           ON f.marketing_airline = d.marketing_airline AND f.flight_number = d.flight_number
          AND f.origin = d.origin AND f.dest = d.dest AND f.service_date = d.service_date
@@ -107,16 +111,20 @@ def build_itineraries(
     sold: str,
     period: tuple[dt.date, dt.date],
     od_pairs: Sequence[tuple[str, str]] | None = None,
+    days: bool = True,
 ) -> None:
     """Create ``target`` (Itinerary rows, data-model.md), ``{target}_exclusions`` (OdExclusions
     per origin/destination pair with candidates) and ``{target}_days`` (the daily matching of
     qualifying itineraries: itinerary_id, service_date, status, the inbound and outbound
-    flight-days, min_connection_min), from ``slots``, ``{slots}_days`` and ``flights``."""
+    flight-days, min_connection_min), from ``slots``, ``{slots}_days`` and ``flights``.
+
+    The daily matching runs one hub at a time, which keeps memory bounded on a full year;
+    every result is per itinerary, so the split never changes it. With ``days=False`` the
+    ``{target}_days`` table is not created (callers that need only the itineraries)."""
     threshold = rules.recurrence_threshold if recurrence_threshold is None else recurrence_threshold
     threshold_scaled = round(threshold * _SCALE)
     start, end = period
     od_filter = _rule_tables(con, hubs, rules, od_pairs)
-    _slot_instances(con, flights, slots)
 
     # 1. Candidates
     con.execute(
@@ -151,6 +159,8 @@ def build_itineraries(
         """
     )
 
+    _slot_instances(con, flights, slots)
+
     # 2. Bounds (lossless): some local arrival x departure combination within the limits
     con.execute(
         f"""
@@ -182,53 +192,182 @@ def build_itineraries(
         """
     )
 
-    # 4. Daily matching for the candidates that passed 2 and 3
+    # 4. Daily matching for the candidates that passed 2 and 3, one hub at a time
+    hub_list = [
+        r[0]
+        for r in con.execute(
+            "SELECT DISTINCT hub FROM _cand_flags WHERE bounds_ok AND sold_ok ORDER BY hub"
+        ).fetchall()
+    ]
+    con.execute(
+        "CREATE OR REPLACE TEMP TABLE _agg (itinerary_id VARCHAR, eligible_days BIGINT, "
+        "connect_days BIGINT, layover DOUBLE, travel DOUBLE)"
+    )
+    con.execute("DROP TABLE IF EXISTS _match_all")
+    if not days:
+        _lean_keys(con)
+    # An empty hub list still runs once so that _match (and _match_all) have their columns.
+    for i, hub in enumerate(hub_list or [""]):
+        if not days:
+            _lean_agg_hub(con, hub, rules.max_layover_min, start, end)
+            continue
+        _match_hub(con, hub, rules.max_layover_min, start, end)
+        con.execute(f"INSERT INTO _agg SELECT itinerary_id, {_AGG_COLUMNS} FROM _match GROUP BY 1")
+        if i == 0:
+            con.execute("CREATE TEMP TABLE _match_all AS SELECT * FROM _match")
+        else:
+            con.execute("INSERT INTO _match_all SELECT * FROM _match")
+        con.execute("DROP TABLE _match")
+    _finish(con, target, threshold_scaled, days=days)
+
+
+# Per-itinerary results of the daily matching (rule 4): eligible days, connecting days and
+# the median scheduled layover and travel time over connecting days.
+_AGG_COLUMNS = """
+    count(*) FILTER (WHERE status <> 'end_of_period'),
+    count(*) FILTER (WHERE status = 'connects'),
+    quantile_disc((epoch(out_dep) - epoch(in_arr)) // 60, 0.5)
+        FILTER (WHERE status = 'connects'),
+    quantile_disc((epoch(out_arr) - epoch(in_dep)) // 60, 0.5)
+        FILTER (WHERE status = 'connects')
+"""
+
+# The local-minus-UTC offset of the inbound arrival, in minutes (-720..719).
+_OFFSET_SQL = """(((f.arr_local - (hour(f.sched_arr) * 60 + minute(f.sched_arr))) % 1440
+                     + 1440 + 720) % 1440) - 720"""
+
+
+def _status_sql(end: dt.date) -> str:
+    """The day's matching status (rule 4), from ``out_dep``, ``latest`` and ``offset_min``."""
+    return f"""
+        CASE WHEN out_dep IS NOT NULL AND out_dep <= latest THEN 'connects'
+             WHEN CAST(latest + to_minutes(CAST(offset_min AS INTEGER)) AS DATE)
+                  > DATE '{end}' THEN 'end_of_period'
+             ELSE 'not_connecting' END"""
+
+
+def _lean_keys(con: duckdb.DuckDBPyConnection) -> None:
+    """Integer keys for the matching when only the per-itinerary results are needed: narrow
+    rows keep the full year's matching of every candidate within memory."""
+    con.execute(
+        """
+        CREATE OR REPLACE TEMP TABLE _slot_keys AS
+        SELECT slot_id, CAST(row_number() OVER (ORDER BY slot_id) AS INTEGER) AS slot_key
+        FROM (SELECT DISTINCT slot_id FROM _slot_inst)
+        """
+    )
+    con.execute(
+        """
+        CREATE OR REPLACE TEMP TABLE _slot_lean AS
+        SELECT k.slot_key, s.service_date, s.sched_dep, s.sched_arr, s.arr_local
+        FROM _slot_inst s JOIN _slot_keys k USING (slot_id)
+        """
+    )
+    con.execute(
+        """
+        CREATE OR REPLACE TEMP TABLE _cand_keys AS
+        SELECT c.itinerary_id, c.hub, c.min_conn,
+               CAST(row_number() OVER (ORDER BY c.itinerary_id) AS INTEGER) AS cand_key,
+               ki.slot_key AS in_key, ko.slot_key AS out_key
+        FROM _cand_flags c
+        JOIN _slot_keys ki ON ki.slot_id = c.in_slot
+        JOIN _slot_keys ko ON ko.slot_id = c.out_slot
+        WHERE c.bounds_ok AND c.sold_ok
+        """
+    )
+
+
+def _lean_agg_hub(
+    con: duckdb.DuckDBPyConnection, hub: str, max_layover: int, start: dt.date, end: dt.date
+) -> None:
+    """Add one hub's per-itinerary matching results to ``_agg`` without keeping the days:
+    the same matching as ``_match_hub``, on integer keys and only the columns it needs.
+    Each step is its own table: DuckDB plans the fused query far worse on large hubs."""
     con.execute(
         f"""
-        CREATE OR REPLACE TEMP TABLE _match AS
-        WITH inb AS (
-            SELECT c.itinerary_id, c.out_slot, c.min_conn,
-                   f.service_date, f.marketing_airline AS in_airline,
-                   f.flight_number AS in_number, f.origin AS in_origin, f.dest AS in_dest,
-                   f.sched_dep AS in_dep, f.sched_arr AS in_arr,
-                   f.sched_arr + to_minutes(c.min_conn) AS earliest,
-                   f.sched_arr + to_minutes({rules.max_layover_min}) AS latest,
-                   (((f.arr_local - (hour(f.sched_arr) * 60 + minute(f.sched_arr))) % 1440
-                     + 1440 + 720) % 1440) - 720 AS offset_min
-            FROM _cand_flags c
-            JOIN _slot_inst f ON f.slot_id = c.in_slot
-            WHERE c.bounds_ok AND c.sold_ok
-              AND f.service_date BETWEEN DATE '{start}' AND DATE '{end}'
-        ),
-        m AS (
-            SELECT inb.*, o.service_date AS out_date, o.marketing_airline AS out_airline,
-                   o.flight_number AS out_number, o.origin AS out_origin, o.dest AS out_dest,
-                   o.sched_dep AS out_dep, o.sched_arr AS out_arr
-            FROM inb ASOF LEFT JOIN _slot_inst o
-              ON o.slot_id = inb.out_slot AND inb.earliest <= o.sched_dep
-        )
-        SELECT *,
-               CASE WHEN out_dep IS NOT NULL AND out_dep <= latest THEN 'connects'
-                    WHEN CAST(latest + to_minutes(CAST(offset_min AS INTEGER)) AS DATE)
-                         > DATE '{end}' THEN 'end_of_period'
-                    ELSE 'not_connecting' END AS status
-        FROM m
-        """
+        CREATE OR REPLACE TEMP TABLE _lean_inb AS
+        SELECT k.cand_key, k.out_key,
+               f.sched_dep AS in_dep, f.sched_arr AS in_arr,
+               f.sched_arr + to_minutes(k.min_conn) AS earliest,
+               f.sched_arr + to_minutes({max_layover}) AS latest,
+               {_OFFSET_SQL} AS offset_min
+        FROM _cand_keys k
+        JOIN _slot_lean f ON f.slot_key = k.in_key
+        WHERE k.hub = $hub AND f.service_date BETWEEN DATE '{start}' AND DATE '{end}'
+        """,
+        {"hub": hub},
     )
     con.execute(
         """
-        CREATE OR REPLACE TEMP TABLE _agg AS
-        SELECT itinerary_id,
-               count(*) FILTER (WHERE status <> 'end_of_period') AS eligible_days,
-               count(*) FILTER (WHERE status = 'connects') AS connect_days,
-               quantile_disc((epoch(out_dep) - epoch(in_arr)) // 60, 0.5)
-                   FILTER (WHERE status = 'connects') AS layover,
-               quantile_disc((epoch(out_arr) - epoch(in_dep)) // 60, 0.5)
-                   FILTER (WHERE status = 'connects') AS travel
-        FROM _match
-        GROUP BY itinerary_id
+        CREATE OR REPLACE TEMP TABLE _lean_m AS
+        SELECT inb.*, o.sched_dep AS out_dep, o.sched_arr AS out_arr
+        FROM _lean_inb inb ASOF LEFT JOIN _slot_lean o
+          ON o.slot_key = inb.out_key AND inb.earliest <= o.sched_dep
         """
     )
+    con.execute(
+        f"""
+        CREATE OR REPLACE TEMP TABLE _lean_s AS
+        SELECT cand_key, in_dep, in_arr, out_dep, out_arr, {_status_sql(end)} AS status
+        FROM _lean_m
+        """
+    )
+    con.execute(
+        f"""
+        INSERT INTO _agg
+        SELECT k.itinerary_id, a.* EXCLUDE (cand_key)
+        FROM (SELECT cand_key, {_AGG_COLUMNS} FROM _lean_s GROUP BY cand_key) a
+        JOIN _cand_keys k USING (cand_key)
+        """
+    )
+    for t in ("_lean_inb", "_lean_m", "_lean_s"):
+        con.execute(f"DROP TABLE {t}")
+
+
+def _match_hub(
+    con: duckdb.DuckDBPyConnection, hub: str, max_layover: int, start: dt.date, end: dt.date
+) -> None:
+    """``_match``: the daily matching (rule 4) of one hub's candidates, in steps as in
+    ``_lean_agg_hub``."""
+    con.execute(
+        f"""
+        CREATE OR REPLACE TEMP TABLE _match_inb AS
+        SELECT c.itinerary_id, c.out_slot, c.min_conn,
+               f.service_date, f.marketing_airline AS in_airline,
+               f.flight_number AS in_number, f.origin AS in_origin, f.dest AS in_dest,
+               f.sched_dep AS in_dep, f.sched_arr AS in_arr,
+               f.sched_arr + to_minutes(c.min_conn) AS earliest,
+               f.sched_arr + to_minutes({max_layover}) AS latest,
+               {_OFFSET_SQL} AS offset_min
+        FROM _cand_flags c
+        JOIN _slot_inst f ON f.slot_id = c.in_slot
+        WHERE c.bounds_ok AND c.sold_ok AND c.hub = $hub
+          AND f.service_date BETWEEN DATE '{start}' AND DATE '{end}'
+        """,
+        {"hub": hub},
+    )
+    con.execute(
+        """
+        CREATE OR REPLACE TEMP TABLE _match_m AS
+        SELECT inb.*, o.service_date AS out_date, o.marketing_airline AS out_airline,
+               o.flight_number AS out_number, o.origin AS out_origin, o.dest AS out_dest,
+               o.sched_dep AS out_dep, o.sched_arr AS out_arr
+        FROM _match_inb inb ASOF LEFT JOIN _slot_inst o
+          ON o.slot_id = inb.out_slot AND inb.earliest <= o.sched_dep
+        """
+    )
+    con.execute(
+        f"CREATE OR REPLACE TEMP TABLE _match AS SELECT *, {_status_sql(end)} AS status "
+        "FROM _match_m"
+    )
+    for t in ("_match_inb", "_match_m"):
+        con.execute(f"DROP TABLE {t}")
+
+
+def _finish(
+    con: duckdb.DuckDBPyConnection, target: str, threshold_scaled: int, *, days: bool
+) -> None:
+    """Qualification, ``target``, ``{target}_exclusions`` and (with ``days``) ``{target}_days``."""
     con.execute(
         """
         CREATE OR REPLACE TEMP TABLE _cand_ok AS
@@ -285,6 +424,24 @@ def build_itineraries(
         ORDER BY origin, dest
         """
     )
+    if days:
+        _days_table(con, target)
+    for t in (
+        "_cand",
+        "_bounds_ok",
+        "_cand_flags",
+        "_match_all",
+        "_agg",
+        "_cand_ok",
+        "_cand_ok2",
+        "_slot_keys",
+        "_slot_lean",
+        "_cand_keys",
+    ):
+        con.execute(f"DROP TABLE IF EXISTS {t}")
+
+
+def _days_table(con: duckdb.DuckDBPyConnection, target: str) -> None:
     con.execute(
         f"""
         CREATE OR REPLACE TABLE {target}_days AS
@@ -294,9 +451,7 @@ def build_itineraries(
                m.in_airline, m.in_number, m.in_origin, m.in_dest,
                m.out_airline, m.out_number, m.out_origin, m.out_dest, m.out_date,
                m.in_dep, m.in_arr, m.out_dep, m.out_arr
-        FROM _match m JOIN {target} t USING (itinerary_id)
+        FROM _match_all m JOIN {target} t USING (itinerary_id)
         ORDER BY m.itinerary_id, m.service_date
         """
     )
-    for t in ("_cand", "_bounds_ok", "_cand_flags", "_match", "_agg", "_cand_ok", "_cand_ok2"):
-        con.execute(f"DROP TABLE IF EXISTS {t}")

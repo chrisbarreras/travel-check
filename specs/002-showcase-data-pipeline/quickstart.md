@@ -16,6 +16,8 @@ uv run flight-pipeline run --config ../config/phase1.toml   # downloads if neede
 uv run flight-pipeline schemas                               # JSON Schema and TypeScript types
 ```
 
+To time a run as on the 4-core reference machine (SC-008), set `FLIGHT_PIPELINE_THREADS=4`: it limits DuckDB's threads and the bootstrap worker processes. Outputs never depend on it.
+
 **Expected:** `site-data/showcase/index.json`, `landing.json` and 8–12 files in `routes/`, within the size budget; `shared/schemas/showcase.schema.json` and `shared/types/showcase.ts`. The run's summary line states the routes, itineraries and showcase comparisons, the per-airline coverage, and the runtime.
 
 ## Check

@@ -76,3 +76,34 @@ def test_aware_datetimes_stored_as_naive_utc() -> None:
 
     aware = dt.datetime(2026, 1, 5, 8, 0, tzinfo=dt.timezone(dt.timedelta(hours=-5)))
     assert _plain(aware) == dt.datetime(2026, 1, 5, 13, 0)  # noqa: DTZ001
+
+
+def test_read_models_only_keeps_file_order(tmp_path: Path) -> None:
+    from flight_pipeline.models import SlotDay
+    from flight_pipeline.storage import read_models
+
+    con = duckdb.connect()
+    con.execute(
+        "CREATE TABLE d AS SELECT * FROM (VALUES "
+        "('S2', DATE '2024-07-02', 'AA', 1, 'AAA', 'BBB', 600), "
+        "('S1', DATE '2024-07-01', 'AA', 1, 'AAA', 'BBB', 600), "
+        "('S3', DATE '2024-07-01', 'AA', 1, 'AAA', 'BBB', 600), "
+        "('S1', DATE '2024-07-03', 'AA', 1, 'AAA', 'BBB', 600)) "
+        "t(slot_id, service_date, marketing_airline, flight_number, origin, dest, dep_local_min)"
+    )
+    path = tmp_path / "d.parquet"
+    con.execute(f"COPY d TO '{path.as_posix()}' (FORMAT parquet)")
+    got = read_models(con, path, SlotDay, only=("slot_id", {"S1", "S2"}))
+    assert [(r.slot_id, r.service_date.day) for r in got] == [("S2", 2), ("S1", 1), ("S1", 3)]
+    assert read_models(con, path, SlotDay, only=("slot_id", set())) == []
+    assert len(read_models(con, path, SlotDay)) == 4
+
+
+def test_thread_limit_from_environment(monkeypatch: object) -> None:
+    import pytest
+
+    from flight_pipeline.storage import THREADS_ENV, connect
+
+    mp: pytest.MonkeyPatch = monkeypatch  # type: ignore[assignment]
+    mp.setenv(THREADS_ENV, "2")
+    assert connect().execute("SELECT current_setting('threads')").fetchone() == (2,)

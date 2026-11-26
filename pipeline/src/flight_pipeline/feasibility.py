@@ -35,9 +35,10 @@ def lower_percentile(values: Sequence[int], q: float) -> int | None:
     return ordered[math.floor(q * (len(ordered) - 1))]
 
 
-def _instances(con: duckdb.DuckDBPyConnection, flights: str) -> None:
-    """One row per flight instance. Identical duplicate copies are dropped; an instance with
-    no ``ok`` row (conflicting copies, missing times, clock mismatch) has ``ok_n = 0``."""
+def flight_instances(con: duckdb.DuckDBPyConnection, flights: str) -> None:
+    """``_inst``: one row per flight instance. Identical duplicate copies are dropped; an
+    instance with no ``ok`` row (conflicting copies, missing times, clock mismatch) has
+    ``ok_n = 0``."""
     con.execute(
         f"""
         CREATE OR REPLACE TEMP TABLE _inst AS
@@ -63,14 +64,18 @@ def daily_slack(
     flights: str,
     itinerary_days: str,
     target: str,
+    *,
+    reuse_instances: bool = False,
 ) -> None:
     """Create ``target`` (itinerary_id, service_date, status, min_connection_min,
     any_cancelled, any_diverted, raw_slack_min): one row per in-period inbound day of each
     itinerary, from the daily matching ``itinerary_days`` written by ``build_itineraries``
     (so the itinerary rules and the outcomes use the same matching, ADR-0014). Status:
     ``end_of_period`` (matching window past the loaded data), ``quality`` (a leg failed a
-    data-quality check), ``not_connecting``, or ``paired``."""
-    _instances(con, flights)
+    data-quality check), ``not_connecting``, or ``paired``. With ``reuse_instances``, the
+    ``_inst`` table from an earlier ``flight_instances`` call on ``flights`` is reused."""
+    if not reuse_instances:
+        flight_instances(con, flights)
     con.execute(
         f"""
         CREATE OR REPLACE TABLE {target} AS
