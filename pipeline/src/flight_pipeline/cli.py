@@ -36,7 +36,13 @@ from flight_pipeline.providers.bts_db1b import BtsDb1bProvider, quarter_key
 from flight_pipeline.providers.bts_ontime import BtsOnTimeProvider, month_key
 from flight_pipeline.providers.bts_t100 import BtsT100Provider, load_passengers
 from flight_pipeline.providers.timezones import AirportsDataTimezones, MissingTimezoneError
-from flight_pipeline.stages import stage_analyze, stage_build, stage_report, stage_select_hubs
+from flight_pipeline.stages import (
+    stage_analyze,
+    stage_build,
+    stage_curate,
+    stage_report,
+    stage_select_hubs,
+)
 from flight_pipeline.storage import connect, write_table
 
 USER_AGENT = f"flight-pipeline/{__version__}"
@@ -197,6 +203,7 @@ def cmd_run(cfg: Config, config_path: Path, client: httpx.Client | None, *, acqu
         ("select-hubs", stage_select_hubs),
         ("build", stage_build),
         ("analyze", stage_analyze),
+        ("curate", stage_curate),
     ):
         progress(f"{name}: {stage(connect(), cfg)}")
     runtime_min = (time.perf_counter() - started) / 60
@@ -227,7 +234,7 @@ def cmd_verify(cfg: Config, config_path: Path) -> str:
         rerun_cfg = cfg.model_copy(update={"paths": paths})
         progress("verify: rerunning all stages after acquire")
         progress(cmd_prepare(rerun_cfg, rerun_cfg.period.months()))
-        for stage in (stage_select_hubs, stage_build, stage_analyze):
+        for stage in (stage_select_hubs, stage_build, stage_analyze, stage_curate):
             progress(stage(connect(), rerun_cfg))
         stage_report(connect(), rerun_cfg, config_path, None)
         fresh = json.loads((Path(tmp) / "reports" / "manifest.json").read_text(encoding="utf-8"))
@@ -267,6 +274,7 @@ def _parser() -> argparse.ArgumentParser:
         ("select-hubs", "compute candidate metrics and select hubs", False),
         ("build", "build itineraries and select origin/destination pairs", False),
         ("analyze", "daily outcomes, all scenarios, comparable pairs, showcases", False),
+        ("curate", "select showcase routes, balanced comparisons and the landing example", False),
         ("report", "write summary.json, summary.md and manifest.json", False),
         ("run", "run every stage in order", False),
         ("verify", "rerun and compare with the committed reports (SC-001)", False),
@@ -301,6 +309,7 @@ def main(argv: Sequence[str] | None = None, *, client: httpx.Client | None = Non
             "select-hubs": lambda: stage_select_hubs(connect(), cfg),
             "build": lambda: stage_build(connect(), cfg),
             "analyze": lambda: stage_analyze(connect(), cfg),
+            "curate": lambda: stage_curate(connect(), cfg),
             "report": lambda: stage_report(connect(), cfg, args.config),
             "run": lambda: cmd_run(cfg, args.config, client, acquire=not args.no_acquire),
             "verify": lambda: cmd_verify(cfg, args.config),

@@ -9,7 +9,7 @@ import json
 import os
 import statistics
 import sys
-from dataclasses import replace
+from dataclasses import asdict, replace
 from importlib import metadata
 from pathlib import Path
 from typing import Any
@@ -27,6 +27,7 @@ from flight_pipeline.compare import (
     tight_itineraries,
 )
 from flight_pipeline.config import Config
+from flight_pipeline.curation import CandidateComparison, RouteCandidate, curate
 from flight_pipeline.hubs import (
     assign_roles,
     candidate_metrics,
@@ -38,6 +39,9 @@ from flight_pipeline.itineraries import build_itineraries
 from flight_pipeline.models import (
     Airport,
     ComparablePair,
+    CuratedComparisonRow,
+    CuratedRouteRow,
+    CurationMeta,
     DailyOutcome,
     Finding,
     HubCandidate,
@@ -461,6 +465,102 @@ def stage_analyze(con: duckdb.DuckDBPyConnection, cfg: Config) -> str:
     )
 
 
+# --- Curation ----------------------------------------------------------------------------
+
+
+def stage_curate(con: duckdb.DuckDBPyConnection, cfg: Config) -> str:
+    """Showcase routes, balanced showcase comparisons and the landing example (research R4)."""
+    od_rows = read_models(con, derived(cfg, "od_selection.parquet"), OdSelection)
+    itineraries = read_models(con, derived(cfg, "itineraries.parquet"), Itinerary)
+    pairs = read_models(con, derived(cfg, "comparable_pairs.parquet"), ComparablePair)
+    scenario_rows = read_models(
+        con, derived(cfg, "sensitivity_scenarios.parquet"), SensitivityScenario
+    )
+    by_id = {i.itinerary_id: i for i in itineraries}
+    tight = tight_itineraries(itineraries, cfg.itineraries, cfg.feasibility.boarding_cutoff_min)
+    counts: dict[str, int] = {}
+    for i in itineraries:
+        counts[f"{i.origin}-{i.dest}"] = counts.get(f"{i.origin}-{i.dest}", 0) + 1
+    routes = [
+        RouteCandidate(
+            route_id=f"{r.origin}-{r.dest}",
+            origin=r.origin,
+            dest=r.dest,
+            regional_origin=r.regional_origin,
+            itinerary_count=counts.get(f"{r.origin}-{r.dest}", 0),
+        )
+        for r in od_rows
+        if r.selected
+    ]
+    comps: list[CandidateComparison] = []
+    for p in pairs:
+        if not p.showcase or p.rate_diff is None:
+            continue
+        a, b = by_id[p.itinerary_a], by_id[p.itinerary_b]
+        lower = b if p.rate_diff > 0 else a
+        comps.append(
+            CandidateComparison(
+                comparison_id=f"{a.itinerary_id}|{b.itinerary_id}",
+                route_id=f"{a.origin}-{a.dest}",
+                itinerary_a=a.itinerary_id,
+                itinerary_b=b.itinerary_id,
+                airlines=frozenset({a.airline_in, a.airline_out, b.airline_in, b.airline_out}),
+                hubs=frozenset({a.hub, b.hub}),
+                cross_hub=a.hub != b.hub,
+                difference=abs(p.rate_diff),
+                settings_compared=p.settings_compared,
+                lower_tight=lower.itinerary_id in tight,
+            )
+        )
+    total_settings = len({(s.min_connection_min, s.boarding_cutoff_min) for s in scenario_rows})
+    result = curate(routes, comps, cfg.showcase, total_settings)
+    models_to_table(
+        con,
+        "showcase_routes",
+        CuratedRouteRow,
+        [CuratedRouteRow(**asdict(r)) for r in result.routes],
+    )
+    write_table(
+        con,
+        "showcase_routes",
+        derived(cfg, "showcase_routes.parquet"),
+        CuratedRouteRow,
+        ["rank"],
+    )
+    models_to_table(
+        con,
+        "showcase_comparisons",
+        CuratedComparisonRow,
+        [CuratedComparisonRow(**asdict(c)) for c in result.comparisons],
+    )
+    write_table(
+        con,
+        "showcase_comparisons",
+        derived(cfg, "showcase_comparisons.parquet"),
+        CuratedComparisonRow,
+        ["comparison_id"],
+    )
+    write_json(
+        derived(cfg, "curation.json"),
+        {
+            "landing_comparison_id": result.landing_comparison_id,
+            "landing_reason": result.landing_reason,
+            "airline_shares": result.airline_shares,
+            "hub_shares": result.hub_shares,
+            "cross_hub_share": result.cross_hub_share,
+            "shortfalls": result.shortfalls,
+        },
+        CurationMeta,
+    )
+    for s in result.shortfalls:
+        print(f"curate: shortfall: {s}", file=sys.stderr, flush=True)
+    return (
+        f"curated {len(result.routes)} routes and {len(result.comparisons)} showcase "
+        f"comparisons ({result.cross_hub_share:.0%} cross-hub); landing "
+        f"{result.landing_comparison_id or 'none'}; {len(result.shortfalls)} shortfall(s)"
+    )
+
+
 # --- Report and manifest -----------------------------------------------------------------
 
 DERIVED_TABLES = (
@@ -481,6 +581,8 @@ DERIVED_TABLES = (
     "daily_outcomes.parquet",
     "itinerary_results.parquet",
     "comparable_pairs.parquet",
+    "showcase_routes.parquet",
+    "showcase_comparisons.parquet",
 )
 REPORT_FILES = ("summary.json", "summary.md", "quality.json")
 PACKAGES = ("flight-pipeline", "duckdb", "pydantic", "numpy", "airportsdata", "tzdata", "httpx")

@@ -401,6 +401,42 @@ class ComparablePair(_Model):
         return self
 
 
+class CuratedRouteRow(_Model):
+    """derived showcase_routes.parquet: one showcase route (specs/002 research R4)."""
+
+    route_id: str
+    origin: Iata
+    dest: Iata
+    regional_origin: bool
+    rank: Annotated[int, Field(ge=1)]
+    itinerary_count: NonNegInt
+    comparison_count: NonNegInt
+    share_of_showcase: Share
+
+
+class CuratedComparisonRow(_Model):
+    """derived showcase_comparisons.parquet: one showcase comparison kept by curation."""
+
+    comparison_id: str
+    route_id: str
+    itinerary_a: str
+    itinerary_b: str
+    cross_hub: bool
+    difference: float
+    landing: bool
+
+
+class CurationMeta(_Model):
+    """derived curation.json."""
+
+    landing_comparison_id: str | None
+    landing_reason: str
+    airline_shares: dict[str, float]
+    hub_shares: dict[str, float]
+    cross_hub_share: Share
+    shortfalls: list[str]
+
+
 class AirlineCoverage(_Model):
     """Itineraries built through the selected hubs, and sampled DB1B passengers on sold
     same-airline routings through them, per marketing airline."""

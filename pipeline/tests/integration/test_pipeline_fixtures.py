@@ -57,6 +57,9 @@ def test_all_outputs_written(finished: Path) -> None:
         "daily_outcomes.parquet",
         "itinerary_results.parquet",
         "comparable_pairs.parquet",
+        "showcase_routes.parquet",
+        "showcase_comparisons.parquet",
+        "curation.json",
     ):
         assert (finished / "derived" / name).exists(), name
     for name in ("summary.json", "summary.md", "manifest.json", "quality.json"):
@@ -112,6 +115,27 @@ def test_showcases_and_decision_follow_design(finished: Path) -> None:
     assert f.criterion_min_examples_met
     assert f.criterion_min_hubs_met
     assert f.decision == "go"
+
+
+def test_curation_follows_design(finished: Path) -> None:
+    # caps hold on the synthetic showcase; the landing example is cross-hub (research R4)
+    con = duckdb.connect()
+    routes = (finished / "derived" / "showcase_routes.parquet").as_posix()
+    comps = (finished / "derived" / "showcase_comparisons.parquet").as_posix()
+    rows = con.execute(
+        f"SELECT route_id, rank, share_of_showcase FROM read_parquet('{routes}') ORDER BY rank"
+    ).fetchall()
+    assert rows
+    assert [r[1] for r in rows] == list(range(1, len(rows) + 1))
+    meta = json.loads((finished / "derived" / "curation.json").read_text())
+    if not any(s.startswith("route ") for s in meta["shortfalls"]):
+        assert max(r[2] for r in rows) <= 0.333 + 1e-9
+    landing = con.execute(
+        f"SELECT comparison_id, cross_hub FROM read_parquet('{comps}') WHERE landing"
+    ).fetchall()
+    assert len(landing) == 1
+    assert landing[0][0] == meta["landing_comparison_id"]
+    assert landing[0][1] is True
 
 
 def test_manifest_records_sources_packages_and_hashes(finished: Path) -> None:

@@ -80,9 +80,9 @@ description: "Task list for the showcase data pipeline"
 
 **Independent Test**: on the synthetic year, the dominant market is capped at one third, at least half the comparisons are cross-hub where possible, and the landing example meets its rule.
 
-- [ ] T022 [P] [US2] Write failing tests in pipeline/tests/unit/test_curation.py: candidate rule, greedy order and tie-breaks, route/airline/hub caps (data-model.md `RouteSummary.share_of_showcase` never above `max_share_route`), regional share with shortfall reporting, at least half of showcase comparisons cross-hub with swaps and shortfall reporting (research R4 step 5, SC-002), minimum route count shortfall, landing example rule (cross-hub, lower not tight, compared at every setting) with its reason, determinism
-- [ ] T023 [US2] Implement pipeline/src/flight_pipeline/curation.py to pass T022
-- [ ] T024 [US2] Add the `curate` stage and command in pipeline/src/flight_pipeline/stages.py and pipeline/src/flight_pipeline/cli.py (contracts/cli.md), writing `data/derived/phase1/showcase_routes.parquet`, and add `curate` to `run`
+- [X] T022 [P] [US2] Write failing tests in pipeline/tests/unit/test_curation.py: candidate rule, greedy order and tie-breaks, route/airline/hub caps (data-model.md `RouteSummary.share_of_showcase` never above `max_share_route`), regional share with shortfall reporting, at least half of showcase comparisons cross-hub with swaps and shortfall reporting (research R4 step 5, SC-002), minimum route count shortfall, landing example rule (cross-hub, lower not tight, compared at every setting) with its reason, determinism
+- [X] T023 [US2] Implement pipeline/src/flight_pipeline/curation.py to pass T022
+- [X] T024 [US2] Add the `curate` stage and command in pipeline/src/flight_pipeline/stages.py and pipeline/src/flight_pipeline/cli.py (contracts/cli.md), writing `data/derived/phase1/showcase_routes.parquet`, and add `curate` to `run`
 
 **Checkpoint**: US1 and US2 produce a curated set.
 

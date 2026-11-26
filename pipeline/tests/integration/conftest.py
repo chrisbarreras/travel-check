@@ -73,7 +73,7 @@ def run_root(tmp_path: Path, synthetic_raw: Path) -> tuple[Path, Path]:
     return tmp_path, make_config(tmp_path, raw)
 
 
-STAGES = ["prepare", "select-hubs", "build", "analyze", "report"]
+STAGES = ["prepare", "select-hubs", "build", "analyze", "curate", "report"]
 
 
 @pytest.fixture(scope="session")
