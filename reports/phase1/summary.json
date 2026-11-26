@@ -12335,7 +12335,7 @@
     },
     "examples_slower_than_ratio": 203,
     "examples_without_nonstop": 175,
-    "examples_without_tight_layover": 388,
+    "examples_without_tight_layover": 189,
     "hubs_without_tight_layover": [
       "ATL",
       "DEN",
@@ -12347,7 +12347,7 @@
     ],
     "max_nonstop_ratio": 2.468571,
     "nonstop_ratio_limit": 1.5,
-    "pairs_without_tight_layover": 15
+    "pairs_without_tight_layover": 14
   },
   "showcase_examples": [
     {

@@ -1,6 +1,6 @@
 # Validation: Showcase Data Pipeline
 
-Results of the [quickstart](quickstart.md) validation scenarios (T051) on the pinned real data, July 2024 – June 2025, `config/phase1.toml`. Run on 2026-11-26 from commit `104fe1c` (after review round 1), with `FLIGHT_PIPELINE_THREADS=4`.
+Results of the [quickstart](quickstart.md) validation scenarios (T051) on the pinned real data, July 2024 – June 2025, `config/phase1.toml`. Run on 2026-11-26 from commit `7f95b7c` (after review round 2), with `FLIGHT_PIPELINE_THREADS=4`.
 
 ## Run
 
@@ -10,10 +10,10 @@ Results of the [quickstart](quickstart.md) validation scenarios (T051) on the pi
 | select-hubs | 7 hubs: ATL, DEN, DFW, LAS, LAX, ORD, PHX |
 | build | 146,444 itineraries through the hubs; 15 origin/destination pairs selected (8 regional) |
 | analyze | 593 itineraries, 27 scenarios, 2,973 comparable pairs, 449 showcase examples |
-| curate | 12 routes, 122 showcase comparisons (75% cross-hub); American, Delta and United each supply 50% (cap 50%); no shortfalls |
+| curate | 12 routes, 122 showcase comparisons (75% cross-hub); American, Delta and United each supply 50% (cap 50%); no shortfalls; landing LIT-ATL-LGA (DL) against LIT-ORD-LGA (UA), +28 points, the lower itinerary's median layover 50 minutes against a 45-minute threshold, 5.8% of its connecting days scheduled below it |
 | insights | 487 itineraries: 196 with a faster alternative, 156 with a better connecting option, 470 with a schedule change |
-| publish | 12 route files, 144 itineraries; 150.8 KB gzip in all, 6.9 KB for `index.json` and `landing.json` |
-| runtime | 24.1 minutes excluding downloads (limit 30, SC-008) |
+| publish | 12 route files, 144 itineraries; 152.5 KB gzip in all, 7.0 KB for `index.json` and `landing.json` |
+| runtime | 25.0 minutes excluding downloads (limit 30, SC-008) |
 
 The runtime was measured on the 16-core development machine with DuckDB and the bootstrap workers limited to 4 (`FLIGHT_PIPELINE_THREADS=4`, recorded as `run.machine.thread_limit` in both manifests). This stands in for the 4-core reference machine. It is a proxy, not a measurement on that machine.
 
@@ -27,7 +27,7 @@ The runtime was measured on the 16-core development machine with DuckDB and the 
 | Balance (SC-002) | Pass: the largest route supplies 12.3% of the comparisons (limit one third); 74.6% cross-hub (minimum half); every airline and hub cap holds |
 | Slider data reproduces the rate (SC-004) | Pass: for all 144 itineraries, the rate recomputed from the published daily series at the itinerary's transfer time equals the published rate and counts. The shared test cases pass in Python. |
 | Faster alternatives (SC-005) | Pass: all 59 listed alternatives have a lower bound of at least −2 points, a saving of at least 15 minutes and at least 30 shared days; each rate carries its sample |
-| Size (SC-007) | Pass: 150.8 KB gzip in all (budget 2 MB); `index.json` plus `landing.json` 6.9 KB (budget 150 KB); `landing.json` holds the landing comparison and both itineraries |
+| Size (SC-007) | Pass: 152.5 KB gzip in all (budget 2 MB); `index.json` plus `landing.json` 7.0 KB (budget 150 KB); `landing.json` holds the landing comparison and both itineraries |
 | Reproducibility (SC-006) | Pass: `verify` and `schemas --check` (see review.md for the final run) |
 
 ## Observations

@@ -48,3 +48,10 @@ Reviews by a new `feature-reviewer` agent each round, given only this feature di
 | 7 | NIT | A schedule straddling midnight forms two slots. | **Documented** in ADR-0014 (consequences) and the methodology, with the count on the Phase 1 data. Circular clustering is a candidate change for a later feature. |
 | 8 | NIT | The Phase 1 report was titled as Phase 0's. | **Fixed.** `reports/phase1/summary.md` is titled "Phase 1 rerun: connection feasibility with schedule-slot itineraries". Phase 0's title is unchanged. |
 | 9 | NIT | `connect_share` was published without its denominator. | **Fixed.** `schedule_warnings` carries `connecting_days` and `eligible_days`, checked against the share. |
+
+### Round 2 result (rerun from 7f95b7c, 4 threads)
+
+- The itineraries, examples, routes, comparisons and shares are unchanged from round 1. No cap shortfalls.
+- Landing example: LIT-ATL-LGA:DL1238+DL1700 against LIT-ORD-LGA:UA1515+UA1800, +28 points. The lower itinerary's median layover is 50 minutes against its 45-minute threshold, and 5.8% of its connecting days were scheduled below the threshold. The round-1 landing example is now tight.
+- 152.5 KB gzip in all, 7.0 KB for index and landing; runtime 25.0 minutes (thread limit 4).
+- All quickstart validation scenarios pass; `schemas --check` passes.

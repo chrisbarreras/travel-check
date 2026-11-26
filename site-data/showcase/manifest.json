@@ -1,23 +1,23 @@
 {
   "code_version": "0.1.0",
-  "config_sha256": "62a1c9341211b4c7e5eed6bad22ce04e94d9bf9a97709d8415bf885d28f18f60",
-  "git_commit": "104fe1c9c21417646d2313f05c3063e285fe1d6d",
+  "config_sha256": "db850b967337b207ec85dbcf14cfcc403f23bf1dbbac7f65f746124eef000705",
+  "git_commit": "7f95b7c7d3db5d4a8debe650e3ca30570f21795e",
   "notes_sha256": "6f71211762688725b6a44a423dcd2c79b7f215c2e75317cdf2e2007e122ece6a",
   "outputs": {
-    "index.json": "58017e2397cc2b7a8fb9c5a7e770311b5ef4adfe6339e44d634e7866805d5d3d",
-    "landing.json": "626714c8126bcacfbeeee94c7e61c52b1566ca69068f8530a52567aa2c64e4f9",
-    "routes/COS-LGA.json": "fd3612f05e593faf004330cda5476363cdd1a92249312479205a3d17a029f713",
-    "routes/HNL-BOS.json": "46c1eb5fc718968ca7a0aaddc72a4f2d166f4d38246b6910c111ddd6e010248d",
-    "routes/IAH-LGA.json": "3810296209e0d695a78c67a7e4b0fe48aee1fb5077e8610d6ac703cc4d6e7f83",
-    "routes/IAH-SFO.json": "f97796275aaed8d05178ce33212607dd6252ad3b0ca3f80dc3a4e05d1fb0b44a",
-    "routes/LAX-DCA.json": "ecb2f4675018ffb0d5bf30b3e29bbaba724d49cc370c75cdbb00bef46aba03d0",
-    "routes/LGA-LAX.json": "d36222a0b47043c3c96989e4a69dee8d391a1f8df6bf444070a2904cb6cc13af",
-    "routes/LIT-LGA.json": "e04923a2621a3c7e35cb96c6219909b48708333d6ba25c5b2dac44eb7366ef37",
-    "routes/MCO-LAS.json": "73023ac858913da587c2785949bb607bfd6ec3df7bb1f3815d28fb1212a049ad",
-    "routes/MCO-LAX.json": "618fed03cc1770a130a64cf6cd9653e44339e1c4ab96380e0aafe369c272479f",
-    "routes/SAT-LGA.json": "4615dcba15f97d4563a71230ad183c4dbd7d7156db7b1704567d7e91840e4085",
-    "routes/SJC-ATL.json": "fe1caff0a7f461243a3bedda277c4b0496c5a8abf26fbd565b753ec9b597554c",
-    "routes/SMF-DFW.json": "d0367bc1d687ac596559ea8125b51d73fd0069194ecd7e9ea28cf24daeba5179"
+    "index.json": "4a90de4d39e436bd9d398a0b917f2a4af733e1c23b5079bd9c5e5980fdc4f24a",
+    "landing.json": "a7e573d4787514a2c6d45a7de97ee01a11c3c344d1885feb65a0b0f0e8f608dd",
+    "routes/COS-LGA.json": "c19a844e70aeb3f2d37017fe3638c36ab90050d366aae75a1c0e95e90085c23a",
+    "routes/HNL-BOS.json": "fbe04ef00abf2f2763e9fc9789777aecf4f57c1ec3acf932b97477397a399e56",
+    "routes/IAH-LGA.json": "c696e7035ff03d35be4bf075dea922628a9c97c779f861e7939c15db76780856",
+    "routes/IAH-SFO.json": "c645d05968712d0ee06875f103c7cd11e5d86ddadce12627a769246677fef257",
+    "routes/LAX-DCA.json": "143b2a2950956d54906ba7a1176ccb5c15cb4dea39a140462224b557406d5294",
+    "routes/LGA-LAX.json": "b9c2ba59f420c86613710283e355d9e6f225105931a12e7a72e9ff095c9d2091",
+    "routes/LIT-LGA.json": "d441df26488f777fc228ea6164b543ce9fa206db6593b771d36540d3c80e1384",
+    "routes/MCO-LAS.json": "5a6b135de09afde7e63ab56e7323dd04b1fc1922f09005da8f56e34681a7b23c",
+    "routes/MCO-LAX.json": "3495764212617739c7190cb20c8b91df12972311509e971f6b46adb038be8a65",
+    "routes/SAT-LGA.json": "c073322d6d76fc690575a0cc5dd005fb9579df908c43ec7dcd03e16e00223d21",
+    "routes/SJC-ATL.json": "691899649eb72534f457846227507df0223e43852a58d9666ddfca1781777efe",
+    "routes/SMF-DFW.json": "d84ce7fa21c8195f12a0cceb17172c8b7658481c5e4642b543c890fb0b4d57ea"
   },
   "packages": {
     "airportsdata": "20261123",
@@ -35,11 +35,11 @@
       "ram_gb": 15.4,
       "thread_limit": 4
     },
-    "run_at": "2026-11-26T18:03:22+00:00",
+    "run_at": "2026-11-26T19:37:26+00:00",
     "runtime_exceeded": false,
     "runtime_limit_min": 30.0,
-    "runtime_measured_at": "2026-11-26T18:03:22+00:00",
-    "runtime_min": 24.07
+    "runtime_measured_at": "2026-11-26T19:37:26+00:00",
+    "runtime_min": 24.99
   },
   "sources": [
     {

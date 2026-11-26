@@ -1,5 +1,5 @@
 {
-  "config_sha256": "62a1c9341211b4c7e5eed6bad22ce04e94d9bf9a97709d8415bf885d28f18f60",
+  "config_sha256": "db850b967337b207ec85dbcf14cfcc403f23bf1dbbac7f65f746124eef000705",
   "outputs": {
     "airports.parquet": "acc6052914103af35586f0db1540568206bdf6f93afbde5b8bcde7777340b798",
     "comparable_pairs.parquet": "40094bdeea2fa76e07020fb2afb989a82b3aec1c73216a400e50552e7830cffe",
@@ -16,14 +16,14 @@
     "passengers.parquet": "f90cf37047dd411e52ade6aba29af7b041840992350eab9299326e3be6618893",
     "quality.json": "62d6d36449e9834ff8d497e957129e598522365103d4d2d4c916cfe1575369be",
     "sensitivity_scenarios.parquet": "0ea7d52a79f7633adfdf3ea48caaa2dbdb8041e31f209b080c324377499feb9d",
-    "showcase_comparisons.parquet": "c43d5da99780cf4b6ff3d37ffeabb602d441aec45f1614da118a14d237a16f90",
+    "showcase_comparisons.parquet": "26dde6280e6d02f5392285575c4c0f458c3b723be292471c97fec995bb6feacf",
     "showcase_routes.parquet": "431ed767a928754d2e9a496d5513ed8182d913b161ceb2f54ed29b3a5d960ba3",
     "slots.parquet": "ed3b3a58aed3d5f6044ab037dcb5a4a874c32231b1fe5d2a3b3aaedc478559ea",
     "slots_changes.parquet": "7636be4c4fdcf049306bf159698545e58685e98d775adfbcc2308ddc926a95ef",
     "slots_days.parquet": "c4470006d210cf90aae2786f706e2772611f7b65184e59e169301d86e5b88f16",
     "sold_routings.parquet": "8621225cfc3101935f2ab915fa5d1cc6a87d1e07e9fa81edd5278be0dccbcbab",
-    "summary.json": "35711e94bac81c6ac35f65886d6f26ce39f9ceef11994381dc0bc88c2e9859ee",
-    "summary.md": "1a478fd8ba64eb79af29fee5f14577f6aa8f272b5bade4aa5f664ebc5705213b"
+    "summary.json": "0a373e3b309575a354a3bf7e2288b06d69a754d2e3af93bf9fbb46fac8fd43e0",
+    "summary.md": "5fefaff86b47d7c37705ed22e076b5d5151fecbb39a331b5fd8474674e9e5768"
   },
   "packages": {
     "airportsdata": "20261123",
@@ -41,11 +41,11 @@
       "ram_gb": 15.4,
       "thread_limit": 4
     },
-    "run_at": "2026-11-26T18:03:21+00:00",
+    "run_at": "2026-11-26T19:37:26+00:00",
     "runtime_exceeded": false,
     "runtime_limit_min": 30.0,
-    "runtime_measured_at": "2026-11-26T18:03:21+00:00",
-    "runtime_min": 24.07
+    "runtime_measured_at": "2026-11-26T19:37:26+00:00",
+    "runtime_min": 24.99
   },
   "sources": [
     {
