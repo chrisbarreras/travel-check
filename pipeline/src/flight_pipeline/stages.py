@@ -26,7 +26,7 @@ from flight_pipeline.compare import (
     shared_days,
     tight_itineraries,
 )
-from flight_pipeline.config import Config
+from flight_pipeline.config import Config, load_disruption_notes
 from flight_pipeline.curation import CandidateComparison, RouteCandidate, curate
 from flight_pipeline.hubs import (
     assign_roles,
@@ -96,6 +96,8 @@ from flight_pipeline.sensitivity import (
     scenarios,
     settings_compared,
 )
+from flight_pipeline.showcase import assemble
+from flight_pipeline.showcase.publish import render, validation_context, write_files
 from flight_pipeline.slots import build_slots
 from flight_pipeline.storage import (
     models_to_table,
@@ -558,6 +560,81 @@ def stage_curate(con: duckdb.DuckDBPyConnection, cfg: Config) -> str:
         f"curated {len(result.routes)} routes and {len(result.comparisons)} showcase "
         f"comparisons ({result.cross_hub_share:.0%} cross-hub); landing "
         f"{result.landing_comparison_id or 'none'}; {len(result.shortfalls)} shortfall(s)"
+    )
+
+
+# --- Publish -----------------------------------------------------------------------------
+
+
+def stage_publish(con: duckdb.DuckDBPyConnection, cfg: Config, config_path: Path) -> str:
+    """Write the validated, size-budgeted showcase JSON (specs/002 contracts/outputs.md)."""
+    routes = read_models(con, derived(cfg, "showcase_routes.parquet"), CuratedRouteRow)
+    comps = read_models(con, derived(cfg, "showcase_comparisons.parquet"), CuratedComparisonRow)
+    meta = read_json(derived(cfg, "curation.json"), CurationMeta)
+    itineraries = read_models(con, derived(cfg, "itineraries.parquet"), Itinerary)
+    results = read_models(con, derived(cfg, "itinerary_results.parquet"), ItineraryResult)
+    pairs = read_models(con, derived(cfg, "comparable_pairs.parquet"), ComparablePair)
+    scenario_rows = read_models(
+        con, derived(cfg, "sensitivity_scenarios.parquet"), SensitivityScenario
+    )
+    nonstop = read_models(con, derived(cfg, "nonstop.parquet"), NonstopMedian)
+    hubs = read_json(derived(cfg, "hub_selection.json"), HubSelectionMeta)["selected"]
+    for name in ("flights", "sold_routings", "slots", "slots_days"):
+        path = derived(cfg, f"{name}.parquet").as_posix().replace("'", "''")
+        con.execute(f"CREATE OR REPLACE VIEW {name} AS SELECT * FROM read_parquet('{path}')")
+
+    default_id = scenario_id(*_defaults(cfg))
+    shown_routes = {r.route_id for r in routes}
+    shown = {i.itinerary_id: i for i in itineraries if f"{i.origin}-{i.dest}" in shown_routes}
+    rates_by_scenario: dict[str, dict[str, float | None]] = {}
+    for r in results:
+        rates_by_scenario.setdefault(r.scenario_id, {})[r.itinerary_id] = r.feasibility_rate
+    mcts = sorted({s.min_connection_min for s in scenario_rows})
+    cutoffs = sorted({s.boarding_cutoff_min for s in scenario_rows})
+    compared = [(c.itinerary_a, c.itinerary_b) for c in comps]
+    missing = {
+        k: describe_missing_settings(v, mcts, cutoffs)
+        for k, v in missing_settings(compared, rates_by_scenario, scenario_rows).items()
+    }
+    inputs = assemble.Inputs(
+        routes=routes,
+        comparisons=comps,
+        landing_comparison_id=meta["landing_comparison_id"],
+        landing_reason=meta["landing_reason"],
+        itineraries=shown,
+        results={
+            r.itinerary_id: r
+            for r in results
+            if r.scenario_id == default_id and r.itinerary_id in shown
+        },
+        pairs={(p.itinerary_a, p.itinerary_b): p for p in pairs},
+        missing_settings=missing,
+        nonstop={(n.origin, n.dest): n for n in nonstop},
+        arrival_local_min=assemble.arrival_minutes(con, "slots_days", "flights"),
+        flight_numbers=assemble.flight_number_shares(con, "slots"),
+        hubs=hubs,
+        sold_same_airline=assemble.sold_same_airline(con, "sold_routings", hubs),
+        tight=frozenset(
+            tight_itineraries(
+                list(shown.values()), cfg.itineraries, cfg.feasibility.boarding_cutoff_min
+            )
+        ),
+        notes=load_disruption_notes(cfg.path(cfg.notes.disruption_file), cfg.period.dates()),
+    )
+    route_files = assemble.route_files(inputs, cfg)
+    index = assemble.index_of(route_files, inputs, cfg, _sha256(config_path))
+    files = render(index, route_files, validation_context(cfg))
+    sizes = write_files(
+        cfg.path(cfg.showcase.output_dir),
+        files,
+        cfg.showcase.size_budget_kb,
+        cfg.showcase.landing_budget_kb,
+    )
+    total = sum(sizes.values()) / 1024
+    first = (sizes["index.json"] + sizes["landing.json"]) / 1024
+    return (
+        f"published {len(route_files)} route files and {len(shown)} itineraries; "
+        f"{total:.1f} KB gzip in all, {first:.1f} KB for index and landing"
     )
 
 

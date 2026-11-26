@@ -54,6 +54,7 @@ def make_config(root: Path, raw: Path) -> Path:
     )
     path = root / "config" / "phase1.toml"
     path.parent.mkdir(parents=True, exist_ok=True)
+    shutil.copy(REPO / "config" / "disruption_notes.toml", path.parent)
     path.write_text(text, encoding="utf-8")
     return path
 
@@ -73,7 +74,7 @@ def run_root(tmp_path: Path, synthetic_raw: Path) -> tuple[Path, Path]:
     return tmp_path, make_config(tmp_path, raw)
 
 
-STAGES = ["prepare", "select-hubs", "build", "analyze", "curate", "report"]
+STAGES = ["prepare", "select-hubs", "build", "analyze", "curate", "publish", "report"]
 
 
 @pytest.fixture(scope="session")

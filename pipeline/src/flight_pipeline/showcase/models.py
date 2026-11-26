@@ -44,7 +44,10 @@ _RATE_TOLERANCE = 1e-6
 
 
 class _Model(BaseModel):
-    model_config = ConfigDict(extra="forbid", frozen=True)
+    # published JSON always carries every field, so the schema marks defaulted ones required
+    model_config = ConfigDict(
+        extra="forbid", frozen=True, json_schema_serialization_defaults_required=True
+    )
 
 
 def _ctx(info: ValidationInfo, key: str) -> Any:

@@ -138,6 +138,39 @@ def test_curation_follows_design(finished: Path) -> None:
     assert landing[0][1] is True
 
 
+def test_published_showcase_follows_contract(finished: Path) -> None:
+    # every file validates, the landing file stands alone, budgets hold (contracts/outputs.md)
+    from flight_pipeline.showcase.models import RouteFile, ShowcaseIndex
+    from flight_pipeline.showcase.publish import wording_violations
+
+    out = finished / "site-data" / "showcase"
+    ctx = {"min_sample": 30, "faster_margin": 0.02, "faster_min_saving_min": 15}
+    idx = ShowcaseIndex.model_validate_json((out / "index.json").read_bytes(), context=ctx)
+    assert idx.routes
+    for summary in idx.routes:
+        data = (out / summary.file).read_bytes()
+        route = RouteFile.model_validate_json(data, context=ctx)
+        assert route.route_id == summary.route_id
+        assert len(route.itineraries) <= 12
+        assert data.endswith(b"\n")
+        assert b"\r" not in data
+        assert wording_violations(json.loads(data)) == []
+    landing = RouteFile.model_validate_json((out / "landing.json").read_bytes(), context=ctx)
+    assert [c.comparison_id for c in landing.comparisons] == [idx.landing.comparison_id]
+    assert {c.landing for c in landing.comparisons} == {True}
+    assert sorted(n.kind for n in idx.coverage.not_covered) == sorted(
+        [
+            "international",
+            "two_or_more_stops",
+            "separate_tickets",
+            "non_reporting_airline",
+            "outside_period",
+            "not_in_showcase",
+        ]
+    )
+    assert "WN" in {a.airline for a in idx.coverage.airlines if a.itineraries > 0}
+
+
 def test_manifest_records_sources_packages_and_hashes(finished: Path) -> None:
     manifest = json.loads((finished / "reports" / "manifest.json").read_text())
     assert len(manifest["config_sha256"]) == 64

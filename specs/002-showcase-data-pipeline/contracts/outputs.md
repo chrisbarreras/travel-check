@@ -7,7 +7,7 @@ What the Phase 1 explorer reads. Shapes are defined once in `flight_pipeline.sho
 | Path | Shape | Loaded |
 |---|---|---|
 | `site-data/showcase/index.json` | ShowcaseIndex | First, always |
-| `site-data/showcase/landing.json` | RouteFile, restricted to the landing comparison's two itineraries | First view, alone |
+| `site-data/showcase/landing.json` | RouteFile, restricted to the landing comparison, its two itineraries and any itinerary their insights refer to | First view, alone |
 | `site-data/showcase/routes/{ORIGIN}-{DEST}.json` | RouteFile | When a route is opened |
 | `site-data/showcase/manifest.json` | ShowcaseManifest | Not by the explorer; for `verify` and provenance |
 | `shared/schemas/showcase.schema.json` | JSON Schema of every published shape | Build time |
@@ -23,4 +23,5 @@ What the Phase 1 explorer reads. Shapes are defined once in `flight_pipeline.sho
 - **Honest values:** every rate is a `Rate` with status, sample and period; `insufficient_data` carries no rate (FR-013). Field names and texts use historical wording; no field is named or described as a probability or chance (FR-014).
 - **Explicit absence:** empty `faster_alternatives`, `connecting_options` without a `better` entry, and an empty `changes` list all mean "none applies"; the explorer shows that, not an empty space (SC-005).
 - **Coverage:** `index.json` carries `coverage` (FR-015a).
+- **Route files:** each route file holds every itinerary in its showcase comparisons, then the route's other itineraries by sold passengers, up to `[showcase] itineraries_per_route_max`.
 - **Versioning:** `schema_version` follows semantic versioning; a breaking shape change bumps the major version.

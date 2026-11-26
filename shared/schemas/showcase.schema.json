@@ -1,0 +1,1193 @@
+{
+  "$defs": {
+    "AirlineCoverage": {
+      "additionalProperties": false,
+      "properties": {
+        "airline": {
+          "maxLength": 3,
+          "minLength": 2,
+          "type": "string"
+        },
+        "itineraries": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "note": {
+          "default": "",
+          "type": "string"
+        },
+        "sold_passengers": {
+          "minimum": 0,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "airline",
+        "itineraries",
+        "sold_passengers",
+        "note"
+      ],
+      "title": "AirlineCoverage",
+      "type": "object"
+    },
+    "Alternative": {
+      "additionalProperties": false,
+      "description": "A faster comparable itinerary whose feasibility is shown, by the paired interval, to\nbe no more than the margin worse (research R8).",
+      "properties": {
+        "ci_high": {
+          "type": "number"
+        },
+        "ci_low": {
+          "type": "number"
+        },
+        "itinerary_id": {
+          "type": "string"
+        },
+        "minutes_saved": {
+          "minimum": 1,
+          "type": "integer"
+        },
+        "rate_other": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "type": "number"
+        },
+        "rate_this": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "type": "number"
+        },
+        "shared_days": {
+          "minimum": 0,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "itinerary_id",
+        "minutes_saved",
+        "rate_this",
+        "rate_other",
+        "ci_low",
+        "ci_high",
+        "shared_days"
+      ],
+      "title": "Alternative",
+      "type": "object"
+    },
+    "Assumptions": {
+      "additionalProperties": false,
+      "properties": {
+        "boarding_cutoff_min": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "buffer_share": {
+          "exclusiveMaximum": 1.0,
+          "exclusiveMinimum": 0.5,
+          "type": "number"
+        },
+        "faster_margin": {
+          "maximum": 0.2,
+          "minimum": 0.0,
+          "type": "number"
+        },
+        "faster_min_saving_min": {
+          "minimum": 1,
+          "type": "integer"
+        },
+        "min_connection_default_min": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "min_connection_partner_min": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "min_sample_days": {
+          "minimum": 1,
+          "type": "integer"
+        },
+        "monthly_min_sample": {
+          "minimum": 1,
+          "type": "integer"
+        },
+        "recurrence_threshold": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "type": "number"
+        }
+      },
+      "required": [
+        "min_connection_default_min",
+        "min_connection_partner_min",
+        "boarding_cutoff_min",
+        "recurrence_threshold",
+        "min_sample_days",
+        "monthly_min_sample",
+        "buffer_share",
+        "faster_margin",
+        "faster_min_saving_min"
+      ],
+      "title": "Assumptions",
+      "type": "object"
+    },
+    "Attribution": {
+      "additionalProperties": false,
+      "properties": {
+        "licence": {
+          "type": "string"
+        },
+        "source": {
+          "type": "string"
+        },
+        "text": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "source",
+        "text",
+        "licence",
+        "url"
+      ],
+      "title": "Attribution",
+      "type": "object"
+    },
+    "Buffer": {
+      "additionalProperties": false,
+      "properties": {
+        "actual_layover_min": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "needed_layover_min": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "operated_days": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "share": {
+          "exclusiveMaximum": 1.0,
+          "exclusiveMinimum": 0.5,
+          "type": "number"
+        }
+      },
+      "required": [
+        "share",
+        "needed_layover_min",
+        "actual_layover_min",
+        "operated_days"
+      ],
+      "title": "Buffer",
+      "type": "object"
+    },
+    "ConnectingOption": {
+      "additionalProperties": false,
+      "properties": {
+        "better": {
+          "type": "boolean"
+        },
+        "ci_high": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "ci_low": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "itinerary_id": {
+          "type": "string"
+        },
+        "outbound_dep_local_min": {
+          "maximum": 1439,
+          "minimum": 0,
+          "type": "integer"
+        },
+        "rate": {
+          "$ref": "#/$defs/Rate"
+        }
+      },
+      "required": [
+        "itinerary_id",
+        "outbound_dep_local_min",
+        "rate",
+        "better",
+        "ci_low",
+        "ci_high"
+      ],
+      "title": "ConnectingOption",
+      "type": "object"
+    },
+    "Coverage": {
+      "additionalProperties": false,
+      "properties": {
+        "airlines": {
+          "items": {
+            "$ref": "#/$defs/AirlineCoverage"
+          },
+          "type": "array"
+        },
+        "hubs": {
+          "items": {
+            "pattern": "^[A-Z0-9]{3}$",
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "not_covered": {
+          "items": {
+            "$ref": "#/$defs/NotCovered"
+          },
+          "type": "array"
+        },
+        "period": {
+          "$ref": "#/$defs/DataPeriod"
+        },
+        "routes": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "routes",
+        "hubs",
+        "airlines",
+        "period",
+        "not_covered"
+      ],
+      "title": "Coverage",
+      "type": "object"
+    },
+    "DailySeries": {
+      "additionalProperties": false,
+      "description": "One entry per paired day: offset from the period start, actual slack in whole minutes\n(null for cancelled or diverted days) and an outcome code (F feasible, T too little time,\nC cancelled, D diverted), compact for the transfer-time slider (ADR-0006).",
+      "properties": {
+        "day_offset": {
+          "items": {
+            "minimum": 0,
+            "type": "integer"
+          },
+          "type": "array"
+        },
+        "outcome": {
+          "type": "string"
+        },
+        "slack_min": {
+          "items": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "day_offset",
+        "slack_min",
+        "outcome"
+      ],
+      "title": "DailySeries",
+      "type": "object"
+    },
+    "DataPeriod": {
+      "additionalProperties": false,
+      "properties": {
+        "db1b_quarters": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "end": {
+          "format": "date",
+          "type": "string"
+        },
+        "start": {
+          "format": "date",
+          "type": "string"
+        }
+      },
+      "required": [
+        "start",
+        "end",
+        "db1b_quarters"
+      ],
+      "title": "DataPeriod",
+      "type": "object"
+    },
+    "Definition": {
+      "additionalProperties": false,
+      "properties": {
+        "key": {
+          "type": "string"
+        },
+        "methodology_anchor": {
+          "type": "string"
+        },
+        "text": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "key",
+        "text",
+        "methodology_anchor"
+      ],
+      "title": "Definition",
+      "type": "object"
+    },
+    "DisruptionNote": {
+      "additionalProperties": false,
+      "description": "A known event shown beside measured values; never used in a calculation.",
+      "properties": {
+        "airlines": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "airports": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "end": {
+          "format": "date",
+          "type": "string"
+        },
+        "note_id": {
+          "type": "string"
+        },
+        "source_url": {
+          "type": "string"
+        },
+        "start": {
+          "format": "date",
+          "type": "string"
+        },
+        "text": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "note_id",
+        "start",
+        "end",
+        "airlines",
+        "airports",
+        "text",
+        "source_url"
+      ],
+      "title": "DisruptionNote",
+      "type": "object"
+    },
+    "ExcludedDays": {
+      "additionalProperties": false,
+      "properties": {
+        "end_of_period": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "not_connecting": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "quality": {
+          "minimum": 0,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "not_connecting",
+        "quality",
+        "end_of_period"
+      ],
+      "title": "ExcludedDays",
+      "type": "object"
+    },
+    "FailureBreakdown": {
+      "additionalProperties": false,
+      "properties": {
+        "cancelled": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "diverted": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "dominant": {
+          "enum": [
+            "too_little_time",
+            "cancelled",
+            "diverted",
+            "none"
+          ],
+          "type": "string"
+        },
+        "too_little_time": {
+          "minimum": 0,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "too_little_time",
+        "cancelled",
+        "diverted",
+        "dominant"
+      ],
+      "title": "FailureBreakdown",
+      "type": "object"
+    },
+    "FindLeg": {
+      "additionalProperties": false,
+      "properties": {
+        "flight_number": {
+          "type": "string"
+        },
+        "share_of_days": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "type": "number"
+        }
+      },
+      "required": [
+        "flight_number",
+        "share_of_days"
+      ],
+      "title": "FindLeg",
+      "type": "object"
+    },
+    "FindParams": {
+      "additionalProperties": false,
+      "properties": {
+        "airlines": {
+          "items": {
+            "maxLength": 3,
+            "minLength": 2,
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "dest": {
+          "pattern": "^[A-Z0-9]{3}$",
+          "type": "string"
+        },
+        "legs": {
+          "items": {
+            "$ref": "#/$defs/FindLeg"
+          },
+          "type": "array"
+        },
+        "origin": {
+          "pattern": "^[A-Z0-9]{3}$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "origin",
+        "dest",
+        "airlines",
+        "legs"
+      ],
+      "title": "FindParams",
+      "type": "object"
+    },
+    "LandingRef": {
+      "additionalProperties": false,
+      "properties": {
+        "comparison_id": {
+          "type": "string"
+        },
+        "reason": {
+          "type": "string"
+        },
+        "route_id": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "route_id",
+        "comparison_id",
+        "reason"
+      ],
+      "title": "LandingRef",
+      "type": "object"
+    },
+    "ManifestRef": {
+      "additionalProperties": false,
+      "properties": {
+        "code_version": {
+          "type": "string"
+        },
+        "config_sha256": {
+          "type": "string"
+        },
+        "generated": {
+          "format": "date",
+          "type": "string"
+        }
+      },
+      "required": [
+        "code_version",
+        "config_sha256",
+        "generated"
+      ],
+      "title": "ManifestRef",
+      "type": "object"
+    },
+    "MonthRate": {
+      "additionalProperties": false,
+      "properties": {
+        "month": {
+          "type": "string"
+        },
+        "note_ids": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "paired_days": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "rate": {
+          "anyOf": [
+            {
+              "maximum": 1.0,
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "status": {
+          "enum": [
+            "ok",
+            "insufficient_data",
+            "no_flights"
+          ],
+          "type": "string"
+        }
+      },
+      "required": [
+        "month",
+        "status",
+        "rate",
+        "paired_days",
+        "note_ids"
+      ],
+      "title": "MonthRate",
+      "type": "object"
+    },
+    "NotCovered": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "enum": [
+            "international",
+            "two_or_more_stops",
+            "separate_tickets",
+            "non_reporting_airline",
+            "outside_period",
+            "not_in_showcase"
+          ],
+          "type": "string"
+        },
+        "text": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "text"
+      ],
+      "title": "NotCovered",
+      "type": "object"
+    },
+    "Rate": {
+      "additionalProperties": false,
+      "description": "Connection feasibility with its sample. The data period is the file's ``period``.",
+      "properties": {
+        "count_feasible": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "definition": {
+          "const": "connection_feasibility",
+          "type": "string"
+        },
+        "paired_days": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "rate": {
+          "anyOf": [
+            {
+              "maximum": 1.0,
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "status": {
+          "enum": [
+            "ok",
+            "insufficient_data"
+          ],
+          "type": "string"
+        }
+      },
+      "required": [
+        "status",
+        "rate",
+        "paired_days",
+        "count_feasible",
+        "definition"
+      ],
+      "title": "Rate",
+      "type": "object"
+    },
+    "RouteFile": {
+      "additionalProperties": false,
+      "properties": {
+        "comparisons": {
+          "items": {
+            "$ref": "#/$defs/ShowcaseComparison"
+          },
+          "type": "array"
+        },
+        "disruption_notes": {
+          "items": {
+            "$ref": "#/$defs/DisruptionNote"
+          },
+          "type": "array"
+        },
+        "itineraries": {
+          "items": {
+            "$ref": "#/$defs/ShowcaseItinerary"
+          },
+          "type": "array"
+        },
+        "period": {
+          "$ref": "#/$defs/DataPeriod"
+        },
+        "route_id": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "route_id",
+        "period",
+        "itineraries",
+        "comparisons",
+        "disruption_notes"
+      ],
+      "title": "RouteFile",
+      "type": "object"
+    },
+    "RouteSummary": {
+      "additionalProperties": false,
+      "properties": {
+        "comparison_count": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "dest": {
+          "pattern": "^[A-Z0-9]{3}$",
+          "type": "string"
+        },
+        "file": {
+          "type": "string"
+        },
+        "itinerary_count": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "nonstop_median_min": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "origin": {
+          "pattern": "^[A-Z0-9]{3}$",
+          "type": "string"
+        },
+        "regional_origin": {
+          "type": "boolean"
+        },
+        "route_id": {
+          "type": "string"
+        },
+        "share_of_showcase": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "type": "number"
+        }
+      },
+      "required": [
+        "route_id",
+        "origin",
+        "dest",
+        "regional_origin",
+        "itinerary_count",
+        "comparison_count",
+        "share_of_showcase",
+        "nonstop_median_min",
+        "file"
+      ],
+      "title": "RouteSummary",
+      "type": "object"
+    },
+    "Schedule": {
+      "additionalProperties": false,
+      "properties": {
+        "arr_local_min": {
+          "maximum": 1439,
+          "minimum": 0,
+          "type": "integer"
+        },
+        "dep_local_min": {
+          "maximum": 1439,
+          "minimum": 0,
+          "type": "integer"
+        },
+        "layover_min": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "nonstop_median_min": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "nonstop_ratio": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "travel_min": {
+          "minimum": 1,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "dep_local_min",
+        "arr_local_min",
+        "layover_min",
+        "travel_min",
+        "nonstop_median_min",
+        "nonstop_ratio"
+      ],
+      "title": "Schedule",
+      "type": "object"
+    },
+    "ScheduleChange": {
+      "additionalProperties": false,
+      "properties": {
+        "date": {
+          "format": "date",
+          "type": "string"
+        },
+        "from_local_min": {
+          "maximum": 1439,
+          "minimum": 0,
+          "type": "integer"
+        },
+        "leg": {
+          "enum": [
+            "inbound",
+            "outbound"
+          ],
+          "type": "string"
+        },
+        "to_local_min": {
+          "maximum": 1439,
+          "minimum": 0,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "date",
+        "leg",
+        "from_local_min",
+        "to_local_min"
+      ],
+      "title": "ScheduleChange",
+      "type": "object"
+    },
+    "ScheduleWarnings": {
+      "additionalProperties": false,
+      "properties": {
+        "changes": {
+          "items": {
+            "$ref": "#/$defs/ScheduleChange"
+          },
+          "type": "array"
+        },
+        "connect_share": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "type": "number"
+        }
+      },
+      "required": [
+        "connect_share",
+        "changes"
+      ],
+      "title": "ScheduleWarnings",
+      "type": "object"
+    },
+    "ShowcaseComparison": {
+      "additionalProperties": false,
+      "properties": {
+        "ci_high": {
+          "type": "number"
+        },
+        "ci_low": {
+          "type": "number"
+        },
+        "comparison_id": {
+          "type": "string"
+        },
+        "cross_hub": {
+          "type": "boolean"
+        },
+        "difference": {
+          "type": "number"
+        },
+        "itinerary_a": {
+          "type": "string"
+        },
+        "itinerary_b": {
+          "type": "string"
+        },
+        "landing": {
+          "type": "boolean"
+        },
+        "missing_settings_note": {
+          "type": "string"
+        },
+        "settings_compared": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "shared_days": {
+          "minimum": 0,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "comparison_id",
+        "itinerary_a",
+        "itinerary_b",
+        "difference",
+        "ci_low",
+        "ci_high",
+        "shared_days",
+        "settings_compared",
+        "missing_settings_note",
+        "cross_hub",
+        "landing"
+      ],
+      "title": "ShowcaseComparison",
+      "type": "object"
+    },
+    "ShowcaseIndex": {
+      "additionalProperties": false,
+      "properties": {
+        "assumptions": {
+          "$ref": "#/$defs/Assumptions"
+        },
+        "attribution": {
+          "items": {
+            "$ref": "#/$defs/Attribution"
+          },
+          "type": "array"
+        },
+        "coverage": {
+          "$ref": "#/$defs/Coverage"
+        },
+        "definitions": {
+          "items": {
+            "$ref": "#/$defs/Definition"
+          },
+          "type": "array"
+        },
+        "landing": {
+          "$ref": "#/$defs/LandingRef"
+        },
+        "manifest": {
+          "$ref": "#/$defs/ManifestRef"
+        },
+        "period": {
+          "$ref": "#/$defs/DataPeriod"
+        },
+        "routes": {
+          "items": {
+            "$ref": "#/$defs/RouteSummary"
+          },
+          "type": "array"
+        },
+        "schema_version": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "schema_version",
+        "period",
+        "assumptions",
+        "coverage",
+        "routes",
+        "landing",
+        "definitions",
+        "attribution",
+        "manifest"
+      ],
+      "title": "ShowcaseIndex",
+      "type": "object"
+    },
+    "ShowcaseItinerary": {
+      "additionalProperties": false,
+      "properties": {
+        "airline": {
+          "maxLength": 3,
+          "minLength": 2,
+          "type": "string"
+        },
+        "airline_out": {
+          "maxLength": 3,
+          "minLength": 2,
+          "type": "string"
+        },
+        "buffer": {
+          "$ref": "#/$defs/Buffer"
+        },
+        "connecting_options": {
+          "items": {
+            "$ref": "#/$defs/ConnectingOption"
+          },
+          "type": "array"
+        },
+        "daily": {
+          "$ref": "#/$defs/DailySeries"
+        },
+        "excluded_days": {
+          "$ref": "#/$defs/ExcludedDays"
+        },
+        "failures": {
+          "$ref": "#/$defs/FailureBreakdown"
+        },
+        "faster_alternatives": {
+          "items": {
+            "$ref": "#/$defs/Alternative"
+          },
+          "type": "array"
+        },
+        "find": {
+          "$ref": "#/$defs/FindParams"
+        },
+        "hub": {
+          "pattern": "^[A-Z0-9]{3}$",
+          "type": "string"
+        },
+        "itinerary_id": {
+          "type": "string"
+        },
+        "monthly": {
+          "items": {
+            "$ref": "#/$defs/MonthRate"
+          },
+          "type": "array"
+        },
+        "partner_connection": {
+          "type": "boolean"
+        },
+        "result": {
+          "$ref": "#/$defs/Rate"
+        },
+        "schedule": {
+          "$ref": "#/$defs/Schedule"
+        },
+        "schedule_warnings": {
+          "$ref": "#/$defs/ScheduleWarnings"
+        },
+        "sold": {
+          "$ref": "#/$defs/SoldRouting"
+        },
+        "tight_layover": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "itinerary_id",
+        "hub",
+        "airline",
+        "airline_out",
+        "partner_connection",
+        "schedule",
+        "result",
+        "failures",
+        "daily",
+        "excluded_days",
+        "monthly",
+        "buffer",
+        "faster_alternatives",
+        "connecting_options",
+        "schedule_warnings",
+        "find",
+        "tight_layover",
+        "sold"
+      ],
+      "title": "ShowcaseItinerary",
+      "type": "object"
+    },
+    "ShowcaseManifest": {
+      "additionalProperties": false,
+      "properties": {
+        "code_version": {
+          "type": "string"
+        },
+        "config_sha256": {
+          "type": "string"
+        },
+        "git_commit": {
+          "type": "string"
+        },
+        "notes_sha256": {
+          "type": "string"
+        },
+        "outputs": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "type": "object"
+        },
+        "packages": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "type": "object"
+        },
+        "run": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "sources": {
+          "items": {
+            "$ref": "#/$defs/SourceRecord"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "sources",
+        "config_sha256",
+        "notes_sha256",
+        "code_version",
+        "git_commit",
+        "packages",
+        "outputs",
+        "run"
+      ],
+      "title": "ShowcaseManifest",
+      "type": "object"
+    },
+    "SoldRouting": {
+      "additionalProperties": false,
+      "properties": {
+        "passengers": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "routing_itineraries": {
+          "minimum": 1,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "passengers",
+        "routing_itineraries"
+      ],
+      "title": "SoldRouting",
+      "type": "object"
+    },
+    "SourceRecord": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "pinned": {
+          "type": "boolean"
+        },
+        "sha256": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "sha256",
+        "pinned"
+      ],
+      "title": "SourceRecord",
+      "type": "object"
+    }
+  },
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "Published showcase files (specs/002-showcase-data-pipeline contracts/outputs.md). Generated from flight_pipeline.showcase.models; do not edit.",
+  "title": "Showcase"
+}

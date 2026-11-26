@@ -52,7 +52,7 @@ Decisions for the open technical questions in [plan.md](plan.md). Each has the d
 
 ## R6. Shape definitions and generated types
 
-- **Decision:** Pydantic models in a new `flight_pipeline.showcase` package are the single definition (ADR-0007). A `schemas` command writes their JSON Schema to `shared/schemas/showcase.schema.json`. TypeScript types are generated from that schema with `json-schema-to-typescript` (exact version pinned, run through `npx`), into `shared/types/showcase.ts`. Both are committed. CI regenerates them and fails on any difference.
+- **Decision:** Pydantic models in a new `flight_pipeline.showcase` package are the single definition (ADR-0007). A `schemas` command writes their JSON Schema to `shared/schemas/showcase.schema.json`. TypeScript types are generated from that schema with `json-schema-to-typescript` (exact version pinned, 15.0.4, run through `npx`; the schema is the serialization schema without field titles, so every field is required and types are inline), into `shared/types/showcase.ts`. Both are committed. CI regenerates them and fails on any difference.
 - **Rationale:** ADR-0007 specifies JSON Schema in Phase 1. `json-schema-to-typescript` is the standard, maintained generator. A `shared/` directory sits outside both the pipeline and the future web app, so neither owns the contract.
 - **Alternatives:** `pydantic-to-typescript` (wraps the same Node tool); hand-written types (forbidden by the constitution).
 

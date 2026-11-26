@@ -18,7 +18,7 @@ from pathlib import Path
 import httpx
 from pydantic import ValidationError
 
-from flight_pipeline import __version__
+from flight_pipeline import __version__, schemas
 from flight_pipeline.config import Config, ConfigError, load_config
 from flight_pipeline.models import (
     FlightRecord,
@@ -36,10 +36,12 @@ from flight_pipeline.providers.bts_db1b import BtsDb1bProvider, quarter_key
 from flight_pipeline.providers.bts_ontime import BtsOnTimeProvider, month_key
 from flight_pipeline.providers.bts_t100 import BtsT100Provider, load_passengers
 from flight_pipeline.providers.timezones import AirportsDataTimezones, MissingTimezoneError
+from flight_pipeline.showcase.publish import PublishError
 from flight_pipeline.stages import (
     stage_analyze,
     stage_build,
     stage_curate,
+    stage_publish,
     stage_report,
     stage_select_hubs,
 )
@@ -206,6 +208,7 @@ def cmd_run(cfg: Config, config_path: Path, client: httpx.Client | None, *, acqu
         ("curate", stage_curate),
     ):
         progress(f"{name}: {stage(connect(), cfg)}")
+    progress(f"publish: {stage_publish(connect(), cfg, config_path)}")
     runtime_min = (time.perf_counter() - started) / 60
     summary = stage_report(connect(), cfg, config_path, runtime_min)
     if runtime_min > cfg.runtime.limit_min:
@@ -257,6 +260,21 @@ def cmd_verify(cfg: Config, config_path: Path) -> str:
     return f"identical: {len(new)} outputs match the committed manifest"
 
 
+def cmd_schemas(cfg: Config, *, check: bool) -> str:
+    """Write, or with ``check`` compare, the JSON Schema and generated TypeScript types
+    (specs/002 research R6). A difference under ``check`` exits 1."""
+    files = schemas.generate(schemas.npx_generator)
+    if check:
+        diffs = schemas.differences(cfg.repo_root, files)
+        if diffs:
+            raise StageError(
+                "; ".join(diffs) + "; run `flight-pipeline schemas` and commit the result"
+            )
+        return f"schemas up to date: {', '.join(sorted(files))}"
+    schemas.write(cfg.repo_root, files)
+    return f"wrote {', '.join(sorted(files))}"
+
+
 def _client(client: httpx.Client | None) -> httpx.Client:
     return client or httpx.Client(headers={"User-Agent": USER_AGENT})
 
@@ -275,6 +293,8 @@ def _parser() -> argparse.ArgumentParser:
         ("build", "build itineraries and select origin/destination pairs", False),
         ("analyze", "daily outcomes, all scenarios, comparable pairs, showcases", False),
         ("curate", "select showcase routes, balanced comparisons and the landing example", False),
+        ("publish", "write the validated showcase JSON within the size budgets", False),
+        ("schemas", "write the JSON Schema and generated TypeScript types", False),
         ("report", "write summary.json, summary.md and manifest.json", False),
         ("run", "run every stage in order", False),
         ("verify", "rerun and compare with the committed reports (SC-001)", False),
@@ -288,6 +308,12 @@ def _parser() -> argparse.ArgumentParser:
                 action="append",
                 metavar="YYYY-MM",
                 help="limit on-time data to these months (repeatable; default: whole period)",
+            )
+        if name == "schemas":
+            p.add_argument(
+                "--check",
+                action="store_true",
+                help="compare with the committed files and exit 1 on any difference",
             )
         if name == "run":
             p.add_argument(
@@ -310,6 +336,8 @@ def main(argv: Sequence[str] | None = None, *, client: httpx.Client | None = Non
             "build": lambda: stage_build(connect(), cfg),
             "analyze": lambda: stage_analyze(connect(), cfg),
             "curate": lambda: stage_curate(connect(), cfg),
+            "publish": lambda: stage_publish(connect(), cfg, args.config),
+            "schemas": lambda: cmd_schemas(cfg, check=args.check),
             "report": lambda: stage_report(connect(), cfg, args.config),
             "run": lambda: cmd_run(cfg, args.config, client, acquire=not args.no_acquire),
             "verify": lambda: cmd_verify(cfg, args.config),
@@ -321,6 +349,8 @@ def main(argv: Sequence[str] | None = None, *, client: httpx.Client | None = Non
     except (
         ConfigError,
         StageError,
+        PublishError,
+        schemas.SchemaError,
         HeaderError,
         MissingTimezoneError,
         QualityError,
