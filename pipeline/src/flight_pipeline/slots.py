@@ -150,35 +150,73 @@ def _split_by_rank(records: list[SlotRecord]) -> list[GroupSlot]:
     return [GroupSlot(sorted(s)) for s in subs if s]
 
 
-def _join(slots: list[GroupSlot]) -> list[GroupSlot]:
-    """Join consecutive sub-slots that share a flight number across the boundary."""
-    pending = sorted(
-        slots, key=lambda s: (s.first.date, s.ref_dep_local_min, s.first.flight_number)
-    )
-    out: list[GroupSlot] = []
-    while pending:
-        a = pending.pop(0)
-        while True:
-            last = a.last
-            candidates = [
-                b
-                for b in pending
-                if last.date < b.first.date <= last.date + dt.timedelta(days=JOIN_MAX_GAP_DAYS)
-                and b.first.flight_number == last.flight_number
-            ]
-            if not candidates:
-                break
-            b = min(
-                candidates,
-                key=lambda b: (b.first.date, abs(b.ref_dep_local_min - a.ref_dep_local_min)),
-            )
-            pending.remove(b)
-            a = GroupSlot(
-                sorted(a.records + b.records),
-                [*a.changes, (b.first.date, last.dep_local_min, b.first.dep_local_min), *b.changes],
-            )
-        out.append(a)
+def _runs(records: Sequence[SlotRecord]) -> list[list[SlotRecord]]:
+    """Records split wherever consecutive days are more than the join gap apart."""
+    out: list[list[SlotRecord]] = []
+    for r in sorted(records):
+        if out and (r.date - out[-1][-1].date).days <= JOIN_MAX_GAP_DAYS:
+            out[-1].append(r)
+        else:
+            out.append([r])
     return out
+
+
+def _join(slots: list[GroupSlot]) -> list[GroupSlot]:
+    """Join sub-slots across schedule changes. Each sub-slot is cut into runs (no gap longer
+    than the join gap); a run joins the run that starts at most the join gap after it ends
+    and carries the same flight number across the boundary, so a change and a change back
+    (A, B, A) is one slot. Runs of one sub-slot always stay together, and a join is made
+    only when the two slots never fly on the same day."""
+    parent = list(range(len(slots)))
+    dates = [{r.date for r in s.records} for s in slots]
+    changes: list[list[tuple[dt.date, int, int]]] = [list(s.changes) for s in slots]
+
+    def find(i: int) -> int:
+        while parent[i] != i:
+            parent[i] = parent[parent[i]]
+            i = parent[i]
+        return i
+
+    pieces = sorted(
+        ((run, i) for i, s in enumerate(slots) for run in _runs(s.records)),
+        key=lambda p: (p[0][0].date, slots[p[1]].ref_dep_local_min, p[0][0].flight_number),
+    )
+    has_successor: set[int] = set()
+    has_predecessor: set[int] = set()
+    for ai, (a_run, a) in enumerate(pieces):
+        last = a_run[-1]
+        candidates = [
+            (bi, b_run, b)
+            for bi, (b_run, b) in enumerate(pieces)
+            if bi not in has_predecessor
+            and b != a  # runs of one sub-slot belong together already
+            and last.date < b_run[0].date <= last.date + dt.timedelta(days=JOIN_MAX_GAP_DAYS)
+            and b_run[0].flight_number == last.flight_number
+        ]
+        if not candidates or ai in has_successor:
+            continue
+        bi, b_run, b = min(
+            candidates,
+            key=lambda c: (
+                c[1][0].date,
+                abs(slots[c[2]].ref_dep_local_min - slots[a].ref_dep_local_min),
+            ),
+        )
+        ra, rb = find(a), find(b)
+        change = (b_run[0].date, last.dep_local_min, b_run[0].dep_local_min)
+        if ra != rb:
+            if dates[ra] & dates[rb]:
+                continue
+            parent[rb] = ra
+            dates[ra] |= dates[rb]
+            changes[ra] += changes[rb]
+        changes[ra].append(change)  # also the change back into a slot already joined (A, B, A)
+        has_successor.add(ai)
+        has_predecessor.add(bi)
+    groups: dict[int, list[SlotRecord]] = {}
+    for i, s in enumerate(slots):
+        groups.setdefault(find(i), []).extend(s.records)
+    return [GroupSlot(sorted(recs), sorted(changes[root])) for root, recs in groups.items()]
 
 
 def assign_slots(records: Sequence[SlotRecord], window_min: int) -> list[GroupSlot]:

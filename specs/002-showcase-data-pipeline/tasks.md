@@ -124,18 +124,18 @@ description: "Task list for the showcase data pipeline"
 
 ### Tests for User Story 5 ⚠️ (write first, must fail)
 
-- [ ] T033 [P] [US5] Write failing tests in pipeline/tests/unit/test_alternatives.py: faster alternatives with no travel-time tolerance, the departure window, minimum saving and the equivalence bound on the paired bootstrap (research R8); connecting options sharing the inbound slot, ranked, `better` only when the interval excludes zero (research R9); empty results when none apply
-- [ ] T034 [P] [US5] Write failing tests in pipeline/tests/unit/test_buffer.py: data-model.md `Buffer.needed_layover_min` as the 95% lower-rule quantile of threshold + layover − slack over operated days, rounded up to 5 minutes; cancelled and diverted days excluded and counted in data-model.md `Buffer.operated_days` (research R10)
-- [ ] T035 [P] [US5] Write failing tests in pipeline/tests/unit/test_monthly.py: data-model.md `MonthRate.status` and data-model.md `MonthRate.rate` with the 20-day monthly minimum (research R11), `no_flights` months, disruption notes attached by date range and airline or airport, and never used in a calculation (research R12); and, in pipeline/tests/unit/test_failures.py, the failure breakdown (FR-021) with data-model.md `FailureBreakdown.dominant`
-- [ ] T036 [P] [US5] Write failing tests in pipeline/tests/unit/test_schedule_changes.py: schedule changes of at least 10 minutes lasting at least 7 scheduled days with date, leg and times (research R13); data-model.md `ScheduleWarnings.connect_share`; find parameters with the most frequent flight number per leg and data-model.md `FindParams.legs` shares (research R14)
+- [X] T033 [P] [US5] Write failing tests in pipeline/tests/unit/test_alternatives.py: faster alternatives with no travel-time tolerance, the departure window, minimum saving and the equivalence bound on the paired bootstrap (research R8); connecting options sharing the inbound slot, ranked, `better` only when the interval excludes zero (research R9); empty results when none apply
+- [X] T034 [P] [US5] Write failing tests in pipeline/tests/unit/test_buffer.py: data-model.md `Buffer.needed_layover_min` as the 95% lower-rule quantile of threshold + layover − slack over operated days, rounded up to 5 minutes; cancelled and diverted days excluded and counted in data-model.md `Buffer.operated_days` (research R10)
+- [X] T035 [P] [US5] Write failing tests in pipeline/tests/unit/test_monthly.py: data-model.md `MonthRate.status` and data-model.md `MonthRate.rate` with the 20-day monthly minimum (research R11), `no_flights` months, disruption notes attached by date range and airline or airport, and never used in a calculation (research R12); and, in pipeline/tests/unit/test_failures.py, the failure breakdown (FR-021) with data-model.md `FailureBreakdown.dominant`
+- [X] T036 [P] [US5] Write failing tests in pipeline/tests/unit/test_schedule_changes.py: schedule changes of at least 10 minutes lasting at least 7 scheduled days with date, leg and times (research R13); data-model.md `ScheduleWarnings.connect_share`; find parameters with the most frequent flight number per leg and data-model.md `FindParams.legs` shares (research R14)
 
 ### Implementation for User Story 5
 
-- [ ] T037 [P] [US5] Implement pipeline/src/flight_pipeline/insights/alternatives.py to pass T033, producing data-model.md `Alternative.minutes_saved` and data-model.md `Alternative.ci_low` within their bounds
-- [ ] T038 [P] [US5] Implement pipeline/src/flight_pipeline/insights/buffer.py to pass T034, producing data-model.md `Buffer.needed_layover_min` and data-model.md `Buffer.operated_days`
-- [ ] T039 [P] [US5] Implement pipeline/src/flight_pipeline/insights/monthly.py (monthly view, disruption notes and the failure breakdown) to pass T035, producing data-model.md `MonthRate.status`, data-model.md `MonthRate.rate` and data-model.md `FailureBreakdown.dominant`
-- [ ] T040 [P] [US5] Implement pipeline/src/flight_pipeline/insights/schedule.py to pass T036
-- [ ] T041 [US5] Add the `insights` stage and command (contracts/cli.md), add it to `run` before `publish`, and write every insight into the route files in pipeline/src/flight_pipeline/showcase/publish.py, including data-model.md `ShowcaseItinerary.tight_layover` and data-model.md `ShowcaseItinerary.sold`
+- [X] T037 [P] [US5] Implement pipeline/src/flight_pipeline/insights/alternatives.py to pass T033, producing data-model.md `Alternative.minutes_saved` and data-model.md `Alternative.ci_low` within their bounds
+- [X] T038 [P] [US5] Implement pipeline/src/flight_pipeline/insights/buffer.py to pass T034, producing data-model.md `Buffer.needed_layover_min` and data-model.md `Buffer.operated_days`
+- [X] T039 [P] [US5] Implement pipeline/src/flight_pipeline/insights/monthly.py (monthly view, disruption notes and the failure breakdown) to pass T035, producing data-model.md `MonthRate.status`, data-model.md `MonthRate.rate` and data-model.md `FailureBreakdown.dominant`
+- [X] T040 [P] [US5] Implement pipeline/src/flight_pipeline/insights/schedule.py to pass T036
+- [X] T041 [US5] Add the `insights` stage and command (contracts/cli.md), add it to `run` before `publish`, and write every insight into the route files in pipeline/src/flight_pipeline/showcase/publish.py, including data-model.md `ShowcaseItinerary.tight_layover` and data-model.md `ShowcaseItinerary.sold`
 
 ---
 

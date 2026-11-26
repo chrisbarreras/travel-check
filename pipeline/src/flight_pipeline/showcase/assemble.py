@@ -1,9 +1,8 @@
 """Assemble the published shapes from the derived tables (specs/002 data-model.md).
 
 The curated routes and comparisons come from ``curate``; each itinerary carries its default
-result, schedule, failure counts and sold routing. Per-day series (User Story 4) and the
-traveler insights (User Story 5) are filled by their own builders; until then they are the
-explicit "none" values of their shapes.
+result, schedule, per-day series and sold routing, and the traveler insights from the
+``insights`` stage.
 """
 
 from __future__ import annotations
@@ -19,6 +18,7 @@ import duckdb
 
 from flight_pipeline.config import Config, DisruptionNote
 from flight_pipeline.coverage import airline_coverage
+from flight_pipeline.insights.build import rate_of
 from flight_pipeline.models import (
     ComparablePair,
     CuratedComparisonRow,
@@ -31,19 +31,14 @@ from flight_pipeline.models import (
 from flight_pipeline.nonstop import nonstop_ratio
 from flight_pipeline.showcase.models import (
     Assumptions,
-    Buffer,
     DataPeriod,
     ExcludedDays,
-    FailureBreakdown,
-    FindLeg,
-    FindParams,
+    ItineraryInsights,
     LandingRef,
     ManifestRef,
-    Rate,
     RouteFile,
     RouteSummary,
     Schedule,
-    ScheduleWarnings,
     ShowcaseComparison,
     ShowcaseIndex,
     ShowcaseItinerary,
@@ -73,7 +68,7 @@ class Inputs:
     missing_settings: Mapping[tuple[str, str], str]
     nonstop: Mapping[tuple[str, str], NonstopMedian]
     arrival_local_min: Mapping[str, int]  # by outbound slot
-    flight_numbers: Mapping[str, Sequence[tuple[str, float]]]  # by slot: (number, share)
+    insights: Mapping[str, ItineraryInsights]
     hubs: Sequence[str]
     sold_same_airline: Mapping[str, int]
     tight: frozenset[str]
@@ -103,45 +98,9 @@ def assumptions(cfg: Config) -> Assumptions:
     )
 
 
-def rate_of(r: ItineraryResult) -> Rate:
-    ok = r.status == "ok"
-    return Rate(
-        status=r.status,
-        rate=r.feasibility_rate if ok else None,
-        paired_days=r.paired_days,
-        count_feasible=r.count_feasible,
-        definition="connection_feasibility",
-    )
-
-
-def failures_of(r: ItineraryResult) -> FailureBreakdown:
-    counts = {
-        "too_little_time": r.count_insufficient_time,
-        "cancelled": r.count_cancelled,
-        "diverted": r.count_diverted,
-    }
-    top = max(counts.values())
-    dominant = "none" if top == 0 else next(k for k, v in counts.items() if v == top)
-    return FailureBreakdown(
-        too_little_time=counts["too_little_time"],
-        cancelled=counts["cancelled"],
-        diverted=counts["diverted"],
-        dominant=dominant,  # pyright: ignore[reportArgumentType]
-    )
-
-
-def _find(it: Itinerary, numbers: Mapping[str, Sequence[tuple[str, float]]]) -> FindParams:
-    """The most frequent flight number of each leg (with its share of days)."""
-    legs: list[FindLeg] = []
-    for slot in (it.inbound_slot, it.outbound_slot):
-        top = (numbers.get(slot) or [("", 0.0)])[0]
-        legs.append(FindLeg(flight_number=top[0], share_of_days=top[1]))
-    airlines = sorted({it.airline_in, it.airline_out})
-    return FindParams(origin=it.origin, dest=it.dest, airlines=airlines, legs=legs)
-
-
 def showcase_itinerary(it: Itinerary, inputs: Inputs, cfg: Config) -> ShowcaseItinerary:
     r = inputs.results[it.itinerary_id]
+    ins = inputs.insights[it.itinerary_id]
     ns = inputs.nonstop.get((it.origin, it.dest))
     ns_min = ns.nonstop_median_min if ns else None
     return ShowcaseItinerary(
@@ -162,24 +121,19 @@ def showcase_itinerary(it: Itinerary, inputs: Inputs, cfg: Config) -> ShowcaseIt
             nonstop_ratio=nonstop_ratio(it.median_travel_min, ns_min),
         ),
         result=rate_of(r),
-        failures=failures_of(r),
+        failures=ins.failures,
         daily=daily_series(inputs.daily.get(it.itinerary_id, []), cfg.period.dates()[0]),
         excluded_days=ExcludedDays(
             not_connecting=r.excluded_not_connecting,
             quality=r.excluded_quality,
             end_of_period=r.excluded_end_of_period,
         ),
-        monthly=[],
-        buffer=Buffer(
-            share=cfg.insights.buffer_share,
-            needed_layover_min=None,
-            actual_layover_min=it.median_layover_min,
-            operated_days=0,
-        ),
-        faster_alternatives=[],
-        connecting_options=[],
-        schedule_warnings=ScheduleWarnings(connect_share=it.connect_share, changes=[]),
-        find=_find(it, inputs.flight_numbers),
+        monthly=ins.monthly,
+        buffer=ins.buffer,
+        faster_alternatives=ins.faster_alternatives,
+        connecting_options=ins.connecting_options,
+        schedule_warnings=ins.schedule_warnings,
+        find=ins.find,
         tight_layover=it.itinerary_id in inputs.tight,
         sold=SoldRouting(passengers=it.sold_passengers, routing_itineraries=it.routing_itineraries),
     )
@@ -210,8 +164,9 @@ def _comparison(c: CuratedComparisonRow, inputs: Inputs) -> ShowcaseComparison:
 def route_itineraries(
     candidates: Sequence[Itinerary], compared: set[str], limit: int
 ) -> list[Itinerary]:
-    """The route's itineraries in its file: every compared itinerary, then the rest by sold
-    passengers (then id) up to ``limit``; sorted by id."""
+    """The route's itineraries in its file: every compared itinerary, then the others by sold
+    passengers (then id) up to ``limit`` (the compared set alone may exceed it). Sorted by
+    id."""
     must = [i for i in candidates if i.itinerary_id in compared]
     rest = sorted(
         (i for i in candidates if i.itinerary_id not in compared),
@@ -342,16 +297,6 @@ def arrival_minutes(
         """
     ).fetchall()
     return {str(s): int(m) for s, m in rows}
-
-
-def flight_number_shares(
-    con: duckdb.DuckDBPyConnection, slots: str
-) -> dict[str, list[tuple[str, float]]]:
-    rows = con.execute(f"SELECT slot_id, flight_numbers FROM {slots}").fetchall()
-    out: dict[str, list[tuple[str, float]]] = {}
-    for slot, numbers in rows:
-        out[str(slot)] = [(str(n["flight_number"]), float(n["share_of_days"])) for n in numbers]
-    return out
 
 
 def sold_same_airline(

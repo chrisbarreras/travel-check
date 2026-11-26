@@ -171,11 +171,17 @@ def curate(
     for r in chosen:
         kept.append(next(c for c in pool if c.route_id == r.route_id))
     rest = [c for c in pool if c not in kept]
+
+    def fits(c: CandidateComparison) -> bool:
+        """The route's compared itineraries stay within the per-route maximum."""
+        mine = {x for k in kept if k.route_id == c.route_id for x in (k.itinerary_a, k.itinerary_b)}
+        return len(mine | {c.itinerary_a, c.itinerary_b}) <= cfg.itineraries_per_route_max
+
     added = True
     while added:
         added = False
         for c in rest:
-            if violation([*kept, c]) <= violation(kept) + _EPS:
+            if fits(c) and violation([*kept, c]) <= violation(kept) + _EPS:
                 kept.append(c)
                 rest.remove(c)
                 added = True

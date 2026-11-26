@@ -84,9 +84,9 @@ def test_pairs_and_results_follow_design(finished: Path) -> None:
     assert len(f.od_pairs) == 10
     assert all(p.regional_origin for p in f.od_pairs)
     layover = itinerary_layovers(finished)
-    # the CMH second bank is scheduled at the 30-minute minimum (tight by design): compare
-    # weather hubs on the first bank's 90-minute connections only
-    rates = {r.itinerary_id: r for r in f.default_results if layover[r.itinerary_id] >= 60}
+    # compare weather hubs on the 90-minute connections only: the CMH second bank is tight
+    # by design, and the 210-minute connections absorb most delays
+    rates = {r.itinerary_id: r for r in f.default_results if layover[r.itinerary_id] == 90}
     assert all(r.status == "ok" for r in rates.values())
     reliable = [
         r.feasibility_rate
@@ -151,7 +151,9 @@ def test_published_showcase_follows_contract(finished: Path) -> None:
         data = (out / summary.file).read_bytes()
         route = RouteFile.model_validate_json(data, context=ctx)
         assert route.route_id == summary.route_id
+        compared = {x for c in route.comparisons for x in (c.itinerary_a, c.itinerary_b)}
         assert len(route.itineraries) <= 12
+        assert compared <= {i.itinerary_id for i in route.itineraries}
         assert data.endswith(b"\n")
         assert b"\r" not in data
         assert wording_violations(json.loads(data)) == []
@@ -169,6 +171,35 @@ def test_published_showcase_follows_contract(finished: Path) -> None:
         ]
     )
     assert "WN" in {a.airline for a in idx.coverage.airlines if a.itineraries > 0}
+
+
+def test_insights_follow_design(finished: Path) -> None:
+    # synthetic.py: the 210-minute connection is a better connecting option at weather hubs;
+    # the 90-minute one is a faster alternative at reliable hubs; nothing else is invented
+    from flight_pipeline.showcase.models import InsightsFile
+
+    ins = InsightsFile.model_validate_json(
+        (finished / "derived" / "insights.json").read_bytes()
+    ).itineraries
+    layover = itinerary_layovers(finished)
+    hub = {k: k.split("-")[1] for k in ins}
+    stormy, reliable = {"ORD", "MSP", "ATL", "PHX"}, {"DFW", "SEA", "CLT", "DEN"}
+    better = {(k, o.itinerary_id) for k, v in ins.items() for o in v.connecting_options if o.better}
+    assert better
+    assert all(layover[o] > layover[k] for k, o in better)  # more time absorbs delays
+    assert any(hub[k] in stormy and layover[o] == 210 for k, o in better)
+    faster = {(k, a.itinerary_id) for k, v in ins.items() for a in v.faster_alternatives}
+    assert any(hub[k] in reliable and layover[k] == 210 and layover[a] == 90 for k, a in faster)
+    for v in ins.values():
+        for a in v.faster_alternatives:
+            assert a.ci_low >= -0.02 - 1e-9
+            assert a.minutes_saved >= 15
+        assert len(v.monthly) == 12
+        assert v.buffer.operated_days <= sum(m.paired_days for m in v.monthly)
+    # the WN renumbering: each leg's most frequent number covers about half the days
+    wn = [v.find for k, v in ins.items() if ":WN" in k]
+    assert wn
+    assert all(0.45 < leg.share_of_days < 0.55 for f in wn for leg in f.legs)
 
 
 def test_manifest_records_sources_packages_and_hashes(finished: Path) -> None:

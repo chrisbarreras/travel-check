@@ -41,6 +41,7 @@ from flight_pipeline.stages import (
     stage_analyze,
     stage_build,
     stage_curate,
+    stage_insights,
     stage_publish,
     stage_report,
     stage_select_hubs,
@@ -206,6 +207,7 @@ def cmd_run(cfg: Config, config_path: Path, client: httpx.Client | None, *, acqu
         ("build", stage_build),
         ("analyze", stage_analyze),
         ("curate", stage_curate),
+        ("insights", stage_insights),
     ):
         progress(f"{name}: {stage(connect(), cfg)}")
     progress(f"publish: {stage_publish(connect(), cfg, config_path)}")
@@ -237,7 +239,7 @@ def cmd_verify(cfg: Config, config_path: Path) -> str:
         rerun_cfg = cfg.model_copy(update={"paths": paths})
         progress("verify: rerunning all stages after acquire")
         progress(cmd_prepare(rerun_cfg, rerun_cfg.period.months()))
-        for stage in (stage_select_hubs, stage_build, stage_analyze, stage_curate):
+        for stage in (stage_select_hubs, stage_build, stage_analyze, stage_curate, stage_insights):
             progress(stage(connect(), rerun_cfg))
         stage_report(connect(), rerun_cfg, config_path, None)
         fresh = json.loads((Path(tmp) / "reports" / "manifest.json").read_text(encoding="utf-8"))
@@ -293,6 +295,11 @@ def _parser() -> argparse.ArgumentParser:
         ("build", "build itineraries and select origin/destination pairs", False),
         ("analyze", "daily outcomes, all scenarios, comparable pairs, showcases", False),
         ("curate", "select showcase routes, balanced comparisons and the landing example", False),
+        (
+            "insights",
+            "faster alternatives, connecting options, buffer, monthly view and more",
+            False,
+        ),
         ("publish", "write the validated showcase JSON within the size budgets", False),
         ("schemas", "write the JSON Schema and generated TypeScript types", False),
         ("report", "write summary.json, summary.md and manifest.json", False),
@@ -336,6 +343,7 @@ def main(argv: Sequence[str] | None = None, *, client: httpx.Client | None = Non
             "build": lambda: stage_build(connect(), cfg),
             "analyze": lambda: stage_analyze(connect(), cfg),
             "curate": lambda: stage_curate(connect(), cfg),
+            "insights": lambda: stage_insights(connect(), cfg),
             "publish": lambda: stage_publish(connect(), cfg, args.config),
             "schemas": lambda: cmd_schemas(cfg, check=args.check),
             "report": lambda: stage_report(connect(), cfg, args.config),

@@ -36,6 +36,7 @@ from flight_pipeline.hubs import (
     count_eligible,
     select_hubs,
 )
+from flight_pipeline.insights.build import ItineraryData, SlotData, build_insights
 from flight_pipeline.itineraries import build_itineraries
 from flight_pipeline.models import (
     Airport,
@@ -49,6 +50,7 @@ from flight_pipeline.models import (
     HubSelection,
     HubSelectionMeta,
     Itinerary,
+    ItineraryDay,
     ItineraryResult,
     Manifest,
     NonstopMedian,
@@ -98,6 +100,7 @@ from flight_pipeline.sensitivity import (
     settings_compared,
 )
 from flight_pipeline.showcase import assemble
+from flight_pipeline.showcase.models import InsightsFile
 from flight_pipeline.showcase.publish import render, validation_context, write_files
 from flight_pipeline.slots import build_slots
 from flight_pipeline.storage import (
@@ -252,6 +255,19 @@ def stage_build(con: duckdb.DuckDBPyConnection, cfg: Config) -> str:
     )
     write_table(
         con, "itineraries", derived(cfg, "itineraries.parquet"), Itinerary, ["itinerary_id"]
+    )
+    con.execute(
+        "CREATE OR REPLACE TABLE itinerary_days AS SELECT itinerary_id, service_date, "
+        "match_status, CASE WHEN match_status_ok THEN "
+        "CAST((epoch(out_dep) - epoch(in_arr)) // 60 AS INTEGER) END AS sched_layover_min "
+        "FROM itineraries_days"
+    )
+    write_table(
+        con,
+        "itinerary_days",
+        derived(cfg, "itinerary_days.parquet"),
+        ItineraryDay,
+        ["itinerary_id", "service_date"],
     )
     comparable_candidates(
         con,
@@ -564,6 +580,74 @@ def stage_curate(con: duckdb.DuckDBPyConnection, cfg: Config) -> str:
     )
 
 
+# --- Insights ----------------------------------------------------------------------------
+
+
+def stage_insights(con: duckdb.DuckDBPyConnection, cfg: Config) -> str:
+    """Traveler insights for every itinerary on a curated route (specs/002 User Story 5)."""
+    routes = {
+        r.route_id
+        for r in read_models(con, derived(cfg, "showcase_routes.parquet"), CuratedRouteRow)
+    }
+    its = [
+        i
+        for i in read_models(con, derived(cfg, "itineraries.parquet"), Itinerary)
+        if f"{i.origin}-{i.dest}" in routes
+    ]
+    ids = {i.itinerary_id for i in its}
+    default_id = scenario_id(*_defaults(cfg))
+    results = {
+        r.itinerary_id: r
+        for r in read_models(con, derived(cfg, "itinerary_results.parquet"), ItineraryResult)
+        if r.scenario_id == default_id and r.itinerary_id in ids
+    }
+    daily = _daily_by_itinerary(
+        read_models(con, derived(cfg, "daily_outcomes.parquet"), DailyOutcome), results
+    )
+    matched: dict[str, list[ItineraryDay]] = {}
+    for x in read_models(con, derived(cfg, "itinerary_days.parquet"), ItineraryDay):
+        if x.itinerary_id in ids:
+            matched.setdefault(x.itinerary_id, []).append(x)
+    slot_ids = {s for i in its for s in (i.inbound_slot, i.outbound_slot)}
+    slot_days: dict[str, list[tuple[dt.date, int]]] = {}
+    for d in read_models(con, derived(cfg, "slots_days.parquet"), SlotDay):
+        if d.slot_id in slot_ids:
+            slot_days.setdefault(d.slot_id, []).append((d.service_date, d.dep_local_min))
+    joins: dict[str, list[tuple[dt.date, int, int]]] = {}
+    for c in read_models(con, derived(cfg, "slots_changes.parquet"), SlotChange):
+        if c.slot_id in slot_ids:
+            joins.setdefault(c.slot_id, []).append(
+                (c.change_date, c.from_local_min, c.to_local_min)
+            )
+    slots = {
+        s.slot_id: SlotData(
+            slot=s, days=slot_days.get(s.slot_id, []), joins=joins.get(s.slot_id, [])
+        )
+        for s in read_models(con, derived(cfg, "slots.parquet"), ScheduleSlot)
+        if s.slot_id in slot_ids
+    }
+    data = {
+        i.itinerary_id: ItineraryData(
+            itinerary=i,
+            result=results[i.itinerary_id],
+            daily=daily.get(i.itinerary_id, []),
+            days=matched.get(i.itinerary_id, []),
+        )
+        for i in its
+    }
+    notes = load_disruption_notes(cfg.path(cfg.notes.disruption_file), cfg.period.dates())
+    result = build_insights(data, slots, notes, cfg)
+    write_json(derived(cfg, "insights.json"), result.model_dump(mode="json"), InsightsFile)
+    rows = result.itineraries.values()
+    return (
+        f"insights for {len(rows)} itineraries on {len(routes)} routes: "
+        f"{sum(bool(x.faster_alternatives) for x in rows)} with a faster alternative, "
+        f"{sum(any(o.better for o in x.connecting_options) for x in rows)} with a better "
+        f"connecting option, {sum(bool(x.schedule_warnings.changes) for x in rows)} with a "
+        "schedule change"
+    )
+
+
 # --- Publish -----------------------------------------------------------------------------
 
 
@@ -622,7 +706,9 @@ def stage_publish(con: duckdb.DuckDBPyConnection, cfg: Config, config_path: Path
         missing_settings=missing,
         nonstop={(n.origin, n.dest): n for n in nonstop},
         arrival_local_min=assemble.arrival_minutes(con, "slots_days", "flights"),
-        flight_numbers=assemble.flight_number_shares(con, "slots"),
+        insights=InsightsFile.model_validate(
+            read_json(derived(cfg, "insights.json"), InsightsFile)
+        ).itineraries,
         hubs=hubs,
         sold_same_airline=assemble.sold_same_airline(con, "sold_routings", hubs),
         daily=_daily_by_itinerary(
@@ -647,7 +733,8 @@ def stage_publish(con: duckdb.DuckDBPyConnection, cfg: Config, config_path: Path
     total = sum(sizes.values()) / 1024
     first = (sizes["index.json"] + sizes["landing.json"]) / 1024
     return (
-        f"published {len(route_files)} route files and {len(shown)} itineraries; "
+        f"published {len(route_files)} route files and "
+        f"{sum(len(r.itineraries) for r in route_files)} itineraries; "
         f"{total:.1f} KB gzip in all, {first:.1f} KB for index and landing"
     )
 
@@ -666,6 +753,7 @@ DERIVED_TABLES = (
     "hub_candidates.parquet",
     "hub_selection.parquet",
     "itineraries.parquet",
+    "itinerary_days.parquet",
     "od_selection.parquet",
     "od_exclusions.parquet",
     "sensitivity_scenarios.parquet",

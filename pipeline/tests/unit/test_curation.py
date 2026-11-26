@@ -142,6 +142,20 @@ def test_landing_example_is_cross_hub_not_tight_and_compared_everywhere() -> Non
     assert sum(flags.values()) == 1
 
 
+def test_compared_itineraries_per_route_stay_within_the_maximum() -> None:
+    routes, comps = world()
+    # LGA-MCO's comparisons involve 20 distinct itineraries; allow only 4 per route
+    result = curate(routes, comps, cfg(itineraries_per_route_max=4, max_share_route=1.0))
+    for r in result.routes:
+        mine = {
+            x
+            for c in result.comparisons
+            if c.route_id == r.route_id
+            for x in (c.itinerary_a, c.itinerary_b)
+        }
+        assert len(mine) <= 4
+
+
 def test_routes_without_a_showcase_comparison_are_not_candidates() -> None:
     routes, comps = world()
     result = curate([*routes, route("ICT-LAS")], comps, cfg(routes_max=12))

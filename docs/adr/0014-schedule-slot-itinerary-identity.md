@@ -24,3 +24,7 @@ Phase 0 identified an itinerary's two flights by marketing airline and flight nu
 - Phase 0's results are frozen at the git tag `phase0-final`; later code does not reproduce them.
 - Reported layover and travel time are medians over connecting days.
 - The daily matching runs on more candidates than Phase 0's median pre-filter allowed; the lossless bound pre-filter and the sold-routing rule keep it within the runtime budget.
+
+## Amendment (implementation, 2026-11-26)
+
+Joining works on runs: each sub-slot is cut at gaps longer than 7 days and the runs are joined across schedule changes, so a change and a change back (a seasonal schedule A, B, A) is one slot with both changes recorded. Runs of one sub-slot always stay together, and a join is made only when the two slots never fly on the same day (research R1 step 4).

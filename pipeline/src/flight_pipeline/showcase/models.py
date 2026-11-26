@@ -321,11 +321,9 @@ class RouteFile(_Model):
         for c in self.comparisons:
             if c.itinerary_a not in ids or c.itinerary_b not in ids:
                 raise ValueError(f"comparison {c.comparison_id} refers to a missing itinerary")
+        # faster alternatives and connecting options may name itineraries of the route
+        # that are not in the file: their entries carry every figure shown
         for it in self.itineraries:
-            refs = [a.itinerary_id for a in it.faster_alternatives]
-            refs += [o.itinerary_id for o in it.connecting_options]
-            if any(r not in ids for r in refs):
-                raise ValueError(f"{it.itinerary_id} refers to an itinerary not in the file")
             if any(n not in notes for m in it.monthly for n in m.note_ids):
                 raise ValueError(f"{it.itinerary_id} refers to a missing disruption note")
         return self
@@ -457,3 +455,22 @@ class ShowcaseManifest(_Model):
 
 
 PUBLISHED_MODELS: tuple[type[BaseModel], ...] = (ShowcaseIndex, RouteFile, ShowcaseManifest)
+
+
+# --- Internal: the insights stage's output (derived insights.json, not published) ---------
+
+
+class ItineraryInsights(_Model):
+    failures: FailureBreakdown
+    monthly: list[MonthRate]
+    buffer: Buffer
+    faster_alternatives: list[Alternative]
+    connecting_options: list[ConnectingOption]
+    schedule_warnings: ScheduleWarnings
+    find: FindParams
+
+
+class InsightsFile(_Model):
+    """Every itinerary on a curated route, by itinerary id."""
+
+    itineraries: dict[str, ItineraryInsights]

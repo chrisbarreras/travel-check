@@ -359,17 +359,15 @@ def notes_for_route(
 
 
 def landing_file(route: RouteFile, comparison_id: str) -> RouteFile:
-    """The landing comparison's two itineraries, plus any itinerary their insights refer to,
-    so the file is self-contained."""
+    """The landing comparison and its two itineraries, loadable alone."""
     comp = next((c for c in route.comparisons if c.comparison_id == comparison_id), None)
     if comp is None:
         raise PublishError(f"landing comparison {comparison_id} is not in {route.route_id}")
     by_id = {i.itinerary_id: i for i in route.itineraries}
     keep = {comp.itinerary_a, comp.itinerary_b}
-    for iid in list(keep):
-        it = by_id[iid]
-        keep |= {a.itinerary_id for a in it.faster_alternatives}
-        keep |= {o.itinerary_id for o in it.connecting_options}
+    missing = keep - set(by_id)
+    if missing:
+        raise PublishError(f"landing itineraries {sorted(missing)} are not in the route file")
     its = [i for i in route.itineraries if i.itinerary_id in keep]
     # the route's notes are kept whole: a handful of entries, referenced by the monthly view
     return route.model_copy(update={"itineraries": its, "comparisons": [comp]})

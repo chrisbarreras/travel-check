@@ -158,6 +158,27 @@ def test_schedule_change_with_the_same_number_is_joined() -> None:
     assert slot.changes == [(day(7), 480, 540)]
 
 
+def test_a_change_and_a_change_back_is_one_slot() -> None:
+    # a winter schedule: 08:00, then 07:00 for a while, then 08:00 again (both 08:00 runs
+    # fall in one time cluster, around the 07:00 one)
+    items = (
+        [(d, 480, "U1") for d in range(1, 11)]
+        + [(d, 420, "U1") for d in range(11, 21)]
+        + [(d, 480, "U1") for d in range(21, 31)]
+    )
+    [slot] = assign_slots(recs(*items), 30)
+    assert len(slot.records) == 30
+    assert slot.changes == [(day(11), 480, 420), (day(21), 420, 480)]
+
+
+def test_a_long_break_inside_one_slot_keeps_it_one_slot() -> None:
+    # the same flight paused for two weeks, then back at the same time: one slot, no change
+    items = [(d, 480, "U1") for d in range(1, 6)] + [(d, 480, "U1") for d in range(20, 25)]
+    [slot] = assign_slots(recs(*items), 30)
+    assert len(slot.records) == 10
+    assert slot.changes == []
+
+
 def test_no_join_without_a_shared_number_or_beyond_seven_days() -> None:
     renamed = [(d, 480, "U1") for d in range(1, 5)] + [(d, 540, "U2") for d in range(5, 9)]
     assert len(assign_slots(recs(*renamed), 30)) == 2

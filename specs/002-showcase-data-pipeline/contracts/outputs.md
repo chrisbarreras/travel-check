@@ -23,5 +23,5 @@ What the Phase 1 explorer reads. Shapes are defined once in `flight_pipeline.sho
 - **Honest values:** every rate is a `Rate` with status, sample and period; `insufficient_data` carries no rate (FR-013). Field names and texts use historical wording; no field is named or described as a probability or chance (FR-014).
 - **Explicit absence:** empty `faster_alternatives`, `connecting_options` without a `better` entry, and an empty `changes` list all mean "none applies"; the explorer shows that, not an empty space (SC-005).
 - **Coverage:** `index.json` carries `coverage` (FR-015a).
-- **Route files:** each route file holds every itinerary in its showcase comparisons, then the route's other itineraries by sold passengers, up to `[showcase] itineraries_per_route_max`.
+- **Route files:** each route file holds every itinerary in its showcase comparisons (curation keeps them within the maximum), then the route's other itineraries by sold passengers, up to `[showcase] itineraries_per_route_max`. Faster alternatives and connecting options may name itineraries of the route that are not in the file; each entry carries the figures shown.
 - **Versioning:** `schema_version` follows semantic versioning; a breaking shape change bumps the major version.

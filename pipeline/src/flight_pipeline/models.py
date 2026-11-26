@@ -426,6 +426,22 @@ class CuratedComparisonRow(_Model):
     landing: bool
 
 
+class ItineraryDay(_Model):
+    """derived itinerary_days.parquet: the default daily matching (specs/002 research R2),
+    with the day's scheduled layover when the flights connect."""
+
+    itinerary_id: str
+    service_date: dt.date
+    match_status: Literal["connects", "not_connecting", "end_of_period"]
+    sched_layover_min: int | None
+
+    @model_validator(mode="after")
+    def _layover(self) -> ItineraryDay:
+        if (self.match_status == "connects") != (self.sched_layover_min is not None):
+            raise ValueError("sched_layover_min is given exactly on connecting days")
+        return self
+
+
 class CurationMeta(_Model):
     """derived curation.json."""
 

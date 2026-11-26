@@ -80,11 +80,11 @@ def test_landing_file_is_self_contained() -> None:
     assert landing.period == PERIOD
 
 
-def test_landing_file_keeps_itineraries_its_insights_refer_to() -> None:
+def test_insights_may_name_itineraries_outside_the_file() -> None:
     from flight_pipeline.showcase.models import Alternative
 
     alt = Alternative(
-        itinerary_id=C,
+        itinerary_id="CMH-ATL-SAN:DL0900+DL1300",  # on the route, not in the file
         minutes_saved=20,
         rate_this=0.9,
         rate_other=0.9,
@@ -96,11 +96,12 @@ def test_landing_file_keeps_itineraries_its_insights_refer_to() -> None:
         itineraries=[
             itinerary(A, faster_alternatives=[alt]),
             itinerary(B, "DEN", feasible=28),
-            itinerary(C, "DFW", feasible=36),
+            itinerary(C, "DFW", feasible=20),
         ]
     )
     landing = landing_file(route, f"{A}|{B}")
-    assert {i.itinerary_id for i in landing.itineraries} == {A, B, C}
+    assert {i.itinerary_id for i in landing.itineraries} == {A, B}
+    assert landing.itineraries[0].faster_alternatives == [alt]
 
 
 def test_coverage_states_every_not_covered_kind() -> None:
