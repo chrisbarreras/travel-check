@@ -10,7 +10,7 @@ Sold routings come from DB1B, a 10% sample of airline tickets. 2.3% of the sampl
 
 | Criterion | Observed | Result |
 |---|---|---|
-| At least 3 showcase examples | 541 | met |
+| At least 3 showcase examples | 449 | met |
 | Examples across at least 2 hubs | 7 | met |
 
 ## Hub selection
@@ -19,36 +19,36 @@ Candidates are the airports with the most scheduled departures. Score = equally 
 
 | Rank | Airport | Score | Eligible (itineraries) | Departures | Airlines (>= share) | Passengers | Weather share | Weather by season (W / Sp / Su / Au) | Weather peak | Selection |
 |---|---|---|---|---|---|---|---|---|---|---|
-| 1 | ATL | 2.167 | yes (38667) | 347,178 | DL, WN | 44,754,615 | 2.4% | 3.1% / 1.9% / 3.5% / 1.0% | summer | selected (score) |
-| 2 | DEN | 2.014 | yes (16753) | 314,491 | F9, UA, WN | 37,573,203 | 1.6% | 1.8% / 1.8% / 1.5% / 1.2% | spring | selected (score) |
-| 3 | ORD | 1.780 | yes (16114) | 334,448 | AA, UA | 32,483,360 | 2.3% | 3.6% / 2.4% / 2.6% / 0.7% | winter | selected (score) |
-| 4 | LAX | 1.756 | yes (764) | 197,826 | AA, AS, DL, NK, UA, WN | 25,708,171 | 0.8% | 1.3% / 0.6% / 0.7% / 0.5% | winter | selected (score) |
-| 5 | LAS | 1.744 | yes (159) | 192,765 | AA, DL, F9, NK, UA, WN | 25,958,236 | 1.0% | 1.0% / 0.7% / 1.8% / 0.5% | summer | selected (score) |
-| 6 | MCO | 1.710 | no (2) | 156,572 | AA, B6, DL, F9, NK, UA, WN | 23,537,224 | 3.2% | 1.5% / 2.8% / 5.6% / 3.1% | summer |  |
-| 7 | DFW | 1.656 | yes (33741) | 319,707 | AA | 35,982,293 | 4.7% | 6.5% / 7.7% / 3.1% / 1.8% | spring | selected (score) |
-| 8 | PHX | 1.383 | yes (2752) | 199,986 | AA, DL, UA, WN | 24,007,106 | 0.6% | 0.8% / 0.6% / 0.9% / 0.3% | summer | selected (score) |
-| 9 | SFO | 1.196 | yes (1714) | 145,712 | AA, AS, DL, UA, WN | 18,431,583 | 0.8% | 1.4% / 0.5% / 0.6% / 0.7% | winter |  |
-| 10 | SEA | 1.117 | yes (4648) | 185,450 | AS, DL, UA | 22,332,495 | 1.2% | 2.6% / 0.6% / 0.9% / 0.7% | winter |  |
-| 11 | CLT | 1.105 | yes (28534) | 252,782 | AA | 24,997,396 | 4.5% | 3.9% / 2.6% / 9.0% / 2.3% | summer |  |
-| 12 | TPA | 1.079 | no (1) | 78,529 | AA, B6, DL, F9, NK, UA, WN | 11,139,765 | 3.3% | 1.4% / 1.7% / 4.9% / 5.5% | autumn |  |
-| 13 | LGA | 1.021 | yes (1093) | 164,171 | AA, DL, UA, WN | 15,687,494 | 1.7% | 2.4% / 1.0% / 2.9% / 0.5% | summer |  |
-| 14 | DCA | 1.019 | yes (2445) | 145,401 | AA, B6, DL, UA, WN | 12,105,640 | 3.3% | 5.5% / 2.3% / 4.5% / 0.8% | winter |  |
-| 15 | FLL | 1.000 | no (9) | 87,938 | AA, B6, DL, NK, UA, WN | 13,045,416 | 2.2% | 1.2% / 1.8% / 4.0% / 1.8% | summer |  |
-| 16 | BOS | 0.990 | no (7) | 146,971 | AA, B6, DL, UA | 16,877,119 | 1.4% | 3.4% / 0.6% / 1.4% / 0.5% | winter |  |
-| 17 | EWR | 0.929 | yes (525) | 135,548 | AA, DL, NK, UA | 16,182,995 | 2.1% | 2.1% / 1.9% / 4.4% / 0.3% | summer |  |
-| 18 | IAH | 0.921 | yes (8869) | 169,612 | AA, NK, UA | 17,366,973 | 3.2% | 3.9% / 3.1% / 5.3% / 0.7% | summer |  |
-| 19 | MSP | 0.902 | yes (3806) | 129,155 | AA, DL, UA, WN | 16,056,936 | 1.7% | 2.2% / 1.8% / 2.1% / 0.7% | winter |  |
-| 20 | SAN | 0.846 | yes (107) | 97,507 | AA, AS, DL, UA, WN | 12,229,614 | 1.7% | 3.4% / 1.3% / 1.1% / 1.1% | winter |  |
-| 21 | SLC | 0.759 | yes (3439) | 114,860 | AA, DL, UA, WN | 12,790,508 | 1.0% | 1.8% / 0.6% / 1.1% / 0.6% | winter |  |
-| 22 | DTW | 0.720 | yes (3948) | 137,392 | AA, DL, NK | 14,399,427 | 1.7% | 2.6% / 1.4% / 1.8% / 0.9% | winter |  |
-| 23 | BNA | 0.693 | yes (39) | 103,686 | AA, DL, UA, WN | 11,903,493 | 1.9% | 2.6% / 2.4% / 2.0% / 0.7% | winter |  |
-| 24 | JFK | 0.660 | yes (457) | 124,207 | AA, B6, DL | 13,979,649 | 1.2% | 2.2% / 0.6% / 1.8% / 0.4% | winter |  |
-| 25 | PHL | 0.642 | yes (2795) | 125,602 | AA, DL, F9 | 13,165,326 | 2.6% | 3.1% / 2.0% / 4.6% / 0.6% | summer |  |
-| 26 | MIA | 0.632 | yes (561) | 110,704 | AA, DL, UA | 14,762,732 | 2.8% | 1.2% / 2.2% / 5.8% / 2.1% | summer |  |
-| 27 | AUS | 0.575 | yes (40) | 85,643 | AA, DL, UA, WN | 10,038,184 | 2.0% | 1.8% / 2.8% / 2.5% / 0.7% | spring |  |
-| 28 | BWI | 0.510 | yes (281) | 97,383 | DL, NK, WN | 12,127,215 | 1.7% | 2.3% / 1.2% / 2.4% / 0.7% | summer |  |
-| 29 | IAD | 0.221 | yes (3011) | 90,580 | DL, UA | 8,613,218 | 2.5% | 3.5% / 1.7% / 4.2% / 0.4% | summer |  |
-| 30 | MDW | 0.023 | yes (59) | 75,953 | WN | 9,452,045 | 1.2% | 1.6% / 1.1% / 1.4% / 0.7% | winter |  |
+| 1 | ATL | 2.167 | yes (33264) | 347,178 | DL, WN | 44,754,615 | 2.4% | 3.1% / 1.9% / 3.5% / 1.0% | summer | selected (score) |
+| 2 | DEN | 2.014 | yes (16262) | 314,491 | F9, UA, WN | 37,573,203 | 1.6% | 1.8% / 1.8% / 1.5% / 1.2% | spring | selected (score) |
+| 3 | ORD | 1.780 | yes (14382) | 334,448 | AA, UA | 32,483,360 | 2.3% | 3.6% / 2.4% / 2.6% / 0.7% | winter | selected (score) |
+| 4 | LAX | 1.756 | yes (645) | 197,826 | AA, AS, DL, NK, UA, WN | 25,708,171 | 0.8% | 1.3% / 0.6% / 0.7% / 0.5% | winter | selected (score) |
+| 5 | LAS | 1.744 | yes (40) | 192,765 | AA, DL, F9, NK, UA, WN | 25,958,236 | 1.0% | 1.0% / 0.7% / 1.8% / 0.5% | summer | selected (score) |
+| 6 | MCO | 1.710 | no (0) | 156,572 | AA, B6, DL, F9, NK, UA, WN | 23,537,224 | 3.2% | 1.5% / 2.8% / 5.6% / 3.1% | summer |  |
+| 7 | DFW | 1.656 | yes (29778) | 319,707 | AA | 35,982,293 | 4.7% | 6.5% / 7.7% / 3.1% / 1.8% | spring | selected (score) |
+| 8 | PHX | 1.383 | yes (2249) | 199,986 | AA, DL, UA, WN | 24,007,106 | 0.6% | 0.8% / 0.6% / 0.9% / 0.3% | summer | selected (score) |
+| 9 | SFO | 1.196 | yes (1450) | 145,712 | AA, AS, DL, UA, WN | 18,431,583 | 0.8% | 1.4% / 0.5% / 0.6% / 0.7% | winter |  |
+| 10 | SEA | 1.117 | yes (3809) | 185,450 | AS, DL, UA | 22,332,495 | 1.2% | 2.6% / 0.6% / 0.9% / 0.7% | winter |  |
+| 11 | CLT | 1.105 | yes (24584) | 252,782 | AA | 24,997,396 | 4.5% | 3.9% / 2.6% / 9.0% / 2.3% | summer |  |
+| 12 | TPA | 1.079 | no (0) | 78,529 | AA, B6, DL, F9, NK, UA, WN | 11,139,765 | 3.3% | 1.4% / 1.7% / 4.9% / 5.5% | autumn |  |
+| 13 | LGA | 1.021 | yes (845) | 164,171 | AA, DL, UA, WN | 15,687,494 | 1.7% | 2.4% / 1.0% / 2.9% / 0.5% | summer |  |
+| 14 | DCA | 1.019 | yes (2050) | 145,401 | AA, B6, DL, UA, WN | 12,105,640 | 3.3% | 5.5% / 2.3% / 4.5% / 0.8% | winter |  |
+| 15 | FLL | 1.000 | no (4) | 87,938 | AA, B6, DL, NK, UA, WN | 13,045,416 | 2.2% | 1.2% / 1.8% / 4.0% / 1.8% | summer |  |
+| 16 | BOS | 0.990 | no (3) | 146,971 | AA, B6, DL, UA | 16,877,119 | 1.4% | 3.4% / 0.6% / 1.4% / 0.5% | winter |  |
+| 17 | EWR | 0.929 | yes (385) | 135,548 | AA, DL, NK, UA | 16,182,995 | 2.1% | 2.1% / 1.9% / 4.4% / 0.3% | summer |  |
+| 18 | IAH | 0.921 | yes (8534) | 169,612 | AA, NK, UA | 17,366,973 | 3.2% | 3.9% / 3.1% / 5.3% / 0.7% | summer |  |
+| 19 | MSP | 0.902 | yes (3366) | 129,155 | AA, DL, UA, WN | 16,056,936 | 1.7% | 2.2% / 1.8% / 2.1% / 0.7% | winter |  |
+| 20 | SAN | 0.846 | yes (72) | 97,507 | AA, AS, DL, UA, WN | 12,229,614 | 1.7% | 3.4% / 1.3% / 1.1% / 1.1% | winter |  |
+| 21 | SLC | 0.759 | yes (3337) | 114,860 | AA, DL, UA, WN | 12,790,508 | 1.0% | 1.8% / 0.6% / 1.1% / 0.6% | winter |  |
+| 22 | DTW | 0.720 | yes (3554) | 137,392 | AA, DL, NK | 14,399,427 | 1.7% | 2.6% / 1.4% / 1.8% / 0.9% | winter |  |
+| 23 | BNA | 0.693 | yes (16) | 103,686 | AA, DL, UA, WN | 11,903,493 | 1.9% | 2.6% / 2.4% / 2.0% / 0.7% | winter |  |
+| 24 | JFK | 0.660 | yes (400) | 124,207 | AA, B6, DL | 13,979,649 | 1.2% | 2.2% / 0.6% / 1.8% / 0.4% | winter |  |
+| 25 | PHL | 0.642 | yes (2354) | 125,602 | AA, DL, F9 | 13,165,326 | 2.6% | 3.1% / 2.0% / 4.6% / 0.6% | summer |  |
+| 26 | MIA | 0.632 | yes (439) | 110,704 | AA, DL, UA | 14,762,732 | 2.8% | 1.2% / 2.2% / 5.8% / 2.1% | summer |  |
+| 27 | AUS | 0.575 | yes (32) | 85,643 | AA, DL, UA, WN | 10,038,184 | 2.0% | 1.8% / 2.8% / 2.5% / 0.7% | spring |  |
+| 28 | BWI | 0.510 | yes (171) | 97,383 | DL, NK, WN | 12,127,215 | 1.7% | 2.3% / 1.2% / 2.4% / 0.7% | summer |  |
+| 29 | IAD | 0.221 | yes (2933) | 90,580 | DL, UA | 8,613,218 | 2.5% | 3.5% / 1.7% / 4.2% / 0.4% | summer |  |
+| 30 | MDW | 0.023 | no (10) | 75,953 | WN | 9,452,045 | 1.2% | 1.6% / 1.1% / 1.4% / 0.7% | winter |  |
 
 **Unmet constraints:** none
 
@@ -58,20 +58,20 @@ Itineraries through the selected hubs by marketing airline (inbound flight), nex
 
 | Airline | Itineraries | Sold passengers, same-airline routings |
 |---|---|---|
-| AA | 60,369 | 2,353,441 |
-| DL | 58,783 | 2,049,811 |
-| UA | 45,032 | 1,572,645 |
-| WN | 537 | 1,081,376 |
-| F9 | 49 | 285,880 |
-| NK | 4 | 113,675 |
-| AS | 45 | 27,345 |
+| AA | 51,740 | 2,353,441 |
+| DL | 51,265 | 2,049,811 |
+| UA | 43,277 | 1,572,645 |
+| WN | 117 | 1,081,376 |
+| F9 | 17 | 285,880 |
+| NK | 0 | 113,675 |
+| AS | 28 | 27,345 |
 | HA | 0 | 1,222 |
 | B6 | 0 | 204 |
 | NZ | 0 | 2 |
 | AC | 0 | 1 |
 | AM | 0 | 1 |
 
-**No itineraries:** HA, B6, NZ, AC, AM. An itinerary pairs two schedule slots (an airline's flights on a route at about the same time of day, whatever their flight numbers), each scheduled on at least 60% of days, so an airline whose departure times vary by day of week or season (Southwest's do) has fewer itineraries than its sold passengers suggest.
+**No itineraries:** NK, HA, B6, NZ, AC, AM. An itinerary pairs two schedule slots (an airline's flights on a route at about the same time of day, whatever their flight numbers), each scheduled on at least 60% of days, so an airline whose departure times vary by day of week or season (Southwest's do) has fewer itineraries than its sold passengers suggest.
 
 ## Origin/destination pairs
 
@@ -79,25 +79,25 @@ Pairs are chosen from the data: candidates have at least two qualifying itinerar
 
 | Rank | Pair | Regional origin | Main hub | Comparable pairs | Itineraries |
 |---|---|---|---|---|---|
-| 1 | LGA-LAX | no | ORD | 661 | 75 |
-| 2 | LAX-LGA | no | ORD | 521 | 75 |
-| 3 | MCO-LAX | no | ATL | 417 | 63 |
-| 4 | LGA-PHX | no | DFW | 401 | 62 |
-| 5 | BOS-LAX | no | ATL | 388 | 59 |
-| 6 | IAH-LGA | no | ORD | 385 | 58 |
-| 8 | DCA-LAX | no | DFW | 342 | 58 |
-| 27 | SAT-LGA | yes | DFW | 262 | 49 |
-| 41 | RDU-LAX | yes | ATL | 211 | 47 |
-| 176 | COS-LGA | yes | DEN | 103 | 30 |
-| 394 | ASE-IAH | yes | DEN | 65 | 22 |
-| 515 | OKC-EWR | yes | DEN | 55 | 22 |
-| 655 | SMF-ATL | yes | LAX | 47 | 26 |
-| 929 | SNA-PHL | yes | PHX | 37 | 18 |
-| 1312 | HNL-BOS | yes | LAX | 27 | 15 |
+| 1 | LGA-LAX | no | ORD | 461 | 63 |
+| 2 | LAX-LGA | no | ORD | 385 | 63 |
+| 3 | IAH-LGA | no | ORD | 362 | 56 |
+| 4 | MCO-LAX | no | ATL | 359 | 57 |
+| 9 | LAX-DCA | no | ATL | 264 | 54 |
+| 10 | MCO-LAS | no | ATL | 254 | 49 |
+| 15 | IAH-SFO | no | DFW | 244 | 52 |
+| 21 | SAT-LGA | yes | DFW | 221 | 44 |
+| 55 | LIT-LGA | yes | DFW | 149 | 36 |
+| 122 | COS-LGA | yes | DEN | 103 | 30 |
+| 431 | COS-ORD | yes | DEN | 48 | 23 |
+| 439 | OKC-EWR | yes | DEN | 48 | 20 |
+| 1021 | HNL-BOS | yes | LAX | 27 | 15 |
+| 1126 | SJC-ATL | yes | LAX | 25 | 16 |
+| 1256 | SMF-DFW | yes | PHX | 23 | 15 |
 
 8 of 15 selected pairs have a regional origin.
 
-**Not selected:** 22218 other candidate pairs.
+**Not selected:** 21580 other candidate pairs.
 
 **Selection shortfalls:** none
 
@@ -109,75 +109,112 @@ For each selected pair, candidates are pairs of regular schedules (an airline's 
 
 | Pair | Candidates | Times can never connect | Routing not sold | Never connect within the layover limits | Connect on too few days | Qualifying |
 |---|---|---|---|---|---|---|
-| ASE-IAH | 116 | 75 | 6 | 11 | 2 | 22 |
-| BOS-LAX | 346 | 229 | 4 | 34 | 20 | 59 |
 | COS-LGA | 149 | 98 | 0 | 12 | 9 | 30 |
-| DCA-LAX | 386 | 271 | 2 | 30 | 25 | 58 |
+| COS-ORD | 148 | 101 | 2 | 13 | 9 | 23 |
 | HNL-BOS | 58 | 31 | 1 | 5 | 6 | 15 |
-| IAH-LGA | 429 | 305 | 20 | 28 | 18 | 58 |
-| LAX-LGA | 550 | 415 | 4 | 30 | 26 | 75 |
-| LGA-LAX | 513 | 364 | 0 | 38 | 36 | 75 |
-| LGA-PHX | 364 | 247 | 0 | 32 | 23 | 62 |
-| MCO-LAX | 373 | 251 | 0 | 38 | 21 | 63 |
-| OKC-EWR | 138 | 83 | 4 | 18 | 11 | 22 |
-| RDU-LAX | 258 | 162 | 0 | 26 | 23 | 47 |
-| SAT-LGA | 310 | 215 | 8 | 24 | 14 | 49 |
-| SMF-ATL | 152 | 106 | 3 | 9 | 8 | 26 |
-| SNA-PHL | 129 | 97 | 1 | 8 | 5 | 18 |
+| IAH-LGA | 429 | 305 | 20 | 28 | 20 | 56 |
+| IAH-SFO | 509 | 356 | 46 | 34 | 21 | 52 |
+| LAX-DCA | 390 | 284 | 4 | 23 | 25 | 54 |
+| LAX-LGA | 550 | 415 | 4 | 30 | 38 | 63 |
+| LGA-LAX | 513 | 364 | 0 | 38 | 48 | 63 |
+| LIT-LGA | 248 | 167 | 5 | 23 | 17 | 36 |
+| MCO-LAS | 309 | 199 | 1 | 35 | 25 | 49 |
+| MCO-LAX | 373 | 251 | 0 | 38 | 27 | 57 |
+| OKC-EWR | 138 | 83 | 4 | 18 | 13 | 20 |
+| SAT-LGA | 310 | 215 | 8 | 24 | 19 | 44 |
+| SJC-ATL | 107 | 75 | 2 | 8 | 6 | 16 |
+| SMF-DFW | 164 | 117 | 11 | 7 | 14 | 15 |
 
 ## Showcase examples
 
 Pairs of comparable itineraries, both with sufficient data and not assumption-sensitive, whose connection feasibility differs by at least the showcase threshold with a 95% confidence interval that excludes zero.
 
-541 showcase examples in 15 origin/destination pairs, across 7 hubs. The strongest example per pair is shown; every example is listed in summary.json.
+449 showcase examples in 15 origin/destination pairs, across 7 hubs. The strongest example per pair is shown; every example is listed in summary.json.
 
-420 of 541 examples were compared at all 9 settings of minimum connection time and boarding cutoff (fewest: 6); at the remaining settings an itinerary did not qualify or had insufficient data, so the order could not be checked there. Connection feasibility depends only on these two settings; the recurrence threshold changes which itineraries qualify. Of the others: 121 not at minimum connection 45 min.
+340 of 449 examples were compared at all 9 settings of minimum connection time and boarding cutoff (fewest: 6); at the remaining settings an itinerary did not qualify or had insufficient data, so the order could not be checked there. Connection feasibility depends only on these two settings; the recurrence threshold changes which itineraries qualify. Of the others: 109 not at minimum connection 45 min.
 
-In 65 of 541 examples the lower itinerary's scheduled layover is shorter than its feasibility threshold (minimum connection time plus boarding cutoff): its connection is feasible only on days when the inbound flight arrives early or the outbound leaves late.
+In 61 of 449 examples the lower itinerary's scheduled layover is shorter than its feasibility threshold (minimum connection time plus boarding cutoff): its connection is feasible only on days when the inbound flight arrives early or the outbound leaves late.
 
 | Pair | Itinerary A | Connection feasibility A | Itinerary B | Connection feasibility B | Difference | Scheduled layover A / B (min) | Sold passengers on routing A / B (DB1B sample; shared by its itineraries) | Settings compared | Shared dates | Comparability |
 |---|---|---|---|---|---|---|---|---|---|---|
-| IAH-LGA | IAH-ATL-LGA:DL0600+DL1030 (ATL) | 94% (337 of 360 days) | IAH-DFW-LGA:AA0743+AA0941 (DFW) | 39% (94 of 244 days) | +55 points (95% CI +48 to +61) | 90 / 39 (tighter than threshold) | 75 on 13 itineraries / 235 on 20 itineraries | 6 of 9 (not at minimum connection 45 min) | 240 | travel time within 21 min, departure within 103 min |
+| IAH-LGA | IAH-ATL-LGA:DL0600+DL1030 (ATL) | 94% (337 of 360 days) | IAH-DFW-LGA:AA0743+AA0941 (DFW) | 39% (94 of 244 days) | +55 points (95% CI +48 to +61) | 90 / 39 (tighter than threshold) | 75 on 13 itineraries / 235 on 18 itineraries | 6 of 9 (not at minimum connection 45 min) | 240 | travel time within 21 min, departure within 103 min |
+| LIT-LGA | LIT-ATL-LGA:DL0937+DL1330 (ATL) | 96% (299 of 310 days) | LIT-ORD-LGA:UA1120+UA1400 (ORD) | 50% (139 of 278 days) | +46 points (95% CI +40 to +53) | 82 / 45 | 283 on 10 itineraries / 70 on 10 itineraries | 6 of 9 (not at minimum connection 45 min) | 246 | travel time within 18 min, departure within 103 min |
 | COS-LGA | COS-ATL-LGA:DL0600+DL1230 (ATL) | 94% (305 of 323 days) | COS-ATL-LGA:DL0600+DL1130 (ATL) | 53% (141 of 266 days) | +41 points (95% CI +35 to +47) | 96 / 36 (tighter than threshold) | 117 on 3 itineraries / 117 on 3 itineraries | 6 of 9 (not at minimum connection 45 min) | 259 | travel time within 59 min, departure within 0 min |
-| BOS-LAX | BOS-DEN-LAX:UA1515+UA1935 (DEN) | 91% (330 of 363 days) | BOS-ORD-LAX:AA1738+AA2025 (ORD) | 50% (136 of 272 days) | +41 points (95% CI +34 to +48) | 91 / 48 | 140 on 9 itineraries / 114 on 5 itineraries | 6 of 9 (not at minimum connection 45 min) | 271 | travel time within 16 min, departure within 143 min |
-| LGA-LAX | LGA-DEN-LAX:UA1655+UA2120 (DEN) | 89% (240 of 271 days) | LGA-ORD-LAX:UA1715+UA1940 (ORD) | 55% (166 of 304 days) | +34 points (95% CI +28 to +40) | 111 / 45 | 215 on 9 itineraries / 535 on 20 itineraries | 9 of 9 | 233 | travel time within 55 min, departure within 20 min |
-| ASE-IAH | ASE-DEN-IAH:UA1430+UA1720 (DEN) | 80% (217 of 270 days) | ASE-DEN-IAH:UA1530+UA1720 (DEN) | 47% (159 of 335 days) | +33 points (95% CI +27 to +39) | 98 / 47 | 299 on 15 itineraries / 299 on 15 itineraries | 9 of 9 | 270 | travel time within 57 min, departure within 60 min |
-| LGA-PHX | LGA-DEN-PHX:UA1518+UA1920 (DEN) | 93% (138 of 149 days) | LGA-ORD-PHX:UA1715+UA1953 (ORD) | 63% (204 of 326 days) | +30 points (95% CI +24 to +36) | 88 / 60 | 90 on 7 itineraries / 167 on 13 itineraries | 9 of 9 | 128 | travel time within 28 min, departure within 117 min |
-| SAT-LGA | SAT-ATL-LGA:DL1405+DL1930 (ATL) | 92% (316 of 342 days) | SAT-ORD-LGA:AA1335+AA1710 (ORD) | 64% (123 of 193 days) | +29 points (95% CI +22 to +36) | 120 / 43 (tighter than threshold) | 410 on 16 itineraries / 193 on 3 itineraries | 6 of 9 (not at minimum connection 45 min) | 184 | travel time within 49 min, departure within 30 min |
+| MCO-LAS | MCO-ATL-LAS:DL0530+DL0830 (ATL) | 95% (319 of 336 days) | MCO-ATL-LAS:DL0615+DL0830 (ATL) | 60% (204 of 341 days) | +35 points (95% CI +30 to +41) | 87 / 42 (tighter than threshold) | 1234 on 21 itineraries / 1234 on 21 itineraries | 6 of 9 (not at minimum connection 45 min) | 312 | travel time within 45 min, departure within 45 min |
+| LGA-LAX | LGA-DEN-LAX:UA1655+UA2120 (DEN) | 89% (240 of 271 days) | LGA-ORD-LAX:UA1715+UA1940 (ORD) | 55% (166 of 304 days) | +34 points (95% CI +28 to +40) | 111 / 45 | 215 on 7 itineraries / 535 on 20 itineraries | 6 of 9 (not at minimum connection 45 min) | 233 | travel time within 55 min, departure within 20 min |
+| LAX-DCA | LAX-ATL-DCA:DL1056+DL1955 (ATL) | 92% (232 of 252 days) | LAX-ORD-DCA:UA1240+UA1940 (ORD) | 63% (224 of 353 days) | +29 points (95% CI +23 to +35) | 102 / 45 | 298 on 18 itineraries / 662 on 10 itineraries | 9 of 9 | 250 | travel time within 35 min, departure within 104 min |
 | HNL-BOS | HNL-ORD-BOS:UA1715+UA0730 (ORD) | 92% (325 of 352 days) | HNL-ATL-BOS:DL1522+DL0705 (ATL) | 64% (168 of 262 days) | +28 points (95% CI +22 to +35) | 74 / 69 | 168 on 2 itineraries / 30 on 3 itineraries | 6 of 9 (not at minimum connection 45 min) | 255 | travel time within 43 min, departure within 113 min |
-| MCO-LAX | MCO-DEN-LAX:UA1545+UA1935 (DEN) | 90% (327 of 362 days) | MCO-ATL-LAX:DL1545+DL1836 (ATL) | 65% (212 of 325 days) | +25 points (95% CI +19 to +31) | 96 / 58 | 182 on 9 itineraries / 186 on 25 itineraries | 9 of 9 | 323 | travel time within 48 min, departure within 0 min |
-| LAX-LGA | LAX-DEN-LGA:UA0500+UA0958 (DEN) | 97% (321 of 332 days) | LAX-DFW-LGA:AA0700+AA1243 (DFW) | 73% (155 of 212 days) | +24 points (95% CI +17 to +30) | 85 / 45 | 184 on 9 itineraries / 345 on 16 itineraries | 6 of 9 (not at minimum connection 45 min) | 210 | travel time within 20 min, departure within 120 min |
-| DCA-LAX | DCA-ATL-LAX:DL1600+DL1959 (ATL) | 93% (270 of 289 days) | DCA-ORD-LAX:AA1759+AA2025 (ORD) | 70% (233 of 332 days) | +23 points (95% CI +18 to +29) | 123 / 66 | 342 on 17 itineraries / 343 on 5 itineraries | 9 of 9 | 263 | travel time within 53 min, departure within 119 min |
-| RDU-LAX | RDU-ATL-LAX:DL0744+DL1125 (ATL) | 97% (233 of 239 days) | RDU-DFW-LAX:AA0505+AA0817 (DFW) | 77% (232 of 300 days) | +20 points (95% CI +15 to +25) | 128 / 59 | 601 on 19 itineraries / 222 on 10 itineraries | 9 of 9 | 207 | travel time within 44 min, departure within 159 min |
-| SMF-ATL | SMF-DEN-ATL:UA1300+UA1745 (DEN) | 94% (300 of 319 days) | SMF-PHX-ATL:AA1257+AA1538 (PHX) | 77% (246 of 319 days) | +17 points (95% CI +12 to +22) | 84 / 49 | 174 on 3 itineraries / 175 on 3 itineraries | 6 of 9 (not at minimum connection 45 min) | 274 | travel time within 26 min, departure within 3 min |
-| OKC-EWR | OKC-ORD-EWR:UA0730+UA1151 (ORD) | 95% (314 of 330 days) | OKC-DEN-EWR:UA0605+UA0746 (DEN) | 79% (287 of 363 days) | +16 points (95% CI +12 to +21) | 127 / 54 | 213 on 5 itineraries / 39 on 6 itineraries | 9 of 9 | 328 | travel time within 11 min, departure within 85 min |
-| SNA-PHL | SNA-ORD-PHL:UA0700+UA1426 (ORD) | 93% (290 of 311 days) | SNA-DFW-PHL:AA0645+AA1235 (DFW) | 78% (158 of 203 days) | +15 points (95% CI +9 to +22) | 78 / 47 | 129 on 2 itineraries / 407 on 3 itineraries | 6 of 9 (not at minimum connection 45 min) | 202 | travel time within 27 min, departure within 15 min |
+| IAH-SFO | IAH-DEN-SFO:UA0825+UA1133 (DEN) | 96% (349 of 364 days) | IAH-LAS-SFO:UA0940+UA1151 (LAS) | 68% (173 of 255 days) | +28 points (95% CI +22 to +34) | 89 / 53 | 31 on 16 itineraries / 38 on 5 itineraries | 6 of 9 (not at minimum connection 45 min) | 254 | travel time within 49 min, departure within 75 min |
+| SJC-ATL | SJC-DEN-ATL:UA0830+UA1336 (DEN) | 98% (232 of 236 days) | SJC-DFW-ATL:AA0610+AA1228 (DFW) | 72% (245 of 338 days) | +26 points (95% CI +21 to +31) | 93 / 33 (tighter than threshold) | 52 on 2 itineraries / 71 on 5 itineraries | 6 of 9 (not at minimum connection 45 min) | 233 | travel time within 36 min, departure within 140 min |
+| MCO-LAX | MCO-DEN-LAX:UA1545+UA1935 (DEN) | 90% (327 of 362 days) | MCO-ATL-LAX:DL1545+DL1836 (ATL) | 65% (212 of 325 days) | +25 points (95% CI +19 to +31) | 96 / 58 | 182 on 9 itineraries / 186 on 24 itineraries | 9 of 9 | 323 | travel time within 48 min, departure within 0 min |
+| SAT-LGA | SAT-ATL-LGA:DL1210+DL1700 (ATL) | 91% (208 of 228 days) | SAT-DFW-LGA:AA1430+AA1645 (DFW) | 70% (159 of 226 days) | +21 points (95% CI +14 to +28) | 78 / 56 | 410 on 14 itineraries / 784 on 22 itineraries | 9 of 9 | 100 | travel time within 40 min, departure within 140 min |
+| COS-ORD | COS-DEN-ORD:UA0820+UA1120 (DEN) | 95% (308 of 325 days) | COS-DEN-ORD:UA0920+UA1120 (DEN) | 74% (269 of 364 days) | +21 points (95% CI +16 to +26) | 115 / 55 | 220 on 17 itineraries / 220 on 17 itineraries | 9 of 9 | 324 | travel time within 59 min, departure within 60 min |
+| LAX-LGA | LAX-ORD-LGA:UA2359+UA0800 (ORD) | 96% (262 of 273 days) | LAX-ATL-LGA:DL2359+DL0830 (ATL) | 75% (180 of 239 days) | +21 points (95% CI +15 to +27) | 123 / 78 | 623 on 17 itineraries / 358 on 17 itineraries | 9 of 9 | 199 | travel time within 28 min, departure within 0 min |
+| SMF-DFW | SMF-LAX-DFW:DL1459+DL1830 (LAX) | 93% (307 of 329 days) | SMF-PHX-DFW:AA1623+AA2000 (PHX) | 73% (167 of 229 days) | +20 points (95% CI +14 to +27) | 111 / 106 | 93 on 2 itineraries / 134 on 6 itineraries | 6 of 9 (not at minimum connection 45 min) | 214 | travel time within 32 min, departure within 84 min |
+| OKC-EWR | OKC-ORD-EWR:UA0730+UA1151 (ORD) | 95% (314 of 330 days) | OKC-DEN-EWR:UA0605+UA0746 (DEN) | 79% (287 of 363 days) | +16 points (95% CI +12 to +21) | 127 / 54 | 213 on 4 itineraries / 39 on 6 itineraries | 9 of 9 | 328 | travel time within 11 min, departure within 85 min |
 
 ## Breakdown of the showcase examples
 
 | Pair | Showcase examples |
 |---|---|
-| LGA-LAX | 102 |
-| LGA-PHX | 88 |
-| LAX-LGA | 72 |
-| IAH-LGA | 59 |
-| MCO-LAX | 44 |
-| SAT-LGA | 37 |
-| DCA-LAX | 31 |
+| LGA-LAX | 76 |
+| IAH-LGA | 57 |
+| IAH-SFO | 40 |
+| LAX-LGA | 39 |
+| LAX-DCA | 38 |
+| LIT-LGA | 37 |
+| MCO-LAX | 37 |
+| MCO-LAS | 34 |
 | COS-LGA | 28 |
-| RDU-LAX | 19 |
-| ASE-IAH | 16 |
-| BOS-LAX | 15 |
-| OKC-EWR | 14 |
-| SNA-PHL | 7 |
+| SAT-LGA | 20 |
+| COS-ORD | 12 |
+| OKC-EWR | 12 |
+| SJC-ATL | 11 |
 | HNL-BOS | 5 |
-| SMF-ATL | 4 |
+| SMF-DFW | 3 |
 
-410 of 541 examples compare itineraries through different hubs; the rest compare flights through the same hub.
+346 of 449 examples compare itineraries through different hubs; the rest compare flights through the same hub.
 
-Without the examples whose lower itinerary is scheduled tighter than its feasibility threshold, 476 examples, in 15 pairs and across 7 hubs (ATL, DEN, DFW, LAS, LAX, ORD, PHX), remain.
+Without the examples whose lower itinerary is scheduled tighter than its feasibility threshold, 388 examples, in 15 pairs and across 7 hubs (ATL, DEN, DFW, LAS, LAX, ORD, PHX), remain.
 
-In 109 of 541 examples the slower itinerary takes more than 1.5 times the median scheduled nonstop time on the same pair (at most 2.6 times). These routings are sold, so they stay in. 348 examples have no nonstop to compare with.
+In 203 of 449 examples the slower itinerary takes more than 1.5 times the median scheduled nonstop time on the same pair (at most 2.5 times). These routings are sold, so they stay in. 175 examples have no nonstop to compare with.
+
+## Showcase curation
+
+12 routes and the showcase comparisons kept for the explorer. A comparison counts toward both itineraries' airlines and hubs, so airline and hub shares add up to more than 100%. Caps: at most 33% from one route, 50% from one airline, 50% from one hub; at least 50% cross-hub.
+
+| Route | Comparisons | Share |
+|---|---|---|
+| IAH-LGA | 15 | 12% |
+| LIT-LGA | 14 | 11% |
+| COS-LGA | 14 | 11% |
+| LGA-LAX | 12 | 10% |
+| MCO-LAS | 13 | 11% |
+| LAX-DCA | 15 | 12% |
+| HNL-BOS | 4 | 3% |
+| IAH-SFO | 13 | 11% |
+| SJC-ATL | 6 | 5% |
+| MCO-LAX | 10 | 8% |
+| SAT-LGA | 5 | 4% |
+| SMF-DFW | 1 | 1% |
+
+| Airline | Share |
+|---|---|
+| AA | 50% |
+| DL | 50% |
+| UA | 50% |
+
+| Hub | Share |
+|---|---|
+| ATL | 48% |
+| DEN | 26% |
+| DFW | 45% |
+| LAS | 5% |
+| LAX | 8% |
+| ORD | 34% |
+| PHX | 8% |
+
+Cross-hub comparisons: 75%. Curation shortfalls: none.
 
 ## Sensitivity to assumptions
 
@@ -185,37 +222,37 @@ Every analyzed itinerary is re-evaluated under each combination of minimum conne
 
 | Scenario | Min. connection (min) | Boarding cutoff (min) | Recurrence | Itineraries | Sufficient data | Median connection feasibility | Comparable pairs reversed |
 |---|---|---|---|---|---|---|---|
-| mct20_cut10_rec50 | 20 | 10 | 50% | 872 | 872 | 94% | 350 |
-| mct20_cut10_rec60 | 20 | 10 | 60% | 699 | 699 | 94% | 350 |
-| mct20_cut10_rec75 | 20 | 10 | 75% | 437 | 437 | 94% | 152 |
-| mct20_cut15_rec50 | 20 | 15 | 50% | 872 | 872 | 93% | 280 |
-| mct20_cut15_rec60 | 20 | 15 | 60% | 699 | 699 | 94% | 280 |
-| mct20_cut15_rec75 | 20 | 15 | 75% | 437 | 437 | 94% | 132 |
-| mct20_cut20_rec50 | 20 | 20 | 50% | 872 | 872 | 93% | 185 |
-| mct20_cut20_rec60 | 20 | 20 | 60% | 699 | 699 | 93% | 185 |
-| mct20_cut20_rec75 | 20 | 20 | 75% | 437 | 437 | 93% | 90 |
-| mct30_cut10_rec50 | 30 | 10 | 50% | 839 | 839 | 93% | 148 |
-| mct30_cut10_rec60 | 30 | 10 | 60% | 679 | 679 | 93% | 148 |
-| mct30_cut10_rec75 | 30 | 10 | 75% | 419 | 419 | 93% | 69 |
-| mct30_cut15_rec50 | 30 | 15 | 50% | 839 | 839 | 93% | 0 |
-| mct30_cut15_rec60 (default) | 30 | 15 | 60% | 679 | 679 | 93% | 0 |
-| mct30_cut15_rec75 | 30 | 15 | 75% | 419 | 419 | 93% | 0 |
-| mct30_cut20_rec50 | 30 | 20 | 50% | 839 | 839 | 92% | 148 |
-| mct30_cut20_rec60 | 30 | 20 | 60% | 679 | 679 | 93% | 148 |
-| mct30_cut20_rec75 | 30 | 20 | 75% | 419 | 419 | 93% | 59 |
-| mct45_cut10_rec50 | 45 | 10 | 50% | 794 | 794 | 92% | 246 |
-| mct45_cut10_rec60 | 45 | 10 | 60% | 642 | 642 | 93% | 242 |
-| mct45_cut10_rec75 | 45 | 10 | 75% | 387 | 387 | 93% | 84 |
-| mct45_cut15_rec50 | 45 | 15 | 50% | 794 | 794 | 92% | 341 |
-| mct45_cut15_rec60 | 45 | 15 | 60% | 642 | 642 | 92% | 334 |
-| mct45_cut15_rec75 | 45 | 15 | 75% | 387 | 387 | 92% | 119 |
-| mct45_cut20_rec50 | 45 | 20 | 50% | 794 | 794 | 91% | 384 |
-| mct45_cut20_rec60 | 45 | 20 | 60% | 642 | 642 | 91% | 374 |
-| mct45_cut20_rec75 | 45 | 20 | 75% | 387 | 387 | 92% | 139 |
+| mct20_cut10_rec50 | 20 | 10 | 50% | 725 | 725 | 93% | 239 |
+| mct20_cut10_rec60 | 20 | 10 | 60% | 608 | 608 | 94% | 239 |
+| mct20_cut10_rec75 | 20 | 10 | 75% | 417 | 417 | 94% | 125 |
+| mct20_cut15_rec50 | 20 | 15 | 50% | 725 | 725 | 93% | 184 |
+| mct20_cut15_rec60 | 20 | 15 | 60% | 608 | 608 | 93% | 184 |
+| mct20_cut15_rec75 | 20 | 15 | 75% | 417 | 417 | 94% | 101 |
+| mct20_cut20_rec50 | 20 | 20 | 50% | 725 | 725 | 93% | 122 |
+| mct20_cut20_rec60 | 20 | 20 | 60% | 608 | 608 | 93% | 122 |
+| mct20_cut20_rec75 | 20 | 20 | 75% | 417 | 417 | 93% | 60 |
+| mct30_cut10_rec50 | 30 | 10 | 50% | 697 | 697 | 93% | 114 |
+| mct30_cut10_rec60 | 30 | 10 | 60% | 593 | 593 | 93% | 114 |
+| mct30_cut10_rec75 | 30 | 10 | 75% | 404 | 404 | 93% | 61 |
+| mct30_cut15_rec50 | 30 | 15 | 50% | 697 | 697 | 92% | 0 |
+| mct30_cut15_rec60 (default) | 30 | 15 | 60% | 593 | 593 | 93% | 0 |
+| mct30_cut15_rec75 | 30 | 15 | 75% | 404 | 404 | 93% | 0 |
+| mct30_cut20_rec50 | 30 | 20 | 50% | 697 | 697 | 92% | 92 |
+| mct30_cut20_rec60 | 30 | 20 | 60% | 593 | 593 | 92% | 92 |
+| mct30_cut20_rec75 | 30 | 20 | 75% | 404 | 404 | 92% | 43 |
+| mct45_cut10_rec50 | 45 | 10 | 50% | 656 | 656 | 92% | 154 |
+| mct45_cut10_rec60 | 45 | 10 | 60% | 557 | 557 | 93% | 145 |
+| mct45_cut10_rec75 | 45 | 10 | 75% | 363 | 363 | 93% | 55 |
+| mct45_cut15_rec50 | 45 | 15 | 50% | 656 | 656 | 92% | 216 |
+| mct45_cut15_rec60 | 45 | 15 | 60% | 557 | 557 | 92% | 209 |
+| mct45_cut15_rec75 | 45 | 15 | 75% | 363 | 363 | 93% | 78 |
+| mct45_cut20_rec50 | 45 | 20 | 50% | 656 | 656 | 91% | 261 |
+| mct45_cut20_rec60 | 45 | 20 | 60% | 557 | 557 | 91% | 252 |
+| mct45_cut20_rec75 | 45 | 20 | 75% | 363 | 363 | 92% | 98 |
 
-**Assumption-sensitive pairs:** ASE-DEN-IAH:UA0900+UA1130 vs ASE-DEN-IAH:UA0730+UA0945, ASE-DEN-IAH:UA0900+UA1344 vs ASE-DEN-IAH:UA1136+UA1540, ASE-DEN-IAH:UA1345+UA1805 vs ASE-DEN-IAH:UA1136+UA1540, ASE-DEN-IAH:UA1345+UA1805 vs ASE-DEN-IAH:UA1430+UA1923, ASE-DEN-IAH:UA1430+UA1805 vs ASE-DFW-IAH:AA1436+AA2100, ASE-DEN-IAH:UA1430+UA1923 vs ASE-DEN-IAH:UA1136+UA1540, ASE-DEN-IAH:UA1530+UA1805 vs ASE-DEN-IAH:UA1345+UA1540, ASE-DFW-IAH:AA1034+AA1440 vs ASE-DEN-IAH:UA1136+UA1344, ASE-DFW-IAH:AA1228+AA1735 vs ASE-DEN-IAH:UA1136+UA1344, ASE-DFW-IAH:AA1228+AA1735 vs ASE-DFW-IAH:AA1034+AA1440, ASE-DFW-IAH:AA1436+AA1851 vs ASE-DEN-IAH:UA1136+UA1344, ASE-DFW-IAH:AA1436+AA1851 vs ASE-DEN-IAH:UA1345+UA1540, ASE-DFW-IAH:AA1436+AA1851 vs ASE-DEN-IAH:UA1530+UA1805, ASE-DFW-IAH:AA1436+AA1851 vs ASE-DFW-IAH:AA1635+AA2100, BOS-ATL-LAX:DL0540+DL1020 vs BOS-DEN-LAX:UA0724+UA1126, BOS-ATL-LAX:DL0540+DL1020 vs BOS-ORD-LAX:UA0600+UA1045, BOS-ATL-LAX:DL0540+DL1125 vs BOS-LAS-LAX:DL0740+DL1345, BOS-ATL-LAX:DL0655+DL1125 vs BOS-ATL-LAX:DL0910+DL1252, BOS-ATL-LAX:DL0655+DL1125 vs BOS-ORD-LAX:AA0515+AA0825, BOS-ATL-LAX:DL0655+DL1125 vs BOS-ORD-LAX:UA0600+UA0900, BOS-ATL-LAX:DL0655+DL1252 vs BOS-DFW-LAX:AA0720+AA1311, BOS-ATL-LAX:DL0810+DL1252 vs BOS-ORD-LAX:UA0600+UA0900, BOS-ATL-LAX:DL0810+DL1252 vs BOS-ORD-LAX:UA1057+UA1400, BOS-ATL-LAX:DL0910+DL1252 vs BOS-ATL-LAX:DL1010+DL1400, BOS-ATL-LAX:DL0910+DL1252 vs BOS-ORD-LAX:UA0800+UA1045, BOS-ATL-LAX:DL0910+DL1400 vs BOS-ATL-LAX:DL0810+DL1252, BOS-ATL-LAX:DL0910+DL1400 vs BOS-ORD-LAX:UA1057+UA1400, BOS-ATL-LAX:DL0910+DL1500 vs BOS-DFW-LAX:AA0810+AA1500, BOS-ATL-LAX:DL1010+DL1400 vs BOS-ORD-LAX:UA0800+UA1045, BOS-ATL-LAX:DL1010+DL1500 vs BOS-ATL-LAX:DL0910+DL1500, BOS-ATL-LAX:DL1010+DL1500 vs BOS-DEN-LAX:UA1140+UA1600, BOS-ATL-LAX:DL1010+DL1500 vs BOS-ORD-LAX:UA0930+UA1255, BOS-ATL-LAX:DL1208+DL1650 vs BOS-ATL-LAX:DL0910+DL1500, BOS-ATL-LAX:DL1208+DL1650 vs BOS-ORD-LAX:UA0930+UA1255, BOS-ATL-LAX:DL1350+DL1836 vs BOS-ORD-LAX:UA1057+UA1400, BOS-DEN-LAX:UA0724+UA1126 vs BOS-ATL-LAX:DL0655+DL1125, BOS-DEN-LAX:UA0724+UA1126 vs BOS-ATL-LAX:DL0810+DL1252, BOS-DEN-LAX:UA0724+UA1126 vs BOS-ATL-LAX:DL0910+DL1252, BOS-DEN-LAX:UA0724+UA1126 vs BOS-ATL-LAX:DL0910+DL1400, BOS-DEN-LAX:UA0724+UA1126 vs BOS-ATL-LAX:DL1010+DL1500, BOS-DEN-LAX:UA0724+UA1126 vs BOS-DEN-LAX:UA0920+UA1328, BOS-DEN-LAX:UA0724+UA1126 vs BOS-DFW-LAX:AA0810+AA1311, BOS-DEN-LAX:UA0724+UA1126 vs BOS-ORD-LAX:AA0515+AA0825, BOS-DEN-LAX:UA0724+UA1126 vs BOS-ORD-LAX:AA0645+AA0951, BOS-DEN-LAX:UA0920+UA1328 vs BOS-ATL-LAX:DL0810+DL1252, BOS-DEN-LAX:UA0920+UA1328 vs BOS-ATL-LAX:DL0910+DL1252, BOS-DEN-LAX:UA0920+UA1328 vs BOS-ATL-LAX:DL0910+DL1400, BOS-DEN-LAX:UA0920+UA1328 vs BOS-DFW-LAX:AA0810+AA1311, BOS-DEN-LAX:UA0920+UA1328 vs BOS-ORD-LAX:AA0645+AA0951, BOS-DEN-LAX:UA0920+UA1328 vs BOS-ORD-LAX:UA0930+UA1255, BOS-DEN-LAX:UA0920+UA1600 vs BOS-LAS-LAX:DL0740+DL1345, BOS-DEN-LAX:UA1140+UA1600 vs BOS-ATL-LAX:DL0910+DL1400, BOS-DEN-LAX:UA1140+UA1600 vs BOS-ORD-LAX:UA0930+UA1255, BOS-DEN-LAX:UA1140+UA1740 vs BOS-ORD-LAX:UA1225+UA1800, BOS-DEN-LAX:UA1515+UA1935 vs BOS-DEN-LAX:UA1650+UA2120, BOS-DEN-LAX:UA1515+UA1935 vs BOS-DFW-LAX:AA1233+AA1730, BOS-DEN-LAX:UA1650+UA2120 vs BOS-ATL-LAX:DL1545+DL1959, BOS-DEN-LAX:UA1650+UA2120 vs BOS-DFW-LAX:AA1428+AA1930, BOS-DFW-LAX:AA0531+AA1030 vs BOS-ATL-LAX:DL0655+DL1125, BOS-DFW-LAX:AA0531+AA1030 vs BOS-ATL-LAX:DL0810+DL1252, BOS-DFW-LAX:AA0531+AA1030 vs BOS-DFW-LAX:AA0810+AA1311, BOS-DFW-LAX:AA0531+AA1030 vs BOS-ORD-LAX:AA0515+AA0825, BOS-DFW-LAX:AA0531+AA1030 vs BOS-ORD-LAX:UA0600+UA0900, BOS-DFW-LAX:AA0720+AA1311 vs BOS-ATL-LAX:DL0910+DL1400, BOS-DFW-LAX:AA0720+AA1311 vs BOS-DFW-LAX:AA0720+AA1400, BOS-DFW-LAX:AA0810+AA1311 vs BOS-ATL-LAX:DL0655+DL1125, BOS-DFW-LAX:AA0810+AA1311 vs BOS-ATL-LAX:DL0910+DL1252, BOS-DFW-LAX:AA0810+AA1311 vs BOS-ORD-LAX:UA0600+UA0900, BOS-DFW-LAX:AA0810+AA1311 vs BOS-ORD-LAX:UA1057+UA1400, BOS-DFW-LAX:AA0810+AA1400 vs BOS-ATL-LAX:DL0655+DL1125, BOS-DFW-LAX:AA0810+AA1400 vs BOS-ATL-LAX:DL0810+DL1252, BOS-DFW-LAX:AA0810+AA1400 vs BOS-DFW-LAX:AA0531+AA1030, BOS-DFW-LAX:AA0810+AA1500 vs BOS-ATL-LAX:DL0810+DL1400, BOS-DFW-LAX:AA1233+AA1730 vs BOS-DFW-LAX:AA1428+AA1930, BOS-DFW-LAX:AA1233+AA1830 vs BOS-ATL-LAX:DL1350+DL1836, BOS-DFW-LAX:AA1428+AA1930 vs BOS-ATL-LAX:DL1545+DL1959, BOS-DFW-LAX:AA1428+AA1930 vs BOS-DFW-LAX:AA1614+AA2121, BOS-DFW-LAX:AA1614+AA2121 vs BOS-ATL-LAX:DL1545+DL1959, BOS-LAS-LAX:DL0740+DL1345 vs BOS-ATL-LAX:DL0540+DL1020, BOS-LAS-LAX:DL0740+DL1345 vs BOS-ORD-LAX:UA0600+UA1045, BOS-ORD-LAX:AA0515+AA0825 vs BOS-ORD-LAX:UA0800+UA1045, BOS-ORD-LAX:AA0515+AA0951 vs BOS-ATL-LAX:DL0655+DL1252, BOS-ORD-LAX:AA0515+AA0951 vs BOS-ATL-LAX:DL0810+DL1252, BOS-ORD-LAX:AA0515+AA0951 vs BOS-ATL-LAX:DL0810+DL1400, BOS-ORD-LAX:AA0515+AA0951 vs BOS-DFW-LAX:AA0531+AA1030, BOS-ORD-LAX:AA0515+AA0951 vs BOS-DFW-LAX:AA0720+AA1311, BOS-ORD-LAX:AA0515+AA0951 vs BOS-DFW-LAX:AA0720+AA1400, BOS-ORD-LAX:AA0515+AA0951 vs BOS-DFW-LAX:AA0810+AA1311, BOS-ORD-LAX:AA0515+AA0951 vs BOS-DFW-LAX:AA0810+AA1400, BOS-ORD-LAX:AA0515+AA0951 vs BOS-DFW-LAX:AA0810+AA1500, BOS-ORD-LAX:AA0645+AA0951 vs BOS-ATL-LAX:DL0910+DL1252, BOS-ORD-LAX:AA0645+AA0951 vs BOS-ATL-LAX:DL0910+DL1400, BOS-ORD-LAX:UA0600+UA0900 vs BOS-ORD-LAX:AA0515+AA0825, BOS-ORD-LAX:UA0800+UA1255 vs BOS-LAS-LAX:DL0740+DL1345, BOS-ORD-LAX:UA0930+UA1255 vs BOS-ATL-LAX:DL0655+DL1125, BOS-ORD-LAX:UA0930+UA1255 vs BOS-ATL-LAX:DL0810+DL1252, BOS-ORD-LAX:UA0930+UA1255 vs BOS-ATL-LAX:DL0910+DL1252, BOS-ORD-LAX:UA0930+UA1255 vs BOS-ATL-LAX:DL0910+DL1400, BOS-ORD-LAX:UA0930+UA1255 vs BOS-DFW-LAX:AA0810+AA1311, BOS-ORD-LAX:UA0930+UA1255 vs BOS-DFW-LAX:AA0810+AA1400, BOS-ORD-LAX:UA0930+UA1255 vs BOS-ORD-LAX:AA0645+AA0951, BOS-ORD-LAX:UA0930+UA1255 vs BOS-ORD-LAX:UA1225+UA1540, BOS-ORD-LAX:UA0930+UA1400 vs BOS-DEN-LAX:UA1140+UA1740, BOS-ORD-LAX:UA1057+UA1400 vs BOS-ATL-LAX:DL0910+DL1252, BOS-ORD-LAX:UA1057+UA1400 vs BOS-DFW-LAX:AA1233+AA1730, BOS-ORD-LAX:UA1057+UA1540 vs BOS-ATL-LAX:DL1350+DL1959, BOS-ORD-LAX:UA1057+UA1540 vs BOS-DEN-LAX:UA0920+UA1600, BOS-ORD-LAX:UA1057+UA1540 vs BOS-ORD-LAX:UA0800+UA1255, BOS-ORD-LAX:UA1225+UA1540 vs BOS-ORD-LAX:UA1057+UA1400, BOS-PHX-LAX:AA0610+AA1016 vs BOS-ATL-LAX:DL0655+DL1125, BOS-PHX-LAX:AA0610+AA1016 vs BOS-ATL-LAX:DL0810+DL1252, BOS-PHX-LAX:AA0610+AA1016 vs BOS-ATL-LAX:DL0910+DL1252, BOS-PHX-LAX:AA0610+AA1016 vs BOS-ATL-LAX:DL0910+DL1400, BOS-PHX-LAX:AA0610+AA1016 vs BOS-DFW-LAX:AA0810+AA1311, BOS-PHX-LAX:AA0610+AA1016 vs BOS-ORD-LAX:AA0515+AA0825, BOS-PHX-LAX:AA0610+AA1016 vs BOS-ORD-LAX:AA0645+AA0951, BOS-PHX-LAX:AA1240+AA1702 vs BOS-DEN-LAX:UA1515+UA1935, BOS-PHX-LAX:AA1240+AA1702 vs BOS-DFW-LAX:AA1233+AA1730, BOS-PHX-LAX:AA1240+AA1702 vs BOS-DFW-LAX:AA1428+AA1930, BOS-PHX-LAX:AA1240+AA1702 vs BOS-ORD-LAX:UA1057+UA1400, BOS-PHX-LAX:AA1240+AA1702 vs BOS-ORD-LAX:UA1225+UA1540, BOS-PHX-LAX:AA1240+AA1758 vs BOS-ATL-LAX:DL1350+DL1836, BOS-PHX-LAX:AA1240+AA1758 vs BOS-DFW-LAX:AA1233+AA1730, BOS-PHX-LAX:AA1240+AA1758 vs BOS-DFW-LAX:AA1233+AA1830, BOS-PHX-LAX:AA1240+AA1758 vs BOS-ORD-LAX:UA1057+UA1400, BOS-PHX-LAX:AA1240+AA1758 vs BOS-ORD-LAX:UA1225+UA1540, COS-DEN-LGA:UA0820+UA1142 vs COS-ATL-LGA:DL0600+DL1230, COS-DEN-LGA:UA0820+UA1142 vs COS-DEN-LGA:UA0730+UA1142, COS-DEN-LGA:UA1335+UA1551 vs COS-DEN-LGA:UA1140+UA1405, COS-DEN-LGA:UA1335+UA1740 vs COS-ORD-LGA:UA1255+UA1830, COS-DFW-LGA:AA0600+AA0941 vs COS-ATL-LGA:DL0600+DL1130, COS-DFW-LGA:AA0600+AA1028 vs COS-DEN-LGA:UA0730+UA0958, COS-DFW-LGA:AA0815+AA1243 vs COS-DFW-LGA:AA1043+AA1541, COS-DFW-LGA:AA1043+AA1440 vs COS-DEN-LGA:UA0820+UA0958, DCA-ATL-LAX:DL0600+DL0855 vs DCA-ATL-LAX:DL0659+DL1020, DCA-ATL-LAX:DL0600+DL0855 vs DCA-ATL-LAX:DL0759+DL1125, DCA-ATL-LAX:DL0600+DL0855 vs DCA-LAS-LAX:AA0744+AA1138, DCA-ATL-LAX:DL0600+DL0855 vs DCA-ORD-LAX:AA0600+AA0825, DCA-ATL-LAX:DL0600+DL0855 vs DCA-ORD-LAX:UA0830+UA1045, DCA-ATL-LAX:DL0600+DL1020 vs DCA-LAS-LAX:AA0744+AA1138, DCA-ATL-LAX:DL0659+DL1020 vs DCA-ATL-LAX:DL0759+DL1125, DCA-ATL-LAX:DL0659+DL1020 vs DCA-ORD-LAX:AA0600+AA0825, DCA-ATL-LAX:DL0659+DL1020 vs DCA-ORD-LAX:UA0830+UA1045, DCA-ATL-LAX:DL0759+DL1125 vs DCA-DFW-LAX:AA0915+AA1400, DCA-ATL-LAX:DL0759+DL1125 vs DCA-ORD-LAX:AA0600+AA0825, DCA-ATL-LAX:DL0759+DL1125 vs DCA-ORD-LAX:UA0830+UA1045, DCA-ATL-LAX:DL0759+DL1252 vs DCA-ATL-LAX:DL0659+DL1125, DCA-ATL-LAX:DL0759+DL1252 vs DCA-ATL-LAX:DL0900+DL1400, DCA-ATL-LAX:DL0900+DL1252 vs DCA-LAS-LAX:AA0744+AA1138, DCA-ATL-LAX:DL0900+DL1252 vs DCA-ORD-LAX:UA1030+UA1255, DCA-ATL-LAX:DL0900+DL1252 vs DCA-PHX-LAX:AA1020+AA1355, DCA-ATL-LAX:DL0900+DL1400 vs DCA-ATL-LAX:DL0659+DL1125, DCA-ATL-LAX:DL1212+DL1500 vs DCA-ATL-LAX:DL1010+DL1252, DCA-ATL-LAX:DL1212+DL1650 vs DCA-ORD-LAX:AA1449+AA1904, DCA-ATL-LAX:DL1212+DL1650 vs DCA-ORD-LAX:UA1200+UA1540, DCA-ATL-LAX:DL1359+DL1650 vs DCA-ORD-LAX:UA1200+UA1400, DCA-ATL-LAX:DL1359+DL1836 vs DCA-DFW-LAX:AA1154+AA1635, DCA-ATL-LAX:DL1600+DL1836 vs DCA-ORD-LAX:AA1759+AA2025, DCA-ATL-LAX:DL1600+DL1959 vs DCA-DEN-LAX:UA1614+UA2120, DCA-DEN-LAX:UA1614+UA1935 vs DCA-ATL-LAX:DL1359+DL1650, DCA-DFW-LAX:AA0500+AA0910 vs DCA-ATL-LAX:DL0659+DL1020, DCA-DFW-LAX:AA0500+AA0910 vs DCA-ATL-LAX:DL0759+DL1125, DCA-DFW-LAX:AA0500+AA0910 vs DCA-LAS-LAX:AA0744+AA1138, DCA-DFW-LAX:AA0755+AA1311 vs DCA-ATL-LAX:DL1010+DL1400, DCA-DFW-LAX:AA0915+AA1311 vs DCA-ORD-LAX:UA0830+UA1045, DCA-DFW-LAX:AA0915+AA1311 vs DCA-ORD-LAX:UA1200+UA1400, DCA-DFW-LAX:AA1312+AA1730 vs DCA-ORD-LAX:UA1300+UA1540, DCA-DFW-LAX:AA1312+AA1830 vs DCA-DFW-LAX:AA1154+AA1730, DCA-DFW-LAX:AA1312+AA1830 vs DCA-ORD-LAX:UA1530+UA1940, DCA-DFW-LAX:AA1459+AA1930 vs DCA-ATL-LAX:DL1359+DL1650, DCA-DFW-LAX:AA1459+AA1930 vs DCA-DEN-LAX:UA1614+UA1935, DCA-DFW-LAX:AA1459+AA1930 vs DCA-ORD-LAX:UA1200+UA1400, DCA-DFW-LAX:AA1459+AA1930 vs DCA-ORD-LAX:UA1530+UA1800, DCA-LAS-LAX:AA0744+AA1138 vs DCA-DFW-LAX:AA0915+AA1400, DCA-ORD-LAX:AA0600+AA0825 vs DCA-ORD-LAX:UA0830+UA1045, DCA-ORD-LAX:AA0600+AA0951 vs DCA-ATL-LAX:DL0900+DL1252, DCA-ORD-LAX:AA0659+AA0951 vs DCA-PHX-LAX:AA0700+AA1016, DCA-ORD-LAX:UA0630+UA0900 vs DCA-ATL-LAX:DL0600+DL1020, DCA-ORD-LAX:UA0630+UA0900 vs DCA-ATL-LAX:DL0900+DL1252, DCA-ORD-LAX:UA0630+UA0900 vs DCA-DFW-LAX:AA0500+AA0910, DCA-ORD-LAX:UA0630+UA0900 vs DCA-LAS-LAX:AA0744+AA1138, DCA-ORD-LAX:UA0630+UA0900 vs DCA-PHX-LAX:AA0700+AA1016, DCA-ORD-LAX:UA0830+UA1045 vs DCA-DFW-LAX:AA0645+AA1030, DCA-ORD-LAX:UA1030+UA1255 vs DCA-ATL-LAX:DL0759+DL1125, DCA-ORD-LAX:UA1030+UA1255 vs DCA-DFW-LAX:AA0915+AA1311, DCA-ORD-LAX:UA1030+UA1255 vs DCA-DFW-LAX:AA1312+AA1730, DCA-ORD-LAX:UA1030+UA1255 vs DCA-LAS-LAX:AA0744+AA1138, DCA-ORD-LAX:UA1030+UA1255 vs DCA-ORD-LAX:UA1300+UA1540, DCA-ORD-LAX:UA1030+UA1400 vs DCA-DFW-LAX:AA1154+AA1635, DCA-ORD-LAX:UA1030+UA1400 vs DCA-ORD-LAX:UA0830+UA1255, DCA-ORD-LAX:UA1300+UA1800 vs DCA-ORD-LAX:AA1449+AA1904, DCA-ORD-LAX:UA1530+UA1800 vs DCA-ATL-LAX:DL1359+DL1650, DCA-ORD-LAX:UA1530+UA1800 vs DCA-DEN-LAX:UA1614+UA1935, DCA-PHX-LAX:AA0700+AA1016 vs DCA-ATL-LAX:DL0600+DL0855, DCA-PHX-LAX:AA0700+AA1016 vs DCA-ATL-LAX:DL0659+DL1020, DCA-PHX-LAX:AA0700+AA1016 vs DCA-ATL-LAX:DL0759+DL1125, DCA-PHX-LAX:AA0700+AA1016 vs DCA-DFW-LAX:AA0500+AA0910, DCA-PHX-LAX:AA0700+AA1016 vs DCA-DFW-LAX:AA0915+AA1311, DCA-PHX-LAX:AA0700+AA1016 vs DCA-LAS-LAX:AA0744+AA1138, DCA-PHX-LAX:AA0700+AA1016 vs DCA-ORD-LAX:AA0600+AA0825, DCA-PHX-LAX:AA1020+AA1355 vs DCA-ATL-LAX:DL0759+DL1125, DCA-PHX-LAX:AA1020+AA1355 vs DCA-DFW-LAX:AA0915+AA1311, DCA-PHX-LAX:AA1020+AA1355 vs DCA-DFW-LAX:AA1312+AA1730, DCA-PHX-LAX:AA1020+AA1355 vs DCA-LAS-LAX:AA0744+AA1138, DCA-PHX-LAX:AA1020+AA1355 vs DCA-ORD-LAX:UA1300+UA1540, HNL-LAX-BOS:DL2135+DL0700 vs HNL-DEN-BOS:UA2010+UA0805, HNL-LAX-BOS:DL2135+DL0700 vs HNL-DFW-BOS:AA1855+AA0845, HNL-ORD-BOS:UA1715+UA0730 vs HNL-DEN-BOS:UA2010+UA0805, HNL-ORD-BOS:UA1715+UA0920 vs HNL-DEN-BOS:UA2010+UA0945, HNL-PHX-BOS:AA2225+AA0855 vs HNL-LAX-BOS:UA2140+UA0835, IAH-ATL-LGA:DL0600+DL1030 vs IAH-ATL-LGA:DL0705+DL1130, IAH-ATL-LGA:DL0600+DL1130 vs IAH-ORD-LGA:UA0720+UA1200, IAH-ATL-LGA:DL0705+DL1130 vs IAH-ORD-LGA:UA0949+UA1400, IAH-ATL-LGA:DL0705+DL1230 vs IAH-ATL-LGA:DL0600+DL1130, IAH-ATL-LGA:DL0705+DL1230 vs IAH-ORD-LGA:UA0949+UA1500, IAH-ATL-LGA:DL0705+DL1330 vs IAH-ATL-LGA:DL0936+DL1530, IAH-ATL-LGA:DL0936+DL1330 vs IAH-DFW-LGA:AA0908+AA1143, IAH-ATL-LGA:DL0936+DL1330 vs IAH-DFW-LGA:AA1019+AA1243, IAH-ATL-LGA:DL0936+DL1330 vs IAH-ORD-LGA:UA0720+UA1100, IAH-ATL-LGA:DL1205+DL1830 vs IAH-ORD-LGA:UA0949+UA1500, IAH-ATL-LGA:DL1205+DL1830 vs IAH-ORD-LGA:UA1420+UA2000, IAH-ATL-LGA:DL1505+DL2030 vs IAH-ATL-LGA:DL1205+DL1700, IAH-ATL-LGA:DL1505+DL2130 vs IAH-ATL-LGA:DL1505+DL2030, IAH-DFW-LGA:AA0500+AA0707 vs IAH-ORD-LGA:UA0720+UA1100, IAH-DFW-LGA:AA0600+AA0823 vs IAH-ORD-LGA:UA0630+UA1000, IAH-DFW-LGA:AA0600+AA0823 vs IAH-ORD-LGA:UA0835+UA1200, IAH-DFW-LGA:AA0600+AA0941 vs IAH-DFW-LGA:AA0500+AA0823, IAH-DFW-LGA:AA0743+AA1028 vs IAH-DFW-LGA:AA0500+AA0707, IAH-DFW-LGA:AA0743+AA1028 vs IAH-DFW-LGA:AA1019+AA1243, IAH-DFW-LGA:AA0743+AA1028 vs IAH-ORD-LGA:UA0720+UA1100, IAH-DFW-LGA:AA0743+AA1143 vs IAH-DFW-LGA:AA0743+AA1243, IAH-DFW-LGA:AA0743+AA1143 vs IAH-ORD-LGA:AA0620+AA1220, IAH-DFW-LGA:AA0908+AA1143 vs IAH-DFW-LGA:AA1019+AA1243, IAH-DFW-LGA:AA0908+AA1143 vs IAH-ORD-LGA:UA0630+UA1000, IAH-DFW-LGA:AA0908+AA1143 vs IAH-ORD-LGA:UA0720+UA1100, IAH-DFW-LGA:AA0908+AA1143 vs IAH-ORD-LGA:UA0835+UA1200, IAH-DFW-LGA:AA0908+AA1243 vs IAH-DFW-LGA:AA0743+AA1143, IAH-DFW-LGA:AA0908+AA1243 vs IAH-ORD-LGA:AA0620+AA1012, IAH-DFW-LGA:AA0908+AA1243 vs IAH-ORD-LGA:AA0620+AA1220, IAH-DFW-LGA:AA1019+AA1243 vs IAH-ORD-LGA:UA0835+UA1200, IAH-DFW-LGA:AA1019+AA1541 vs IAH-ORD-LGA:UA0720+UA1300, IAH-ORD-LGA:AA0620+AA1012 vs IAH-ORD-LGA:UA0720+UA1100, IAH-ORD-LGA:AA0620+AA1220 vs IAH-DFW-LGA:AA0743+AA1243, IAH-ORD-LGA:AA1326+AA1710 vs IAH-DFW-LGA:AA1212+AA1440, IAH-ORD-LGA:AA1326+AA1710 vs IAH-DFW-LGA:AA1625+AA1902, IAH-ORD-LGA:UA0630+UA1300 vs IAH-ORD-LGA:UA0720+UA1400, IAH-ORD-LGA:UA0720+UA1100 vs IAH-DFW-LGA:AA0600+AA0823, IAH-ORD-LGA:UA0720+UA1100 vs IAH-DFW-LGA:AA1019+AA1243, IAH-ORD-LGA:UA0720+UA1300 vs IAH-DFW-LGA:AA0500+AA0941, IAH-ORD-LGA:UA0835+UA1200 vs IAH-ORD-LGA:UA0630+UA1000, IAH-ORD-LGA:UA0835+UA1300 vs IAH-ORD-LGA:UA0949+UA1400, IAH-ORD-LGA:UA0835+UA1400 vs IAH-ATL-LGA:DL0600+DL1230, IAH-ORD-LGA:UA0949+UA1400 vs IAH-DFW-LGA:AA0743+AA1143, IAH-ORD-LGA:UA0949+UA1400 vs IAH-DFW-LGA:AA0908+AA1243, IAH-ORD-LGA:UA0949+UA1500 vs IAH-ORD-LGA:UA0720+UA1200, IAH-ORD-LGA:UA1200+UA1600 vs IAH-DFW-LGA:AA0908+AA1243, IAH-ORD-LGA:UA1200+UA1600 vs IAH-DFW-LGA:AA1019+AA1243, IAH-ORD-LGA:UA1200+UA1600 vs IAH-DFW-LGA:AA1212+AA1541, IAH-ORD-LGA:UA1200+UA1600 vs IAH-DFW-LGA:AA1424+AA1755, IAH-ORD-LGA:UA1200+UA1600 vs IAH-ORD-LGA:UA1420+UA1830, IAH-ORD-LGA:UA1200+UA1700 vs IAH-ATL-LGA:DL0936+DL1530, IAH-ORD-LGA:UA1200+UA1830 vs IAH-ORD-LGA:UA1200+UA1800, IAH-ORD-LGA:UA1420+UA1800 vs IAH-ATL-LGA:DL1505+DL1930, IAH-ORD-LGA:UA1420+UA1800 vs IAH-DFW-LGA:AA1212+AA1440, IAH-ORD-LGA:UA1420+UA1800 vs IAH-DFW-LGA:AA1625+AA1902, IAH-ORD-LGA:UA1420+UA1800 vs IAH-ORD-LGA:AA1326+AA1710, IAH-ORD-LGA:UA1420+UA1830 vs IAH-DFW-LGA:AA1212+AA1541, IAH-ORD-LGA:UA1420+UA1830 vs IAH-DFW-LGA:AA1424+AA1755, LAX-ATL-LGA:DL0600+DL1530 vs LAX-ORD-LGA:AA0600+AA1450, LAX-ATL-LGA:DL0600+DL1700 vs LAX-ATL-LGA:DL0825+DL1830, LAX-ATL-LGA:DL0715+DL1700 vs LAX-DEN-LGA:UA0852+UA1405, LAX-ATL-LGA:DL0715+DL1700 vs LAX-ORD-LGA:UA0820+UA1700, LAX-ATL-LGA:DL0825+DL1700 vs LAX-DFW-LGA:AA0915+AA1541, LAX-ATL-LGA:DL0825+DL1830 vs LAX-ORD-LGA:AA0600+AA1450, LAX-ATL-LGA:DL0825+DL1830 vs LAX-ORD-LGA:UA0700+UA1500, LAX-ATL-LGA:DL1056+DL1930 vs LAX-ATL-LGA:DL0825+DL1700, LAX-ATL-LGA:DL1056+DL1930 vs LAX-ATL-LGA:DL1215+DL2030, LAX-ATL-LGA:DL1056+DL1930 vs LAX-ORD-LGA:AA0949+AA1710, LAX-ATL-LGA:DL1056+DL1930 vs LAX-ORD-LGA:UA1240+UA2000, LAX-ATL-LGA:DL1215+DL2030 vs LAX-DFW-LGA:AA0915+AA1541, LAX-ATL-LGA:DL1215+DL2030 vs LAX-DFW-LGA:AA1228+AA1902, LAX-ATL-LGA:DL1215+DL2130 vs LAX-ATL-LGA:DL1056+DL1930, LAX-ATL-LGA:DL2145+DL0630 vs LAX-ATL-LGA:DL2250+DL0730, LAX-ATL-LGA:DL2145+DL0630 vs LAX-ATL-LGA:F92231+F90745, LAX-ATL-LGA:DL2145+DL0730 vs LAX-ATL-LGA:DL2359+DL1030, LAX-ATL-LGA:DL2250+DL0730 vs LAX-ATL-LGA:F92231+F90745, LAX-ATL-LGA:DL2250+DL0830 vs LAX-DFW-LGA:AA0055+AA0707, LAX-ATL-LGA:DL2250+DL0830 vs LAX-ORD-LGA:AA2259+AA0819, LAX-ATL-LGA:DL2250+DL0830 vs LAX-ORD-LGA:UA2359+UA0800, LAX-ATL-LGA:DL2250+DL0930 vs LAX-DFW-LGA:AA0055+AA0941, LAX-ATL-LGA:DL2359+DL0930 vs LAX-DFW-LGA:AA0055+AA0707, LAX-ATL-LGA:DL2359+DL1030 vs LAX-ATL-LGA:DL2145+DL0830, LAX-DEN-LGA:UA0500+UA0958 vs LAX-ORD-LGA:UA0600+UA1400, LAX-DEN-LGA:UA0700+UA1405 vs LAX-ORD-LGA:UA0820+UA1800, LAX-DEN-LGA:UA0700+UA1405 vs LAX-ORD-LGA:UA0820+UA1830, LAX-DEN-LGA:UA0852+UA1405 vs LAX-ORD-LGA:AA0600+AA1450, LAX-DEN-LGA:UA0852+UA1405 vs LAX-ORD-LGA:UA0600+UA1400, LAX-DEN-LGA:UA0852+UA1405 vs LAX-ORD-LGA:UA0700+UA1500, LAX-DEN-LGA:UA0852+UA1405 vs LAX-ORD-LGA:UA0820+UA1700, LAX-DEN-LGA:UA0852+UA1551 vs LAX-ORD-LGA:UA1035+UA2000, LAX-DEN-LGA:UA1100+UA1551 vs LAX-ATL-LGA:DL1056+DL1930, LAX-DEN-LGA:UA1100+UA1740 vs LAX-ORD-LGA:UA0820+UA1700, LAX-DEN-LGA:UA1245+UA1740 vs LAX-ATL-LGA:DL1056+DL1930, LAX-DEN-LGA:WN0520+WN1005 vs LAX-ORD-LGA:UA0600+UA1400, LAX-DEN-LGA:WN0520+WN1005 vs LAX-ORD-LGA:UA0700+UA1500, LAX-DFW-LGA:AA0055+AA0823 vs LAX-DFW-LGA:AA0055+AA0707, LAX-DFW-LGA:AA0600+AA1243 vs LAX-DEN-LGA:UA0700+UA1142, LAX-DFW-LGA:AA0600+AA1243 vs LAX-DFW-LGA:AA0700+AA1440, LAX-DFW-LGA:AA0600+AA1243 vs LAX-ORD-LGA:UA0700+UA1400, LAX-DFW-LGA:AA0915+AA1541 vs LAX-ATL-LGA:DL0715+DL1530, LAX-DFW-LGA:AA0915+AA1541 vs LAX-DFW-LGA:AA0700+AA1243, LAX-DFW-LGA:AA1130+AA1755 vs LAX-DFW-LGA:AA0915+AA1541, LAX-DFW-LGA:AA2359+AA0707 vs LAX-DFW-LGA:AA0055+AA0707, LAX-ORD-LGA:AA0745+AA1450 vs LAX-ATL-LGA:DL0715+DL1530, LAX-ORD-LGA:AA0745+AA1450 vs LAX-ATL-LGA:DL0825+DL1700, LAX-ORD-LGA:AA0745+AA1450 vs LAX-DFW-LGA:AA0915+AA1541, LAX-ORD-LGA:AA0745+AA1450 vs LAX-ORD-LGA:AA0949+AA1710, LAX-ORD-LGA:AA0949+AA1710 vs LAX-ATL-LGA:DL0825+DL1700, LAX-ORD-LGA:AA0949+AA1710 vs LAX-ATL-LGA:DL1215+DL2030, LAX-ORD-LGA:AA0949+AA1710 vs LAX-DFW-LGA:AA0915+AA1541, LAX-ORD-LGA:AA0949+AA1710 vs LAX-DFW-LGA:AA1228+AA1902, LAX-ORD-LGA:AA2259+AA0601 vs LAX-ATL-LGA:DL2359+DL0830, LAX-ORD-LGA:AA2259+AA0601 vs LAX-DFW-LGA:AA2359+AA0610, LAX-ORD-LGA:AA2259+AA0601 vs LAX-ORD-LGA:AA2359+AA0719, LAX-ORD-LGA:AA2259+AA0719 vs LAX-ATL-LGA:DL2359+DL0930, LAX-ORD-LGA:AA2259+AA0719 vs LAX-DFW-LGA:AA0055+AA0707, LAX-ORD-LGA:AA2259+AA0719 vs LAX-DFW-LGA:AA2359+AA0707, LAX-ORD-LGA:AA2359+AA0719 vs LAX-ATL-LGA:DL2359+DL0830, LAX-ORD-LGA:AA2359+AA0819 vs LAX-DFW-LGA:AA0055+AA0707, LAX-ORD-LGA:UA0600+UA1300 vs LAX-ATL-LGA:DL0825+DL1700, LAX-ORD-LGA:UA0600+UA1300 vs LAX-ORD-LGA:AA0745+AA1450, LAX-ORD-LGA:UA0600+UA1300 vs LAX-ORD-LGA:UA0700+UA1400, LAX-ORD-LGA:UA0600+UA1400 vs LAX-ATL-LGA:DL0825+DL1830, LAX-ORD-LGA:UA0600+UA1500 vs LAX-ATL-LGA:DL0825+DL1930, LAX-ORD-LGA:UA0600+UA1500 vs LAX-ORD-LGA:UA0820+UA1700, LAX-ORD-LGA:UA0700+UA1400 vs LAX-ATL-LGA:DL0825+DL1700, LAX-ORD-LGA:UA0700+UA1400 vs LAX-DFW-LGA:AA0915+AA1541, LAX-ORD-LGA:UA0700+UA1400 vs LAX-ORD-LGA:AA0745+AA1450, LAX-ORD-LGA:UA0700+UA1400 vs LAX-ORD-LGA:AA0949+AA1710, LAX-ORD-LGA:UA0700+UA1500 vs LAX-ORD-LGA:AA0600+AA1450, LAX-ORD-LGA:UA0700+UA1600 vs LAX-ATL-LGA:DL0825+DL1830, LAX-ORD-LGA:UA0700+UA1700 vs LAX-ORD-LGA:UA0700+UA1600, LAX-ORD-LGA:UA0820+UA1600 vs LAX-ATL-LGA:DL1056+DL1930, LAX-ORD-LGA:UA0820+UA1800 vs LAX-ORD-LGA:UA0820+UA1830, LAX-ORD-LGA:UA1035+UA1800 vs LAX-ATL-LGA:DL1056+DL1930, LAX-ORD-LGA:UA1035+UA1800 vs LAX-DEN-LGA:UA1100+UA1551, LAX-ORD-LGA:UA1035+UA1830 vs LAX-ATL-LGA:DL1056+DL1930, LAX-ORD-LGA:UA1035+UA1830 vs LAX-ATL-LGA:DL1215+DL2130, LAX-ORD-LGA:UA1240+UA2000 vs LAX-ATL-LGA:DL1215+DL2030, LAX-ORD-LGA:UA1240+UA2000 vs LAX-DFW-LGA:AA1130+AA1755, LAX-ORD-LGA:UA1240+UA2000 vs LAX-DFW-LGA:AA1228+AA1902, LAX-ORD-LGA:UA2359+UA0700 vs LAX-ATL-LGA:DL2359+DL0830, LAX-ORD-LGA:UA2359+UA0700 vs LAX-DFW-LGA:AA2359+AA0610, LAX-ORD-LGA:UA2359+UA0700 vs LAX-ORD-LGA:AA2359+AA0719, LAX-ORD-LGA:UA2359+UA0800 vs LAX-DFW-LGA:AA0055+AA0707, LGA-ATL-LAX:DL0600+DL1125 vs LGA-ORD-LAX:UA0725+UA1255, LGA-ATL-LAX:DL0659+DL1252 vs LGA-ORD-LAX:UA0825+UA1255, LGA-ATL-LAX:DL0759+DL1125 vs LGA-DEN-LAX:UA1000+UA1328, LGA-ATL-LAX:DL0759+DL1125 vs LGA-ORD-LAX:UA1025+UA1255, LGA-ATL-LAX:DL0759+DL1252 vs LGA-DEN-LAX:UA1000+UA1600, LGA-ATL-LAX:DL0759+DL1252 vs LGA-ORD-LAX:UA0725+UA1045, LGA-ATL-LAX:DL0900+DL1252 vs LGA-ATL-LAX:DL1059+DL1500, LGA-ATL-LAX:DL0900+DL1252 vs LGA-DFW-LAX:AA0600+AA1030, LGA-ATL-LAX:DL0900+DL1252 vs LGA-DFW-LAX:AA0830+AA1311, LGA-ATL-LAX:DL0900+DL1252 vs LGA-DFW-LAX:AA1000+AA1500, LGA-ATL-LAX:DL0900+DL1252 vs LGA-DFW-LAX:DL1130+DL1600, LGA-ATL-LAX:DL0900+DL1252 vs LGA-ORD-LAX:AA1200+AA1515, LGA-ATL-LAX:DL0900+DL1252 vs LGA-ORD-LAX:UA0625+UA0900, LGA-ATL-LAX:DL0900+DL1252 vs LGA-ORD-LAX:UA1125+UA1400, LGA-ATL-LAX:DL0900+DL1400 vs LGA-ORD-LAX:AA0600+AA0951, LGA-ATL-LAX:DL0900+DL1400 vs LGA-ORD-LAX:UA0920+UA1255, LGA-ATL-LAX:DL0900+DL1400 vs LGA-ORD-LAX:UA0920+UA1400, LGA-ATL-LAX:DL0900+DL1400 vs LGA-ORD-LAX:UA1025+UA1400, LGA-ATL-LAX:DL0959+DL1400 vs LGA-ATL-LAX:DL0900+DL1252, LGA-ATL-LAX:DL0959+DL1400 vs LGA-ATL-LAX:DL1059+DL1500, LGA-ATL-LAX:DL0959+DL1400 vs LGA-ATL-LAX:DL1259+DL1650, LGA-ATL-LAX:DL0959+DL1400 vs LGA-DEN-LAX:UA1000+UA1328, LGA-ATL-LAX:DL0959+DL1400 vs LGA-DFW-LAX:AA0830+AA1311, LGA-ATL-LAX:DL0959+DL1400 vs LGA-ORD-LAX:UA1125+UA1400, LGA-ATL-LAX:DL0959+DL1500 vs LGA-ATL-LAX:DL0759+DL1252, LGA-ATL-LAX:DL0959+DL1500 vs LGA-ATL-LAX:DL0900+DL1500, LGA-ATL-LAX:DL0959+DL1500 vs LGA-DEN-LAX:UA1000+UA1600, LGA-ATL-LAX:DL1059+DL1500 vs LGA-DEN-LAX:UA1000+UA1328, LGA-ATL-LAX:DL1059+DL1500 vs LGA-DFW-LAX:AA1000+AA1500, LGA-ATL-LAX:DL1059+DL1500 vs LGA-ORD-LAX:UA1125+UA1400, LGA-ATL-LAX:DL1059+DL1650 vs LGA-ATL-LAX:DL1200+DL1650, LGA-ATL-LAX:DL1200+DL1650 vs LGA-ATL-LAX:DL1259+DL1836, LGA-ATL-LAX:DL1200+DL1650 vs LGA-DEN-LAX:UA1225+UA1740, LGA-ATL-LAX:DL1259+DL1650 vs LGA-ATL-LAX:DL1059+DL1500, LGA-ATL-LAX:DL1259+DL1650 vs LGA-DEN-LAX:UA1518+UA1935, LGA-ATL-LAX:DL1259+DL1650 vs LGA-DFW-LAX:AA1000+AA1500, LGA-ATL-LAX:DL1259+DL1650 vs LGA-DFW-LAX:DL1130+DL1600, LGA-ATL-LAX:DL1259+DL1650 vs LGA-ORD-LAX:UA1125+UA1400, LGA-ATL-LAX:DL1359+DL1959 vs LGA-DEN-LAX:UA1518+UA2120, LGA-ATL-LAX:DL1500+DL1836 vs LGA-DFW-LAX:AA1700+AA2121, LGA-ATL-LAX:DL1500+DL1836 vs LGA-ORD-LAX:AA1605+AA1904, LGA-ATL-LAX:DL1500+DL1836 vs LGA-ORD-LAX:UA1315+UA1540, LGA-ATL-LAX:DL1500+DL1959 vs LGA-ORD-LAX:AA1423+AA1904, LGA-ATL-LAX:DL1600+DL1959 vs LGA-DFW-LAX:AA1354+AA1830, LGA-ATL-LAX:DL1600+DL1959 vs LGA-ORD-LAX:UA1315+UA1540, LGA-ATL-PHX:DL0659+DL1115 vs LGA-ORD-PHX:AA0600+AA0958, LGA-ATL-PHX:DL0659+DL1115 vs LGA-ORD-PHX:UA0625+UA0915, LGA-ATL-PHX:DL0659+DL1115 vs LGA-ORD-PHX:UA0920+UA1335, LGA-ATL-PHX:DL0759+DL1115 vs LGA-DFW-PHX:AA0830+AA1219, LGA-ATL-PHX:DL0759+DL1115 vs LGA-DFW-PHX:AA1000+AA1425, LGA-ATL-PHX:DL0759+DL1115 vs LGA-ORD-PHX:AA0600+AA0828, LGA-ATL-PHX:DL0759+DL1303 vs LGA-ATL-PHX:DL0659+DL1115, LGA-ATL-PHX:DL0900+DL1303 vs LGA-ORD-PHX:UA0625+UA0915, LGA-ATL-PHX:DL1500+DL1940 vs LGA-DEN-PHX:UA1518+UA2104, LGA-ATL-PHX:DL1600+DL2115 vs LGA-DFW-PHX:AA1354+AA1950, LGA-ATL-PHX:DL1600+DL2115 vs LGA-DFW-PHX:AA1500+AA2050, LGA-ATL-PHX:DL1600+DL2115 vs LGA-DFW-PHX:AA1600+AA2150, LGA-ATL-PHX:DL1600+DL2115 vs LGA-DFW-PHX:AA1600+AA2241, LGA-ATL-PHX:DL1600+DL2115 vs LGA-ORD-PHX:AA1423+AA1852, LGA-ATL-PHX:DL1600+DL2115 vs LGA-ORD-PHX:AA1605+AA2025, LGA-ATL-PHX:DL1600+DL2115 vs LGA-ORD-PHX:UA1525+UA1953, LGA-ATL-PHX:DL1700+DL2115 vs LGA-DEN-PHX:UA1655+UA2104, LGA-ATL-PHX:DL1700+DL2115 vs LGA-ORD-PHX:UA1625+UA1953, LGA-DEN-LAX:UA0715+UA1126 vs LGA-ATL-LAX:DL0759+DL1252, LGA-DEN-LAX:UA0715+UA1126 vs LGA-ATL-LAX:DL0959+DL1500, LGA-DEN-LAX:UA0715+UA1126 vs LGA-ORD-LAX:AA0600+AA0951, LGA-DEN-LAX:UA1000+UA1328 vs LGA-DFW-LAX:DL1130+DL1600, LGA-DEN-LAX:UA1000+UA1600 vs LGA-ATL-LAX:DL0900+DL1500, LGA-DEN-LAX:UA1225+UA1600 vs LGA-ATL-LAX:DL1059+DL1500, LGA-DEN-LAX:UA1225+UA1600 vs LGA-DEN-LAX:UA1000+UA1328, LGA-DEN-LAX:UA1225+UA1600 vs LGA-DEN-LAX:UA1518+UA1935, LGA-DEN-LAX:UA1225+UA1600 vs LGA-DFW-LAX:AA1354+AA1830, LGA-DEN-LAX:UA1225+UA1600 vs LGA-DFW-LAX:AA1500+AA1930, LGA-DEN-LAX:UA1225+UA1600 vs LGA-DFW-LAX:DL1130+DL1600, LGA-DEN-LAX:UA1225+UA1600 vs LGA-ORD-LAX:AA1200+AA1515, LGA-DEN-LAX:UA1225+UA1600 vs LGA-ORD-LAX:UA1025+UA1255, LGA-DEN-LAX:UA1225+UA1600 vs LGA-ORD-LAX:UA1125+UA1400, LGA-DEN-LAX:UA1225+UA1740 vs LGA-ATL-LAX:DL1259+DL1836, LGA-DEN-LAX:UA1655+UA2120 vs LGA-DFW-LAX:AA1600+AA2121, LGA-DEN-PHX:UA0715+UA1129 vs LGA-ATL-PHX:DL0759+DL1303, LGA-DEN-PHX:UA0715+UA1129 vs LGA-ORD-PHX:AA0600+AA0958, LGA-DEN-PHX:UA0715+UA1129 vs LGA-ORD-PHX:UA0725+UA1110, LGA-DEN-PHX:UA0715+UA1129 vs LGA-ORD-PHX:UA0920+UA1335, LGA-DEN-PHX:UA1225+UA1615 vs LGA-ORD-PHX:UA1025+UA1335, LGA-DEN-PHX:UA1518+UA1920 vs LGA-ATL-PHX:DL1700+DL2115, LGA-DEN-PHX:UA1518+UA1920 vs LGA-DEN-PHX:UA1225+UA1615, LGA-DEN-PHX:UA1518+UA1920 vs LGA-DFW-PHX:AA1229+AA1750, LGA-DEN-PHX:UA1655+UA2104 vs LGA-DFW-PHX:AA1500+AA1950, LGA-DEN-PHX:WN1230+WN1605 vs LGA-DEN-PHX:UA1000+UA1325, LGA-DEN-PHX:WN1700+WN2045 vs LGA-ATL-PHX:DL1600+DL1940, LGA-DEN-PHX:WN1700+WN2045 vs LGA-DFW-PHX:AA1700+AA2150, LGA-DFW-LAX:AA0600+AA1030 vs LGA-ATL-LAX:DL0759+DL1125, LGA-DFW-LAX:AA0600+AA1030 vs LGA-ORD-LAX:UA0625+UA0900, LGA-DFW-LAX:AA0730+AA1311 vs LGA-ATL-LAX:DL0900+DL1500, LGA-DFW-LAX:AA0730+AA1311 vs LGA-ORD-LAX:UA0725+UA1045, LGA-DFW-LAX:AA0830+AA1311 vs LGA-ATL-LAX:DL1059+DL1500, LGA-DFW-LAX:AA0830+AA1311 vs LGA-DEN-LAX:UA1000+UA1328, LGA-DFW-LAX:AA0830+AA1311 vs LGA-DFW-LAX:AA0600+AA1030, LGA-DFW-LAX:AA0830+AA1311 vs LGA-ORD-LAX:UA0625+UA0900, LGA-DFW-LAX:AA0830+AA1311 vs LGA-ORD-LAX:UA1125+UA1400, LGA-DFW-LAX:AA0830+AA1400 vs LGA-DFW-LAX:AA0730+AA1400, LGA-DFW-LAX:AA0830+AA1400 vs LGA-ORD-LAX:AA0600+AA0951, LGA-DFW-LAX:AA1000+AA1400 vs LGA-ATL-LAX:DL1059+DL1400, LGA-DFW-LAX:AA1000+AA1500 vs LGA-ORD-LAX:AA1200+AA1515, LGA-DFW-LAX:AA1229+AA1730 vs LGA-ATL-LAX:DL0959+DL1400, LGA-DFW-LAX:AA1229+AA1730 vs LGA-ATL-LAX:DL1259+DL1650, LGA-DFW-LAX:AA1229+AA1730 vs LGA-DFW-LAX:AA1354+AA1930, LGA-DFW-LAX:AA1354+AA1830 vs LGA-ATL-LAX:DL1500+DL1836, LGA-DFW-LAX:AA1354+AA1830 vs LGA-DFW-LAX:DL1130+DL1600, LGA-DFW-LAX:AA1354+AA1830 vs LGA-ORD-LAX:UA1315+UA1540, LGA-DFW-LAX:AA1354+AA1930 vs LGA-DEN-LAX:UA1518+UA1935, LGA-DFW-LAX:AA1354+AA1930 vs LGA-ORD-LAX:AA1605+AA2025, LGA-DFW-LAX:AA1500+AA1930 vs LGA-ORD-LAX:UA1625+UA1940, LGA-DFW-LAX:AA1600+AA2233 vs LGA-DFW-LAX:AA1700+AA2233, LGA-DFW-LAX:AA1600+AA2233 vs LGA-ORD-LAX:AA1605+AA2025, LGA-DFW-LAX:AA1700+AA2121 vs LGA-ORD-LAX:UA1525+UA1800, LGA-DFW-LAX:AA1700+AA2233 vs LGA-DFW-LAX:AA1600+AA2121, LGA-DFW-LAX:DL1130+DL1600 vs LGA-ORD-LAX:UA1315+UA1540, LGA-DFW-PHX:AA0600+AA1033 vs LGA-DFW-PHX:AA0730+AA1219, LGA-DFW-PHX:AA0600+AA1033 vs LGA-ORD-PHX:UA0625+UA0915, LGA-DFW-PHX:AA0600+AA1219 vs LGA-ORD-PHX:AA0600+AA0958, LGA-DFW-PHX:AA0730+AA1219 vs LGA-ATL-PHX:DL0900+DL1303, LGA-DFW-PHX:AA0730+AA1219 vs LGA-ORD-PHX:AA0925+AA1320, LGA-DFW-PHX:AA0730+AA1219 vs LGA-ORD-PHX:UA0625+UA0915, LGA-DFW-PHX:AA0730+AA1219 vs LGA-ORD-PHX:UA0825+UA1110, LGA-DFW-PHX:AA0730+AA1219 vs LGA-ORD-PHX:UA1025+UA1335, LGA-DFW-PHX:AA0730+AA1425 vs LGA-DFW-PHX:AA0830+AA1425, LGA-DFW-PHX:AA0830+AA1425 vs LGA-ORD-PHX:AA0600+AA0958, LGA-DFW-PHX:AA1000+AA1425 vs LGA-DFW-PHX:AA1229+AA1635, LGA-DFW-PHX:AA1229+AA1750 vs LGA-DFW-PHX:AA1000+AA1525, LGA-DFW-PHX:AA1354+AA1750 vs LGA-ORD-PHX:AA1605+AA1852, LGA-DFW-PHX:AA1354+AA1950 vs LGA-DFW-PHX:AA1500+AA2050, LGA-DFW-PHX:AA1354+AA1950 vs LGA-DFW-PHX:AA1600+AA2241, LGA-DFW-PHX:AA1354+AA1950 vs LGA-ORD-PHX:AA1605+AA2025, LGA-DFW-PHX:AA1354+AA1950 vs LGA-ORD-PHX:UA1525+UA1953, LGA-DFW-PHX:AA1500+AA2050 vs LGA-DFW-PHX:AA1229+AA1750, LGA-DFW-PHX:AA1500+AA2050 vs LGA-DFW-PHX:AA1600+AA2241, LGA-DFW-PHX:AA1500+AA2050 vs LGA-DFW-PHX:AA1700+AA2241, LGA-DFW-PHX:AA1600+AA2050 vs LGA-ATL-PHX:DL1600+DL1940, LGA-DFW-PHX:AA1600+AA2150 vs LGA-DFW-PHX:AA1354+AA1950, LGA-DFW-PHX:AA1600+AA2150 vs LGA-ORD-PHX:UA1525+UA1953, LGA-DFW-PHX:AA1600+AA2241 vs LGA-DFW-PHX:AA1700+AA2241, LGA-DFW-PHX:AA1700+AA2150 vs LGA-ATL-PHX:DL1600+DL1940, LGA-ORD-LAX:AA0725+AA0951 vs LGA-ORD-LAX:AA0600+AA0825, LGA-ORD-LAX:AA1200+AA1515 vs LGA-DEN-LAX:UA1000+UA1328, LGA-ORD-LAX:AA1200+AA1515 vs LGA-DFW-LAX:DL1130+DL1600, LGA-ORD-LAX:AA1200+AA1515 vs LGA-ORD-LAX:UA1125+UA1400, LGA-ORD-LAX:AA1423+AA1904 vs LGA-ATL-LAX:DL1359+DL1836, LGA-ORD-LAX:AA1605+AA1904 vs LGA-ORD-LAX:UA1315+UA1540, LGA-ORD-LAX:AA1605+AA1904 vs LGA-ORD-LAX:UA1525+UA1800, LGA-ORD-LAX:AA1605+AA2025 vs LGA-DEN-LAX:UA1518+UA1935, LGA-ORD-LAX:UA0625+UA0900 vs LGA-ATL-LAX:DL0759+DL1125, LGA-ORD-LAX:UA0725+UA1045 vs LGA-ATL-LAX:DL0900+DL1400, LGA-ORD-LAX:UA0725+UA1045 vs LGA-DFW-LAX:AA0830+AA1400, LGA-ORD-LAX:UA0725+UA1045 vs LGA-ORD-LAX:AA0600+AA0951, LGA-ORD-LAX:UA0725+UA1045 vs LGA-ORD-LAX:UA0920+UA1255, LGA-ORD-LAX:UA0725+UA1045 vs LGA-ORD-LAX:UA1025+UA1400, LGA-ORD-LAX:UA0725+UA1255 vs LGA-ORD-LAX:UA1025+UA1540, LGA-ORD-LAX:UA0920+UA1255 vs LGA-DFW-LAX:AA0830+AA1400, LGA-ORD-LAX:UA0920+UA1255 vs LGA-ORD-LAX:UA0625+UA0900, LGA-ORD-LAX:UA0920+UA1255 vs LGA-ORD-LAX:UA1125+UA1400, LGA-ORD-LAX:UA1025+UA1255 vs LGA-DEN-LAX:UA1000+UA1328, LGA-ORD-LAX:UA1025+UA1255 vs LGA-DFW-LAX:DL1130+DL1600, LGA-ORD-LAX:UA1025+UA1255 vs LGA-ORD-LAX:AA1200+AA1515, LGA-ORD-LAX:UA1025+UA1255 vs LGA-ORD-LAX:UA1125+UA1400, LGA-ORD-LAX:UA1025+UA1400 vs LGA-DFW-LAX:AA0830+AA1400, LGA-ORD-LAX:UA1025+UA1540 vs LGA-ATL-LAX:DL1259+DL1836, LGA-ORD-LAX:UA1025+UA1540 vs LGA-DEN-LAX:UA1225+UA1740, LGA-ORD-LAX:UA1025+UA1540 vs LGA-ORD-LAX:UA0825+UA1255, LGA-ORD-LAX:UA1125+UA1400 vs LGA-DEN-LAX:UA1000+UA1328, LGA-ORD-LAX:UA1125+UA1400 vs LGA-DFW-LAX:AA1354+AA1830, LGA-ORD-LAX:UA1125+UA1400 vs LGA-DFW-LAX:DL1130+DL1600, LGA-ORD-LAX:UA1315+UA1540 vs LGA-ORD-LAX:UA1525+UA1800, LGA-ORD-LAX:UA1315+UA1800 vs LGA-ATL-LAX:DL1359+DL1959, LGA-ORD-LAX:UA1315+UA1800 vs LGA-DEN-LAX:UA1518+UA2120, LGA-ORD-LAX:UA1425+UA1800 vs LGA-ATL-LAX:DL1500+DL1959, LGA-ORD-LAX:UA1425+UA1940 vs LGA-ATL-LAX:DL1359+DL1959, LGA-ORD-LAX:UA1425+UA1940 vs LGA-DEN-LAX:UA1518+UA2120, LGA-ORD-LAX:UA1425+UA1940 vs LGA-ORD-LAX:UA1315+UA1800, LGA-ORD-LAX:UA1525+UA1940 vs LGA-ATL-LAX:DL1259+DL1650, LGA-ORD-LAX:UA1525+UA1940 vs LGA-DFW-LAX:AA1229+AA1730, LGA-ORD-LAX:UA1625+UA1940 vs LGA-DFW-LAX:AA1354+AA1830, LGA-ORD-PHX:AA0600+AA0828 vs LGA-DFW-PHX:AA0830+AA1219, LGA-ORD-PHX:AA1200+AA1702 vs LGA-ATL-PHX:DL1500+DL2115, LGA-ORD-PHX:AA1423+AA1702 vs LGA-DFW-PHX:AA1600+AA1950, LGA-ORD-PHX:AA1605+AA1852 vs LGA-ORD-PHX:AA1423+AA1702, LGA-ORD-PHX:AA1605+AA2025 vs LGA-DFW-PHX:AA1500+AA2050, LGA-ORD-PHX:AA1605+AA2025 vs LGA-DFW-PHX:AA1600+AA2241, LGA-ORD-PHX:AA1605+AA2025 vs LGA-DFW-PHX:AA1700+AA2241, LGA-ORD-PHX:UA0825+UA1110 vs LGA-ATL-PHX:DL0900+DL1303, LGA-ORD-PHX:UA0825+UA1110 vs LGA-DEN-PHX:UA1000+UA1325, LGA-ORD-PHX:UA0825+UA1110 vs LGA-ORD-PHX:UA0625+UA0915, LGA-ORD-PHX:UA0825+UA1110 vs LGA-ORD-PHX:UA1025+UA1335, LGA-ORD-PHX:UA0825+UA1335 vs LGA-ATL-PHX:DL0600+DL1115, LGA-ORD-PHX:UA1025+UA1335 vs LGA-DFW-PHX:AA1229+AA1750, LGA-ORD-PHX:UA1125+UA1610 vs LGA-DEN-PHX:UA1000+UA1615, LGA-ORD-PHX:UA1315+UA1610 vs LGA-DEN-PHX:WN1230+WN1605, LGA-ORD-PHX:UA1315+UA1610 vs LGA-DFW-PHX:AA1500+AA1950, LGA-ORD-PHX:UA1625+UA1953 vs LGA-DEN-PHX:UA1655+UA2104, MCO-ATL-LAX:DL0530+DL0855 vs MCO-ATL-LAX:DL0800+DL1125, MCO-ATL-LAX:DL0530+DL0855 vs MCO-PHX-LAX:AA0715+AA1016, MCO-ATL-LAX:DL0615+DL0855 vs MCO-DEN-LAX:UA0801+UA1126, MCO-ATL-LAX:DL0615+DL0855 vs MCO-DFW-LAX:AA0515+AA0910, MCO-ATL-LAX:DL0615+DL0855 vs MCO-DFW-LAX:AA0653+AA1030, MCO-ATL-LAX:DL0615+DL0855 vs MCO-PHX-LAX:AA0715+AA1016, MCO-ATL-LAX:DL0615+DL1020 vs MCO-DFW-LAX:AA0810+AA1311, MCO-ATL-LAX:DL0700+DL1020 vs MCO-ATL-LAX:DL0530+DL0855, MCO-ATL-LAX:DL0700+DL1020 vs MCO-ATL-LAX:DL0800+DL1125, MCO-ATL-LAX:DL0700+DL1020 vs MCO-ATL-LAX:DL1000+DL1400, MCO-ATL-LAX:DL0700+DL1125 vs MCO-ATL-LAX:DL0800+DL1125, MCO-ATL-LAX:DL0800+DL1020 vs MCO-ATL-LAX:DL0900+DL1125, MCO-ATL-LAX:DL0800+DL1125 vs MCO-ATL-LAX:DL1000+DL1400, MCO-ATL-LAX:DL0900+DL1252 vs MCO-ATL-LAX:DL1100+DL1500, MCO-ATL-LAX:DL0900+DL1252 vs MCO-DEN-LAX:UA0801+UA1126, MCO-ATL-LAX:DL0900+DL1252 vs MCO-ORD-LAX:UA0729+UA1045, MCO-ATL-LAX:DL0900+DL1252 vs MCO-ORD-LAX:UA0930+UA1255, MCO-ATL-LAX:DL0900+DL1400 vs MCO-ORD-LAX:UA0729+UA1045, MCO-ATL-LAX:DL0900+DL1400 vs MCO-ORD-LAX:UA0930+UA1255, MCO-ATL-LAX:DL1000+DL1252 vs MCO-ATL-LAX:DL1100+DL1400, MCO-ATL-LAX:DL1000+DL1252 vs MCO-DEN-LAX:UA1000+UA1328, MCO-ATL-LAX:DL1000+DL1252 vs MCO-DEN-LAX:UA1241+UA1600, MCO-ATL-LAX:DL1000+DL1252 vs MCO-ORD-LAX:UA1230+UA1540, MCO-ATL-LAX:DL1000+DL1400 vs MCO-ORD-LAX:UA0729+UA1045, MCO-ATL-LAX:DL1000+DL1500 vs MCO-ORD-LAX:UA0729+UA1045, MCO-ATL-LAX:DL1000+DL1500 vs MCO-ORD-LAX:UA0930+UA1255, MCO-ATL-LAX:DL1100+DL1400 vs MCO-DEN-LAX:UA1241+UA1600, MCO-ATL-LAX:DL1100+DL1400 vs MCO-DFW-LAX:AA1333+AA1730, MCO-ATL-LAX:DL1100+DL1400 vs MCO-ORD-LAX:UA1230+UA1540, MCO-ATL-LAX:DL1100+DL1500 vs MCO-ATL-LAX:DL1300+DL1650, MCO-ATL-LAX:DL1100+DL1500 vs MCO-DEN-LAX:UA0801+UA1126, MCO-ATL-LAX:DL1100+DL1500 vs MCO-DFW-LAX:AA1333+AA1830, MCO-ATL-LAX:DL1200+DL1500 vs MCO-ATL-LAX:DL0900+DL1125, MCO-ATL-LAX:DL1300+DL1650 vs MCO-DEN-LAX:UA1000+UA1328, MCO-ATL-LAX:DL1400+DL1650 vs MCO-DEN-LAX:UA1241+UA1600, MCO-ATL-LAX:DL1400+DL1650 vs MCO-DFW-LAX:AA1150+AA1500, MCO-ATL-LAX:DL1400+DL1836 vs MCO-ATL-LAX:DL1300+DL1650, MCO-ATL-LAX:DL1400+DL1836 vs MCO-DFW-LAX:AA1150+AA1730, MCO-ATL-LAX:DL1545+DL1959 vs MCO-DEN-LAX:UA1545+UA1935, MCO-ATL-LAX:DL1545+DL1959 vs MCO-DFW-LAX:AA1603+AA2121, MCO-DEN-LAX:UA0801+UA1126 vs MCO-ATL-LAX:DL1000+DL1252, MCO-DEN-LAX:UA0801+UA1126 vs MCO-ATL-LAX:DL1100+DL1400, MCO-DEN-LAX:UA0801+UA1126 vs MCO-DEN-LAX:UA1000+UA1328, MCO-DEN-LAX:UA0801+UA1126 vs MCO-DFW-LAX:AA0515+AA0910, MCO-DEN-LAX:UA0801+UA1126 vs MCO-DFW-LAX:AA0930+AA1311, MCO-DEN-LAX:UA0801+UA1126 vs MCO-PHX-LAX:AA0715+AA1016, MCO-DEN-LAX:UA1000+UA1600 vs MCO-ATL-LAX:DL1200+DL1650, MCO-DEN-LAX:UA1000+UA1600 vs MCO-DEN-LAX:UA1241+UA1740, MCO-DEN-LAX:UA1000+UA1600 vs MCO-ORD-LAX:UA0930+UA1400, MCO-DEN-LAX:UA1241+UA1740 vs MCO-ATL-LAX:DL1200+DL1650, MCO-DEN-LAX:UA1545+UA1935 vs MCO-DFW-LAX:AA1333+AA1730, MCO-DFW-LAX:AA0515+AA0817 vs MCO-ORD-LAX:AA0656+AA0951, MCO-DFW-LAX:AA0515+AA0910 vs MCO-ORD-LAX:AA0656+AA0951, MCO-DFW-LAX:AA0653+AA1030 vs MCO-DEN-LAX:UA0801+UA1126, MCO-DFW-LAX:AA0653+AA1030 vs MCO-DFW-LAX:AA0515+AA0910, MCO-DFW-LAX:AA0653+AA1030 vs MCO-DFW-LAX:AA0930+AA1311, MCO-DFW-LAX:AA0653+AA1030 vs MCO-DFW-LAX:AA0930+AA1400, MCO-DFW-LAX:AA0653+AA1030 vs MCO-ORD-LAX:UA0729+UA1045, MCO-DFW-LAX:AA0653+AA1030 vs MCO-PHX-LAX:AA0715+AA1016, MCO-DFW-LAX:AA0810+AA1311 vs MCO-ATL-LAX:DL0530+DL1020, MCO-DFW-LAX:AA0930+AA1311 vs MCO-DEN-LAX:UA1000+UA1328, MCO-DFW-LAX:AA0930+AA1400 vs MCO-DEN-LAX:UA1000+UA1328, MCO-DFW-LAX:AA0930+AA1500 vs MCO-ORD-LAX:UA0729+UA1045, MCO-DFW-LAX:AA1150+AA1500 vs MCO-DEN-LAX:UA1241+UA1600, MCO-DFW-LAX:AA1150+AA1635 vs MCO-ATL-LAX:DL1300+DL1650, MCO-DFW-LAX:AA1150+AA1635 vs MCO-ATL-LAX:DL1400+DL1836, MCO-DFW-LAX:AA1150+AA1635 vs MCO-DFW-LAX:AA0930+AA1500, MCO-DFW-LAX:AA1150+AA1635 vs MCO-DFW-LAX:AA1333+AA1830, MCO-DFW-LAX:AA1333+AA1730 vs MCO-DEN-LAX:UA1241+UA1600, MCO-DFW-LAX:AA1333+AA1730 vs MCO-DFW-LAX:AA1150+AA1500, MCO-DFW-LAX:AA1333+AA1730 vs MCO-ORD-LAX:UA1230+UA1540, MCO-DFW-LAX:AA1333+AA1830 vs MCO-ATL-LAX:DL1300+DL1650, MCO-DFW-LAX:AA1333+AA1830 vs MCO-ATL-LAX:DL1400+DL1836, MCO-DFW-LAX:AA1333+AA1830 vs MCO-DFW-LAX:AA1150+AA1730, MCO-DFW-LAX:AA1603+AA1930 vs MCO-ATL-LAX:DL1655+DL1959, MCO-DFW-LAX:AA1742+AA2121 vs MCO-ORD-LAX:UA1615+UA1940, MCO-DFW-LAX:AA1742+AA2233 vs MCO-DEN-LAX:UA1545+UA1935, MCO-ORD-LAX:AA1452+AA1904 vs MCO-ATL-LAX:DL1545+DL1959, MCO-ORD-LAX:AA1452+AA1904 vs MCO-DFW-LAX:AA1603+AA2121, MCO-ORD-LAX:AA1452+AA1904 vs MCO-DFW-LAX:AA1742+AA2233, MCO-ORD-LAX:UA0729+UA1045 vs MCO-DEN-LAX:UA0801+UA1126, MCO-ORD-LAX:UA0729+UA1045 vs MCO-DFW-LAX:AA0515+AA0910, MCO-ORD-LAX:UA0729+UA1045 vs MCO-DFW-LAX:AA0515+AA1030, MCO-ORD-LAX:UA0729+UA1045 vs MCO-DFW-LAX:AA0930+AA1400, MCO-ORD-LAX:UA0930+UA1255 vs MCO-ATL-LAX:DL1100+DL1500, MCO-ORD-LAX:UA0930+UA1255 vs MCO-DEN-LAX:UA0801+UA1126, MCO-ORD-LAX:UA0930+UA1255 vs MCO-DFW-LAX:AA0930+AA1311, MCO-ORD-LAX:UA0930+UA1255 vs MCO-DFW-LAX:AA0930+AA1400, MCO-ORD-LAX:UA0930+UA1255 vs MCO-DFW-LAX:AA1150+AA1635, MCO-ORD-LAX:UA0930+UA1255 vs MCO-ORD-LAX:UA0729+UA1045, MCO-ORD-LAX:UA0930+UA1400 vs MCO-ATL-LAX:DL1200+DL1650, MCO-ORD-LAX:UA1230+UA1540 vs MCO-ATL-LAX:DL1400+DL1650, MCO-ORD-LAX:UA1230+UA1540 vs MCO-DEN-LAX:UA1241+UA1600, MCO-PHX-LAX:AA0715+AA1016 vs MCO-ATL-LAX:DL1000+DL1252, MCO-PHX-LAX:AA0715+AA1016 vs MCO-DEN-LAX:UA1000+UA1328, MCO-PHX-LAX:AA0715+AA1016 vs MCO-DFW-LAX:AA0515+AA0910, MCO-PHX-LAX:AA0715+AA1016 vs MCO-DFW-LAX:AA0930+AA1311, OKC-ATL-EWR:DL0800+DL1259 vs OKC-ATL-EWR:DL0535+DL1007, OKC-DFW-EWR:AA0500+AA0704 vs OKC-DEN-EWR:UA0605+UA0746, OKC-DFW-EWR:AA0847+AA1128 vs OKC-DFW-EWR:AA0754+AA1128, OKC-ORD-EWR:AA0515+AA1000 vs OKC-DFW-EWR:AA0754+AA1128, OKC-ORD-EWR:UA1020+UA1425 vs OKC-DFW-EWR:AA0847+AA1128, RDU-ATL-LAX:DL0629+DL0855 vs RDU-ATL-LAX:DL0744+DL1020, RDU-ATL-LAX:DL0629+DL0855 vs RDU-DEN-LAX:UA0800+UA1126, RDU-ATL-LAX:DL0629+DL0855 vs RDU-DFW-LAX:AA0632+AA1030, RDU-ATL-LAX:DL0629+DL0855 vs RDU-ORD-LAX:UA0615+UA0900, RDU-ATL-LAX:DL0629+DL0855 vs RDU-PHX-LAX:AA0715+AA1016, RDU-ATL-LAX:DL0744+DL1020 vs RDU-DEN-LAX:UA0800+UA1126, RDU-ATL-LAX:DL0744+DL1020 vs RDU-DFW-LAX:AA0632+AA1030, RDU-ATL-LAX:DL0744+DL1020 vs RDU-ORD-LAX:UA0615+UA0900, RDU-ATL-LAX:DL0744+DL1125 vs RDU-ATL-LAX:DL0629+DL1020, RDU-ATL-LAX:DL0951+DL1252 vs RDU-ATL-LAX:DL1115+DL1500, RDU-ATL-LAX:DL0951+DL1400 vs RDU-DFW-LAX:AA1142+AA1730, RDU-ATL-LAX:DL1115+DL1400 vs RDU-ORD-LAX:UA1019+UA1255, RDU-ATL-LAX:DL1115+DL1400 vs RDU-ORD-LAX:UA1256+UA1540, RDU-ATL-LAX:DL1340+DL1836 vs RDU-ATL-LAX:DL1241+DL1650, RDU-ATL-LAX:DL1525+DL1836 vs RDU-ORD-LAX:UA1256+UA1540, RDU-ATL-LAX:DL1717+DL1959 vs RDU-DEN-LAX:UA1614+UA1935, RDU-ATL-LAX:DL1717+DL1959 vs RDU-DFW-LAX:AA1541+AA1930, RDU-ATL-LAX:DL1717+DL1959 vs RDU-ORD-LAX:AA1751+AA2025, RDU-DEN-LAX:UA1614+UA1935 vs RDU-ORD-LAX:AA1751+AA2025, RDU-DFW-LAX:AA0505+AA0910 vs RDU-DEN-LAX:UA0800+UA1126, RDU-DFW-LAX:AA0505+AA0910 vs RDU-ORD-LAX:AA0600+AA0825, RDU-DFW-LAX:AA0505+AA1030 vs RDU-ORD-LAX:AA0600+AA0951, RDU-DFW-LAX:AA0505+AA1030 vs RDU-ORD-LAX:UA0615+UA1045, RDU-DFW-LAX:AA0632+AA1030 vs RDU-DEN-LAX:UA0800+UA1126, RDU-DFW-LAX:AA0632+AA1030 vs RDU-ORD-LAX:UA0615+UA0900, RDU-DFW-LAX:AA0632+AA1030 vs RDU-PHX-LAX:AA0715+AA1016, RDU-ORD-LAX:AA0600+AA0825 vs RDU-ATL-LAX:DL0629+DL0855, RDU-ORD-LAX:AA0600+AA0825 vs RDU-ATL-LAX:DL0744+DL1020, RDU-ORD-LAX:AA0600+AA0825 vs RDU-DEN-LAX:UA0800+UA1126, RDU-ORD-LAX:AA0600+AA0825 vs RDU-DFW-LAX:AA0632+AA1030, RDU-ORD-LAX:AA0600+AA0951 vs RDU-ORD-LAX:UA0615+UA1045, RDU-ORD-LAX:UA0615+UA0900 vs RDU-DEN-LAX:UA0800+UA1126, RDU-ORD-LAX:UA1019+UA1255 vs RDU-ATL-LAX:DL0744+DL1020, RDU-ORD-LAX:UA1019+UA1255 vs RDU-DEN-LAX:UA0800+UA1126, RDU-ORD-LAX:UA1019+UA1400 vs RDU-ATL-LAX:DL0951+DL1400, RDU-ORD-LAX:UA1019+UA1400 vs RDU-DFW-LAX:AA1142+AA1730, RDU-ORD-LAX:UA1256+UA1540 vs RDU-DFW-LAX:AA1142+AA1635, RDU-PHX-LAX:AA0715+AA1016 vs RDU-ORD-LAX:AA0720+AA0951, SAT-ATL-LGA:DL0700+DL1130 vs SAT-DFW-LGA:AA0700+AA0941, SAT-ATL-LGA:DL0700+DL1130 vs SAT-ORD-LGA:AA0601+AA1012, SAT-ATL-LGA:DL0700+DL1230 vs SAT-ATL-LGA:DL0525+DL1130, SAT-ATL-LGA:DL1210+DL1700 vs SAT-ATL-LGA:DL1055+DL1530, SAT-ATL-LGA:DL1210+DL1700 vs SAT-DFW-LGA:AA1052+AA1440, SAT-ATL-LGA:DL1210+DL1700 vs SAT-DFW-LGA:AA1226+AA1541, SAT-ATL-LGA:DL1210+DL1700 vs SAT-DFW-LGA:AA1430+AA1755, SAT-ATL-LGA:DL1210+DL1700 vs SAT-ORD-LGA:UA1408+UA1830, SAT-ATL-LGA:DL1210+DL1930 vs SAT-ATL-LGA:DL1055+DL1700, SAT-ATL-LGA:DL1405+DL1830 vs SAT-DFW-LGA:AA1634+AA1902, SAT-ATL-LGA:DL1405+DL1930 vs SAT-ATL-LGA:DL1632+DL2130, SAT-ATL-LGA:DL1632+DL2130 vs SAT-DFW-LGA:AA1430+AA1755, SAT-DFW-LGA:AA0500+AA0707 vs SAT-DFW-LGA:AA0800+AA1028, SAT-DFW-LGA:AA0500+AA0823 vs SAT-ORD-LGA:UA0700+UA1100, SAT-DFW-LGA:AA0600+AA0823 vs SAT-ATL-LGA:DL0525+DL0930, SAT-DFW-LGA:AA0600+AA0823 vs SAT-DFW-LGA:AA0500+AA0707, SAT-DFW-LGA:AA0600+AA0823 vs SAT-DFW-LGA:AA0800+AA1028, SAT-DFW-LGA:AA0600+AA0941 vs SAT-ORD-LGA:UA0700+UA1100, SAT-DFW-LGA:AA0700+AA1028 vs SAT-DFW-LGA:AA0600+AA0941, SAT-DFW-LGA:AA0700+AA1143 vs SAT-DFW-LGA:AA0600+AA1028, SAT-DFW-LGA:AA0911+AA1143 vs SAT-DFW-LGA:AA0800+AA1028, SAT-DFW-LGA:AA0911+AA1243 vs SAT-ORD-LGA:UA0700+UA1100, SAT-DFW-LGA:AA1052+AA1243 vs SAT-DFW-LGA:AA1226+AA1440, SAT-DFW-LGA:AA1052+AA1243 vs SAT-ORD-LGA:AA1335+AA1710, SAT-DFW-LGA:AA1226+AA1440 vs SAT-DFW-LGA:AA1430+AA1645, SAT-DFW-LGA:AA1226+AA1440 vs SAT-ORD-LGA:AA1335+AA1710, SAT-DFW-LGA:AA1226+AA1541 vs SAT-ATL-LGA:DL1055+DL1530, SAT-DFW-LGA:AA1430+AA1755 vs SAT-DFW-LGA:AA1226+AA1541, SAT-DFW-LGA:AA1430+AA1755 vs SAT-DFW-LGA:AA1226+AA1645, SAT-ORD-LGA:AA0601+AA1012 vs SAT-DFW-LGA:AA0500+AA0823, SAT-ORD-LGA:AA0601+AA1012 vs SAT-DFW-LGA:AA0600+AA0941, SAT-ORD-LGA:AA0601+AA1012 vs SAT-DFW-LGA:AA0700+AA1028, SAT-ORD-LGA:UA0700+UA1100 vs SAT-DFW-LGA:AA0700+AA0941, SAT-ORD-LGA:UA0700+UA1200 vs SAT-DFW-LGA:AA0800+AA1143, SAT-ORD-LGA:UA1408+UA1800 vs SAT-ATL-LGA:DL1405+DL1830, SAT-ORD-LGA:UA1408+UA1830 vs SAT-ATL-LGA:DL1632+DL2130, SAT-ORD-LGA:UA1408+UA1830 vs SAT-DFW-LGA:AA1226+AA1645, SAT-ORD-LGA:UA1408+UA1830 vs SAT-DFW-LGA:AA1430+AA1755, SMF-DEN-ATL:UA0517+UA0957 vs SMF-ORD-ATL:UA0700+UA1430, SMF-DEN-ATL:UA0845+UA1336 vs SMF-LAX-ATL:DL0903+DL1215, SMF-DEN-ATL:UA0845+UA1336 vs SMF-ORD-ATL:UA0700+UA1430, SMF-DFW-ATL:AA0600+AA1228 vs SMF-DFW-ATL:AA0757+AA1428, SMF-DFW-ATL:AA0600+AA1228 vs SMF-PHX-ATL:AA0600+AA0945, SMF-DFW-ATL:AA0757+AA1428 vs SMF-LAX-ATL:DL0600+DL0825, SMF-DFW-ATL:AA1422+AA2048 vs SMF-PHX-ATL:AA1257+AA1538, SMF-LAX-ATL:DL0903+DL1215 vs SMF-ORD-ATL:UA0700+UA1430, SMF-LAX-ATL:DL0903+DL1215 vs SMF-ORD-ATL:UA1045+UA1830, SMF-LAX-ATL:DL0903+DL1325 vs SMF-LAX-ATL:DL0903+DL1426, SMF-ORD-ATL:UA0700+UA1430 vs SMF-DFW-ATL:AA0600+AA1428, SMF-ORD-ATL:UA0700+UA1430 vs SMF-DFW-ATL:AA0757+AA1625, SMF-ORD-ATL:UA1045+UA1830 vs SMF-DFW-ATL:AA0757+AA1625, SMF-ORD-ATL:UA1045+UA1830 vs SMF-DFW-ATL:AA1112+AA1859, SMF-PHX-ATL:AA0600+AA0945 vs SMF-DFW-ATL:AA0757+AA1428, SMF-PHX-ATL:AA0600+AA0945 vs SMF-LAX-ATL:DL0600+DL0825, SNA-ATL-PHL:DL1154+DL2055 vs SNA-PHX-PHL:AA0956+AA1226, SNA-DEN-PHL:UA1319+UA1750 vs SNA-ATL-PHL:DL1154+DL2055, SNA-ORD-PHL:UA1050+UA1825 vs SNA-PHX-PHL:AA1245+AA1626, SNA-PHX-PHL:AA0645+AA0959 vs SNA-ATL-PHL:DL0645+DL1509, SNA-PHX-PHL:AA0645+AA0959 vs SNA-ATL-PHL:DL0645+DL1625, SNA-PHX-PHL:AA0645+AA0959 vs SNA-DFW-PHL:AA0645+AA1235, SNA-PHX-PHL:AA0645+AA0959 vs SNA-ORD-PHL:AA0749+AA1452, SNA-PHX-PHL:AA0645+AA0959 vs SNA-ORD-PHL:UA0700+UA1426, SNA-PHX-PHL:AA0956+AA1226 vs SNA-ORD-PHL:AA1134+AA1853
+**Assumption-sensitive pairs:** COS-DEN-LGA:UA0820+UA1142 vs COS-ATL-LGA:DL0600+DL1230, COS-DEN-LGA:UA0820+UA1142 vs COS-DEN-LGA:UA0730+UA1142, COS-DEN-LGA:UA1335+UA1551 vs COS-DEN-LGA:UA1140+UA1405, COS-DEN-LGA:UA1335+UA1740 vs COS-ORD-LGA:UA1255+UA1830, COS-DEN-ORD:UA0730+UA0940 vs COS-DEN-ORD:UA0530+UA0750, COS-DEN-ORD:UA0730+UA1120 vs COS-DEN-ORD:UA0820+UA1120, COS-DEN-ORD:UA0920+UA1325 vs COS-DEN-ORD:UA1140+UA1510, COS-DEN-ORD:UA1140+UA1510 vs COS-DEN-ORD:UA1335+UA1745, COS-DEN-ORD:UA1335+UA1622 vs COS-DFW-ORD:AA1043+AA1538, COS-DFW-LGA:AA0600+AA0941 vs COS-ATL-LGA:DL0600+DL1130, COS-DFW-LGA:AA0600+AA1028 vs COS-DEN-LGA:UA0730+UA0958, COS-DFW-LGA:AA0815+AA1243 vs COS-DFW-LGA:AA1043+AA1541, COS-DFW-LGA:AA1043+AA1440 vs COS-DEN-LGA:UA0820+UA0958, COS-DFW-ORD:AA1043+AA1538 vs COS-DEN-ORD:UA1000+UA1325, HNL-LAX-BOS:DL2135+DL0700 vs HNL-DEN-BOS:UA2010+UA0805, HNL-LAX-BOS:DL2135+DL0700 vs HNL-DFW-BOS:AA1855+AA0845, HNL-ORD-BOS:UA1715+UA0730 vs HNL-DEN-BOS:UA2010+UA0805, HNL-ORD-BOS:UA1715+UA0920 vs HNL-DEN-BOS:UA2010+UA0945, HNL-PHX-BOS:AA2225+AA0855 vs HNL-LAX-BOS:UA2140+UA0835, IAH-ATL-LGA:DL0600+DL1030 vs IAH-ATL-LGA:DL0705+DL1130, IAH-ATL-LGA:DL0600+DL1130 vs IAH-ORD-LGA:UA0720+UA1200, IAH-ATL-LGA:DL0705+DL1130 vs IAH-ORD-LGA:UA0949+UA1400, IAH-ATL-LGA:DL0705+DL1230 vs IAH-ATL-LGA:DL0600+DL1130, IAH-ATL-LGA:DL0705+DL1230 vs IAH-ORD-LGA:UA0949+UA1500, IAH-ATL-LGA:DL0705+DL1330 vs IAH-ATL-LGA:DL0936+DL1530, IAH-ATL-LGA:DL0936+DL1330 vs IAH-DFW-LGA:AA0908+AA1143, IAH-ATL-LGA:DL0936+DL1330 vs IAH-ORD-LGA:UA0720+UA1100, IAH-ATL-LGA:DL1205+DL1830 vs IAH-ORD-LGA:UA0949+UA1500, IAH-ATL-LGA:DL1205+DL1830 vs IAH-ORD-LGA:UA1420+UA2000, IAH-ATL-LGA:DL1505+DL2030 vs IAH-ATL-LGA:DL1205+DL1700, IAH-ATL-LGA:DL1505+DL2130 vs IAH-ATL-LGA:DL1505+DL2030, IAH-DEN-SFO:UA0515+UA0745 vs IAH-DEN-SFO:UA0720+UA1005, IAH-DEN-SFO:UA0515+UA0745 vs IAH-DFW-SFO:AA0743+AA1115, IAH-DEN-SFO:UA0515+UA1005 vs IAH-DEN-SFO:UA0720+UA1133, IAH-DEN-SFO:UA0720+UA1005 vs IAH-DFW-SFO:AA1019+AA1309, IAH-DEN-SFO:UA0720+UA1133 vs IAH-DEN-SFO:UA0940+UA1336, IAH-DEN-SFO:UA0720+UA1133 vs IAH-LAS-SFO:UA0940+UA1340, IAH-DEN-SFO:UA0825+UA1133 vs IAH-DFW-SFO:AA0908+AA1309, IAH-DEN-SFO:UA0825+UA1133 vs IAH-LAS-SFO:UA0730+UA1010, IAH-DEN-SFO:UA0825+UA1133 vs IAH-LAX-SFO:DL0610+DL1020, IAH-DEN-SFO:UA0825+UA1133 vs IAH-LAX-SFO:UA0720+UA1030, IAH-DEN-SFO:UA0940+UA1336 vs IAH-DEN-SFO:UA0825+UA1133, IAH-DEN-SFO:UA0940+UA1336 vs IAH-LAX-SFO:UA0720+UA1030, IAH-DEN-SFO:UA0940+UA1336 vs IAH-LAX-SFO:UA1225+UA1610, IAH-DEN-SFO:UA1058+UA1336 vs IAH-DFW-SFO:AA0908+AA1115, IAH-DEN-SFO:UA1446+UA1738 vs IAH-DFW-SFO:AA1424+AA1714, IAH-DEN-SFO:UA1625+UA1902 vs IAH-DFW-SFO:AA1625+AA1857, IAH-DEN-SFO:UA1625+UA1902 vs IAH-DFW-SFO:AA1826+AA2054, IAH-DEN-SFO:UA1625+UA1902 vs IAH-LAX-SFO:UA1623+UA1906, IAH-DFW-LGA:AA0500+AA0707 vs IAH-ORD-LGA:UA0720+UA1100, IAH-DFW-LGA:AA0600+AA0823 vs IAH-ORD-LGA:UA0630+UA1000, IAH-DFW-LGA:AA0600+AA0823 vs IAH-ORD-LGA:UA0835+UA1200, IAH-DFW-LGA:AA0600+AA0941 vs IAH-DFW-LGA:AA0500+AA0823, IAH-DFW-LGA:AA0743+AA1028 vs IAH-DFW-LGA:AA0500+AA0707, IAH-DFW-LGA:AA0743+AA1028 vs IAH-ORD-LGA:UA0720+UA1100, IAH-DFW-LGA:AA0743+AA1143 vs IAH-DFW-LGA:AA0743+AA1243, IAH-DFW-LGA:AA0743+AA1143 vs IAH-ORD-LGA:AA0620+AA1220, IAH-DFW-LGA:AA0908+AA1143 vs IAH-ORD-LGA:UA0630+UA1000, IAH-DFW-LGA:AA0908+AA1143 vs IAH-ORD-LGA:UA0720+UA1100, IAH-DFW-LGA:AA0908+AA1143 vs IAH-ORD-LGA:UA0835+UA1200, IAH-DFW-LGA:AA0908+AA1243 vs IAH-DFW-LGA:AA0743+AA1143, IAH-DFW-LGA:AA0908+AA1243 vs IAH-ORD-LGA:AA0620+AA1012, IAH-DFW-LGA:AA0908+AA1243 vs IAH-ORD-LGA:AA0620+AA1220, IAH-DFW-SFO:AA0600+AA0904 vs IAH-DFW-SFO:AA0500+AA0720, IAH-DFW-SFO:AA0743+AA1115 vs IAH-DEN-SFO:UA0720+UA1005, IAH-DFW-SFO:AA0743+AA1115 vs IAH-DFW-SFO:AA0600+AA0904, IAH-DFW-SFO:AA0908+AA1115 vs IAH-LAS-SFO:UA0940+UA1151, IAH-DFW-SFO:AA0908+AA1115 vs IAH-PHX-SFO:AA0825+AA1032, IAH-DFW-SFO:AA1019+AA1309 vs IAH-DFW-SFO:AA1212+AA1548, IAH-DFW-SFO:AA1424+AA1714 vs IAH-LAX-SFO:UA1623+UA1906, IAH-DFW-SFO:AA1625+AA1857 vs IAH-LAX-SFO:UA1623+UA1906, IAH-DFW-SFO:AA1625+AA2054 vs IAH-DFW-SFO:AA1424+AA1857, IAH-DFW-SFO:UA1441+UA1950 vs IAH-DEN-SFO:UA1250+UA1738, IAH-DFW-SFO:UA1441+UA1950 vs IAH-LAX-SFO:UA1425+UA1906, IAH-DFW-SFO:UA1715+UA1950 vs IAH-DEN-SFO:UA1625+UA1902, IAH-DFW-SFO:UA1715+UA1950 vs IAH-LAX-SFO:UA1623+UA1906, IAH-LAS-SFO:UA0730+UA1010 vs IAH-DEN-SFO:UA0515+UA0745, IAH-LAS-SFO:UA0730+UA1010 vs IAH-DFW-SFO:AA0743+AA1115, IAH-LAS-SFO:UA0730+UA1010 vs IAH-DFW-SFO:AA1019+AA1309, IAH-LAS-SFO:UA0730+UA1010 vs IAH-LAX-SFO:UA0515+UA0815, IAH-LAS-SFO:UA0730+UA1010 vs IAH-LAX-SFO:UA1009+UA1345, IAH-LAS-SFO:UA0940+UA1340 vs IAH-DEN-SFO:UA0825+UA1133, IAH-LAS-SFO:UA0940+UA1340 vs IAH-DEN-SFO:UA0940+UA1336, IAH-LAX-SFO:UA0515+UA0815 vs IAH-DEN-SFO:UA0515+UA0745, IAH-LAX-SFO:UA0515+UA0815 vs IAH-DFW-SFO:AA0743+AA1115, IAH-LAX-SFO:UA0720+UA1030 vs IAH-LAS-SFO:UA0730+UA1010, IAH-LAX-SFO:UA0720+UA1030 vs IAH-LAX-SFO:UA0515+UA0815, IAH-LAX-SFO:UA0720+UA1030 vs IAH-LAX-SFO:UA1009+UA1345, IAH-LAX-SFO:UA1009+UA1345 vs IAH-DFW-SFO:AA0908+AA1309, IAH-LAX-SFO:UA1225+UA1610 vs IAH-DEN-SFO:UA1446+UA1902, IAH-LAX-SFO:UA1425+UA1906 vs IAH-DEN-SFO:UA1250+UA1738, IAH-LAX-SFO:UA1425+UA1906 vs IAH-DEN-SFO:UA1446+UA1902, IAH-LAX-SFO:UA1623+UA1906 vs IAH-DFW-SFO:AA1826+AA2054, IAH-LAX-SFO:UA1820+UA2130 vs IAH-DEN-SFO:UA1805+UA2105, IAH-LAX-SFO:UA1950+UA2235 vs IAH-DFW-SFO:AA1826+AA2054, IAH-ORD-LGA:AA0620+AA1012 vs IAH-ORD-LGA:UA0720+UA1100, IAH-ORD-LGA:AA0620+AA1220 vs IAH-DFW-LGA:AA0743+AA1243, IAH-ORD-LGA:AA1326+AA1710 vs IAH-DFW-LGA:AA1212+AA1440, IAH-ORD-LGA:AA1326+AA1710 vs IAH-DFW-LGA:AA1625+AA1902, IAH-ORD-LGA:UA0630+UA1300 vs IAH-ORD-LGA:UA0720+UA1400, IAH-ORD-LGA:UA0720+UA1100 vs IAH-DFW-LGA:AA0600+AA0823, IAH-ORD-LGA:UA0720+UA1300 vs IAH-DFW-LGA:AA0500+AA0941, IAH-ORD-LGA:UA0835+UA1200 vs IAH-ORD-LGA:UA0630+UA1000, IAH-ORD-LGA:UA0835+UA1300 vs IAH-ORD-LGA:UA0949+UA1400, IAH-ORD-LGA:UA0835+UA1400 vs IAH-ATL-LGA:DL0600+DL1230, IAH-ORD-LGA:UA0949+UA1400 vs IAH-DFW-LGA:AA0743+AA1143, IAH-ORD-LGA:UA0949+UA1400 vs IAH-DFW-LGA:AA0908+AA1243, IAH-ORD-LGA:UA0949+UA1500 vs IAH-ORD-LGA:UA0720+UA1200, IAH-ORD-LGA:UA1200+UA1600 vs IAH-DFW-LGA:AA0908+AA1243, IAH-ORD-LGA:UA1200+UA1600 vs IAH-DFW-LGA:AA1212+AA1541, IAH-ORD-LGA:UA1200+UA1600 vs IAH-DFW-LGA:AA1424+AA1755, IAH-ORD-LGA:UA1200+UA1600 vs IAH-ORD-LGA:UA1420+UA1830, IAH-ORD-LGA:UA1200+UA1700 vs IAH-ATL-LGA:DL0936+DL1530, IAH-ORD-LGA:UA1200+UA1830 vs IAH-ORD-LGA:UA1200+UA1800, IAH-ORD-LGA:UA1420+UA1800 vs IAH-ATL-LGA:DL1505+DL1930, IAH-ORD-LGA:UA1420+UA1800 vs IAH-DFW-LGA:AA1212+AA1440, IAH-ORD-LGA:UA1420+UA1800 vs IAH-DFW-LGA:AA1625+AA1902, IAH-ORD-LGA:UA1420+UA1800 vs IAH-ORD-LGA:AA1326+AA1710, IAH-ORD-LGA:UA1420+UA1830 vs IAH-DFW-LGA:AA1212+AA1541, IAH-ORD-LGA:UA1420+UA1830 vs IAH-DFW-LGA:AA1424+AA1755, LAX-ATL-DCA:DL0600+DL1537 vs LAX-ORD-DCA:UA0820+UA1600, LAX-ATL-DCA:DL0715+DL1537 vs LAX-ORD-DCA:UA0700+UA1400, LAX-ATL-DCA:DL0825+DL1745 vs LAX-ATL-DCA:DL0715+DL1537, LAX-ATL-DCA:DL0825+DL1745 vs LAX-ORD-DCA:UA1035+UA1800, LAX-ATL-DCA:DL0825+DL1855 vs LAX-DFW-DCA:AA0700+AA1505, LAX-ATL-DCA:DL1056+DL1955 vs LAX-ATL-DCA:DL0825+DL1745, LAX-ATL-DCA:DL1056+DL1955 vs LAX-ATL-DCA:DL1215+DL2159, LAX-ATL-DCA:DL1056+DL1955 vs LAX-ORD-DCA:UA1035+UA1800, LAX-ATL-DCA:DL1056+DL1955 vs LAX-PHX-DCA:AA0950+AA1309, LAX-ATL-DCA:DL1056+DL2055 vs LAX-ORD-DCA:UA1035+UA1940, LAX-ATL-DCA:DL1215+DL2055 vs LAX-DFW-DCA:AA1228+AA1902, LAX-ATL-DCA:DL1215+DL2055 vs LAX-ORD-DCA:UA1035+UA1800, LAX-ATL-DCA:DL1215+DL2159 vs LAX-ORD-DCA:UA1035+UA1800, LAX-ATL-DCA:DL2359+DL0919 vs LAX-ORD-DCA:AA2359+AA0805, LAX-ATL-LGA:DL0600+DL1530 vs LAX-ORD-LGA:AA0600+AA1450, LAX-ATL-LGA:DL0600+DL1700 vs LAX-ATL-LGA:DL0825+DL1830, LAX-ATL-LGA:DL0715+DL1700 vs LAX-DEN-LGA:UA0852+UA1405, LAX-ATL-LGA:DL0715+DL1700 vs LAX-ORD-LGA:UA0820+UA1700, LAX-ATL-LGA:DL0825+DL1700 vs LAX-DFW-LGA:AA0915+AA1541, LAX-ATL-LGA:DL0825+DL1830 vs LAX-ORD-LGA:AA0600+AA1450, LAX-ATL-LGA:DL0825+DL1830 vs LAX-ORD-LGA:UA0700+UA1500, LAX-ATL-LGA:DL1056+DL1930 vs LAX-ATL-LGA:DL0825+DL1700, LAX-ATL-LGA:DL1056+DL1930 vs LAX-ORD-LGA:AA0949+AA1710, LAX-ATL-LGA:DL1056+DL1930 vs LAX-ORD-LGA:UA1240+UA2000, LAX-ATL-LGA:DL1215+DL2130 vs LAX-ATL-LGA:DL1056+DL1930, LAX-ATL-LGA:DL2145+DL0730 vs LAX-ATL-LGA:DL2359+DL1030, LAX-ATL-LGA:DL2250+DL0830 vs LAX-DFW-LGA:AA0055+AA0707, LAX-ATL-LGA:DL2250+DL0830 vs LAX-ORD-LGA:AA2259+AA0819, LAX-ATL-LGA:DL2250+DL0830 vs LAX-ORD-LGA:UA2359+UA0800, LAX-ATL-LGA:DL2250+DL0930 vs LAX-DFW-LGA:AA0055+AA0941, LAX-ATL-LGA:DL2359+DL1030 vs LAX-ATL-LGA:DL2145+DL0830, LAX-DEN-DCA:UA0500+UA0940 vs LAX-ORD-DCA:AA0600+AA1330, LAX-DEN-LGA:UA0500+UA0958 vs LAX-ORD-LGA:UA0600+UA1400, LAX-DEN-LGA:UA0700+UA1405 vs LAX-ORD-LGA:UA0820+UA1800, LAX-DEN-LGA:UA0700+UA1405 vs LAX-ORD-LGA:UA0820+UA1830, LAX-DEN-LGA:UA0852+UA1405 vs LAX-ORD-LGA:AA0600+AA1450, LAX-DEN-LGA:UA0852+UA1405 vs LAX-ORD-LGA:UA0600+UA1400, LAX-DEN-LGA:UA0852+UA1405 vs LAX-ORD-LGA:UA0700+UA1500, LAX-DEN-LGA:UA0852+UA1405 vs LAX-ORD-LGA:UA0820+UA1700, LAX-DEN-LGA:UA0852+UA1551 vs LAX-ORD-LGA:UA1035+UA2000, LAX-DEN-LGA:UA1100+UA1551 vs LAX-ATL-LGA:DL1056+DL1930, LAX-DEN-LGA:UA1100+UA1740 vs LAX-ORD-LGA:UA0820+UA1700, LAX-DEN-LGA:UA1245+UA1740 vs LAX-ATL-LGA:DL1056+DL1930, LAX-DFW-DCA:AA0600+AA1224 vs LAX-ATL-DCA:DL0715+DL1537, LAX-DFW-DCA:AA0600+AA1224 vs LAX-ORD-DCA:UA0700+UA1400, LAX-DFW-DCA:AA0700+AA1505 vs LAX-ATL-DCA:DL0825+DL1745, LAX-DFW-DCA:AA1228+AA2050 vs LAX-ORD-DCA:AA1116+AA2028, LAX-DFW-DCA:AA1340+AA2050 vs LAX-ATL-DCA:DL1215+DL2055, LAX-DFW-DCA:AA1340+AA2050 vs LAX-DFW-DCA:AA1130+AA1902, LAX-DFW-DCA:AA1440+AA2050 vs LAX-ATL-DCA:DL1325+DL2159, LAX-DFW-DCA:AA2359+AA0701 vs LAX-ATL-DCA:DL2359+DL0919, LAX-DFW-DCA:AA2359+AA0701 vs LAX-DFW-DCA:AA0055+AA0701, LAX-DFW-DCA:AA2359+AA0701 vs LAX-ORD-DCA:AA2259+AA0805, LAX-DFW-LGA:AA0055+AA0823 vs LAX-DFW-LGA:AA0055+AA0707, LAX-DFW-LGA:AA0600+AA1243 vs LAX-DEN-LGA:UA0700+UA1142, LAX-DFW-LGA:AA0600+AA1243 vs LAX-DFW-LGA:AA0700+AA1440, LAX-DFW-LGA:AA0600+AA1243 vs LAX-ORD-LGA:UA0700+UA1400, LAX-DFW-LGA:AA0915+AA1541 vs LAX-ATL-LGA:DL0715+DL1530, LAX-DFW-LGA:AA2359+AA0707 vs LAX-DFW-LGA:AA0055+AA0707, LAX-ORD-DCA:AA0600+AA1330 vs LAX-ATL-DCA:DL0825+DL1745, LAX-ORD-DCA:AA1116+AA1917 vs LAX-DFW-DCA:AA0915+AA1702, LAX-ORD-DCA:AA1116+AA1917 vs LAX-DFW-DCA:AA1228+AA1902, LAX-ORD-DCA:AA1116+AA2028 vs LAX-ATL-DCA:DL0825+DL1745, LAX-ORD-DCA:AA1327+AA2028 vs LAX-ORD-DCA:UA1240+UA1940, LAX-ORD-DCA:AA2259+AA0805 vs LAX-ATL-DCA:DL2359+DL0919, LAX-ORD-DCA:AA2259+AA0805 vs LAX-ORD-DCA:AA2359+AA0805, LAX-ORD-DCA:AA2359+AA0805 vs LAX-DFW-DCA:AA0055+AA0701, LAX-ORD-DCA:UA0700+UA1400 vs LAX-ATL-DCA:DL0825+DL1640, LAX-ORD-DCA:UA0700+UA1600 vs LAX-ATL-DCA:DL0600+DL1640, LAX-ORD-DCA:UA0820+UA1600 vs LAX-ATL-DCA:DL0715+DL1537, LAX-ORD-DCA:UA0820+UA1600 vs LAX-ORD-DCA:AA0600+AA1330, LAX-ORD-DCA:UA1035+UA1800 vs LAX-DFW-DCA:AA1228+AA1902, LAX-ORD-DCA:UA1035+UA1800 vs LAX-ORD-DCA:AA1116+AA1917, LAX-ORD-LGA:AA0949+AA1710 vs LAX-ATL-LGA:DL0825+DL1700, LAX-ORD-LGA:AA0949+AA1710 vs LAX-DFW-LGA:AA0915+AA1541, LAX-ORD-LGA:AA0949+AA1710 vs LAX-DFW-LGA:AA1228+AA1902, LAX-ORD-LGA:AA2259+AA0601 vs LAX-ATL-LGA:DL2359+DL0830, LAX-ORD-LGA:AA2259+AA0601 vs LAX-DFW-LGA:AA2359+AA0610, LAX-ORD-LGA:AA2259+AA0719 vs LAX-DFW-LGA:AA0055+AA0707, LAX-ORD-LGA:AA2259+AA0719 vs LAX-DFW-LGA:AA2359+AA0707, LAX-ORD-LGA:UA0600+UA1400 vs LAX-ATL-LGA:DL0825+DL1830, LAX-ORD-LGA:UA0600+UA1500 vs LAX-ATL-LGA:DL0825+DL1930, LAX-ORD-LGA:UA0600+UA1500 vs LAX-ORD-LGA:UA0820+UA1700, LAX-ORD-LGA:UA0700+UA1400 vs LAX-ATL-LGA:DL0825+DL1700, LAX-ORD-LGA:UA0700+UA1400 vs LAX-DFW-LGA:AA0915+AA1541, LAX-ORD-LGA:UA0700+UA1400 vs LAX-ORD-LGA:AA0949+AA1710, LAX-ORD-LGA:UA0700+UA1500 vs LAX-ORD-LGA:AA0600+AA1450, LAX-ORD-LGA:UA0700+UA1600 vs LAX-ATL-LGA:DL0825+DL1830, LAX-ORD-LGA:UA0700+UA1700 vs LAX-ORD-LGA:UA0700+UA1600, LAX-ORD-LGA:UA0820+UA1600 vs LAX-ATL-LGA:DL1056+DL1930, LAX-ORD-LGA:UA0820+UA1800 vs LAX-ORD-LGA:UA0820+UA1830, LAX-ORD-LGA:UA1035+UA1800 vs LAX-ATL-LGA:DL1056+DL1930, LAX-ORD-LGA:UA1035+UA1800 vs LAX-DEN-LGA:UA1100+UA1551, LAX-ORD-LGA:UA1035+UA1830 vs LAX-ATL-LGA:DL1056+DL1930, LAX-ORD-LGA:UA1035+UA1830 vs LAX-ATL-LGA:DL1215+DL2130, LAX-ORD-LGA:UA1240+UA2000 vs LAX-DFW-LGA:AA1228+AA1902, LAX-ORD-LGA:UA2359+UA0700 vs LAX-ATL-LGA:DL2359+DL0830, LAX-ORD-LGA:UA2359+UA0700 vs LAX-DFW-LGA:AA2359+AA0610, LAX-ORD-LGA:UA2359+UA0800 vs LAX-DFW-LGA:AA0055+AA0707, LAX-PHX-DCA:AA0601+AA0849 vs LAX-ATL-DCA:DL0715+DL1537, LAX-PHX-DCA:AA0601+AA0849 vs LAX-DFW-DCA:AA0600+AA1224, LAX-PHX-DCA:AA0950+AA1309 vs LAX-ATL-DCA:DL0715+DL1537, LAX-PHX-DCA:AA0950+AA1309 vs LAX-ATL-DCA:DL0825+DL1745, LAX-PHX-DCA:AA0950+AA1309 vs LAX-ORD-DCA:UA0700+UA1400, LAX-PHX-DCA:AA0950+AA1309 vs LAX-ORD-DCA:UA1035+UA1800, LGA-ATL-LAX:DL0600+DL1125 vs LGA-ORD-LAX:UA0725+UA1255, LGA-ATL-LAX:DL0659+DL1252 vs LGA-ORD-LAX:UA0825+UA1255, LGA-ATL-LAX:DL0759+DL1125 vs LGA-DEN-LAX:UA1000+UA1328, LGA-ATL-LAX:DL0759+DL1125 vs LGA-ORD-LAX:UA1025+UA1255, LGA-ATL-LAX:DL0759+DL1252 vs LGA-ORD-LAX:UA0725+UA1045, LGA-ATL-LAX:DL0900+DL1252 vs LGA-ATL-LAX:DL1059+DL1500, LGA-ATL-LAX:DL0900+DL1252 vs LGA-DFW-LAX:AA0830+AA1311, LGA-ATL-LAX:DL0900+DL1252 vs LGA-DFW-LAX:DL1130+DL1600, LGA-ATL-LAX:DL0900+DL1252 vs LGA-ORD-LAX:AA1200+AA1515, LGA-ATL-LAX:DL0900+DL1252 vs LGA-ORD-LAX:UA0625+UA0900, LGA-ATL-LAX:DL0900+DL1252 vs LGA-ORD-LAX:UA1125+UA1400, LGA-ATL-LAX:DL0900+DL1400 vs LGA-ORD-LAX:AA0600+AA0951, LGA-ATL-LAX:DL0900+DL1400 vs LGA-ORD-LAX:UA0920+UA1255, LGA-ATL-LAX:DL0900+DL1400 vs LGA-ORD-LAX:UA0920+UA1400, LGA-ATL-LAX:DL0900+DL1400 vs LGA-ORD-LAX:UA1025+UA1400, LGA-ATL-LAX:DL0959+DL1500 vs LGA-ATL-LAX:DL0759+DL1252, LGA-ATL-LAX:DL0959+DL1500 vs LGA-ATL-LAX:DL0900+DL1500, LGA-ATL-LAX:DL1059+DL1500 vs LGA-DEN-LAX:UA1000+UA1328, LGA-ATL-LAX:DL1059+DL1500 vs LGA-ORD-LAX:UA1125+UA1400, LGA-ATL-LAX:DL1059+DL1650 vs LGA-ATL-LAX:DL1200+DL1650, LGA-ATL-LAX:DL1200+DL1650 vs LGA-ATL-LAX:DL1259+DL1836, LGA-ATL-LAX:DL1200+DL1650 vs LGA-DEN-LAX:UA1225+UA1740, LGA-ATL-LAX:DL1259+DL1650 vs LGA-ATL-LAX:DL1059+DL1500, LGA-ATL-LAX:DL1259+DL1650 vs LGA-DEN-LAX:UA1518+UA1935, LGA-ATL-LAX:DL1259+DL1650 vs LGA-DFW-LAX:DL1130+DL1600, LGA-ATL-LAX:DL1259+DL1650 vs LGA-ORD-LAX:UA1125+UA1400, LGA-ATL-LAX:DL1359+DL1959 vs LGA-DEN-LAX:UA1518+UA2120, LGA-ATL-LAX:DL1500+DL1836 vs LGA-DFW-LAX:AA1700+AA2121, LGA-ATL-LAX:DL1500+DL1836 vs LGA-ORD-LAX:AA1605+AA1904, LGA-ATL-LAX:DL1500+DL1836 vs LGA-ORD-LAX:UA1315+UA1540, LGA-ATL-LAX:DL1600+DL1959 vs LGA-DFW-LAX:AA1354+AA1830, LGA-ATL-LAX:DL1600+DL1959 vs LGA-ORD-LAX:UA1315+UA1540, LGA-DEN-LAX:UA0715+UA1126 vs LGA-ATL-LAX:DL0759+DL1252, LGA-DEN-LAX:UA0715+UA1126 vs LGA-ATL-LAX:DL0959+DL1500, LGA-DEN-LAX:UA0715+UA1126 vs LGA-ORD-LAX:AA0600+AA0951, LGA-DEN-LAX:UA1000+UA1328 vs LGA-DFW-LAX:DL1130+DL1600, LGA-DEN-LAX:UA1225+UA1600 vs LGA-ATL-LAX:DL1059+DL1500, LGA-DEN-LAX:UA1225+UA1600 vs LGA-DEN-LAX:UA1000+UA1328, LGA-DEN-LAX:UA1225+UA1600 vs LGA-DEN-LAX:UA1518+UA1935, LGA-DEN-LAX:UA1225+UA1600 vs LGA-DFW-LAX:AA1354+AA1830, LGA-DEN-LAX:UA1225+UA1600 vs LGA-DFW-LAX:DL1130+DL1600, LGA-DEN-LAX:UA1225+UA1600 vs LGA-ORD-LAX:AA1200+AA1515, LGA-DEN-LAX:UA1225+UA1600 vs LGA-ORD-LAX:UA1025+UA1255, LGA-DEN-LAX:UA1225+UA1600 vs LGA-ORD-LAX:UA1125+UA1400, LGA-DEN-LAX:UA1225+UA1740 vs LGA-ATL-LAX:DL1259+DL1836, LGA-DEN-LAX:UA1655+UA2120 vs LGA-DFW-LAX:AA1600+AA2121, LGA-DFW-LAX:AA0730+AA1311 vs LGA-ATL-LAX:DL0900+DL1500, LGA-DFW-LAX:AA0730+AA1311 vs LGA-ORD-LAX:UA0725+UA1045, LGA-DFW-LAX:AA0830+AA1311 vs LGA-ATL-LAX:DL1059+DL1500, LGA-DFW-LAX:AA0830+AA1311 vs LGA-DEN-LAX:UA1000+UA1328, LGA-DFW-LAX:AA0830+AA1311 vs LGA-ORD-LAX:UA0625+UA0900, LGA-DFW-LAX:AA0830+AA1311 vs LGA-ORD-LAX:UA1125+UA1400, LGA-DFW-LAX:AA0830+AA1400 vs LGA-ORD-LAX:AA0600+AA0951, LGA-DFW-LAX:AA1354+AA1830 vs LGA-ATL-LAX:DL1500+DL1836, LGA-DFW-LAX:AA1354+AA1830 vs LGA-DFW-LAX:DL1130+DL1600, LGA-DFW-LAX:AA1354+AA1830 vs LGA-ORD-LAX:UA1315+UA1540, LGA-DFW-LAX:AA1700+AA2121 vs LGA-ORD-LAX:UA1525+UA1800, LGA-DFW-LAX:AA1700+AA2233 vs LGA-DFW-LAX:AA1600+AA2121, LGA-DFW-LAX:DL1130+DL1600 vs LGA-ORD-LAX:UA1315+UA1540, LGA-ORD-LAX:AA0725+AA0951 vs LGA-ORD-LAX:AA0600+AA0825, LGA-ORD-LAX:AA1200+AA1515 vs LGA-DEN-LAX:UA1000+UA1328, LGA-ORD-LAX:AA1200+AA1515 vs LGA-DFW-LAX:DL1130+DL1600, LGA-ORD-LAX:AA1200+AA1515 vs LGA-ORD-LAX:UA1125+UA1400, LGA-ORD-LAX:AA1605+AA1904 vs LGA-ORD-LAX:UA1315+UA1540, LGA-ORD-LAX:AA1605+AA1904 vs LGA-ORD-LAX:UA1525+UA1800, LGA-ORD-LAX:AA1605+AA2025 vs LGA-DEN-LAX:UA1518+UA1935, LGA-ORD-LAX:UA0625+UA0900 vs LGA-ATL-LAX:DL0759+DL1125, LGA-ORD-LAX:UA0725+UA1045 vs LGA-ATL-LAX:DL0900+DL1400, LGA-ORD-LAX:UA0725+UA1045 vs LGA-DFW-LAX:AA0830+AA1400, LGA-ORD-LAX:UA0725+UA1045 vs LGA-ORD-LAX:AA0600+AA0951, LGA-ORD-LAX:UA0725+UA1045 vs LGA-ORD-LAX:UA0920+UA1255, LGA-ORD-LAX:UA0725+UA1045 vs LGA-ORD-LAX:UA1025+UA1400, LGA-ORD-LAX:UA0725+UA1255 vs LGA-ORD-LAX:UA1025+UA1540, LGA-ORD-LAX:UA0920+UA1255 vs LGA-DFW-LAX:AA0830+AA1400, LGA-ORD-LAX:UA0920+UA1255 vs LGA-ORD-LAX:UA0625+UA0900, LGA-ORD-LAX:UA0920+UA1255 vs LGA-ORD-LAX:UA1125+UA1400, LGA-ORD-LAX:UA1025+UA1255 vs LGA-DEN-LAX:UA1000+UA1328, LGA-ORD-LAX:UA1025+UA1255 vs LGA-DFW-LAX:DL1130+DL1600, LGA-ORD-LAX:UA1025+UA1255 vs LGA-ORD-LAX:AA1200+AA1515, LGA-ORD-LAX:UA1025+UA1255 vs LGA-ORD-LAX:UA1125+UA1400, LGA-ORD-LAX:UA1025+UA1400 vs LGA-DFW-LAX:AA0830+AA1400, LGA-ORD-LAX:UA1025+UA1540 vs LGA-ATL-LAX:DL1259+DL1836, LGA-ORD-LAX:UA1025+UA1540 vs LGA-DEN-LAX:UA1225+UA1740, LGA-ORD-LAX:UA1025+UA1540 vs LGA-ORD-LAX:UA0825+UA1255, LGA-ORD-LAX:UA1125+UA1400 vs LGA-DEN-LAX:UA1000+UA1328, LGA-ORD-LAX:UA1125+UA1400 vs LGA-DFW-LAX:AA1354+AA1830, LGA-ORD-LAX:UA1125+UA1400 vs LGA-DFW-LAX:DL1130+DL1600, LGA-ORD-LAX:UA1315+UA1540 vs LGA-ORD-LAX:UA1525+UA1800, LGA-ORD-LAX:UA1315+UA1800 vs LGA-ATL-LAX:DL1359+DL1959, LGA-ORD-LAX:UA1315+UA1800 vs LGA-DEN-LAX:UA1518+UA2120, LGA-ORD-LAX:UA1425+UA1800 vs LGA-ATL-LAX:DL1500+DL1959, LGA-ORD-LAX:UA1425+UA1940 vs LGA-ATL-LAX:DL1359+DL1959, LGA-ORD-LAX:UA1425+UA1940 vs LGA-DEN-LAX:UA1518+UA2120, LGA-ORD-LAX:UA1425+UA1940 vs LGA-ORD-LAX:UA1315+UA1800, LGA-ORD-LAX:UA1525+UA1940 vs LGA-ATL-LAX:DL1259+DL1650, LGA-ORD-LAX:UA1625+UA1940 vs LGA-DFW-LAX:AA1354+AA1830, LIT-ATL-LGA:DL0725+DL1130 vs LIT-ATL-LGA:DL0530+DL1030, LIT-DFW-LGA:AA0500+AA0941 vs LIT-DFW-LGA:AA0600+AA1028, LIT-DFW-LGA:AA0500+AA0941 vs LIT-DFW-LGA:AA0737+AA1143, LIT-DFW-LGA:AA0600+AA0823 vs LIT-DFW-LGA:AA0500+AA0707, LIT-DFW-LGA:AA0737+AA1243 vs LIT-DFW-LGA:AA0500+AA0941, LIT-DFW-LGA:AA1215+AA1541 vs LIT-ORD-LGA:UA1515+UA2000, LIT-ORD-LGA:UA0745+UA1100 vs LIT-ORD-LGA:AA0700+AA1012, LIT-ORD-LGA:UA0745+UA1300 vs LIT-DFW-LGA:AA0906+AA1243, LIT-ORD-LGA:UA1515+UA1830 vs LIT-DFW-LGA:AA1215+AA1440, MCO-ATL-LAS:DL0530+DL0830 vs MCO-ATL-LAS:DL0700+DL0959, MCO-ATL-LAS:DL0530+DL0830 vs MCO-DEN-LAS:UA0801+UA1124, MCO-ATL-LAS:DL0530+DL0830 vs MCO-PHX-LAS:AA0715+AA1116, MCO-ATL-LAS:DL0530+DL0959 vs MCO-LAX-LAS:DL0650+DL1137, MCO-ATL-LAS:DL0615+DL0959 vs MCO-ATL-LAS:DL0530+DL0959, MCO-ATL-LAS:DL0615+DL1058 vs MCO-ATL-LAS:DL0800+DL1215, MCO-ATL-LAS:DL0700+DL0959 vs MCO-ATL-LAS:DL0900+DL1215, MCO-ATL-LAS:DL0700+DL0959 vs MCO-DEN-LAS:UA0801+UA1124, MCO-ATL-LAS:DL0800+DL1058 vs MCO-DFW-LAS:AA0515+AA0840, MCO-ATL-LAS:DL0800+DL1058 vs MCO-DFW-LAS:AA0930+AA1257, MCO-ATL-LAS:DL0800+DL1215 vs MCO-ATL-LAS:DL0700+DL1058, MCO-ATL-LAS:DL0800+DL1215 vs MCO-ATL-LAS:DL0700+DL1215, MCO-ATL-LAS:DL0800+DL1215 vs MCO-ATL-LAS:DL1000+DL1456, MCO-ATL-LAS:DL0900+DL1215 vs MCO-DEN-LAS:UA0801+UA1124, MCO-ATL-LAS:DL1100+DL1456 vs MCO-DEN-LAS:UA0801+UA1124, MCO-ATL-LAS:DL1100+DL1456 vs MCO-DFW-LAS:AA0810+AA1257, MCO-ATL-LAS:DL1200+DL1659 vs MCO-LAX-LAS:DL1000+DL1525, MCO-ATL-LAS:DL1400+DL1659 vs MCO-DFW-LAS:AA1150+AA1450, MCO-ATL-LAX:DL0530+DL0855 vs MCO-ATL-LAX:DL0800+DL1125, MCO-ATL-LAX:DL0615+DL0855 vs MCO-DEN-LAX:UA0801+UA1126, MCO-ATL-LAX:DL0615+DL0855 vs MCO-DFW-LAX:AA0653+AA1030, MCO-ATL-LAX:DL0615+DL1020 vs MCO-DFW-LAX:AA0810+AA1311, MCO-ATL-LAX:DL0700+DL1020 vs MCO-ATL-LAX:DL0530+DL0855, MCO-ATL-LAX:DL0700+DL1020 vs MCO-ATL-LAX:DL0800+DL1125, MCO-ATL-LAX:DL0700+DL1020 vs MCO-ATL-LAX:DL1000+DL1400, MCO-ATL-LAX:DL0700+DL1125 vs MCO-ATL-LAX:DL0800+DL1125, MCO-ATL-LAX:DL0800+DL1020 vs MCO-ATL-LAX:DL0900+DL1125, MCO-ATL-LAX:DL0800+DL1125 vs MCO-ATL-LAX:DL1000+DL1400, MCO-ATL-LAX:DL0900+DL1252 vs MCO-ATL-LAX:DL1100+DL1500, MCO-ATL-LAX:DL0900+DL1252 vs MCO-DEN-LAX:UA0801+UA1126, MCO-ATL-LAX:DL0900+DL1252 vs MCO-ORD-LAX:UA0729+UA1045, MCO-ATL-LAX:DL0900+DL1252 vs MCO-ORD-LAX:UA0930+UA1255, MCO-ATL-LAX:DL0900+DL1400 vs MCO-ORD-LAX:UA0729+UA1045, MCO-ATL-LAX:DL0900+DL1400 vs MCO-ORD-LAX:UA0930+UA1255, MCO-ATL-LAX:DL1000+DL1252 vs MCO-ATL-LAX:DL1100+DL1400, MCO-ATL-LAX:DL1000+DL1252 vs MCO-DEN-LAX:UA1000+UA1328, MCO-ATL-LAX:DL1000+DL1252 vs MCO-DEN-LAX:UA1241+UA1600, MCO-ATL-LAX:DL1000+DL1252 vs MCO-ORD-LAX:UA1230+UA1540, MCO-ATL-LAX:DL1000+DL1400 vs MCO-ORD-LAX:UA0729+UA1045, MCO-ATL-LAX:DL1000+DL1500 vs MCO-ORD-LAX:UA0729+UA1045, MCO-ATL-LAX:DL1000+DL1500 vs MCO-ORD-LAX:UA0930+UA1255, MCO-ATL-LAX:DL1100+DL1400 vs MCO-DEN-LAX:UA1241+UA1600, MCO-ATL-LAX:DL1100+DL1400 vs MCO-DFW-LAX:AA1333+AA1730, MCO-ATL-LAX:DL1100+DL1400 vs MCO-ORD-LAX:UA1230+UA1540, MCO-ATL-LAX:DL1100+DL1500 vs MCO-ATL-LAX:DL1300+DL1650, MCO-ATL-LAX:DL1100+DL1500 vs MCO-DEN-LAX:UA0801+UA1126, MCO-ATL-LAX:DL1100+DL1500 vs MCO-DFW-LAX:AA1333+AA1830, MCO-ATL-LAX:DL1200+DL1500 vs MCO-ATL-LAX:DL0900+DL1125, MCO-ATL-LAX:DL1300+DL1650 vs MCO-DEN-LAX:UA1000+UA1328, MCO-ATL-LAX:DL1400+DL1650 vs MCO-DEN-LAX:UA1241+UA1600, MCO-ATL-LAX:DL1400+DL1650 vs MCO-DFW-LAX:AA1150+AA1500, MCO-ATL-LAX:DL1400+DL1836 vs MCO-ATL-LAX:DL1300+DL1650, MCO-ATL-LAX:DL1400+DL1836 vs MCO-DFW-LAX:AA1150+AA1730, MCO-ATL-LAX:DL1545+DL1959 vs MCO-DEN-LAX:UA1545+UA1935, MCO-DEN-LAS:UA0801+UA1124 vs MCO-DEN-LAS:UA1000+UA1355, MCO-DEN-LAS:UA0801+UA1124 vs MCO-DFW-LAS:AA0515+AA0840, MCO-DEN-LAS:UA0801+UA1124 vs MCO-DFW-LAS:AA0930+AA1257, MCO-DEN-LAS:UA1000+UA1355 vs MCO-ATL-LAS:DL1300+DL1659, MCO-DEN-LAS:UA1000+UA1355 vs MCO-DFW-LAS:AA1150+AA1643, MCO-DEN-LAS:UA1241+UA1610 vs MCO-ATL-LAS:DL1300+DL1659, MCO-DEN-LAS:UA1241+UA1610 vs MCO-DEN-LAS:UA1000+UA1355, MCO-DEN-LAS:UA1241+UA1610 vs MCO-DFW-LAS:AA1333+AA1749, MCO-DEN-LAS:UA1545+UA1925 vs MCO-ATL-LAS:DL1545+DL1959, MCO-DEN-LAS:UA1545+UA1925 vs MCO-DFW-LAS:AA1333+AA1749, MCO-DEN-LAX:UA0801+UA1126 vs MCO-ATL-LAX:DL1000+DL1252, MCO-DEN-LAX:UA0801+UA1126 vs MCO-ATL-LAX:DL1100+DL1400, MCO-DEN-LAX:UA0801+UA1126 vs MCO-DEN-LAX:UA1000+UA1328, MCO-DEN-LAX:UA0801+UA1126 vs MCO-DFW-LAX:AA0930+AA1311, MCO-DEN-LAX:UA1000+UA1600 vs MCO-ATL-LAX:DL1200+DL1650, MCO-DEN-LAX:UA1000+UA1600 vs MCO-DEN-LAX:UA1241+UA1740, MCO-DEN-LAX:UA1000+UA1600 vs MCO-ORD-LAX:UA0930+UA1400, MCO-DEN-LAX:UA1241+UA1740 vs MCO-ATL-LAX:DL1200+DL1650, MCO-DEN-LAX:UA1545+UA1935 vs MCO-DFW-LAX:AA1333+AA1730, MCO-DFW-LAS:AA0653+AA1104 vs MCO-ATL-LAS:DL0700+DL0959, MCO-DFW-LAS:AA0653+AA1104 vs MCO-DEN-LAS:UA0801+UA1124, MCO-DFW-LAS:AA0653+AA1104 vs MCO-DFW-LAS:AA0810+AA1257, MCO-DFW-LAS:AA0810+AA1104 vs MCO-ATL-LAS:DL0615+DL0830, MCO-DFW-LAS:AA0930+AA1450 vs MCO-DFW-LAS:AA1150+AA1643, MCO-DFW-LAS:AA1150+AA1450 vs MCO-ATL-LAS:DL1000+DL1215, MCO-DFW-LAS:AA1150+AA1643 vs MCO-ATL-LAS:DL1300+DL1659, MCO-DFW-LAS:AA1333+AA1643 vs MCO-DFW-LAS:AA1150+AA1450, MCO-DFW-LAS:AA1333+AA1749 vs MCO-ATL-LAS:DL1200+DL1456, MCO-DFW-LAS:AA1603+AA2057 vs MCO-ATL-LAS:DL1545+DL1959, MCO-DFW-LAX:AA0515+AA0817 vs MCO-ORD-LAX:AA0656+AA0951, MCO-DFW-LAX:AA0653+AA1030 vs MCO-DEN-LAX:UA0801+UA1126, MCO-DFW-LAX:AA0653+AA1030 vs MCO-DFW-LAX:AA0930+AA1311, MCO-DFW-LAX:AA0653+AA1030 vs MCO-DFW-LAX:AA0930+AA1400, MCO-DFW-LAX:AA0653+AA1030 vs MCO-ORD-LAX:UA0729+UA1045, MCO-DFW-LAX:AA0810+AA1311 vs MCO-ATL-LAX:DL0530+DL1020, MCO-DFW-LAX:AA0930+AA1311 vs MCO-DEN-LAX:UA1000+UA1328, MCO-DFW-LAX:AA0930+AA1400 vs MCO-DEN-LAX:UA1000+UA1328, MCO-DFW-LAX:AA0930+AA1500 vs MCO-ORD-LAX:UA0729+UA1045, MCO-DFW-LAX:AA1150+AA1500 vs MCO-DEN-LAX:UA1241+UA1600, MCO-DFW-LAX:AA1150+AA1635 vs MCO-ATL-LAX:DL1300+DL1650, MCO-DFW-LAX:AA1150+AA1635 vs MCO-ATL-LAX:DL1400+DL1836, MCO-DFW-LAX:AA1150+AA1635 vs MCO-DFW-LAX:AA0930+AA1500, MCO-DFW-LAX:AA1150+AA1635 vs MCO-DFW-LAX:AA1333+AA1830, MCO-DFW-LAX:AA1333+AA1730 vs MCO-DEN-LAX:UA1241+UA1600, MCO-DFW-LAX:AA1333+AA1730 vs MCO-DFW-LAX:AA1150+AA1500, MCO-DFW-LAX:AA1333+AA1730 vs MCO-ORD-LAX:UA1230+UA1540, MCO-DFW-LAX:AA1333+AA1830 vs MCO-ATL-LAX:DL1300+DL1650, MCO-DFW-LAX:AA1333+AA1830 vs MCO-ATL-LAX:DL1400+DL1836, MCO-DFW-LAX:AA1333+AA1830 vs MCO-DFW-LAX:AA1150+AA1730, MCO-DFW-LAX:AA1742+AA2121 vs MCO-ORD-LAX:UA1615+UA1940, MCO-DFW-LAX:AA1742+AA2233 vs MCO-DEN-LAX:UA1545+UA1935, MCO-LAX-LAS:UA0720+UA1308 vs MCO-ATL-LAS:DL0700+DL1215, MCO-LAX-LAS:UA1918+UA2242 vs MCO-DFW-LAS:AA1742+AA2057, MCO-ORD-LAS:UA0729+UA1052 vs MCO-DEN-LAS:UA1000+UA1355, MCO-ORD-LAS:UA0729+UA1052 vs MCO-DFW-LAS:AA0653+AA1104, MCO-ORD-LAS:UA0729+UA1052 vs MCO-DFW-LAS:AA0810+AA1257, MCO-ORD-LAS:UA0729+UA1052 vs MCO-DFW-LAS:AA0930+AA1450, MCO-ORD-LAS:UA0729+UA1052 vs MCO-PHX-LAS:AA0715+AA1116, MCO-ORD-LAX:UA0729+UA1045 vs MCO-DEN-LAX:UA0801+UA1126, MCO-ORD-LAX:UA0729+UA1045 vs MCO-DFW-LAX:AA0515+AA1030, MCO-ORD-LAX:UA0729+UA1045 vs MCO-DFW-LAX:AA0930+AA1400, MCO-ORD-LAX:UA0930+UA1255 vs MCO-ATL-LAX:DL1100+DL1500, MCO-ORD-LAX:UA0930+UA1255 vs MCO-DEN-LAX:UA0801+UA1126, MCO-ORD-LAX:UA0930+UA1255 vs MCO-DFW-LAX:AA0930+AA1311, MCO-ORD-LAX:UA0930+UA1255 vs MCO-DFW-LAX:AA0930+AA1400, MCO-ORD-LAX:UA0930+UA1255 vs MCO-DFW-LAX:AA1150+AA1635, MCO-ORD-LAX:UA0930+UA1255 vs MCO-ORD-LAX:UA0729+UA1045, MCO-ORD-LAX:UA0930+UA1400 vs MCO-ATL-LAX:DL1200+DL1650, MCO-ORD-LAX:UA1230+UA1540 vs MCO-ATL-LAX:DL1400+DL1650, MCO-ORD-LAX:UA1230+UA1540 vs MCO-DEN-LAX:UA1241+UA1600, MCO-PHX-LAS:AA0715+AA1116 vs MCO-ATL-LAS:DL0700+DL0959, MCO-PHX-LAS:AA0715+AA1116 vs MCO-ATL-LAS:DL0800+DL1058, MCO-PHX-LAS:AA0715+AA1116 vs MCO-ATL-LAS:DL0900+DL1215, MCO-PHX-LAS:AA0715+AA1116 vs MCO-DEN-LAS:UA0801+UA1124, MCO-PHX-LAS:AA0715+AA1116 vs MCO-DEN-LAS:UA1000+UA1355, MCO-PHX-LAS:AA0715+AA1116 vs MCO-DFW-LAS:AA0515+AA0840, MCO-PHX-LAS:AA0715+AA1116 vs MCO-DFW-LAS:AA0653+AA1104, MCO-PHX-LAS:AA0715+AA1116 vs MCO-DFW-LAS:AA0810+AA1257, MCO-PHX-LAS:AA0715+AA1116 vs MCO-DFW-LAS:AA0930+AA1257, OKC-ATL-EWR:DL0800+DL1259 vs OKC-ATL-EWR:DL0535+DL1007, OKC-DFW-EWR:AA0500+AA0704 vs OKC-DEN-EWR:UA0605+UA0746, OKC-DFW-EWR:AA0847+AA1128 vs OKC-DFW-EWR:AA0754+AA1128, OKC-ORD-EWR:UA1020+UA1425 vs OKC-DFW-EWR:AA0847+AA1128, SAT-ATL-LGA:DL0700+DL1130 vs SAT-DFW-LGA:AA0700+AA0941, SAT-ATL-LGA:DL0700+DL1130 vs SAT-ORD-LGA:AA0601+AA1012, SAT-ATL-LGA:DL0700+DL1230 vs SAT-ATL-LGA:DL0525+DL1130, SAT-ATL-LGA:DL1210+DL1700 vs SAT-ATL-LGA:DL1055+DL1530, SAT-ATL-LGA:DL1210+DL1700 vs SAT-DFW-LGA:AA1226+AA1541, SAT-ATL-LGA:DL1210+DL1700 vs SAT-DFW-LGA:AA1430+AA1755, SAT-ATL-LGA:DL1210+DL1700 vs SAT-ORD-LGA:UA1408+UA1830, SAT-ATL-LGA:DL1405+DL1830 vs SAT-DFW-LGA:AA1634+AA1902, SAT-DFW-LGA:AA0500+AA0707 vs SAT-DFW-LGA:AA0800+AA1028, SAT-DFW-LGA:AA0500+AA0823 vs SAT-ORD-LGA:UA0700+UA1100, SAT-DFW-LGA:AA0600+AA0823 vs SAT-ATL-LGA:DL0525+DL0930, SAT-DFW-LGA:AA0600+AA0823 vs SAT-DFW-LGA:AA0500+AA0707, SAT-DFW-LGA:AA0600+AA0823 vs SAT-DFW-LGA:AA0800+AA1028, SAT-DFW-LGA:AA0600+AA0941 vs SAT-ORD-LGA:UA0700+UA1100, SAT-DFW-LGA:AA0700+AA1028 vs SAT-DFW-LGA:AA0600+AA0941, SAT-DFW-LGA:AA0700+AA1143 vs SAT-DFW-LGA:AA0600+AA1028, SAT-DFW-LGA:AA0911+AA1143 vs SAT-DFW-LGA:AA0800+AA1028, SAT-DFW-LGA:AA0911+AA1243 vs SAT-ORD-LGA:UA0700+UA1100, SAT-DFW-LGA:AA1226+AA1440 vs SAT-DFW-LGA:AA1430+AA1645, SAT-DFW-LGA:AA1226+AA1541 vs SAT-ATL-LGA:DL1055+DL1530, SAT-DFW-LGA:AA1430+AA1755 vs SAT-DFW-LGA:AA1226+AA1541, SAT-DFW-LGA:AA1430+AA1755 vs SAT-DFW-LGA:AA1226+AA1645, SAT-ORD-LGA:AA0601+AA1012 vs SAT-DFW-LGA:AA0500+AA0823, SAT-ORD-LGA:AA0601+AA1012 vs SAT-DFW-LGA:AA0600+AA0941, SAT-ORD-LGA:AA0601+AA1012 vs SAT-DFW-LGA:AA0700+AA1028, SAT-ORD-LGA:UA0700+UA1100 vs SAT-DFW-LGA:AA0700+AA0941, SAT-ORD-LGA:UA0700+UA1200 vs SAT-DFW-LGA:AA0800+AA1143, SAT-ORD-LGA:UA1408+UA1800 vs SAT-ATL-LGA:DL1405+DL1830, SAT-ORD-LGA:UA1408+UA1830 vs SAT-DFW-LGA:AA1226+AA1645, SAT-ORD-LGA:UA1408+UA1830 vs SAT-DFW-LGA:AA1430+AA1755, SJC-PHX-ATL:AA1248+AA1538 vs SJC-DFW-ATL:AA1419+AA2048, SMF-DEN-DFW:UA0517+UA0945 vs SMF-LAX-DFW:AA0600+AA0915, SMF-DEN-DFW:UA0845+UA1328 vs SMF-LAX-DFW:DL0600+DL0835, SMF-DEN-DFW:UA0845+UA1328 vs SMF-PHX-DFW:AA0600+AA0952, SMF-DEN-DFW:UA1300+UA1750 vs SMF-PHX-DFW:AA1257+AA1725, SMF-LAX-DFW:AA0600+AA0915 vs SMF-LAX-DFW:DL0600+DL0835, SMF-LAX-DFW:AA0600+AA0915 vs SMF-PHX-DFW:AA0600+AA0952, SMF-LAX-DFW:AA1146+AA1440 vs SMF-PHX-DFW:AA1257+AA1635
 
-22191 pair-scenario combinations could not be compared because an itinerary did not qualify or had insufficient data in that scenario; they are not counted as reversals.
+15012 pair-scenario combinations could not be compared because an itinerary did not qualify or had insufficient data in that scenario; they are not counted as reversals.
 
 ## Confidence interval method
 
@@ -243,87 +280,6 @@ Data period: 2024-07-01 to 2025-06-30. Connection feasibility is the share of pa
 
 | Itinerary | Hub | Connection feasibility | Insufficient time | Cancelled | Diverted | Slack min / p10 / p50 / p90 (minutes) | Excluded days: not connecting / data quality |
 |---|---|---|---|---|---|---|---|
-| ASE-DEN-IAH:UA0730+UA0945 | DEN | 76% (256 of 338 days) | 66 | 14 | 2 | -257 / 13 / 77 / 116 | 0 / 0 |
-| ASE-DEN-IAH:UA0730+UA1130 | DEN | 93% (310 of 335 days) | 12 | 12 | 1 | -192 / 130 / 184 / 211 | 3 / 0 |
-| ASE-DEN-IAH:UA0900+UA1130 | DEN | 79% (265 of 335 days) | 53 | 16 | 1 | -270 / 20 / 76 / 105 | 3 / 0 |
-| ASE-DEN-IAH:UA0900+UA1344 | DEN | 93% (313 of 337 days) | 6 | 18 | 0 | -106 / 155 / 207 / 248 | 1 / 0 |
-| ASE-DEN-IAH:UA1136+UA1344 | DEN | 73% (238 of 325 days) | 73 | 14 | 0 | -450 / 9 / 68 / 108 | 0 / 0 |
-| ASE-DEN-IAH:UA1136+UA1540 | DEN | 92% (299 of 324 days) | 10 | 13 | 2 | -317 / 129 / 189 / 215 | 1 / 0 |
-| ASE-DEN-IAH:UA1345+UA1540 | DEN | 63% (213 of 336 days) | 104 | 17 | 2 | -383 / 5 / 58 / 89 | 0 / 0 |
-| ASE-DEN-IAH:UA1345+UA1720 | DEN | 90% (302 of 335 days) | 15 | 17 | 1 | -269 / 104 / 160 / 197 | 1 / 0 |
-| ASE-DEN-IAH:UA1345+UA1805 | DEN | 93% (246 of 264 days) | 6 | 12 | 0 | -201 / 148 / 201 / 267 | 72 / 0 |
-| ASE-DEN-IAH:UA1430+UA1720 | DEN | 80% (217 of 270 days) | 37 | 15 | 1 | -236 / 2 / 111 / 153 | 1 / 0 |
-| ASE-DEN-IAH:UA1430+UA1805 | DEN | 87% (221 of 255 days) | 20 | 14 | 0 | -208 / 69 / 163 / 222 | 16 / 0 |
-| ASE-DEN-IAH:UA1430+UA1923 | DEN | 92% (233 of 252 days) | 6 | 13 | 0 | -73 / 155 / 240 / 281 | 19 / 0 |
-| ASE-DEN-IAH:UA1530+UA1720 | DEN | 47% (159 of 335 days) | 148 | 25 | 3 | -1176 / -75 / 45 / 84 | 1 / 0 |
-| ASE-DEN-IAH:UA1530+UA1805 | DEN | 70% (198 of 283 days) | 63 | 20 | 2 | -1121 / -22 / 88 / 151 | 53 / 0 |
-| ASE-DEN-IAH:UA1530+UA1923 | DEN | 85% (285 of 336 days) | 24 | 25 | 2 | -1064 / 59 / 168 / 210 | 0 / 0 |
-| ASE-DFW-IAH:AA1034+AA1440 | DFW | 75% (137 of 183 days) | 29 | 15 | 2 | -173 / 18 / 68 / 99 | 60 / 0 |
-| ASE-DFW-IAH:AA1228+AA1735 | DFW | 75% (126 of 168 days) | 27 | 13 | 2 | -187 / 6 / 125 / 171 | 104 / 0 |
-| ASE-DFW-IAH:AA1228+AA1851 | DFW | 85% (222 of 262 days) | 12 | 24 | 4 | -356 / 86 / 195 / 254 | 10 / 0 |
-| ASE-DFW-IAH:AA1436+AA1851 | DFW | 74% (157 of 212 days) | 31 | 22 | 2 | -297 / 22 / 91 / 188 | 51 / 0 |
-| ASE-DFW-IAH:AA1436+AA2100 | DFW | 86% (182 of 211 days) | 6 | 20 | 3 | -182 / 122 / 209 / 260 | 52 / 0 |
-| ASE-DFW-IAH:AA1635+AA2100 | DFW | 74% (130 of 176 days) | 30 | 14 | 2 | -1496 / -14 / 85 / 148 | 50 / 0 |
-| ASE-DFW-IAH:AA1635+AA2237 | DFW | 80% (125 of 156 days) | 9 | 19 | 3 | -1408 / 67 / 181 / 240 | 70 / 0 |
-| BOS-ATL-LAX:DL0540+DL1020 | ATL | 97% (342 of 352 days) | 3 | 7 | 0 | -160 / 95 / 129 / 158 | 12 / 0 |
-| BOS-ATL-LAX:DL0540+DL1125 | ATL | 98% (237 of 242 days) | 1 | 4 | 0 | 21 / 169 / 200 / 227 | 122 / 0 |
-| BOS-ATL-LAX:DL0655+DL1125 | ATL | 93% (216 of 233 days) | 14 | 3 | 0 | -172 / 63 / 99 / 147 | 121 / 0 |
-| BOS-ATL-LAX:DL0655+DL1252 | ATL | 95% (334 of 352 days) | 11 | 5 | 2 | -754 / 142 / 190 / 234 | 2 / 0 |
-| BOS-ATL-LAX:DL0810+DL1252 | ATL | 93% (331 of 355 days) | 16 | 7 | 1 | -457 / 75 / 120 / 162 | 4 / 0 |
-| BOS-ATL-LAX:DL0810+DL1400 | ATL | 96% (222 of 232 days) | 4 | 6 | 0 | -125 / 151 / 191 / 215 | 127 / 0 |
-| BOS-ATL-LAX:DL0910+DL1252 | ATL | 89% (194 of 219 days) | 23 | 2 | 0 | -402 / 44 / 71 / 98 | 2 / 0 |
-| BOS-ATL-LAX:DL0910+DL1400 | ATL | 94% (141 of 150 days) | 7 | 2 | 0 | -343 / 96 / 135 / 162 | 71 / 0 |
-| BOS-ATL-LAX:DL0910+DL1500 | ATL | 96% (162 of 169 days) | 3 | 4 | 0 | -251 / 155 / 196 / 221 | 52 / 0 |
-| BOS-ATL-LAX:DL1010+DL1400 | ATL | 88% (189 of 216 days) | 22 | 4 | 1 | -226 / 40 / 76 / 107 | 88 / 0 |
-| BOS-ATL-LAX:DL1010+DL1500 | ATL | 96% (242 of 251 days) | 4 | 5 | 0 | -19 / 91 / 136 / 173 | 53 / 0 |
-| BOS-ATL-LAX:DL1208+DL1650 | ATL | 97% (256 of 263 days) | 6 | 1 | 0 | -122 / 96 / 135 / 176 | 98 / 0 |
-| BOS-ATL-LAX:DL1208+DL1836 | ATL | 97% (328 of 338 days) | 2 | 6 | 2 | -264 / 194 / 235 / 277 | 23 / 0 |
-| BOS-ATL-LAX:DL1350+DL1836 | ATL | 95% (310 of 328 days) | 12 | 3 | 3 | -191 / 85 / 136 / 190 | 22 / 0 |
-| BOS-ATL-LAX:DL1350+DL1959 | ATL | 97% (264 of 271 days) | 2 | 4 | 1 | -116 / 178 / 218 / 269 | 79 / 0 |
-| BOS-ATL-LAX:DL1545+DL1959 | ATL | 88% (177 of 202 days) | 22 | 3 | 0 | -147 / 43 / 90 / 153 | 43 / 0 |
-| BOS-DEN-LAX:UA0724+UA1126 | DEN | 97% (351 of 363 days) | 7 | 5 | 0 | -184 / 64 / 93 / 123 | 0 / 0 |
-| BOS-DEN-LAX:UA0724+UA1328 | DEN | 99% (358 of 363 days) | 1 | 4 | 0 | -133 / 189 / 218 / 253 | 0 / 0 |
-| BOS-DEN-LAX:UA0920+UA1328 | DEN | 96% (330 of 345 days) | 12 | 2 | 1 | -176 / 65 / 98 / 127 | 0 / 0 |
-| BOS-DEN-LAX:UA0920+UA1600 | DEN | 98% (247 of 253 days) | 2 | 3 | 1 | -17 / 211 / 242 / 286 | 92 / 0 |
-| BOS-DEN-LAX:UA1140+UA1600 | DEN | 96% (339 of 352 days) | 10 | 2 | 1 | -96 / 79 / 113 / 168 | 0 / 0 |
-| BOS-DEN-LAX:UA1140+UA1740 | DEN | 99% (341 of 345 days) | 2 | 1 | 1 | -8 / 180 / 217 / 275 | 7 / 0 |
-| BOS-DEN-LAX:UA1515+UA1935 | DEN | 91% (330 of 363 days) | 28 | 1 | 4 | -144 / 57 / 106 / 174 | 0 / 0 |
-| BOS-DEN-LAX:UA1515+UA2120 | DEN | 97% (287 of 297 days) | 3 | 3 | 4 | -42 / 146 / 202 / 248 | 66 / 0 |
-| BOS-DEN-LAX:UA1650+UA2120 | DEN | 90% (243 of 271 days) | 23 | 5 | 0 | -965 / 55 / 101 / 152 | 45 / 0 |
-| BOS-DFW-LAX:AA0531+AA1030 | DFW | 93% (292 of 313 days) | 8 | 12 | 1 | -379 / 62 / 94 / 162 | 43 / 0 |
-| BOS-DFW-LAX:AA0720+AA1311 | DFW | 94% (192 of 204 days) | 8 | 1 | 3 | -200 / 114 / 175 / 244 | 36 / 0 |
-| BOS-DFW-LAX:AA0720+AA1400 | DFW | 94% (184 of 196 days) | 3 | 6 | 3 | -135 / 154 / 203 / 277 | 44 / 0 |
-| BOS-DFW-LAX:AA0810+AA1311 | DFW | 93% (294 of 317 days) | 17 | 3 | 3 | -777 / 69 / 118 / 174 | 37 / 1 |
-| BOS-DFW-LAX:AA0810+AA1400 | DFW | 93% (215 of 230 days) | 6 | 8 | 1 | -593 / 106 / 149 / 220 | 124 / 1 |
-| BOS-DFW-LAX:AA0810+AA1500 | DFW | 96% (250 of 261 days) | 4 | 5 | 2 | -503 / 173 / 225 / 297 | 93 / 1 |
-| BOS-DFW-LAX:AA1233+AA1730 | DFW | 90% (267 of 296 days) | 16 | 11 | 2 | -146 / 71 / 116 / 170 | 62 / 0 |
-| BOS-DFW-LAX:AA1233+AA1830 | DFW | 95% (217 of 228 days) | 4 | 6 | 1 | -493 / 122 / 178 / 231 | 130 / 0 |
-| BOS-DFW-LAX:AA1233+AA1930 | DFW | 95% (210 of 220 days) | 0 | 9 | 1 | 45 / 202 / 252 / 301 | 138 / 0 |
-| BOS-DFW-LAX:AA1428+AA1930 | DFW | 90% (197 of 220 days) | 16 | 7 | 0 | -202 / 51 / 120 / 184 | 134 / 0 |
-| BOS-DFW-LAX:AA1428+AA2121 | DFW | 96% (262 of 273 days) | 2 | 8 | 1 | -102 / 174 / 236 / 290 | 81 / 0 |
-| BOS-DFW-LAX:AA1614+AA2121 | DFW | 89% (236 of 265 days) | 22 | 7 | 0 | -338 / 50 / 118 / 181 | 84 / 0 |
-| BOS-DFW-LAX:AA1614+AA2233 | DFW | 93% (225 of 241 days) | 8 | 8 | 0 | -276 / 137 / 192 / 244 | 108 / 0 |
-| BOS-DFW-LAX:AA1807+AA2233 | DFW | 73% (176 of 241 days) | 52 | 12 | 1 | -171 / 15 / 72 / 135 | 29 / 0 |
-| BOS-LAS-LAX:DL0740+DL1345 | LAS | 97% (354 of 364 days) | 5 | 3 | 2 | -68 / 98 / 187 / 240 | 1 / 0 |
-| BOS-ORD-LAX:AA0515+AA0825 | ORD | 90% (237 of 262 days) | 19 | 4 | 2 | -71 / 52 / 100 / 160 | 33 / 0 |
-| BOS-ORD-LAX:AA0515+AA0951 | ORD | 97% (255 of 264 days) | 5 | 3 | 1 | -813 / 147 / 184 / 216 | 31 / 0 |
-| BOS-ORD-LAX:AA0645+AA0951 | ORD | 94% (304 of 323 days) | 14 | 4 | 1 | -23 / 59 / 95 / 125 | 6 / 0 |
-| BOS-ORD-LAX:AA1408+AA1904 | ORD | 98% (178 of 182 days) | 3 | 1 | 0 | -223 / 154 / 204 / 276 | 75 / 0 |
-| BOS-ORD-LAX:AA1738+AA2025 | ORD | 50% (136 of 272 days) | 127 | 9 | 0 | -519 / -26 / 46 / 105 | 43 / 0 |
-| BOS-ORD-LAX:UA0600+UA0900 | ORD | 91% (326 of 358 days) | 18 | 14 | 0 | -152 / 49 / 73 / 104 | 0 / 0 |
-| BOS-ORD-LAX:UA0600+UA1045 | ORD | 97% (295 of 305 days) | 1 | 9 | 0 | -122 / 156 / 179 / 212 | 53 / 0 |
-| BOS-ORD-LAX:UA0800+UA1045 | ORD | 82% (138 of 168 days) | 24 | 6 | 0 | -25 / 41 / 71 / 107 | 52 / 0 |
-| BOS-ORD-LAX:UA0800+UA1255 | ORD | 98% (215 of 220 days) | 0 | 5 | 0 | 120 / 181 / 202 / 230 | 0 / 0 |
-| BOS-ORD-LAX:UA0930+UA1255 | ORD | 95% (333 of 349 days) | 13 | 3 | 0 | -181 / 61 / 96 / 138 | 0 / 0 |
-| BOS-ORD-LAX:UA0930+UA1400 | ORD | 99% (307 of 310 days) | 1 | 2 | 0 | -112 / 120 / 158 / 192 | 39 / 0 |
-| BOS-ORD-LAX:UA1057+UA1400 | ORD | 92% (209 of 228 days) | 18 | 1 | 0 | -96 / 49 / 84 / 113 | 25 / 0 |
-| BOS-ORD-LAX:UA1057+UA1540 | ORD | 98% (249 of 253 days) | 2 | 2 | 0 | -11 / 152 / 187 / 226 | 0 / 0 |
-| BOS-ORD-LAX:UA1225+UA1540 | ORD | 94% (323 of 342 days) | 15 | 4 | 0 | -425 / 64 / 96 / 132 | 0 / 0 |
-| BOS-ORD-LAX:UA1225+UA1800 | ORD | 99% (240 of 243 days) | 1 | 2 | 0 | -119 / 202 / 231 / 267 | 99 / 0 |
-| BOS-ORD-LAX:UA1637+UA1940 | ORD | 82% (299 of 363 days) | 57 | 4 | 3 | -427 / 31 / 77 / 125 | 0 / 0 |
-| BOS-PHX-LAX:AA0610+AA1016 | PHX | 94% (170 of 180 days) | 8 | 2 | 0 | -19 / 56 / 96 / 137 | 101 / 0 |
-| BOS-PHX-LAX:AA1240+AA1702 | PHX | 95% (226 of 238 days) | 11 | 1 | 0 | -2491 / 55 / 87 / 136 | 124 / 0 |
-| BOS-PHX-LAX:AA1240+AA1758 | PHX | 96% (228 of 238 days) | 9 | 1 | 0 | -966 / 62 / 116 / 187 | 124 / 0 |
 | COS-ATL-LGA:DL0600+DL1130 | ATL | 53% (141 of 266 days) | 122 | 3 | 0 | -939 / 16 / 47 / 74 | 65 / 0 |
 | COS-ATL-LGA:DL0600+DL1230 | ATL | 94% (305 of 323 days) | 12 | 4 | 2 | -868 / 79 / 106 / 142 | 8 / 0 |
 | COS-ATL-LGA:DL0600+DL1330 | ATL | 96% (279 of 290 days) | 6 | 3 | 2 | -817 / 144 / 169 / 202 | 41 / 0 |
@@ -341,6 +297,23 @@ Data period: 2024-07-01 to 2025-06-30. Connection feasibility is the share of pa
 | COS-DEN-LGA:UA1335+UA1551 | DEN | 91% (237 of 261 days) | 16 | 3 | 5 | -908 / 54 / 98 / 157 | 102 / 0 |
 | COS-DEN-LGA:UA1335+UA1740 | DEN | 95% (290 of 305 days) | 10 | 2 | 3 | -228 / 125 / 202 / 238 | 58 / 0 |
 | COS-DEN-LGA:UA1531+UA1740 | DEN | 71% (199 of 282 days) | 76 | 5 | 2 | -291 / -14 / 75 / 110 | 78 / 0 |
+| COS-DEN-ORD:UA0530+UA0750 | DEN | 84% (307 of 364 days) | 54 | 3 | 0 | -360 / 38 / 78 / 110 | 0 / 0 |
+| COS-DEN-ORD:UA0530+UA0940 | DEN | 97% (352 of 364 days) | 8 | 3 | 1 | -252 / 153 / 193 / 221 | 0 / 0 |
+| COS-DEN-ORD:UA0730+UA0940 | DEN | 86% (313 of 362 days) | 36 | 12 | 1 | -476 / 44 / 90 / 122 | 0 / 0 |
+| COS-DEN-ORD:UA0730+UA1120 | DEN | 95% (344 of 362 days) | 8 | 10 | 0 | -374 / 148 / 188 / 217 | 0 / 0 |
+| COS-DEN-ORD:UA0820+UA1120 | DEN | 95% (308 of 325 days) | 15 | 2 | 0 | -198 / 89 / 131 / 155 | 0 / 0 |
+| COS-DEN-ORD:UA0920+UA1120 | DEN | 74% (269 of 364 days) | 93 | 2 | 0 | -484 / 14 / 58 / 95 | 0 / 0 |
+| COS-DEN-ORD:UA0920+UA1325 | DEN | 96% (349 of 364 days) | 9 | 6 | 0 | -355 / 135 / 183 / 230 | 0 / 0 |
+| COS-DEN-ORD:UA1000+UA1325 | DEN | 89% (307 of 345 days) | 32 | 5 | 1 | -453 / 49 / 151 / 178 | 0 / 0 |
+| COS-DEN-ORD:UA1140+UA1325 | DEN | 72% (263 of 365 days) | 95 | 6 | 1 | -448 / 13 / 57 / 87 | 0 / 0 |
+| COS-DEN-ORD:UA1140+UA1510 | DEN | 96% (275 of 287 days) | 8 | 2 | 2 | -326 / 107 / 161 / 199 | 78 / 0 |
+| COS-DEN-ORD:UA1140+UA1622 | DEN | 97% (352 of 363 days) | 5 | 5 | 1 | -270 / 185 / 230 / 283 | 2 / 0 |
+| COS-DEN-ORD:UA1335+UA1622 | DEN | 90% (324 of 362 days) | 32 | 5 | 1 | -991 / 48 / 111 / 169 | 1 / 0 |
+| COS-DEN-ORD:UA1335+UA1745 | DEN | 96% (347 of 363 days) | 14 | 2 | 0 | -863 / 130 / 209 / 295 | 0 / 0 |
+| COS-DEN-ORD:UA1531+UA1745 | DEN | 73% (241 of 329 days) | 82 | 6 | 0 | -304 / -19 / 81 / 155 | 31 / 0 |
+| COS-DEN-ORD:UA1531+UA1907 | DEN | 87% (234 of 268 days) | 29 | 5 | 0 | -222 / 38 / 154 / 226 | 92 / 0 |
+| COS-DEN-ORD:UA1715+UA2030 | DEN | 91% (324 of 355 days) | 24 | 6 | 1 | -140 / 64 / 137 / 188 | 9 / 0 |
+| COS-DEN-ORD:UA1832+UA2030 | DEN | 67% (238 of 353 days) | 97 | 17 | 1 | -844 / -8 / 65 / 121 | 9 / 0 |
 | COS-DFW-LGA:AA0600+AA0941 | DFW | 60% (164 of 274 days) | 96 | 11 | 3 | -477 / 15 / 51 / 81 | 90 / 0 |
 | COS-DFW-LGA:AA0600+AA1028 | DFW | 90% (259 of 288 days) | 17 | 8 | 4 | -463 / 61 / 98 / 131 | 76 / 0 |
 | COS-DFW-LGA:AA0600+AA1143 | DFW | 93% (297 of 319 days) | 7 | 11 | 4 | -303 / 131 / 177 / 219 | 45 / 0 |
@@ -351,67 +324,15 @@ Data period: 2024-07-01 to 2025-06-30. Connection feasibility is the share of pa
 | COS-DFW-LGA:AA1043+AA1645 | DFW | 88% (202 of 229 days) | 11 | 14 | 2 | -1132 / 116 / 197 / 248 | 132 / 0 |
 | COS-DFW-LGA:AA1213+AA1645 | DFW | 75% (173 of 230 days) | 44 | 11 | 2 | -399 / 5 / 81 / 142 | 134 / 0 |
 | COS-DFW-LGA:AA1213+AA1755 | DFW | 92% (271 of 296 days) | 8 | 15 | 2 | -339 / 96 / 191 / 252 | 68 / 0 |
+| COS-DFW-ORD:AA0600+AA1030 | DFW | 84% (190 of 227 days) | 26 | 10 | 1 | -428 / 38 / 96 / 130 | 137 / 0 |
+| COS-DFW-ORD:AA1043+AA1538 | DFW | 89% (286 of 321 days) | 21 | 14 | 0 | -1194 / 64 / 140 / 197 | 40 / 0 |
+| COS-DFW-ORD:AA1043+AA1656 | DFW | 90% (232 of 257 days) | 9 | 16 | 0 | -1113 / 144 / 214 / 269 | 104 / 0 |
+| COS-DFW-ORD:AA1213+AA1656 | DFW | 85% (227 of 267 days) | 31 | 9 | 0 | -374 / 40 / 112 / 168 | 97 / 0 |
+| COS-DFW-ORD:AA1213+AA1845 | DFW | 93% (256 of 276 days) | 8 | 11 | 1 | -270 / 141 / 229 / 282 | 88 / 0 |
+| COS-DFW-ORD:AA1645+AA2115 | DFW | 83% (271 of 325 days) | 40 | 13 | 1 | -985 / 36 / 103 / 145 | 32 / 0 |
 | COS-ORD-LGA:UA1255+UA1800 | ORD | 93% (290 of 313 days) | 14 | 5 | 4 | -519 / 68 / 99 / 159 | 0 / 0 |
 | COS-ORD-LGA:UA1255+UA1830 | ORD | 95% (243 of 256 days) | 7 | 5 | 1 | -169 / 100 / 129 / 198 | 57 / 0 |
 | COS-ORD-LGA:UA1255+UA2000 | ORD | 97% (304 of 313 days) | 5 | 4 | 0 | -400 / 189 / 222 / 287 | 0 / 0 |
-| DCA-ATL-LAX:DL0600+DL0855 | ATL | 91% (245 of 270 days) | 14 | 10 | 1 | -347 / 58 / 81 / 112 | 94 / 0 |
-| DCA-ATL-LAX:DL0600+DL1020 | ATL | 94% (330 of 352 days) | 9 | 13 | 0 | -49 / 139 / 166 / 199 | 12 / 0 |
-| DCA-ATL-LAX:DL0659+DL1020 | ATL | 90% (312 of 345 days) | 26 | 7 | 0 | -879 / 52 / 94 / 121 | 12 / 0 |
-| DCA-ATL-LAX:DL0659+DL1125 | ATL | 94% (221 of 235 days) | 11 | 3 | 0 | -816 / 128 / 158 / 190 | 122 / 0 |
-| DCA-ATL-LAX:DL0759+DL1125 | ATL | 90% (206 of 230 days) | 19 | 5 | 0 | -77 / 54 / 99 / 133 | 105 / 0 |
-| DCA-ATL-LAX:DL0759+DL1252 | ATL | 95% (313 of 331 days) | 5 | 12 | 1 | 7 / 138 / 184 / 225 | 4 / 0 |
-| DCA-ATL-LAX:DL0900+DL1252 | ATL | 92% (281 of 304 days) | 13 | 9 | 1 | -479 / 88 / 125 / 158 | 2 / 0 |
-| DCA-ATL-LAX:DL0900+DL1400 | ATL | 94% (185 of 196 days) | 5 | 6 | 0 | -417 / 157 / 194 / 215 | 110 / 0 |
-| DCA-ATL-LAX:DL1010+DL1252 | ATL | 73% (216 of 296 days) | 74 | 5 | 1 | -103 / 31 / 60 / 100 | 40 / 0 |
-| DCA-ATL-LAX:DL1010+DL1400 | ATL | 95% (211 of 223 days) | 6 | 6 | 0 | -33 / 100 / 131 / 160 | 113 / 0 |
-| DCA-ATL-LAX:DL1010+DL1500 | ATL | 97% (254 of 261 days) | 1 | 6 | 0 | 38 / 139 / 188 / 224 | 75 / 0 |
-| DCA-ATL-LAX:DL1212+DL1500 | ATL | 74% (179 of 241 days) | 56 | 6 | 0 | -1112 / 20 / 66 / 96 | 120 / 0 |
-| DCA-ATL-LAX:DL1212+DL1650 | ATL | 98% (259 of 263 days) | 2 | 2 | 0 | -1040 / 131 / 175 / 222 | 98 / 0 |
-| DCA-ATL-LAX:DL1359+DL1650 | ATL | 83% (219 of 263 days) | 43 | 1 | 0 | -473 / 34 / 72 / 117 | 98 / 0 |
-| DCA-ATL-LAX:DL1359+DL1836 | ATL | 97% (329 of 339 days) | 5 | 3 | 2 | -392 / 119 / 173 / 228 | 22 / 0 |
-| DCA-ATL-LAX:DL1600+DL1836 | ATL | 71% (174 of 245 days) | 64 | 5 | 2 | -433 / 14 / 60 / 113 | 119 / 0 |
-| DCA-ATL-LAX:DL1600+DL1959 | ATL | 93% (270 of 289 days) | 12 | 7 | 0 | -228 / 81 / 133 / 188 | 75 / 0 |
-| DCA-DEN-LAX:UA1614+UA1935 | DEN | 87% (315 of 364 days) | 42 | 2 | 5 | -358 / 39 / 80 / 131 | 0 / 0 |
-| DCA-DEN-LAX:UA1614+UA2120 | DEN | 93% (277 of 298 days) | 15 | 3 | 3 | -255 / 110 / 179 / 218 | 66 / 0 |
-| DCA-DFW-LAX:AA0500+AA0910 | DFW | 91% (232 of 254 days) | 8 | 14 | 0 | -1579 / 78 / 110 / 152 | 95 / 0 |
-| DCA-DFW-LAX:AA0500+AA1030 | DFW | 95% (296 of 312 days) | 5 | 10 | 1 | -1445 / 135 / 180 / 223 | 37 / 0 |
-| DCA-DFW-LAX:AA0645+AA1030 | DFW | 86% (251 of 293 days) | 26 | 15 | 1 | -818 / 45 / 87 / 129 | 71 / 0 |
-| DCA-DFW-LAX:AA0755+AA1311 | DFW | 96% (226 of 236 days) | 5 | 3 | 2 | -426 / 133 / 178 / 226 | 37 / 0 |
-| DCA-DFW-LAX:AA0755+AA1400 | DFW | 93% (195 of 210 days) | 2 | 11 | 2 | -376 / 187 / 227 / 266 | 63 / 0 |
-| DCA-DFW-LAX:AA0915+AA1311 | DFW | 87% (285 of 326 days) | 34 | 5 | 2 | -1216 / 36 / 97 / 154 | 37 / 0 |
-| DCA-DFW-LAX:AA0915+AA1400 | DFW | 89% (213 of 238 days) | 15 | 9 | 1 | -1168 / 82 / 143 / 188 | 125 / 0 |
-| DCA-DFW-LAX:AA0915+AA1500 | DFW | 94% (252 of 269 days) | 9 | 6 | 2 | -1131 / 154 / 212 / 279 | 94 / 0 |
-| DCA-DFW-LAX:AA1154+AA1635 | DFW | 96% (210 of 218 days) | 4 | 3 | 1 | -237 / 111 / 176 / 231 | 142 / 0 |
-| DCA-DFW-LAX:AA1154+AA1730 | DFW | 95% (283 of 298 days) | 3 | 9 | 3 | -314 / 181 / 226 / 271 | 62 / 0 |
-| DCA-DFW-LAX:AA1312+AA1730 | DFW | 91% (270 of 297 days) | 13 | 11 | 3 | -189 / 82 / 123 / 167 | 62 / 0 |
-| DCA-DFW-LAX:AA1312+AA1830 | DFW | 95% (217 of 228 days) | 5 | 5 | 1 | -125 / 117 / 176 / 223 | 131 / 0 |
-| DCA-DFW-LAX:AA1312+AA1930 | DFW | 94% (207 of 221 days) | 1 | 12 | 1 | 36 / 212 / 248 / 314 | 138 / 0 |
-| DCA-DFW-LAX:AA1459+AA1930 | DFW | 89% (202 of 226 days) | 14 | 8 | 2 | -805 / 83 / 130 / 188 | 137 / 0 |
-| DCA-DFW-LAX:AA1459+AA2121 | DFW | 96% (236 of 247 days) | 5 | 6 | 0 | -657 / 187 / 239 / 286 | 116 / 0 |
-| DCA-DFW-LAX:AA1715+AA2121 | DFW | 83% (228 of 274 days) | 32 | 13 | 1 | -1049 / 37 / 97 / 164 | 88 / 0 |
-| DCA-DFW-LAX:AA1715+AA2233 | DFW | 91% (221 of 243 days) | 9 | 12 | 1 | -979 / 107 / 172 / 238 | 119 / 0 |
-| DCA-DFW-LAX:AA1907+AA2233 | DFW | 64% (155 of 242 days) | 73 | 14 | 0 | -810 / -29 / 66 / 121 | 117 / 0 |
-| DCA-LAS-LAX:AA0744+AA1138 | LAS | 91% (310 of 342 days) | 30 | 2 | 0 | -238 / 51 / 110 / 182 | 23 / 0 |
-| DCA-ORD-LAX:AA0600+AA0825 | ORD | 89% (279 of 312 days) | 17 | 14 | 2 | -1884 / 60 / 86 / 122 | 26 / 0 |
-| DCA-ORD-LAX:AA0600+AA0951 | ORD | 93% (307 of 331 days) | 8 | 16 | 0 | -1808 / 150 / 173 / 201 | 7 / 0 |
-| DCA-ORD-LAX:AA0659+AA0951 | ORD | 95% (297 of 313 days) | 10 | 6 | 0 | -738 / 87 / 111 / 141 | 7 / 0 |
-| DCA-ORD-LAX:AA1449+AA1904 | ORD | 98% (233 of 238 days) | 4 | 1 | 0 | -211 / 154 / 195 / 247 | 126 / 0 |
-| DCA-ORD-LAX:AA1759+AA2025 | ORD | 70% (233 of 332 days) | 89 | 10 | 0 | -286 / -38 / 70 / 126 | 13 / 0 |
-| DCA-ORD-LAX:UA0630+UA0900 | ORD | 94% (326 of 347 days) | 7 | 13 | 1 | -84 / 69 / 91 / 119 | 0 / 0 |
-| DCA-ORD-LAX:UA0630+UA1045 | ORD | 96% (283 of 294 days) | 3 | 7 | 1 | -103 / 176 / 196 / 227 | 53 / 0 |
-| DCA-ORD-LAX:UA0830+UA1045 | ORD | 87% (236 of 271 days) | 26 | 9 | 0 | -428 / 45 / 66 / 96 | 46 / 0 |
-| DCA-ORD-LAX:UA0830+UA1255 | ORD | 96% (304 of 317 days) | 4 | 9 | 0 | -288 / 177 / 201 / 234 | 0 / 0 |
-| DCA-ORD-LAX:UA1030+UA1255 | ORD | 92% (337 of 365 days) | 22 | 6 | 0 | -400 / 56 / 82 / 115 | 0 / 0 |
-| DCA-ORD-LAX:UA1030+UA1400 | ORD | 97% (314 of 325 days) | 6 | 5 | 0 | -321 / 119 / 145 / 171 | 40 / 0 |
-| DCA-ORD-LAX:UA1200+UA1400 | ORD | 81% (229 of 284 days) | 49 | 5 | 1 | -123 / 38 / 67 / 99 | 24 / 0 |
-| DCA-ORD-LAX:UA1200+UA1540 | ORD | 98% (301 of 308 days) | 1 | 5 | 1 | -26 / 144 / 171 / 217 | 0 / 0 |
-| DCA-ORD-LAX:UA1300+UA1540 | ORD | 91% (215 of 237 days) | 16 | 6 | 0 | -204 / 66 / 98 / 128 | 0 / 0 |
-| DCA-ORD-LAX:UA1300+UA1800 | ORD | 99% (177 of 179 days) | 0 | 2 | 0 | 55 / 201 / 237 / 255 | 58 / 0 |
-| DCA-ORD-LAX:UA1530+UA1800 | ORD | 89% (263 of 297 days) | 28 | 6 | 0 | -452 / 45 / 90 / 135 | 17 / 0 |
-| DCA-ORD-LAX:UA1530+UA1940 | ORD | 95% (298 of 314 days) | 8 | 7 | 1 | -950 / 153 / 204 / 251 | 0 / 0 |
-| DCA-ORD-LAX:UA1700+UA1940 | ORD | 86% (313 of 363 days) | 41 | 6 | 3 | -218 / 36 / 94 / 138 | 0 / 0 |
-| DCA-PHX-LAX:AA0700+AA1016 | PHX | 92% (221 of 239 days) | 17 | 1 | 0 | -630 / 49 / 75 / 122 | 126 / 0 |
-| DCA-PHX-LAX:AA1020+AA1355 | PHX | 92% (334 of 364 days) | 24 | 4 | 2 | -574 / 51 / 89 / 126 | 1 / 0 |
 | HNL-ATL-BOS:DL1522+DL0705 | ATL | 64% (168 of 262 days) | 88 | 4 | 2 | -654 / 17 / 61 / 97 | 102 / 0 |
 | HNL-ATL-BOS:DL1522+DL0815 | ATL | 93% (270 of 289 days) | 10 | 9 | 0 | -272 / 86 / 139 / 178 | 75 / 0 |
 | HNL-ATL-BOS:DL1522+DL0959 | ATL | 97% (303 of 313 days) | 2 | 8 | 0 | -182 / 186 / 227 / 268 | 51 / 0 |
@@ -440,6 +361,22 @@ Data period: 2024-07-01 to 2025-06-30. Connection feasibility is the share of pa
 | IAH-ATL-LGA:DL1505+DL1930 | ATL | 77% (238 of 308 days) | 60 | 9 | 1 | -284 / 19 / 74 / 148 | 50 / 0 |
 | IAH-ATL-LGA:DL1505+DL2030 | ATL | 92% (218 of 238 days) | 10 | 10 | 0 | -271 / 86 / 162 / 229 | 120 / 0 |
 | IAH-ATL-LGA:DL1505+DL2130 | ATL | 92% (268 of 290 days) | 13 | 7 | 2 | -194 / 116 / 194 / 255 | 68 / 0 |
+| IAH-DEN-SFO:UA0515+UA0745 | DEN | 90% (281 of 311 days) | 26 | 4 | 0 | -313 / 47 / 75 / 114 | 0 / 0 |
+| IAH-DEN-SFO:UA0515+UA1005 | DEN | 97% (228 of 236 days) | 4 | 4 | 0 | -141 / 184 / 220 / 247 | 75 / 0 |
+| IAH-DEN-SFO:UA0720+UA1005 | DEN | 89% (257 of 289 days) | 26 | 5 | 1 | -567 / 48 / 80 / 113 | 76 / 0 |
+| IAH-DEN-SFO:UA0720+UA1133 | DEN | 96% (351 of 365 days) | 8 | 5 | 1 | -567 / 135 / 167 / 205 | 0 / 0 |
+| IAH-DEN-SFO:UA0825+UA1133 | DEN | 96% (349 of 364 days) | 10 | 4 | 1 | -242 / 70 / 99 / 129 | 0 / 0 |
+| IAH-DEN-SFO:UA0825+UA1336 | DEN | 98% (356 of 363 days) | 2 | 4 | 1 | -122 / 195 / 222 / 251 | 1 / 0 |
+| IAH-DEN-SFO:UA0940+UA1336 | DEN | 96% (350 of 365 days) | 13 | 2 | 0 | -688 / 87 / 142 / 182 | 0 / 0 |
+| IAH-DEN-SFO:UA1058+UA1336 | DEN | 80% (211 of 265 days) | 51 | 3 | 0 | -540 / 28 / 68 / 100 | 2 / 0 |
+| IAH-DEN-SFO:UA1058+UA1558 | DEN | 98% (260 of 266 days) | 1 | 5 | 0 | -367 / 173 / 212 / 255 | 1 / 0 |
+| IAH-DEN-SFO:UA1250+UA1558 | DEN | 92% (336 of 364 days) | 19 | 7 | 2 | -264 / 68 / 108 / 153 | 1 / 0 |
+| IAH-DEN-SFO:UA1250+UA1738 | DEN | 96% (347 of 363 days) | 6 | 8 | 2 | -78 / 170 / 215 / 263 | 2 / 0 |
+| IAH-DEN-SFO:UA1446+UA1738 | DEN | 85% (308 of 364 days) | 45 | 7 | 4 | -501 / 24 / 89 / 134 | 0 / 0 |
+| IAH-DEN-SFO:UA1446+UA1902 | DEN | 95% (327 of 345 days) | 8 | 5 | 5 | -202 / 118 / 175 / 232 | 19 / 0 |
+| IAH-DEN-SFO:UA1625+UA1902 | DEN | 77% (267 of 345 days) | 70 | 4 | 4 | -213 / 14 / 65 / 108 | 19 / 0 |
+| IAH-DEN-SFO:UA1625+UA2105 | DEN | 97% (266 of 274 days) | 3 | 4 | 1 | 1 / 151 / 182 / 231 | 90 / 0 |
+| IAH-DEN-SFO:UA1805+UA2105 | DEN | 83% (227 of 274 days) | 43 | 4 | 0 | -113 / 26 / 79 / 118 | 91 / 0 |
 | IAH-DFW-LGA:AA0500+AA0707 | DFW | 85% (269 of 318 days) | 35 | 14 | 0 | -1866 / 42 / 68 / 104 | 1 / 0 |
 | IAH-DFW-LGA:AA0500+AA0823 | DFW | 92% (276 of 301 days) | 7 | 17 | 1 | -1854 / 114 / 141 / 163 | 18 / 0 |
 | IAH-DFW-LGA:AA0500+AA0941 | DFW | 93% (271 of 291 days) | 5 | 15 | 0 | -1776 / 187 / 215 / 250 | 28 / 0 |
@@ -452,14 +389,47 @@ Data period: 2024-07-01 to 2025-06-30. Connection feasibility is the share of pa
 | IAH-DFW-LGA:AA0743+AA1243 | DFW | 89% (202 of 226 days) | 5 | 15 | 4 | -575 / 168 / 215 / 280 | 139 / 0 |
 | IAH-DFW-LGA:AA0908+AA1143 | DFW | 84% (268 of 319 days) | 30 | 19 | 2 | -2152 / 43 / 84 / 127 | 45 / 0 |
 | IAH-DFW-LGA:AA0908+AA1243 | DFW | 90% (293 of 324 days) | 9 | 17 | 5 | -2008 / 100 / 150 / 203 | 40 / 0 |
-| IAH-DFW-LGA:AA1019+AA1243 | DFW | 84% (163 of 195 days) | 23 | 8 | 1 | -3210 / 41 / 85 / 122 | 73 / 0 |
-| IAH-DFW-LGA:AA1019+AA1541 | DFW | 94% (171 of 182 days) | 1 | 8 | 2 | 18 / 201 / 240 / 294 | 86 / 0 |
 | IAH-DFW-LGA:AA1212+AA1440 | DFW | 75% (181 of 242 days) | 41 | 15 | 5 | -1093 / 1 / 72 / 130 | 118 / 0 |
 | IAH-DFW-LGA:AA1212+AA1541 | DFW | 87% (266 of 307 days) | 22 | 15 | 4 | -1022 / 69 / 130 / 181 | 53 / 0 |
 | IAH-DFW-LGA:AA1212+AA1645 | DFW | 88% (200 of 228 days) | 11 | 13 | 4 | -873 / 117 / 192 / 231 | 132 / 0 |
 | IAH-DFW-LGA:AA1424+AA1755 | DFW | 85% (251 of 296 days) | 27 | 16 | 2 | -387 / 52 / 137 / 190 | 68 / 0 |
 | IAH-DFW-LGA:AA1424+AA1902 | DFW | 86% (309 of 358 days) | 17 | 31 | 1 | -291 / 137 / 206 / 258 | 6 / 0 |
 | IAH-DFW-LGA:AA1625+AA1902 | DFW | 73% (222 of 304 days) | 49 | 31 | 2 | -1010 / 22 / 84 / 133 | 3 / 0 |
+| IAH-DFW-SFO:AA0500+AA0720 | DFW | 84% (238 of 282 days) | 29 | 15 | 0 | -1940 / 42 / 72 / 100 | 37 / 0 |
+| IAH-DFW-SFO:AA0500+AA0904 | DFW | 92% (295 of 319 days) | 8 | 16 | 0 | -1846 / 128 / 180 / 241 | 0 / 0 |
+| IAH-DFW-SFO:AA0600+AA0904 | DFW | 89% (321 of 361 days) | 24 | 16 | 0 | -261 / 49 / 113 / 166 | 2 / 0 |
+| IAH-DFW-SFO:AA0743+AA1115 | DFW | 89% (320 of 358 days) | 19 | 18 | 1 | -630 / 78 / 134 / 188 | 7 / 0 |
+| IAH-DFW-SFO:AA0908+AA1115 | DFW | 76% (182 of 239 days) | 37 | 19 | 1 | -1341 / 24 / 78 / 123 | 125 / 0 |
+| IAH-DFW-SFO:AA0908+AA1309 | DFW | 92% (246 of 267 days) | 8 | 13 | 0 | -2057 / 117 / 175 / 238 | 97 / 0 |
+| IAH-DFW-SFO:AA1019+AA1309 | DFW | 88% (229 of 260 days) | 18 | 13 | 0 | -3203 / 61 / 99 / 154 | 8 / 0 |
+| IAH-DFW-SFO:AA1212+AA1548 | DFW | 87% (307 of 351 days) | 25 | 16 | 3 | -926 / 75 / 143 / 201 | 9 / 0 |
+| IAH-DFW-SFO:AA1212+AA1714 | DFW | 93% (329 of 352 days) | 7 | 15 | 1 | -900 / 162 / 228 / 275 | 8 / 0 |
+| IAH-DFW-SFO:AA1424+AA1714 | DFW | 83% (297 of 356 days) | 44 | 15 | 0 | -436 / 31 / 98 / 140 | 8 / 0 |
+| IAH-DFW-SFO:AA1424+AA1857 | DFW | 90% (310 of 345 days) | 19 | 16 | 0 | -320 / 120 / 203 / 265 | 19 / 0 |
+| IAH-DFW-SFO:AA1625+AA1857 | DFW | 76% (221 of 290 days) | 46 | 23 | 0 | -1036 / 24 / 79 / 140 | 17 / 0 |
+| IAH-DFW-SFO:AA1625+AA2054 | DFW | 90% (207 of 230 days) | 5 | 17 | 1 | -835 / 128 / 195 / 235 | 77 / 0 |
+| IAH-DFW-SFO:AA1826+AA2054 | DFW | 68% (175 of 258 days) | 68 | 13 | 2 | -265 / -32 / 66 / 119 | 72 / 0 |
+| IAH-DFW-SFO:AA1826+AA2240 | DFW | 88% (214 of 243 days) | 14 | 14 | 1 | -165 / 72 / 172 / 244 | 87 / 0 |
+| IAH-DFW-SFO:UA1441+UA1950 | DFW | 96% (347 of 361 days) | 6 | 7 | 1 | -17 / 161 / 227 / 273 | 4 / 0 |
+| IAH-DFW-SFO:UA1627+UA1950 | DFW | 93% (264 of 285 days) | 17 | 4 | 0 | -121 / 56 / 117 / 157 | 3 / 0 |
+| IAH-DFW-SFO:UA1715+UA1950 | DFW | 79% (209 of 266 days) | 51 | 6 | 0 | -222 / -2 / 76 / 119 | 0 / 0 |
+| IAH-LAS-SFO:UA0730+UA1010 | LAS | 95% (216 of 228 days) | 10 | 2 | 0 | -25 / 57 / 82 / 129 | 45 / 0 |
+| IAH-LAS-SFO:UA0730+UA1151 | LAS | 99% (240 of 242 days) | 0 | 2 | 0 | 73 / 146 / 183 / 206 | 31 / 0 |
+| IAH-LAS-SFO:UA0940+UA1151 | LAS | 68% (173 of 255 days) | 76 | 6 | 0 | -144 / 21 / 54 / 80 | 110 / 0 |
+| IAH-LAS-SFO:UA0940+UA1340 | LAS | 96% (245 of 255 days) | 5 | 5 | 0 | -18 / 130 / 170 / 218 | 110 / 0 |
+| IAH-LAS-SFO:UA1212+UA1555 | LAS | 94% (322 of 343 days) | 15 | 5 | 1 | -205 / 79 / 141 / 186 | 22 / 0 |
+| IAH-LAX-SFO:DL0610+DL1020 | LAX | 95% (345 of 362 days) | 10 | 7 | 0 | -901 / 110 / 177 / 237 | 3 / 0 |
+| IAH-LAX-SFO:UA0515+UA0815 | LAX | 91% (253 of 278 days) | 21 | 3 | 1 | -91 / 49 / 89 / 122 | 41 / 0 |
+| IAH-LAX-SFO:UA0515+UA1030 | LAX | 98% (289 of 295 days) | 1 | 4 | 1 | 13 / 184 / 226 / 254 | 24 / 0 |
+| IAH-LAX-SFO:UA0720+UA1030 | LAX | 96% (321 of 335 days) | 7 | 7 | 0 | -18 / 65 / 90 / 120 | 30 / 0 |
+| IAH-LAX-SFO:UA1009+UA1345 | LAX | 93% (227 of 244 days) | 7 | 7 | 3 | -239 / 93 / 129 / 165 | 3 / 0 |
+| IAH-LAX-SFO:UA1225+UA1610 | LAX | 96% (338 of 353 days) | 9 | 6 | 0 | -135 / 88 / 129 / 169 | 12 / 0 |
+| IAH-LAX-SFO:UA1425+UA1906 | LAX | 96% (293 of 306 days) | 10 | 2 | 1 | -117 / 129 / 182 / 228 | 59 / 0 |
+| IAH-LAX-SFO:UA1623+UA1906 | LAX | 74% (209 of 281 days) | 68 | 3 | 1 | -239 / 21 / 63 / 102 | 83 / 0 |
+| IAH-LAX-SFO:UA1623+UA2130 | LAX | 98% (220 of 225 days) | 2 | 3 | 0 | -112 / 148 / 193 / 229 | 139 / 0 |
+| IAH-LAX-SFO:UA1820+UA2130 | LAX | 88% (197 of 225 days) | 27 | 1 | 0 | -177 / 26 / 84 / 116 | 133 / 0 |
+| IAH-LAX-SFO:UA1820+UA2235 | LAX | 96% (304 of 318 days) | 8 | 6 | 0 | -541 / 115 / 160 / 205 | 39 / 0 |
+| IAH-LAX-SFO:UA1950+UA2235 | LAX | 73% (234 of 319 days) | 81 | 4 | 0 | -625 / 19 / 60 / 110 | 45 / 0 |
 | IAH-ORD-LGA:AA0620+AA1012 | ORD | 89% (248 of 279 days) | 16 | 15 | 0 | -409 / 60 / 93 / 149 | 80 / 0 |
 | IAH-ORD-LGA:AA0620+AA1220 | ORD | 90% (283 of 316 days) | 7 | 23 | 3 | -221 / 178 / 217 / 316 | 43 / 0 |
 | IAH-ORD-LGA:AA1326+AA1710 | ORD | 75% (207 of 276 days) | 55 | 11 | 3 | -1070 / 19 / 73 / 172 | 60 / 0 |
@@ -485,6 +455,25 @@ Data period: 2024-07-01 to 2025-06-30. Connection feasibility is the share of pa
 | IAH-ORD-LGA:UA1420+UA1800 | ORD | 78% (285 of 364 days) | 65 | 9 | 5 | -157 / 17 / 66 / 128 | 1 / 0 |
 | IAH-ORD-LGA:UA1420+UA1830 | ORD | 88% (260 of 297 days) | 24 | 11 | 2 | -154 / 53 / 95 / 165 | 68 / 0 |
 | IAH-ORD-LGA:UA1420+UA2000 | ORD | 95% (343 of 362 days) | 11 | 7 | 1 | -98 / 140 / 185 / 247 | 3 / 0 |
+| IAH-PHX-SFO:AA0825+AA1032 | PHX | 74% (223 of 303 days) | 71 | 9 | 0 | -414 / 26 / 60 / 94 | 35 / 0 |
+| LAX-ATL-DCA:DL0600+DL1537 | ATL | 94% (339 of 361 days) | 6 | 8 | 8 | -186 / 119 / 147 / 192 | 4 / 0 |
+| LAX-ATL-DCA:DL0600+DL1640 | ATL | 95% (343 of 360 days) | 3 | 11 | 3 | -117 / 184 / 210 / 253 | 5 / 0 |
+| LAX-ATL-DCA:DL0715+DL1537 | ATL | 90% (266 of 295 days) | 23 | 1 | 5 | -472 / 49 / 85 / 132 | 70 / 0 |
+| LAX-ATL-DCA:DL0715+DL1640 | ATL | 95% (343 of 360 days) | 8 | 7 | 2 | -401 / 100 / 143 / 186 | 5 / 0 |
+| LAX-ATL-DCA:DL0715+DL1745 | ATL | 96% (320 of 334 days) | 4 | 8 | 2 | -284 / 168 / 211 / 258 | 31 / 0 |
+| LAX-ATL-DCA:DL0825+DL1640 | ATL | 83% (242 of 290 days) | 43 | 4 | 1 | -227 / 32 / 77 / 116 | 74 / 0 |
+| LAX-ATL-DCA:DL0825+DL1745 | ATL | 92% (305 of 333 days) | 17 | 9 | 2 | -402 / 79 / 138 / 190 | 31 / 0 |
+| LAX-ATL-DCA:DL0825+DL1855 | ATL | 93% (331 of 357 days) | 7 | 14 | 5 | -360 / 151 / 203 / 252 | 7 / 0 |
+| LAX-ATL-DCA:DL1056+DL1955 | ATL | 92% (232 of 252 days) | 9 | 4 | 7 | -54 / 68 / 115 / 160 | 33 / 0 |
+| LAX-ATL-DCA:DL1056+DL2055 | ATL | 95% (227 of 238 days) | 2 | 7 | 2 | 11 / 133 / 181 / 252 | 47 / 0 |
+| LAX-ATL-DCA:DL1056+DL2159 | ATL | 96% (229 of 239 days) | 0 | 8 | 2 | 76 / 187 / 230 / 282 | 46 / 0 |
+| LAX-ATL-DCA:DL1215+DL2055 | ATL | 89% (204 of 228 days) | 16 | 7 | 1 | -353 / 54 / 98 / 161 | 64 / 0 |
+| LAX-ATL-DCA:DL1215+DL2159 | ATL | 91% (255 of 280 days) | 8 | 12 | 5 | -293 / 106 / 156 / 203 | 12 / 0 |
+| LAX-ATL-DCA:DL1325+DL2159 | ATL | 82% (223 of 271 days) | 37 | 6 | 5 | -429 / 28 / 80 / 132 | 1 / 0 |
+| LAX-ATL-DCA:DL2250+DL0715 | ATL | 80% (227 of 282 days) | 47 | 7 | 1 | -80 / 34 / 77 / 101 | 36 / 0 |
+| LAX-ATL-DCA:DL2250+DL0919 | ATL | 98% (306 of 313 days) | 0 | 7 | 0 | 54 / 161 / 202 / 238 | 5 / 0 |
+| LAX-ATL-DCA:DL2359+DL0919 | ATL | 92% (222 of 240 days) | 12 | 6 | 0 | -432 / 71 / 124 / 162 | 4 / 0 |
+| LAX-ATL-DCA:DL2359+DL1105 | ATL | 97% (219 of 225 days) | 2 | 4 | 0 | -335 / 163 / 230 / 271 | 19 / 0 |
 | LAX-ATL-LGA:DL0600+DL1530 | ATL | 94% (324 of 344 days) | 6 | 13 | 1 | -204 / 99 / 135 / 185 | 21 / 0 |
 | LAX-ATL-LGA:DL0600+DL1700 | ATL | 95% (319 of 337 days) | 1 | 13 | 4 | -134 / 190 / 227 / 280 | 28 / 0 |
 | LAX-ATL-LGA:DL0715+DL1530 | ATL | 78% (223 of 286 days) | 58 | 4 | 1 | -227 / 32 / 71 / 118 | 79 / 0 |
@@ -493,20 +482,16 @@ Data period: 2024-07-01 to 2025-06-30. Connection feasibility is the share of pa
 | LAX-ATL-LGA:DL0825+DL1830 | ATL | 95% (333 of 352 days) | 10 | 7 | 2 | -113 / 102 / 174 / 230 | 12 / 0 |
 | LAX-ATL-LGA:DL0825+DL1930 | ATL | 96% (320 of 334 days) | 5 | 7 | 2 | -340 / 164 / 234 / 295 | 30 / 0 |
 | LAX-ATL-LGA:DL1056+DL1930 | ATL | 87% (209 of 239 days) | 26 | 4 | 0 | -73 / 35 / 94 / 144 | 46 / 0 |
-| LAX-ATL-LGA:DL1056+DL2030 | ATL | 97% (170 of 176 days) | 1 | 5 | 0 | 24 / 129 / 163 / 216 | 109 / 0 |
 | LAX-ATL-LGA:DL1056+DL2130 | ATL | 97% (271 of 278 days) | 2 | 4 | 1 | 40 / 149 / 210 / 256 | 7 / 0 |
-| LAX-ATL-LGA:DL1215+DL2030 | ATL | 84% (183 of 218 days) | 28 | 7 | 0 | -348 / 40 / 82 / 154 | 74 / 0 |
 | LAX-ATL-LGA:DL1215+DL2130 | ATL | 93% (207 of 222 days) | 11 | 3 | 1 | -315 / 74 / 123 / 171 | 70 / 0 |
-| LAX-ATL-LGA:DL2145+DL0630 | ATL | 90% (147 of 163 days) | 12 | 4 | 0 | -139 / 51 / 83 / 105 | 79 / 0 |
 | LAX-ATL-LGA:DL2145+DL0730 | ATL | 97% (214 of 220 days) | 2 | 3 | 1 | -24 / 117 / 152 / 174 | 22 / 0 |
 | LAX-ATL-LGA:DL2145+DL0830 | ATL | 97% (230 of 237 days) | 2 | 4 | 1 | -4 / 177 / 211 / 234 | 5 / 0 |
 | LAX-ATL-LGA:DL2250+DL0730 | ATL | 88% (240 of 273 days) | 25 | 6 | 2 | -107 / 46 / 87 / 114 | 45 / 0 |
 | LAX-ATL-LGA:DL2250+DL0830 | ATL | 96% (301 of 313 days) | 7 | 5 | 0 | -22 / 106 / 149 / 176 | 5 / 0 |
 | LAX-ATL-LGA:DL2250+DL0930 | ATL | 99% (264 of 267 days) | 0 | 2 | 1 | 48 / 176 / 211 / 236 | 51 / 0 |
 | LAX-ATL-LGA:DL2359+DL0830 | ATL | 75% (180 of 239 days) | 53 | 6 | 0 | -479 / 20 / 74 / 99 | 5 / 0 |
-| LAX-ATL-LGA:DL2359+DL0930 | ATL | 94% (194 of 207 days) | 10 | 2 | 1 | -16 / 80 / 133 / 162 | 37 / 0 |
 | LAX-ATL-LGA:DL2359+DL1030 | ATL | 97% (232 of 239 days) | 1 | 5 | 1 | -357 / 142 / 197 / 225 | 5 / 0 |
-| LAX-ATL-LGA:F92231+F90745 | ATL | 86% (179 of 207 days) | 21 | 7 | 0 | -983 / 42 / 111 / 217 | 114 / 0 |
+| LAX-DEN-DCA:UA0500+UA0940 | DEN | 94% (344 of 365 days) | 12 | 7 | 2 | -87 / 53 / 85 / 116 | 0 / 0 |
 | LAX-DEN-LGA:UA0500+UA0958 | DEN | 97% (321 of 332 days) | 4 | 3 | 4 | -80 / 78 / 99 / 126 | 33 / 0 |
 | LAX-DEN-LGA:UA0500+UA1142 | DEN | 97% (291 of 300 days) | 1 | 4 | 4 | 23 / 174 / 209 / 244 | 65 / 0 |
 | LAX-DEN-LGA:UA0700+UA1142 | DEN | 92% (276 of 300 days) | 17 | 2 | 5 | -268 / 59 / 84 / 123 | 65 / 0 |
@@ -516,33 +501,58 @@ Data period: 2024-07-01 to 2025-06-30. Connection feasibility is the share of pa
 | LAX-DEN-LGA:UA1100+UA1551 | DEN | 89% (280 of 313 days) | 21 | 7 | 5 | -357 / 58 / 98 / 171 | 45 / 0 |
 | LAX-DEN-LGA:UA1100+UA1740 | DEN | 96% (287 of 299 days) | 4 | 5 | 3 | -231 / 179 / 203 / 248 | 59 / 0 |
 | LAX-DEN-LGA:UA1245+UA1740 | DEN | 91% (263 of 288 days) | 18 | 1 | 6 | -265 / 61 / 99 / 140 | 56 / 0 |
-| LAX-DEN-LGA:WN0520+WN1005 | DEN | 96% (200 of 209 days) | 3 | 2 | 4 | -107 / 74 / 105 / 149 | 34 / 0 |
+| LAX-DFW-DCA:AA0055+AA0701 | DFW | 91% (234 of 258 days) | 20 | 2 | 2 | -271 / 52 / 78 / 104 | 2 / 0 |
+| LAX-DFW-DCA:AA0055+AA0819 | DFW | 97% (247 of 255 days) | 1 | 6 | 1 | -98 / 133 / 161 / 188 | 5 / 0 |
+| LAX-DFW-DCA:AA0600+AA1224 | DFW | 91% (324 of 355 days) | 20 | 8 | 3 | -561 / 58 / 86 / 117 | 1 / 0 |
+| LAX-DFW-DCA:AA0600+AA1505 | DFW | 95% (227 of 239 days) | 2 | 5 | 5 | -466 / 216 / 244 / 296 | 117 / 0 |
+| LAX-DFW-DCA:AA0700+AA1505 | DFW | 93% (324 of 350 days) | 7 | 11 | 8 | -595 / 163 / 191 / 240 | 1 / 0 |
+| LAX-DFW-DCA:AA0915+AA1505 | DFW | 69% (194 of 280 days) | 69 | 12 | 5 | -558 / -33 / 60 / 104 | 48 / 0 |
+| LAX-DFW-DCA:AA0915+AA1702 | DFW | 85% (277 of 327 days) | 20 | 22 | 8 | -548 / 102 / 176 / 231 | 1 / 0 |
+| LAX-DFW-DCA:AA1130+AA1902 | DFW | 89% (215 of 241 days) | 7 | 17 | 2 | -424 / 112 / 167 / 214 | 3 / 0 |
+| LAX-DFW-DCA:AA1228+AA1902 | DFW | 86% (311 of 361 days) | 29 | 17 | 4 | -506 / 48 / 102 / 147 | 3 / 0 |
+| LAX-DFW-DCA:AA1228+AA2050 | DFW | 92% (318 of 344 days) | 6 | 18 | 2 | -410 / 165 / 210 / 261 | 20 / 0 |
+| LAX-DFW-DCA:AA1340+AA2050 | DFW | 90% (302 of 337 days) | 19 | 15 | 1 | -236 / 75 / 136 / 198 | 18 / 0 |
+| LAX-DFW-DCA:AA1440+AA2050 | DFW | 84% (288 of 344 days) | 40 | 15 | 1 | -249 / 37 / 78 / 128 | 20 / 0 |
+| LAX-DFW-DCA:AA2359+AA0701 | DFW | 94% (329 of 351 days) | 10 | 8 | 4 | -414 / 81 / 127 / 148 | 1 / 0 |
+| LAX-DFW-DCA:AA2359+AA0819 | DFW | 94% (326 of 348 days) | 5 | 15 | 2 | -337 / 166 / 205 / 234 | 4 / 0 |
 | LAX-DFW-LGA:AA0055+AA0707 | DFW | 93% (237 of 256 days) | 16 | 2 | 1 | -237 / 58 / 95 / 128 | 4 / 0 |
 | LAX-DFW-LGA:AA0055+AA0823 | DFW | 97% (241 of 248 days) | 0 | 5 | 2 | 75 / 131 / 163 / 189 | 12 / 0 |
 | LAX-DFW-LGA:AA0055+AA0941 | DFW | 99% (230 of 233 days) | 1 | 2 | 0 | 13 / 203 / 233 / 265 | 27 / 0 |
 | LAX-DFW-LGA:AA0600+AA1243 | DFW | 92% (295 of 319 days) | 10 | 7 | 7 | -540 / 77 / 113 / 164 | 37 / 0 |
 | LAX-DFW-LGA:AA0600+AA1440 | DFW | 93% (220 of 236 days) | 3 | 9 | 4 | -479 / 203 / 230 / 290 | 120 / 0 |
-| LAX-DFW-LGA:AA0700+AA1243 | DFW | 73% (155 of 212 days) | 47 | 6 | 4 | -592 / 30 / 64 / 98 | 139 / 0 |
 | LAX-DFW-LGA:AA0700+AA1440 | DFW | 92% (213 of 232 days) | 4 | 10 | 5 | -569 / 146 / 173 / 224 | 119 / 0 |
 | LAX-DFW-LGA:AA0700+AA1541 | DFW | 94% (281 of 300 days) | 4 | 10 | 5 | -516 / 200 / 225 / 275 | 51 / 0 |
 | LAX-DFW-LGA:AA0915+AA1541 | DFW | 78% (213 of 273 days) | 43 | 12 | 5 | -609 / 1 / 91 / 131 | 55 / 0 |
 | LAX-DFW-LGA:AA0915+AA1755 | DFW | 84% (223 of 265 days) | 18 | 19 | 5 | -475 / 129 / 225 / 287 | 63 / 0 |
-| LAX-DFW-LGA:AA1130+AA1755 | DFW | 81% (154 of 190 days) | 20 | 13 | 3 | -483 / 33 / 85 / 148 | 54 / 0 |
 | LAX-DFW-LGA:AA1130+AA1902 | DFW | 88% (212 of 241 days) | 8 | 18 | 3 | -414 / 127 / 173 / 217 | 3 / 0 |
 | LAX-DFW-LGA:AA1228+AA1902 | DFW | 84% (300 of 359 days) | 30 | 26 | 3 | -432 / 50 / 103 / 145 | 5 / 0 |
 | LAX-DFW-LGA:AA2359+AA0610 | DFW | 78% (219 of 280 days) | 51 | 7 | 3 | -467 / 29 / 74 / 101 | 72 / 0 |
 | LAX-DFW-LGA:AA2359+AA0707 | DFW | 94% (319 of 340 days) | 11 | 7 | 3 | -412 / 95 / 134 / 167 | 12 / 0 |
 | LAX-DFW-LGA:AA2359+AA0823 | DFW | 95% (313 of 330 days) | 3 | 10 | 4 | -312 / 162 / 209 / 239 | 22 / 0 |
+| LAX-ORD-DCA:AA0600+AA1330 | ORD | 94% (338 of 361 days) | 10 | 7 | 6 | -669 / 69 / 97 / 156 | 0 / 0 |
+| LAX-ORD-DCA:AA0949+AA1917 | ORD | 94% (293 of 313 days) | 8 | 8 | 4 | -412 / 107 / 203 / 262 | 5 / 0 |
+| LAX-ORD-DCA:AA1116+AA1917 | ORD | 87% (233 of 268 days) | 26 | 7 | 2 | -473 / 41 / 111 / 173 | 2 / 0 |
+| LAX-ORD-DCA:AA1116+AA2028 | ORD | 92% (246 of 268 days) | 8 | 12 | 2 | -273 / 137 / 186 / 278 | 2 / 0 |
+| LAX-ORD-DCA:AA1327+AA2028 | ORD | 66% (229 of 346 days) | 92 | 20 | 5 | -485 / 13 / 63 / 172 | 2 / 0 |
+| LAX-ORD-DCA:AA2259+AA0605 | ORD | 76% (231 of 303 days) | 63 | 7 | 2 | -673 / 19 / 65 / 89 | 15 / 0 |
+| LAX-ORD-DCA:AA2259+AA0805 | ORD | 93% (296 of 317 days) | 10 | 11 | 0 | -549 / 145 / 191 / 249 | 1 / 0 |
+| LAX-ORD-DCA:AA2359+AA0805 | ORD | 92% (221 of 239 days) | 12 | 6 | 0 | -991 / 84 / 127 / 163 | 1 / 0 |
+| LAX-ORD-DCA:UA0600+UA1400 | ORD | 97% (242 of 250 days) | 1 | 4 | 3 | -6 / 114 / 138 / 189 | 1 / 0 |
+| LAX-ORD-DCA:UA0600+UA1500 | ORD | 97% (219 of 226 days) | 0 | 5 | 2 | 59 / 173 / 196 / 241 | 25 / 0 |
+| LAX-ORD-DCA:UA0700+UA1400 | ORD | 88% (301 of 344 days) | 36 | 4 | 3 | -527 / 44 / 69 / 124 | 0 / 0 |
+| LAX-ORD-DCA:UA0700+UA1500 | ORD | 95% (296 of 310 days) | 7 | 6 | 1 | -462 / 101 / 129 / 176 | 34 / 0 |
+| LAX-ORD-DCA:UA0700+UA1600 | ORD | 95% (274 of 287 days) | 4 | 7 | 2 | -394 / 163 / 186 / 257 | 57 / 0 |
+| LAX-ORD-DCA:UA0820+UA1600 | ORD | 94% (281 of 300 days) | 10 | 6 | 3 | -54 / 76 / 103 / 159 | 59 / 0 |
+| LAX-ORD-DCA:UA0820+UA1800 | ORD | 97% (348 of 359 days) | 1 | 7 | 3 | 32 / 196 / 225 / 286 | 0 / 0 |
+| LAX-ORD-DCA:UA1035+UA1800 | ORD | 88% (311 of 352 days) | 30 | 9 | 2 | -205 / 48 / 90 / 142 | 1 / 0 |
+| LAX-ORD-DCA:UA1035+UA1940 | ORD | 95% (332 of 349 days) | 3 | 12 | 2 | -33 / 148 / 195 / 259 | 4 / 0 |
+| LAX-ORD-DCA:UA1240+UA1940 | ORD | 63% (224 of 353 days) | 108 | 18 | 3 | -526 / 17 / 56 / 128 | 4 / 0 |
 | LAX-ORD-LGA:AA0600+AA1450 | ORD | 94% (286 of 304 days) | 6 | 7 | 5 | -668 / 151 / 177 / 232 | 57 / 0 |
-| LAX-ORD-LGA:AA0745+AA1450 | ORD | 86% (168 of 196 days) | 23 | 3 | 2 | -560 / 43 / 72 / 117 | 73 / 0 |
 | LAX-ORD-LGA:AA0745+AA1710 | ORD | 93% (241 of 260 days) | 5 | 13 | 1 | -474 / 172 / 209 / 277 | 9 / 0 |
 | LAX-ORD-LGA:AA0949+AA1710 | ORD | 85% (209 of 245 days) | 25 | 9 | 2 | -550 / 42 / 84 / 131 | 73 / 0 |
 | LAX-ORD-LGA:AA2259+AA0601 | ORD | 78% (210 of 268 days) | 48 | 8 | 2 | -620 / 20 / 65 / 100 | 50 / 0 |
 | LAX-ORD-LGA:AA2259+AA0719 | ORD | 94% (266 of 282 days) | 12 | 3 | 1 | -592 / 86 / 131 / 168 | 36 / 0 |
 | LAX-ORD-LGA:AA2259+AA0819 | ORD | 95% (225 of 237 days) | 8 | 4 | 0 | -528 / 152 / 198 / 239 | 81 / 0 |
-| LAX-ORD-LGA:AA2359+AA0719 | ORD | 78% (162 of 209 days) | 43 | 4 | 0 | -1073 / 16 / 70 / 100 | 31 / 0 |
-| LAX-ORD-LGA:AA2359+AA0819 | ORD | 93% (189 of 203 days) | 8 | 6 | 0 | -1012 / 78 / 137 / 174 | 37 / 0 |
-| LAX-ORD-LGA:UA0600+UA1300 | ORD | 88% (176 of 199 days) | 14 | 7 | 2 | -67 / 47 / 72 / 120 | 52 / 0 |
 | LAX-ORD-LGA:UA0600+UA1400 | ORD | 95% (239 of 251 days) | 2 | 7 | 3 | -7 / 114 / 134 / 172 | 0 / 0 |
 | LAX-ORD-LGA:UA0600+UA1500 | ORD | 96% (213 of 222 days) | 0 | 7 | 2 | 72 / 171 / 194 / 261 | 29 / 0 |
 | LAX-ORD-LGA:UA0700+UA1400 | ORD | 87% (299 of 344 days) | 34 | 7 | 4 | -527 / 44 / 66 / 122 | 0 / 0 |
@@ -560,6 +570,9 @@ Data period: 2024-07-01 to 2025-06-30. Connection feasibility is the share of pa
 | LAX-ORD-LGA:UA2359+UA0700 | ORD | 80% (209 of 261 days) | 47 | 5 | 0 | -629 / 28 / 69 / 92 | 12 / 0 |
 | LAX-ORD-LGA:UA2359+UA0800 | ORD | 96% (262 of 273 days) | 7 | 4 | 0 | -565 / 88 / 130 / 157 | 0 / 0 |
 | LAX-ORD-LGA:UA2359+UA0900 | ORD | 97% (216 of 222 days) | 3 | 3 | 0 | -509 / 146 / 191 / 215 | 51 / 0 |
+| LAX-PHX-DCA:AA0601+AA0849 | PHX | 91% (320 of 350 days) | 27 | 1 | 2 | -866 / 52 / 76 / 95 | 1 / 0 |
+| LAX-PHX-DCA:AA0950+AA1309 | PHX | 92% (311 of 338 days) | 19 | 3 | 5 | -843 / 60 / 101 / 134 | 5 / 0 |
+| LAX-PHX-DCA:AA1933+AA2346 | PHX | 98% (223 of 228 days) | 1 | 4 | 0 | 25 / 120 / 163 / 182 | 113 / 0 |
 | LGA-ATL-LAX:DL0600+DL1020 | ATL | 97% (343 of 353 days) | 3 | 7 | 0 | -106 / 99 / 127 / 163 | 12 / 0 |
 | LGA-ATL-LAX:DL0600+DL1125 | ATL | 98% (238 of 243 days) | 1 | 4 | 0 | -44 / 169 / 193 / 230 | 122 / 0 |
 | LGA-ATL-LAX:DL0659+DL1020 | ATL | 85% (238 of 280 days) | 36 | 5 | 1 | -53 / 42 / 67 / 101 | 18 / 0 |
@@ -569,7 +582,6 @@ Data period: 2024-07-01 to 2025-06-30. Connection feasibility is the share of pa
 | LGA-ATL-LAX:DL0900+DL1252 | ATL | 92% (328 of 355 days) | 23 | 3 | 1 | -609 / 56 / 93 / 127 | 2 / 0 |
 | LGA-ATL-LAX:DL0900+DL1400 | ATL | 95% (220 of 231 days) | 7 | 4 | 0 | -550 / 138 / 164 / 192 | 126 / 0 |
 | LGA-ATL-LAX:DL0900+DL1500 | ATL | 96% (265 of 277 days) | 7 | 5 | 0 | -475 / 174 / 221 / 252 | 80 / 0 |
-| LGA-ATL-LAX:DL0959+DL1400 | ATL | 92% (196 of 212 days) | 13 | 3 | 0 | -106 / 71 / 108 / 134 | 102 / 0 |
 | LGA-ATL-LAX:DL0959+DL1500 | ATL | 96% (241 of 250 days) | 5 | 4 | 0 | -325 / 115 / 164 / 194 | 64 / 0 |
 | LGA-ATL-LAX:DL1059+DL1400 | ATL | 59% (131 of 223 days) | 88 | 4 | 0 | -231 / 20 / 50 / 74 | 132 / 0 |
 | LGA-ATL-LAX:DL1059+DL1500 | ATL | 91% (253 of 277 days) | 16 | 7 | 1 | -111 / 64 / 107 / 138 | 78 / 0 |
@@ -582,78 +594,26 @@ Data period: 2024-07-01 to 2025-06-30. Connection feasibility is the share of pa
 | LGA-ATL-LAX:DL1500+DL1836 | ATL | 81% (237 of 294 days) | 52 | 3 | 2 | -263 / 23 / 72 / 124 | 20 / 0 |
 | LGA-ATL-LAX:DL1500+DL1959 | ATL | 95% (234 of 246 days) | 8 | 4 | 0 | -160 / 112 / 162 / 215 | 68 / 0 |
 | LGA-ATL-LAX:DL1600+DL1959 | ATL | 84% (208 of 248 days) | 32 | 8 | 0 | -389 / 31 / 97 / 149 | 40 / 0 |
-| LGA-ATL-PHX:DL0600+DL1115 | ATL | 97% (337 of 347 days) | 2 | 8 | 0 | -38 / 147 / 178 / 211 | 18 / 0 |
-| LGA-ATL-PHX:DL0659+DL1115 | ATL | 96% (284 of 296 days) | 6 | 6 | 0 | -123 / 84 / 117 / 145 | 2 / 0 |
-| LGA-ATL-PHX:DL0759+DL1115 | ATL | 85% (231 of 272 days) | 36 | 5 | 0 | -300 / 39 / 67 / 105 | 69 / 0 |
-| LGA-ATL-PHX:DL0759+DL1303 | ATL | 97% (297 of 307 days) | 4 | 5 | 1 | -187 / 128 / 172 / 217 | 34 / 0 |
-| LGA-ATL-PHX:DL0900+DL1303 | ATL | 91% (296 of 324 days) | 25 | 2 | 1 | -587 / 53 / 100 / 153 | 33 / 0 |
-| LGA-ATL-PHX:DL1500+DL1940 | ATL | 96% (211 of 219 days) | 5 | 3 | 0 | -168 / 99 / 143 / 191 | 95 / 0 |
-| LGA-ATL-PHX:DL1500+DL2115 | ATL | 97% (215 of 221 days) | 1 | 4 | 1 | -117 / 192 / 227 / 271 | 93 / 0 |
-| LGA-ATL-PHX:DL1600+DL1940 | ATL | 78% (150 of 193 days) | 36 | 6 | 1 | -73 / 30 / 74 / 122 | 95 / 0 |
-| LGA-ATL-PHX:DL1600+DL2115 | ATL | 93% (249 of 269 days) | 8 | 11 | 1 | -325 / 110 / 166 / 213 | 19 / 0 |
-| LGA-ATL-PHX:DL1700+DL2115 | ATL | 89% (270 of 303 days) | 23 | 9 | 1 | -233 / 61 / 107 / 160 | 20 / 0 |
 | LGA-DEN-LAX:UA0715+UA1126 | DEN | 97% (329 of 340 days) | 8 | 3 | 0 | -283 / 81 / 124 / 173 | 0 / 0 |
-| LGA-DEN-LAX:UA0715+UA1328 | DEN | 98% (203 of 207 days) | 3 | 1 | 0 | -159 / 194 / 230 / 261 | 133 / 0 |
 | LGA-DEN-LAX:UA1000+UA1328 | DEN | 88% (226 of 257 days) | 25 | 6 | 0 | -231 / 46 / 81 / 118 | 0 / 0 |
-| LGA-DEN-LAX:UA1000+UA1600 | DEN | 96% (193 of 201 days) | 2 | 6 | 0 | -64 / 190 / 223 / 289 | 56 / 0 |
 | LGA-DEN-LAX:UA1225+UA1600 | DEN | 91% (333 of 364 days) | 21 | 2 | 8 | -1047 / 56 / 90 / 146 | 0 / 0 |
 | LGA-DEN-LAX:UA1225+UA1740 | DEN | 97% (348 of 357 days) | 2 | 1 | 6 | -16 / 158 / 193 / 238 | 7 / 0 |
 | LGA-DEN-LAX:UA1518+UA1935 | DEN | 91% (223 of 245 days) | 20 | 1 | 1 | -309 / 76 / 123 / 184 | 0 / 0 |
 | LGA-DEN-LAX:UA1518+UA2120 | DEN | 97% (213 of 220 days) | 5 | 1 | 1 | -292 / 144 / 202 / 244 | 25 / 0 |
 | LGA-DEN-LAX:UA1655+UA2120 | DEN | 89% (240 of 271 days) | 26 | 3 | 2 | -256 / 47 / 114 / 163 | 54 / 0 |
-| LGA-DEN-PHX:UA0715+UA1129 | DEN | 97% (331 of 340 days) | 7 | 2 | 0 | -290 / 82 / 125 / 168 | 0 / 0 |
-| LGA-DEN-PHX:UA1000+UA1325 | DEN | 87% (156 of 179 days) | 21 | 2 | 0 | -217 / 42 / 73 / 103 | 78 / 0 |
-| LGA-DEN-PHX:UA1000+UA1615 | DEN | 98% (160 of 163 days) | 2 | 1 | 0 | -68 / 198 / 234 / 264 | 94 / 0 |
-| LGA-DEN-PHX:UA1225+UA1615 | DEN | 93% (288 of 311 days) | 14 | 2 | 7 | -934 / 62 / 102 / 132 | 53 / 0 |
-| LGA-DEN-PHX:UA1518+UA1920 | DEN | 93% (138 of 149 days) | 11 | 0 | 0 | -290 / 57 / 88 / 126 | 96 / 0 |
-| LGA-DEN-PHX:UA1518+UA2104 | DEN | 96% (177 of 184 days) | 4 | 2 | 1 | -280 / 143 / 190 / 269 | 61 / 0 |
-| LGA-DEN-PHX:UA1655+UA2104 | DEN | 88% (234 of 266 days) | 26 | 3 | 3 | -231 / 40 / 100 / 165 | 59 / 0 |
-| LGA-DEN-PHX:WN1230+WN1605 | DEN | 87% (174 of 199 days) | 23 | 2 | 0 | -92 / 44 / 78 / 114 | 91 / 0 |
-| LGA-DEN-PHX:WN1700+WN2045 | DEN | 82% (163 of 199 days) | 32 | 4 | 0 | -97 / 22 / 81 / 123 | 103 / 0 |
-| LGA-DFW-LAX:AA0600+AA1030 | DFW | 92% (178 of 193 days) | 11 | 4 | 0 | -685 / 54 / 89 / 125 | 29 / 0 |
 | LGA-DFW-LAX:AA0730+AA1311 | DFW | 96% (280 of 292 days) | 1 | 10 | 1 | 13 / 142 / 180 / 241 | 27 / 0 |
-| LGA-DFW-LAX:AA0730+AA1400 | DFW | 94% (189 of 200 days) | 4 | 5 | 2 | -620 / 178 / 227 / 273 | 119 / 0 |
 | LGA-DFW-LAX:AA0830+AA1311 | DFW | 92% (303 of 328 days) | 18 | 4 | 3 | -654 / 68 / 117 / 170 | 37 / 0 |
 | LGA-DFW-LAX:AA0830+AA1400 | DFW | 95% (227 of 240 days) | 2 | 8 | 3 | -535 / 122 / 171 / 209 | 125 / 0 |
 | LGA-DFW-LAX:AA0830+AA1500 | DFW | 97% (262 of 271 days) | 2 | 5 | 2 | -534 / 188 / 235 / 295 | 94 / 0 |
-| LGA-DFW-LAX:AA1000+AA1400 | DFW | 72% (139 of 194 days) | 47 | 8 | 0 | -434 / 16 / 65 / 111 | 51 / 0 |
-| LGA-DFW-LAX:AA1000+AA1500 | DFW | 89% (168 of 188 days) | 14 | 4 | 2 | -394 / 72 / 127 / 200 | 57 / 0 |
-| LGA-DFW-LAX:AA1229+AA1730 | DFW | 93% (146 of 157 days) | 5 | 5 | 1 | -262 / 91 / 133 / 181 | 62 / 0 |
 | LGA-DFW-LAX:AA1354+AA1830 | DFW | 84% (186 of 222 days) | 30 | 5 | 1 | -238 / 23 / 119 / 178 | 109 / 0 |
-| LGA-DFW-LAX:AA1354+AA1930 | DFW | 92% (191 of 208 days) | 8 | 8 | 1 | -244 / 110 / 187 / 248 | 123 / 0 |
-| LGA-DFW-LAX:AA1500+AA1930 | DFW | 87% (165 of 190 days) | 16 | 7 | 2 | -131 / 57 / 119 / 184 | 87 / 0 |
 | LGA-DFW-LAX:AA1600+AA2121 | DFW | 88% (218 of 247 days) | 11 | 17 | 1 | -176 / 86 / 148 / 210 | 59 / 0 |
-| LGA-DFW-LAX:AA1600+AA2233 | DFW | 92% (199 of 217 days) | 3 | 15 | 0 | 20 / 160 / 223 / 278 | 89 / 0 |
 | LGA-DFW-LAX:AA1700+AA2121 | DFW | 75% (198 of 263 days) | 57 | 8 | 0 | -241 / 12 / 83 / 148 | 69 / 0 |
 | LGA-DFW-LAX:AA1700+AA2233 | DFW | 89% (204 of 230 days) | 17 | 8 | 1 | -152 / 61 / 159 / 223 | 102 / 0 |
 | LGA-DFW-LAX:DL1130+DL1600 | DFW | 81% (249 of 307 days) | 53 | 3 | 2 | -221 / 19 / 95 / 138 | 14 / 0 |
-| LGA-DFW-PHX:AA0600+AA1033 | DFW | 95% (210 of 221 days) | 5 | 6 | 0 | -647 / 71 / 101 / 143 | 1 / 0 |
-| LGA-DFW-PHX:AA0600+AA1219 | DFW | 95% (201 of 211 days) | 2 | 8 | 0 | -592 / 171 / 201 / 243 | 11 / 0 |
-| LGA-DFW-PHX:AA0730+AA1219 | DFW | 93% (286 of 308 days) | 8 | 13 | 1 | -727 / 81 / 125 / 168 | 11 / 0 |
-| LGA-DFW-PHX:AA0730+AA1425 | DFW | 96% (191 of 199 days) | 3 | 5 | 0 | -605 / 196 / 232 / 275 | 120 / 0 |
-| LGA-DFW-PHX:AA0830+AA1219 | DFW | 78% (245 of 315 days) | 61 | 6 | 3 | -712 / 18 / 68 / 100 | 50 / 0 |
-| LGA-DFW-PHX:AA0830+AA1425 | DFW | 96% (348 of 363 days) | 5 | 9 | 1 | -594 / 136 / 183 / 223 | 2 / 0 |
-| LGA-DFW-PHX:AA0830+AA1525 | DFW | 94% (212 of 226 days) | 4 | 7 | 3 | -443 / 202 / 244 / 286 | 139 / 0 |
-| LGA-DFW-PHX:AA1000+AA1425 | DFW | 80% (197 of 245 days) | 38 | 8 | 2 | -569 / 23 / 84 / 129 | 0 / 0 |
-| LGA-DFW-PHX:AA1000+AA1525 | DFW | 91% (221 of 244 days) | 14 | 7 | 2 | -508 / 83 / 152 / 204 | 1 / 0 |
-| LGA-DFW-PHX:AA1000+AA1635 | DFW | 95% (231 of 244 days) | 5 | 6 | 2 | -382 / 156 / 220 / 289 | 1 / 0 |
-| LGA-DFW-PHX:AA1229+AA1635 | DFW | 77% (168 of 219 days) | 42 | 8 | 1 | -434 / 26 / 74 / 125 | 0 / 0 |
-| LGA-DFW-PHX:AA1229+AA1750 | DFW | 91% (128 of 140 days) | 6 | 6 | 0 | -310 / 93 / 148 / 214 | 79 / 0 |
-| LGA-DFW-PHX:AA1354+AA1750 | DFW | 74% (173 of 234 days) | 52 | 7 | 2 | -269 / -6 / 74 / 138 | 97 / 0 |
-| LGA-DFW-PHX:AA1354+AA1950 | DFW | 92% (226 of 245 days) | 5 | 11 | 3 | -256 / 131 / 198 / 256 | 86 / 0 |
-| LGA-DFW-PHX:AA1500+AA1950 | DFW | 87% (200 of 229 days) | 19 | 7 | 3 | -255 / 48 / 127 / 183 | 48 / 0 |
-| LGA-DFW-PHX:AA1500+AA2050 | DFW | 92% (183 of 200 days) | 10 | 7 | 0 | -205 / 93 / 174 / 231 | 77 / 0 |
-| LGA-DFW-PHX:AA1600+AA1950 | DFW | 65% (123 of 190 days) | 57 | 8 | 2 | -249 / 10 / 59 / 124 | 116 / 0 |
-| LGA-DFW-PHX:AA1600+AA2050 | DFW | 84% (178 of 211 days) | 19 | 13 | 1 | -203 / 45 / 108 / 156 | 95 / 0 |
-| LGA-DFW-PHX:AA1600+AA2150 | DFW | 93% (173 of 187 days) | 3 | 10 | 1 | -187 / 89 / 158 / 216 | 119 / 0 |
-| LGA-DFW-PHX:AA1600+AA2241 | DFW | 91% (203 of 222 days) | 3 | 15 | 1 | -77 / 168 / 223 / 277 | 84 / 0 |
-| LGA-DFW-PHX:AA1700+AA2150 | DFW | 79% (164 of 207 days) | 35 | 6 | 2 | -226 / 6 / 104 / 149 | 125 / 0 |
-| LGA-DFW-PHX:AA1700+AA2241 | DFW | 91% (214 of 235 days) | 12 | 7 | 2 | -178 / 60 / 167 / 218 | 97 / 0 |
 | LGA-ORD-LAX:AA0600+AA0825 | ORD | 77% (203 of 262 days) | 49 | 8 | 2 | -203 / 32 / 64 / 121 | 31 / 0 |
 | LGA-ORD-LAX:AA0600+AA0951 | ORD | 94% (271 of 287 days) | 8 | 7 | 1 | -147 / 121 / 148 / 182 | 6 / 0 |
 | LGA-ORD-LAX:AA0725+AA0951 | ORD | 82% (237 of 289 days) | 45 | 7 | 0 | -467 / 36 / 64 / 96 | 1 / 0 |
 | LGA-ORD-LAX:AA1200+AA1515 | ORD | 88% (245 of 278 days) | 28 | 5 | 0 | -98 / 43 / 91 / 136 | 47 / 0 |
-| LGA-ORD-LAX:AA1423+AA1904 | ORD | 95% (202 of 213 days) | 9 | 2 | 0 | -868 / 125 / 193 / 248 | 109 / 0 |
 | LGA-ORD-LAX:AA1605+AA1904 | ORD | 80% (189 of 235 days) | 42 | 3 | 1 | -326 / 7 / 80 / 142 | 116 / 0 |
 | LGA-ORD-LAX:AA1605+AA2025 | ORD | 92% (308 of 336 days) | 18 | 9 | 1 | -741 / 69 / 160 / 223 | 15 / 0 |
 | LGA-ORD-LAX:UA0625+UA0900 | ORD | 91% (333 of 365 days) | 19 | 11 | 2 | -46 / 52 / 70 / 101 | 0 / 0 |
@@ -676,27 +636,63 @@ Data period: 2024-07-01 to 2025-06-30. Connection feasibility is the share of pa
 | LGA-ORD-LAX:UA1525+UA1940 | ORD | 93% (301 of 322 days) | 8 | 9 | 4 | -1124 / 130 / 176 / 225 | 0 / 0 |
 | LGA-ORD-LAX:UA1625+UA1940 | ORD | 86% (307 of 357 days) | 40 | 6 | 4 | -303 / 36 / 102 / 156 | 0 / 0 |
 | LGA-ORD-LAX:UA1715+UA1940 | ORD | 55% (166 of 304 days) | 123 | 12 | 3 | -309 / -18 / 50 / 91 | 23 / 0 |
-| LGA-ORD-PHX:AA0600+AA0828 | ORD | 78% (167 of 214 days) | 43 | 4 | 0 | -223 / 36 / 60 / 89 | 79 / 0 |
-| LGA-ORD-PHX:AA0600+AA0958 | ORD | 95% (176 of 185 days) | 4 | 3 | 2 | -143 / 135 / 158 / 200 | 108 / 0 |
-| LGA-ORD-PHX:AA0925+AA1320 | ORD | 91% (277 of 303 days) | 12 | 14 | 0 | -1529 / 116 / 164 / 225 | 9 / 0 |
-| LGA-ORD-PHX:AA1200+AA1702 | ORD | 98% (247 of 253 days) | 2 | 3 | 1 | -158 / 161 / 211 / 257 | 72 / 0 |
-| LGA-ORD-PHX:AA1423+AA1702 | ORD | 69% (191 of 277 days) | 77 | 7 | 2 | -979 / -27 / 67 / 137 | 45 / 0 |
-| LGA-ORD-PHX:AA1423+AA1852 | ORD | 93% (235 of 254 days) | 16 | 2 | 1 | -822 / 87 / 171 / 218 | 68 / 0 |
-| LGA-ORD-PHX:AA1605+AA1852 | ORD | 70% (195 of 279 days) | 79 | 3 | 2 | -327 / -7 / 64 / 105 | 72 / 0 |
-| LGA-ORD-PHX:AA1605+AA2025 | ORD | 92% (294 of 321 days) | 17 | 9 | 1 | -239 / 83 / 167 / 228 | 30 / 0 |
-| LGA-ORD-PHX:UA0625+UA0915 | ORD | 90% (303 of 335 days) | 23 | 4 | 5 | -34 / 47 / 82 / 116 | 30 / 0 |
-| LGA-ORD-PHX:UA0625+UA1110 | ORD | 99% (284 of 287 days) | 0 | 2 | 1 | 91 / 170 / 194 / 239 | 78 / 0 |
-| LGA-ORD-PHX:UA0725+UA1110 | ORD | 97% (272 of 280 days) | 3 | 5 | 0 | -436 / 99 / 130 / 170 | 77 / 0 |
-| LGA-ORD-PHX:UA0825+UA1110 | ORD | 93% (223 of 241 days) | 17 | 1 | 0 | -203 / 52 / 75 / 116 | 98 / 0 |
-| LGA-ORD-PHX:UA0825+UA1335 | ORD | 97% (296 of 304 days) | 2 | 5 | 1 | -55 / 185 / 218 / 248 | 35 / 0 |
-| LGA-ORD-PHX:UA0920+UA1335 | ORD | 95% (305 of 320 days) | 6 | 8 | 1 | -341 / 120 / 165 / 207 | 0 / 0 |
-| LGA-ORD-PHX:UA1025+UA1335 | ORD | 92% (336 of 364 days) | 24 | 4 | 0 | -553 / 56 / 100 / 132 | 0 / 0 |
-| LGA-ORD-PHX:UA1125+UA1610 | ORD | 98% (309 of 314 days) | 3 | 1 | 1 | -221 / 166 / 196 / 229 | 5 / 0 |
-| LGA-ORD-PHX:UA1315+UA1610 | ORD | 88% (291 of 332 days) | 36 | 4 | 1 | -437 / 42 / 81 / 111 | 6 / 0 |
-| LGA-ORD-PHX:UA1425+UA1953 | ORD | 99% (210 of 212 days) | 1 | 1 | 0 | -14 / 213 / 244 / 279 | 123 / 0 |
-| LGA-ORD-PHX:UA1525+UA1953 | ORD | 92% (293 of 319 days) | 10 | 12 | 4 | -1082 / 136 / 183 / 233 | 3 / 0 |
-| LGA-ORD-PHX:UA1625+UA1953 | ORD | 89% (315 of 354 days) | 28 | 9 | 2 | -294 / 54 / 110 / 156 | 3 / 0 |
-| LGA-ORD-PHX:UA1715+UA1953 | ORD | 63% (204 of 326 days) | 106 | 15 | 1 | -275 / -13 / 56 / 106 | 1 / 0 |
+| LIT-ATL-LGA:DL0530+DL0930 | ATL | 94% (288 of 308 days) | 14 | 5 | 1 | -203 / 75 / 101 / 123 | 57 / 0 |
+| LIT-ATL-LGA:DL0530+DL1030 | ATL | 94% (340 of 360 days) | 11 | 8 | 1 | -348 / 131 / 162 / 188 | 5 / 0 |
+| LIT-ATL-LGA:DL0530+DL1130 | ATL | 97% (292 of 300 days) | 3 | 5 | 0 | -137 / 196 / 221 / 247 | 65 / 0 |
+| LIT-ATL-LGA:DL0725+DL1130 | ATL | 95% (282 of 298 days) | 11 | 5 | 0 | -738 / 75 / 109 / 138 | 63 / 0 |
+| LIT-ATL-LGA:DL0725+DL1230 | ATL | 96% (322 of 335 days) | 4 | 7 | 2 | -681 / 135 / 170 / 208 | 26 / 0 |
+| LIT-ATL-LGA:DL0725+DL1330 | ATL | 96% (279 of 290 days) | 4 | 5 | 2 | -630 / 195 / 226 / 267 | 71 / 0 |
+| LIT-ATL-LGA:DL0937+DL1330 | ATL | 96% (299 of 310 days) | 6 | 3 | 2 | -217 / 84 / 103 / 139 | 28 / 0 |
+| LIT-ATL-LGA:DL0937+DL1530 | ATL | 97% (312 of 322 days) | 2 | 8 | 0 | -69 / 181 / 219 / 264 | 16 / 0 |
+| LIT-ATL-LGA:DL1238+DL1700 | ATL | 92% (275 of 298 days) | 14 | 7 | 2 | -382 / 81 / 120 / 203 | 11 / 0 |
+| LIT-ATL-LGA:DL1238+DL1830 | ATL | 96% (287 of 299 days) | 5 | 6 | 1 | -254 / 156 / 209 / 276 | 10 / 0 |
+| LIT-DFW-LGA:AA0500+AA0707 | DFW | 68% (189 of 278 days) | 76 | 13 | 0 | -1534 / 20 / 57 / 92 | 22 / 0 |
+| LIT-DFW-LGA:AA0500+AA0823 | DFW | 88% (248 of 282 days) | 17 | 16 | 1 | -1496 / 84 / 128 / 151 | 18 / 0 |
+| LIT-DFW-LGA:AA0500+AA0941 | DFW | 92% (251 of 274 days) | 11 | 12 | 0 | -1424 / 167 / 202 / 237 | 26 / 0 |
+| LIT-DFW-LGA:AA0600+AA0823 | DFW | 72% (230 of 321 days) | 74 | 16 | 1 | -1619 / 22 / 58 / 97 | 19 / 0 |
+| LIT-DFW-LGA:AA0600+AA0941 | DFW | 88% (270 of 306 days) | 21 | 15 | 0 | -1538 / 93 / 134 / 183 | 34 / 0 |
+| LIT-DFW-LGA:AA0600+AA1028 | DFW | 91% (243 of 268 days) | 11 | 12 | 2 | -1497 / 128 / 185 / 226 | 72 / 0 |
+| LIT-DFW-LGA:AA0737+AA1028 | DFW | 80% (220 of 276 days) | 52 | 3 | 1 | -547 / 14 / 68 / 99 | 75 / 0 |
+| LIT-DFW-LGA:AA0737+AA1143 | DFW | 92% (280 of 306 days) | 17 | 7 | 2 | -550 / 100 / 147 / 178 | 45 / 0 |
+| LIT-DFW-LGA:AA0737+AA1243 | DFW | 92% (264 of 288 days) | 12 | 7 | 5 | -541 / 154 / 210 / 256 | 63 / 0 |
+| LIT-DFW-LGA:AA0906+AA1243 | DFW | 94% (206 of 219 days) | 5 | 7 | 1 | -72 / 116 / 153 / 202 | 27 / 0 |
+| LIT-DFW-LGA:AA1215+AA1440 | DFW | 79% (192 of 242 days) | 31 | 15 | 4 | -118 / 37 / 70 / 120 | 110 / 0 |
+| LIT-DFW-LGA:AA1215+AA1541 | DFW | 92% (276 of 299 days) | 7 | 14 | 2 | -79 / 91 / 126 / 166 | 53 / 0 |
+| LIT-DFW-LGA:AA1215+AA1645 | DFW | 92% (208 of 225 days) | 4 | 11 | 2 | -164 / 152 / 186 / 232 | 127 / 0 |
+| LIT-DFW-LGA:AA1619+AA1902 | DFW | 70% (245 of 350 days) | 71 | 32 | 2 | -1023 / 9 / 73 / 126 | 3 / 0 |
+| LIT-ORD-LGA:AA0700+AA1012 | ORD | 89% (210 of 236 days) | 20 | 6 | 0 | -762 / 48 / 96 / 184 | 70 / 0 |
+| LIT-ORD-LGA:AA0700+AA1220 | ORD | 93% (247 of 267 days) | 6 | 12 | 2 | -627 / 166 / 219 / 340 | 39 / 0 |
+| LIT-ORD-LGA:UA0745+UA1100 | ORD | 90% (328 of 364 days) | 27 | 6 | 3 | -584 / 53 / 78 / 112 | 0 / 0 |
+| LIT-ORD-LGA:UA0745+UA1200 | ORD | 95% (327 of 344 days) | 7 | 7 | 3 | -531 / 116 / 140 / 172 | 20 / 0 |
+| LIT-ORD-LGA:UA0745+UA1300 | ORD | 94% (282 of 299 days) | 4 | 8 | 5 | -471 / 174 / 201 / 245 | 65 / 0 |
+| LIT-ORD-LGA:UA1120+UA1400 | ORD | 50% (139 of 278 days) | 133 | 4 | 2 | -496 / -15 / 45 / 77 | 56 / 0 |
+| LIT-ORD-LGA:UA1120+UA1500 | ORD | 86% (257 of 300 days) | 31 | 9 | 3 | -457 / 43 / 102 / 155 | 34 / 0 |
+| LIT-ORD-LGA:UA1120+UA1600 | ORD | 95% (285 of 301 days) | 7 | 5 | 4 | -404 / 103 / 163 / 235 | 33 / 0 |
+| LIT-ORD-LGA:UA1120+UA1700 | ORD | 96% (287 of 300 days) | 4 | 7 | 2 | -334 / 165 / 222 / 289 | 34 / 0 |
+| LIT-ORD-LGA:UA1515+UA1800 | ORD | 64% (186 of 291 days) | 92 | 10 | 3 | -1210 / -14 / 55 / 122 | 0 / 0 |
+| LIT-ORD-LGA:UA1515+UA1830 | ORD | 81% (198 of 244 days) | 36 | 9 | 1 | -1179 / 26 / 84 / 153 | 47 / 0 |
+| LIT-ORD-LGA:UA1515+UA2000 | ORD | 92% (265 of 289 days) | 15 | 9 | 0 | -1105 / 113 / 176 / 226 | 2 / 0 |
+| MCO-ATL-LAS:DL0530+DL0830 | ATL | 95% (319 of 336 days) | 7 | 10 | 0 | -208 / 83 / 100 / 125 | 0 / 0 |
+| MCO-ATL-LAS:DL0530+DL0959 | ATL | 96% (234 of 243 days) | 2 | 7 | 0 | -80 / 174 / 190 / 212 | 93 / 0 |
+| MCO-ATL-LAS:DL0615+DL0830 | ATL | 60% (204 of 341 days) | 129 | 8 | 0 | -195 / 32 / 48 / 69 | 24 / 0 |
+| MCO-ATL-LAS:DL0615+DL0959 | ATL | 97% (254 of 263 days) | 3 | 6 | 0 | -175 / 118 / 138 / 164 | 102 / 0 |
+| MCO-ATL-LAS:DL0615+DL1058 | ATL | 97% (272 of 279 days) | 1 | 6 | 0 | 5 / 163 / 198 / 230 | 86 / 0 |
+| MCO-ATL-LAS:DL0700+DL0959 | ATL | 94% (247 of 263 days) | 9 | 7 | 0 | -268 / 66 / 85 / 110 | 102 / 0 |
+| MCO-ATL-LAS:DL0700+DL1058 | ATL | 97% (271 of 279 days) | 1 | 7 | 0 | 0 / 108 / 142 / 182 | 86 / 0 |
+| MCO-ATL-LAS:DL0700+DL1215 | ATL | 97% (282 of 291 days) | 1 | 7 | 1 | -102 / 196 / 220 / 250 | 74 / 0 |
+| MCO-ATL-LAS:DL0800+DL1058 | ATL | 91% (248 of 273 days) | 21 | 4 | 0 | -141 / 46 / 90 / 124 | 86 / 0 |
+| MCO-ATL-LAS:DL0800+DL1215 | ATL | 97% (279 of 287 days) | 3 | 4 | 1 | 18 / 131 / 169 / 195 | 72 / 0 |
+| MCO-ATL-LAS:DL0900+DL1215 | ATL | 94% (275 of 293 days) | 11 | 6 | 1 | -262 / 83 / 106 / 131 | 72 / 0 |
+| MCO-ATL-LAS:DL1000+DL1215 | ATL | 65% (146 of 226 days) | 77 | 2 | 1 | -313 / 30 / 51 / 73 | 139 / 0 |
+| MCO-ATL-LAS:DL1000+DL1456 | ATL | 97% (305 of 315 days) | 4 | 6 | 0 | -176 / 176 / 213 / 244 | 50 / 0 |
+| MCO-ATL-LAS:DL1100+DL1456 | ATL | 95% (321 of 339 days) | 13 | 5 | 0 | -440 / 105 / 149 / 196 | 26 / 0 |
+| MCO-ATL-LAS:DL1200+DL1456 | ATL | 86% (292 of 339 days) | 41 | 6 | 0 | -700 / 38 / 84 / 128 | 26 / 0 |
+| MCO-ATL-LAS:DL1200+DL1659 | ATL | 97% (269 of 278 days) | 3 | 5 | 1 | -196 / 157 / 203 / 238 | 87 / 0 |
+| MCO-ATL-LAS:DL1300+DL1659 | ATL | 92% (255 of 278 days) | 15 | 6 | 2 | -200 / 75 / 140 / 178 | 87 / 0 |
+| MCO-ATL-LAS:DL1400+DL1659 | ATL | 82% (229 of 278 days) | 41 | 5 | 3 | -432 / 24 / 76 / 114 | 86 / 0 |
+| MCO-ATL-LAS:DL1400+DL1845 | ATL | 94% (336 of 359 days) | 15 | 6 | 2 | -334 / 131 / 185 / 226 | 5 / 0 |
+| MCO-ATL-LAS:DL1545+DL1845 | ATL | 74% (246 of 333 days) | 79 | 7 | 1 | -410 / -1 / 73 / 121 | 31 / 0 |
+| MCO-ATL-LAS:DL1545+DL1959 | ATL | 90% (321 of 358 days) | 25 | 10 | 2 | -346 / 77 / 142 / 191 | 6 / 0 |
 | MCO-ATL-LAX:DL0530+DL0855 | ATL | 96% (235 of 245 days) | 4 | 5 | 1 | -194 / 111 / 131 / 162 | 91 / 0 |
 | MCO-ATL-LAX:DL0530+DL1020 | ATL | 97% (313 of 324 days) | 3 | 8 | 0 | -74 / 192 / 214 / 248 | 12 / 0 |
 | MCO-ATL-LAX:DL0615+DL0855 | ATL | 94% (254 of 271 days) | 13 | 3 | 1 | -245 / 57 / 78 / 113 | 94 / 0 |
@@ -721,7 +717,14 @@ Data period: 2024-07-01 to 2025-06-30. Connection feasibility is the share of pa
 | MCO-ATL-LAX:DL1400+DL1836 | ATL | 93% (320 of 343 days) | 14 | 5 | 4 | -309 / 124 / 184 / 227 | 21 / 0 |
 | MCO-ATL-LAX:DL1545+DL1836 | ATL | 65% (212 of 325 days) | 104 | 6 | 3 | -422 / -6 / 61 / 137 | 39 / 0 |
 | MCO-ATL-LAX:DL1545+DL1959 | ATL | 91% (264 of 289 days) | 16 | 9 | 0 | -281 / 85 / 153 / 226 | 75 / 0 |
-| MCO-ATL-LAX:DL1655+DL1959 | ATL | 81% (160 of 198 days) | 30 | 7 | 1 | -348 / 8 / 90 / 139 | 21 / 0 |
+| MCO-DEN-LAS:UA0801+UA1124 | DEN | 93% (303 of 326 days) | 16 | 7 | 0 | -253 / 56 / 82 / 118 | 38 / 0 |
+| MCO-DEN-LAS:UA0801+UA1355 | DEN | 98% (261 of 266 days) | 1 | 4 | 0 | 4 / 194 / 222 / 289 | 98 / 0 |
+| MCO-DEN-LAS:UA1000+UA1355 | DEN | 92% (222 of 240 days) | 16 | 2 | 0 | -347 / 60 / 108 / 188 | 84 / 0 |
+| MCO-DEN-LAS:UA1241+UA1610 | DEN | 93% (337 of 364 days) | 21 | 5 | 1 | -561 / 59 / 96 / 150 | 0 / 0 |
+| MCO-DEN-LAS:UA1241+UA1754 | DEN | 97% (228 of 234 days) | 3 | 3 | 0 | -444 / 165 / 205 / 264 | 130 / 0 |
+| MCO-DEN-LAS:UA1545+UA1925 | DEN | 90% (325 of 362 days) | 26 | 6 | 5 | -249 / 56 / 105 / 164 | 0 / 0 |
+| MCO-DEN-LAS:UA1545+UA2100 | DEN | 94% (268 of 284 days) | 6 | 6 | 4 | -177 / 150 / 199 / 279 | 78 / 0 |
+| MCO-DEN-LAS:UA1712+UA2100 | DEN | 86% (235 of 272 days) | 30 | 6 | 1 | -197 / 37 / 99 / 170 | 40 / 0 |
 | MCO-DEN-LAX:UA0801+UA1126 | DEN | 93% (339 of 364 days) | 19 | 6 | 0 | -252 / 56 / 82 / 110 | 0 / 0 |
 | MCO-DEN-LAX:UA0801+UA1328 | DEN | 98% (356 of 364 days) | 3 | 5 | 0 | -105 / 177 / 205 / 239 | 0 / 0 |
 | MCO-DEN-LAX:UA1000+UA1328 | DEN | 91% (294 of 324 days) | 24 | 6 | 0 | -373 / 51 / 93 / 130 | 0 / 0 |
@@ -731,8 +734,21 @@ Data period: 2024-07-01 to 2025-06-30. Connection feasibility is the share of pa
 | MCO-DEN-LAX:UA1545+UA1935 | DEN | 90% (327 of 362 days) | 26 | 5 | 4 | -255 / 57 / 116 / 182 | 0 / 0 |
 | MCO-DEN-LAX:UA1545+UA2120 | DEN | 95% (282 of 296 days) | 3 | 7 | 4 | -132 / 169 / 208 / 259 | 66 / 0 |
 | MCO-DEN-LAX:UA1712+UA2120 | DEN | 84% (226 of 269 days) | 35 | 7 | 1 | -237 / 23 / 103 / 163 | 43 / 0 |
+| MCO-DFW-LAS:AA0515+AA0840 | DFW | 91% (242 of 267 days) | 11 | 13 | 1 | -566 / 56 / 100 / 141 | 25 / 0 |
+| MCO-DFW-LAS:AA0515+AA1104 | DFW | 93% (230 of 246 days) | 2 | 12 | 2 | -310 / 209 / 239 / 287 | 46 / 0 |
+| MCO-DFW-LAS:AA0653+AA1104 | DFW | 94% (278 of 296 days) | 4 | 13 | 1 | -232 / 99 / 136 / 187 | 4 / 0 |
+| MCO-DFW-LAS:AA0810+AA1104 | DFW | 76% (209 of 276 days) | 57 | 8 | 2 | -657 / 29 / 63 / 106 | 54 / 0 |
+| MCO-DFW-LAS:AA0810+AA1257 | DFW | 94% (304 of 325 days) | 6 | 12 | 3 | -573 / 137 / 174 / 229 | 5 / 0 |
+| MCO-DFW-LAS:AA0930+AA1257 | DFW | 90% (314 of 347 days) | 17 | 15 | 1 | -746 / 71 / 99 / 163 | 5 / 0 |
+| MCO-DFW-LAS:AA0930+AA1450 | DFW | 92% (295 of 320 days) | 9 | 14 | 2 | -641 / 175 / 216 / 277 | 32 / 0 |
+| MCO-DFW-LAS:AA1150+AA1450 | DFW | 77% (244 of 316 days) | 57 | 15 | 0 | -595 / 23 / 83 / 155 | 32 / 0 |
+| MCO-DFW-LAS:AA1150+AA1643 | DFW | 92% (320 of 348 days) | 9 | 18 | 1 | -470 / 132 / 199 / 279 | 0 / 0 |
+| MCO-DFW-LAS:AA1333+AA1643 | DFW | 78% (284 of 363 days) | 61 | 16 | 2 | -482 / 14 / 78 / 146 | 0 / 0 |
+| MCO-DFW-LAS:AA1333+AA1749 | DFW | 88% (214 of 243 days) | 15 | 12 | 2 | -281 / 78 / 143 / 193 | 120 / 0 |
+| MCO-DFW-LAS:AA1333+AA1853 | DFW | 93% (285 of 307 days) | 9 | 12 | 1 | -187 / 144 / 207 / 267 | 56 / 0 |
+| MCO-DFW-LAS:AA1603+AA2057 | DFW | 90% (223 of 248 days) | 13 | 11 | 1 | -197 / 101 / 180 / 240 | 9 / 0 |
+| MCO-DFW-LAS:AA1742+AA2057 | DFW | 68% (239 of 351 days) | 95 | 16 | 1 | -850 / -2 / 67 / 136 | 6 / 0 |
 | MCO-DFW-LAX:AA0515+AA0817 | DFW | 86% (224 of 260 days) | 23 | 12 | 1 | -581 / 45 / 72 / 105 | 32 / 0 |
-| MCO-DFW-LAX:AA0515+AA0910 | DFW | 89% (176 of 197 days) | 6 | 14 | 1 | -419 / 101 / 126 / 164 | 95 / 0 |
 | MCO-DFW-LAX:AA0515+AA1030 | DFW | 93% (236 of 253 days) | 5 | 10 | 2 | -333 / 160 / 198 / 230 | 39 / 0 |
 | MCO-DFW-LAX:AA0653+AA1030 | DFW | 94% (249 of 266 days) | 6 | 9 | 2 | -243 / 61 / 98 / 142 | 34 / 0 |
 | MCO-DFW-LAX:AA0810+AA1311 | DFW | 97% (285 of 293 days) | 2 | 5 | 1 | -619 / 147 / 187 / 242 | 37 / 0 |
@@ -744,13 +760,15 @@ Data period: 2024-07-01 to 2025-06-30. Connection feasibility is the share of pa
 | MCO-DFW-LAX:AA1150+AA1730 | DFW | 93% (211 of 227 days) | 5 | 11 | 0 | -410 / 197 / 242 / 294 | 121 / 0 |
 | MCO-DFW-LAX:AA1333+AA1730 | DFW | 89% (267 of 301 days) | 22 | 11 | 1 | -295 / 65 / 129 / 178 | 62 / 0 |
 | MCO-DFW-LAX:AA1333+AA1830 | DFW | 94% (218 of 232 days) | 7 | 6 | 1 | -303 / 110 / 192 / 244 | 131 / 0 |
-| MCO-DFW-LAX:AA1603+AA1930 | DFW | 81% (162 of 199 days) | 28 | 8 | 1 | -186 / 24 / 98 / 160 | 58 / 0 |
-| MCO-DFW-LAX:AA1603+AA2121 | DFW | 91% (175 of 192 days) | 7 | 9 | 1 | -153 / 100 / 212 / 267 | 65 / 0 |
 | MCO-DFW-LAX:AA1742+AA2121 | DFW | 79% (216 of 272 days) | 44 | 11 | 1 | -902 / 17 / 90 / 168 | 85 / 0 |
 | MCO-DFW-LAX:AA1742+AA2233 | DFW | 90% (219 of 242 days) | 12 | 10 | 1 | -842 / 81 / 171 / 238 | 115 / 0 |
 | MCO-DFW-LAX:AA1933+AA2233 | DFW | 66% (160 of 243 days) | 68 | 15 | 0 | -710 / -38 / 65 / 119 | 4 / 0 |
+| MCO-LAX-LAS:DL0650+DL1137 | LAX | 96% (341 of 357 days) | 11 | 5 | 0 | -229 / 84 / 155 / 208 | 8 / 0 |
+| MCO-LAX-LAS:DL1000+DL1525 | LAX | 96% (349 of 364 days) | 8 | 7 | 0 | -217 / 167 / 205 / 259 | 1 / 0 |
+| MCO-LAX-LAS:UA0720+UA1308 | LAX | 98% (313 of 320 days) | 1 | 6 | 0 | 22 / 112 / 201 / 237 | 34 / 0 |
+| MCO-LAX-LAS:UA1918+UA2242 | LAX | 73% (230 of 317 days) | 78 | 6 | 3 | -834 / 30 / 59 / 115 | 30 / 0 |
+| MCO-ORD-LAS:UA0729+UA1052 | ORD | 95% (269 of 284 days) | 9 | 6 | 0 | -119 / 64 / 92 / 125 | 13 / 0 |
 | MCO-ORD-LAX:AA0656+AA0951 | ORD | 84% (261 of 309 days) | 44 | 4 | 0 | -853 / 37 / 63 / 93 | 21 / 0 |
-| MCO-ORD-LAX:AA1452+AA1904 | ORD | 91% (159 of 174 days) | 13 | 2 | 0 | -954 / 51 / 107 / 192 | 98 / 0 |
 | MCO-ORD-LAX:AA1452+AA2025 | ORD | 92% (216 of 234 days) | 12 | 6 | 0 | -947 / 93 / 207 / 271 | 38 / 0 |
 | MCO-ORD-LAX:UA0729+UA1045 | ORD | 93% (228 of 244 days) | 12 | 4 | 0 | -130 / 61 / 86 / 119 | 53 / 0 |
 | MCO-ORD-LAX:UA0729+UA1255 | ORD | 99% (293 of 297 days) | 1 | 3 | 0 | -31 / 191 / 219 / 254 | 0 / 0 |
@@ -759,7 +777,7 @@ Data period: 2024-07-01 to 2025-06-30. Connection feasibility is the share of pa
 | MCO-ORD-LAX:UA1230+UA1540 | ORD | 88% (321 of 364 days) | 31 | 11 | 1 | -416 / 46 / 75 / 107 | 0 / 0 |
 | MCO-ORD-LAX:UA1230+UA1800 | ORD | 96% (300 of 312 days) | 2 | 9 | 1 | -195 / 183 / 216 / 248 | 52 / 0 |
 | MCO-ORD-LAX:UA1615+UA1940 | ORD | 79% (289 of 364 days) | 62 | 9 | 4 | -795 / 5 / 82 / 117 | 0 / 0 |
-| MCO-PHX-LAX:AA0715+AA1016 | PHX | 92% (164 of 179 days) | 12 | 3 | 0 | -791 / 50 / 79 / 110 | 110 / 0 |
+| MCO-PHX-LAS:AA0715+AA1116 | PHX | 94% (217 of 230 days) | 11 | 2 | 0 | -1302 / 53 / 110 / 164 | 59 / 0 |
 | OKC-ATL-EWR:DL0535+DL1007 | ATL | 93% (341 of 365 days) | 13 | 11 | 0 | -434 / 63 / 99 / 146 | 0 / 0 |
 | OKC-ATL-EWR:DL0800+DL1259 | ATL | 94% (291 of 310 days) | 8 | 7 | 4 | -358 / 115 / 141 / 223 | 8 / 0 |
 | OKC-ATL-EWR:DL1121+DL1608 | ATL | 96% (308 of 320 days) | 3 | 7 | 2 | -300 / 88 / 130 / 245 | 42 / 0 |
@@ -776,59 +794,10 @@ Data period: 2024-07-01 to 2025-06-30. Connection feasibility is the share of pa
 | OKC-DFW-EWR:AA1015+AA1438 | DFW | 92% (333 of 362 days) | 5 | 18 | 6 | -338 / 166 / 220 / 307 | 3 / 0 |
 | OKC-DFW-EWR:AA1150+AA1438 | DFW | 90% (316 of 351 days) | 9 | 20 | 6 | -382 / 77 / 122 / 219 | 2 / 0 |
 | OKC-DFW-EWR:AA1442+AA1910 | DFW | 89% (257 of 288 days) | 15 | 15 | 1 | -804 / 110 / 204 / 268 | 3 / 0 |
-| OKC-ORD-EWR:AA0515+AA1000 | ORD | 92% (184 of 201 days) | 5 | 11 | 1 | -729 / 135 / 165 / 245 | 65 / 0 |
 | OKC-ORD-EWR:UA0730+UA1151 | ORD | 95% (314 of 330 days) | 10 | 4 | 2 | -345 / 103 / 136 / 192 | 34 / 0 |
 | OKC-ORD-EWR:UA0730+UA1250 | ORD | 97% (221 of 227 days) | 3 | 2 | 1 | -288 / 175 / 201 / 265 | 137 / 0 |
 | OKC-ORD-EWR:UA1020+UA1425 | ORD | 93% (284 of 306 days) | 15 | 5 | 2 | -459 / 77 / 126 / 257 | 1 / 0 |
 | OKC-ORD-EWR:UA1425+UA1809 | ORD | 91% (200 of 219 days) | 13 | 6 | 0 | -201 / 78 / 121 / 223 | 0 / 0 |
-| OKC-ORD-EWR:UA1425+UA1959 | ORD | 96% (158 of 165 days) | 6 | 1 | 0 | -137 / 181 / 221 / 280 | 54 / 0 |
-| RDU-ATL-LAX:DL0530+DL0855 | ATL | 96% (257 of 267 days) | 5 | 4 | 1 | -93 / 98 / 139 / 166 | 92 / 0 |
-| RDU-ATL-LAX:DL0530+DL1020 | ATL | 97% (338 of 347 days) | 2 | 6 | 1 | -22 / 184 / 220 / 257 | 12 / 0 |
-| RDU-ATL-LAX:DL0629+DL0855 | ATL | 91% (190 of 208 days) | 13 | 4 | 1 | -189 / 53 / 74 / 102 | 101 / 0 |
-| RDU-ATL-LAX:DL0629+DL1020 | ATL | 97% (289 of 297 days) | 2 | 6 | 0 | -37 / 124 / 155 / 191 | 12 / 0 |
-| RDU-ATL-LAX:DL0629+DL1125 | ATL | 98% (205 of 210 days) | 0 | 5 | 0 | 72 / 186 / 220 / 256 | 99 / 0 |
-| RDU-ATL-LAX:DL0744+DL1020 | ATL | 91% (306 of 336 days) | 25 | 5 | 0 | -187 / 51 / 74 / 115 | 25 / 0 |
-| RDU-ATL-LAX:DL0744+DL1125 | ATL | 97% (233 of 239 days) | 3 | 3 | 0 | -77 / 107 / 135 / 171 | 122 / 0 |
-| RDU-ATL-LAX:DL0744+DL1252 | ATL | 98% (322 of 327 days) | 0 | 4 | 1 | 63 / 193 / 225 / 260 | 34 / 0 |
-| RDU-ATL-LAX:DL0951+DL1252 | ATL | 96% (292 of 303 days) | 6 | 4 | 1 | -709 / 77 / 106 / 148 | 2 / 0 |
-| RDU-ATL-LAX:DL0951+DL1400 | ATL | 96% (198 of 207 days) | 4 | 5 | 0 | -650 / 153 / 182 / 206 | 98 / 0 |
-| RDU-ATL-LAX:DL0951+DL1500 | ATL | 97% (197 of 203 days) | 1 | 5 | 0 | -587 / 201 / 234 / 268 | 102 / 0 |
-| RDU-ATL-LAX:DL1115+DL1400 | ATL | 95% (222 of 234 days) | 8 | 4 | 0 | -219 / 61 / 91 / 118 | 131 / 0 |
-| RDU-ATL-LAX:DL1115+DL1500 | ATL | 96% (274 of 285 days) | 5 | 6 | 0 | -62 / 115 / 149 / 181 | 80 / 0 |
-| RDU-ATL-LAX:DL1241+DL1500 | ATL | 78% (197 of 254 days) | 51 | 6 | 0 | -372 / 28 / 60 / 88 | 109 / 0 |
-| RDU-ATL-LAX:DL1241+DL1650 | ATL | 97% (260 of 267 days) | 5 | 2 | 0 | -272 / 137 / 177 / 225 | 96 / 0 |
-| RDU-ATL-LAX:DL1340+DL1836 | ATL | 98% (214 of 218 days) | 2 | 2 | 0 | -43 / 169 / 230 / 278 | 21 / 0 |
-| RDU-ATL-LAX:DL1525+DL1836 | ATL | 95% (250 of 263 days) | 10 | 1 | 2 | -197 / 80 / 126 / 168 | 22 / 0 |
-| RDU-ATL-LAX:DL1525+DL1959 | ATL | 96% (254 of 264 days) | 3 | 6 | 1 | -4 / 169 / 203 / 253 | 21 / 0 |
-| RDU-ATL-LAX:DL1717+DL1959 | ATL | 89% (247 of 277 days) | 25 | 5 | 0 | -281 / 45 / 82 / 137 | 68 / 0 |
-| RDU-DEN-LAX:UA0800+UA1126 | DEN | 90% (317 of 353 days) | 33 | 3 | 0 | -705 / 46 / 83 / 112 | 0 / 0 |
-| RDU-DEN-LAX:UA0800+UA1328 | DEN | 99% (350 of 353 days) | 1 | 2 | 0 | -628 / 179 / 206 / 236 | 0 / 0 |
-| RDU-DEN-LAX:UA1614+UA1935 | DEN | 87% (315 of 364 days) | 44 | 3 | 2 | -188 / 36 / 91 / 159 | 0 / 0 |
-| RDU-DEN-LAX:UA1614+UA2120 | DEN | 95% (283 of 298 days) | 9 | 4 | 2 | -70 / 135 / 183 / 229 | 66 / 0 |
-| RDU-DFW-LAX:AA0505+AA0817 | DFW | 77% (232 of 300 days) | 59 | 8 | 1 | -516 / 34 / 68 / 106 | 32 / 0 |
-| RDU-DFW-LAX:AA0505+AA0910 | DFW | 93% (222 of 238 days) | 5 | 11 | 0 | -443 / 87 / 123 / 166 | 94 / 0 |
-| RDU-DFW-LAX:AA0505+AA1030 | DFW | 97% (284 of 293 days) | 3 | 5 | 1 | -421 / 169 / 197 / 239 | 39 / 0 |
-| RDU-DFW-LAX:AA0632+AA1030 | DFW | 90% (249 of 276 days) | 16 | 11 | 0 | -2316 / 60 / 98 / 149 | 33 / 0 |
-| RDU-DFW-LAX:AA0810+AA1311 | DFW | 94% (213 of 227 days) | 7 | 6 | 1 | -644 / 136 / 173 / 224 | 37 / 0 |
-| RDU-DFW-LAX:AA0810+AA1400 | DFW | 91% (182 of 199 days) | 6 | 10 | 1 | -581 / 184 / 220 / 262 | 65 / 0 |
-| RDU-DFW-LAX:AA1142+AA1500 | DFW | 87% (233 of 269 days) | 30 | 4 | 2 | -1189 / 32 / 76 / 143 | 94 / 0 |
-| RDU-DFW-LAX:AA1142+AA1635 | DFW | 94% (207 of 221 days) | 9 | 2 | 3 | -1047 / 129 / 169 / 225 | 142 / 0 |
-| RDU-DFW-LAX:AA1142+AA1730 | DFW | 95% (287 of 301 days) | 6 | 7 | 1 | -1054 / 185 / 228 / 272 | 62 / 0 |
-| RDU-DFW-LAX:AA1541+AA1930 | DFW | 89% (194 of 219 days) | 17 | 8 | 0 | -209 / 63 / 115 / 188 | 134 / 1 |
-| RDU-ORD-LAX:AA0600+AA0825 | ORD | 93% (192 of 207 days) | 12 | 2 | 1 | -254 / 50 / 81 / 110 | 20 / 0 |
-| RDU-ORD-LAX:AA0600+AA0951 | ORD | 96% (213 of 221 days) | 4 | 4 | 0 | -157 / 142 / 161 / 188 | 6 / 0 |
-| RDU-ORD-LAX:AA0720+AA0951 | ORD | 86% (257 of 298 days) | 36 | 5 | 0 | -645 / 41 / 80 / 107 | 7 / 0 |
-| RDU-ORD-LAX:AA1609+AA1904 | ORD | 92% (176 of 191 days) | 13 | 1 | 1 | -79 / 52 / 107 / 163 | 110 / 0 |
-| RDU-ORD-LAX:AA1609+AA2025 | ORD | 97% (284 of 294 days) | 1 | 8 | 1 | -22 / 141 / 194 / 252 | 7 / 0 |
-| RDU-ORD-LAX:AA1751+AA2025 | ORD | 85% (183 of 215 days) | 23 | 9 | 0 | -249 / 38 / 80 / 125 | 12 / 0 |
-| RDU-ORD-LAX:UA0615+UA0900 | ORD | 90% (323 of 359 days) | 22 | 13 | 1 | -232 / 53 / 88 / 118 | 0 / 0 |
-| RDU-ORD-LAX:UA0615+UA1045 | ORD | 96% (294 of 306 days) | 3 | 8 | 1 | -145 / 163 / 190 / 223 | 53 / 0 |
-| RDU-ORD-LAX:UA1019+UA1255 | ORD | 91% (209 of 229 days) | 16 | 3 | 1 | -210 / 59 / 96 / 135 | 0 / 0 |
-| RDU-ORD-LAX:UA1019+UA1400 | ORD | 96% (188 of 196 days) | 5 | 3 | 0 | -143 / 121 / 153 / 180 | 33 / 0 |
-| RDU-ORD-LAX:UA1256+UA1540 | ORD | 94% (210 of 224 days) | 12 | 2 | 0 | -302 / 57 / 95 / 144 | 0 / 0 |
-| RDU-ORD-LAX:UA1256+UA1800 | ORD | 99% (151 of 152 days) | 0 | 1 | 0 | 102 / 198 / 223 / 250 | 72 / 0 |
-| RDU-ORD-LAX:UA1656+UA1940 | ORD | 84% (291 of 347 days) | 52 | 1 | 3 | -1050 / 28 / 84 / 131 | 0 / 0 |
-| RDU-PHX-LAX:AA0715+AA1016 | PHX | 88% (211 of 239 days) | 25 | 2 | 1 | -194 / 44 / 73 / 113 | 126 / 0 |
 | SAT-ATL-LGA:DL0525+DL0930 | ATL | 75% (230 of 308 days) | 69 | 8 | 1 | -305 / 36 / 54 / 80 | 57 / 0 |
 | SAT-ATL-LGA:DL0525+DL1030 | ATL | 95% (342 of 360 days) | 4 | 13 | 1 | -346 / 94 / 114 / 146 | 5 / 0 |
 | SAT-ATL-LGA:DL0525+DL1130 | ATL | 96% (288 of 300 days) | 3 | 9 | 0 | -285 / 154 / 173 / 212 | 65 / 0 |
@@ -840,11 +809,9 @@ Data period: 2024-07-01 to 2025-06-30. Connection feasibility is the share of pa
 | SAT-ATL-LGA:DL1055+DL1700 | ATL | 96% (304 of 318 days) | 3 | 8 | 3 | -432 / 132 / 177 / 240 | 27 / 0 |
 | SAT-ATL-LGA:DL1210+DL1700 | ATL | 91% (208 of 228 days) | 10 | 8 | 2 | -97 / 63 / 94 / 167 | 7 / 0 |
 | SAT-ATL-LGA:DL1210+DL1830 | ATL | 95% (214 of 225 days) | 4 | 5 | 2 | -30 / 130 / 169 / 239 | 10 / 0 |
-| SAT-ATL-LGA:DL1210+DL1930 | ATL | 96% (189 of 197 days) | 1 | 5 | 2 | 19 / 190 / 225 / 287 | 38 / 0 |
 | SAT-ATL-LGA:DL1405+DL1830 | ATL | 81% (179 of 222 days) | 42 | 1 | 0 | -455 / 26 / 81 / 142 | 134 / 0 |
 | SAT-ATL-LGA:DL1405+DL1930 | ATL | 92% (316 of 342 days) | 17 | 8 | 1 | -344 / 75 / 131 / 192 | 14 / 0 |
 | SAT-ATL-LGA:DL1405+DL2030 | ATL | 94% (226 of 240 days) | 4 | 10 | 0 | -319 / 166 / 216 / 287 | 116 / 0 |
-| SAT-ATL-LGA:DL1632+DL2130 | ATL | 91% (186 of 205 days) | 16 | 3 | 0 | -245 / 57 / 97 / 139 | 49 / 0 |
 | SAT-DFW-LGA:AA0500+AA0707 | DFW | 85% (270 of 316 days) | 35 | 10 | 1 | -589 / 41 / 69 / 101 | 1 / 0 |
 | SAT-DFW-LGA:AA0500+AA0823 | DFW | 92% (275 of 299 days) | 9 | 13 | 2 | -229 / 113 / 139 / 162 | 18 / 0 |
 | SAT-DFW-LGA:AA0500+AA0941 | DFW | 96% (276 of 289 days) | 4 | 9 | 0 | -162 / 187 / 214 / 243 | 28 / 0 |
@@ -859,8 +826,6 @@ Data period: 2024-07-01 to 2025-06-30. Connection feasibility is the share of pa
 | SAT-DFW-LGA:AA0800+AA1243 | DFW | 93% (300 of 323 days) | 4 | 14 | 5 | -137 / 171 / 223 / 270 | 40 / 0 |
 | SAT-DFW-LGA:AA0911+AA1143 | DFW | 87% (276 of 319 days) | 28 | 13 | 2 | -538 / 49 / 86 / 135 | 45 / 0 |
 | SAT-DFW-LGA:AA0911+AA1243 | DFW | 92% (299 of 325 days) | 9 | 12 | 5 | -485 / 112 / 155 / 203 | 39 / 0 |
-| SAT-DFW-LGA:AA1052+AA1243 | DFW | 72% (118 of 164 days) | 41 | 4 | 1 | -384 / 5 / 58 / 101 | 76 / 0 |
-| SAT-DFW-LGA:AA1052+AA1440 | DFW | 91% (166 of 183 days) | 8 | 7 | 2 | -257 / 113 / 165 / 216 | 57 / 0 |
 | SAT-DFW-LGA:AA1052+AA1541 | DFW | 93% (211 of 226 days) | 3 | 11 | 1 | -170 / 170 / 225 / 266 | 14 / 0 |
 | SAT-DFW-LGA:AA1226+AA1440 | DFW | 71% (174 of 245 days) | 54 | 13 | 4 | -2652 / 8 / 62 / 115 | 119 / 0 |
 | SAT-DFW-LGA:AA1226+AA1541 | DFW | 90% (278 of 310 days) | 16 | 14 | 2 | -2590 / 73 / 122 / 162 | 54 / 0 |
@@ -871,57 +836,43 @@ Data period: 2024-07-01 to 2025-06-30. Connection feasibility is the share of pa
 | SAT-DFW-LGA:AA1634+AA1902 | DFW | 77% (230 of 299 days) | 47 | 20 | 2 | -254 / 13 / 80 / 122 | 3 / 0 |
 | SAT-ORD-LGA:AA0601+AA1012 | ORD | 94% (263 of 281 days) | 8 | 10 | 0 | -192 / 68 / 98 / 168 | 69 / 0 |
 | SAT-ORD-LGA:AA0601+AA1220 | ORD | 93% (291 of 312 days) | 3 | 16 | 2 | -867 / 189 / 221 / 336 | 38 / 0 |
-| SAT-ORD-LGA:AA1335+AA1710 | ORD | 64% (123 of 193 days) | 57 | 11 | 2 | -1177 / -4 / 60 / 136 | 124 / 0 |
 | SAT-ORD-LGA:UA0700+UA1100 | ORD | 91% (318 of 348 days) | 22 | 6 | 2 | -380 / 54 / 78 / 106 | 0 / 0 |
 | SAT-ORD-LGA:UA0700+UA1200 | ORD | 94% (319 of 339 days) | 11 | 7 | 2 | -327 / 116 / 140 / 174 | 9 / 0 |
 | SAT-ORD-LGA:UA0700+UA1300 | ORD | 92% (271 of 293 days) | 10 | 8 | 4 | -250 / 174 / 202 / 250 | 55 / 0 |
 | SAT-ORD-LGA:UA1408+UA1800 | ORD | 86% (309 of 358 days) | 37 | 6 | 6 | -198 / 43 / 77 / 139 | 0 / 0 |
 | SAT-ORD-LGA:UA1408+UA1830 | ORD | 91% (266 of 293 days) | 18 | 6 | 3 | -185 / 70 / 107 / 178 | 65 / 0 |
 | SAT-ORD-LGA:UA1408+UA2000 | ORD | 96% (342 of 356 days) | 8 | 4 | 2 | -80 / 164 / 199 / 261 | 2 / 0 |
-| SMF-DEN-ATL:UA0517+UA0957 | DEN | 96% (349 of 363 days) | 4 | 5 | 5 | -133 / 66 / 88 / 119 | 0 / 0 |
-| SMF-DEN-ATL:UA0845+UA1336 | DEN | 95% (263 of 277 days) | 10 | 3 | 1 | -281 / 73 / 101 / 128 | 86 / 0 |
-| SMF-DEN-ATL:UA1300+UA1745 | DEN | 94% (300 of 319 days) | 14 | 1 | 4 | -198 / 60 / 95 / 146 | 45 / 0 |
-| SMF-DFW-ATL:AA0600+AA1228 | DFW | 91% (312 of 342 days) | 19 | 10 | 1 | -436 / 54 / 84 / 136 | 22 / 0 |
-| SMF-DFW-ATL:AA0600+AA1428 | DFW | 94% (337 of 359 days) | 6 | 13 | 3 | -325 / 176 / 207 / 259 | 5 / 0 |
-| SMF-DFW-ATL:AA0757+AA1428 | DFW | 89% (207 of 233 days) | 14 | 10 | 2 | -1465 / 61 / 89 / 157 | 4 / 0 |
-| SMF-DFW-ATL:AA0757+AA1625 | DFW | 91% (178 of 195 days) | 5 | 10 | 2 | -1328 / 163 / 213 / 283 | 42 / 0 |
-| SMF-DFW-ATL:AA1112+AA1859 | DFW | 91% (324 of 355 days) | 12 | 15 | 4 | -784 / 103 / 158 / 234 | 7 / 0 |
-| SMF-DFW-ATL:AA1422+AA2048 | DFW | 80% (239 of 298 days) | 40 | 16 | 3 | -876 / 31 / 76 / 128 | 59 / 0 |
-| SMF-DFW-ATL:AA2359+AA0702 | DFW | 86% (204 of 237 days) | 19 | 13 | 1 | -475 / 52 / 116 / 146 | 12 / 0 |
-| SMF-DFW-ATL:AA2359+AA0816 | DFW | 94% (225 of 239 days) | 3 | 10 | 1 | -378 / 130 / 192 / 222 | 10 / 0 |
-| SMF-LAX-ATL:DL0600+DL0825 | LAX | 83% (268 of 321 days) | 50 | 2 | 1 | -219 / 41 / 62 / 109 | 28 / 0 |
-| SMF-LAX-ATL:DL0600+DL1056 | LAX | 99% (280 of 283 days) | 2 | 1 | 0 | -57 / 186 / 212 / 243 | 66 / 0 |
-| SMF-LAX-ATL:DL0903+DL1215 | LAX | 95% (207 of 219 days) | 10 | 1 | 1 | -63 / 61 / 111 / 160 | 100 / 0 |
-| SMF-LAX-ATL:DL0903+DL1325 | LAX | 97% (251 of 258 days) | 2 | 2 | 3 | 12 / 101 / 181 / 242 | 61 / 0 |
-| SMF-LAX-ATL:DL0903+DL1426 | LAX | 97% (212 of 218 days) | 0 | 2 | 4 | 78 / 181 / 233 / 285 | 101 / 0 |
-| SMF-LAX-ATL:DL1107+DL1426 | LAX | 97% (236 of 243 days) | 4 | 1 | 2 | -166 / 94 / 120 / 149 | 0 / 0 |
-| SMF-LAX-ATL:DL1730+DL2145 | LAX | 97% (203 of 209 days) | 4 | 1 | 1 | -128 / 127 / 179 / 208 | 119 / 0 |
-| SMF-LAX-ATL:DL1730+DL2250 | LAX | 99% (278 of 282 days) | 1 | 3 | 0 | -48 / 200 / 243 / 273 | 46 / 0 |
-| SMF-LAX-ATL:DL1947+DL2250 | LAX | 91% (215 of 235 days) | 17 | 3 | 0 | -94 / 54 / 98 / 134 | 14 / 0 |
-| SMF-LAX-ATL:DL1947+DL2359 | LAX | 97% (180 of 186 days) | 3 | 3 | 0 | -47 / 115 / 161 / 200 | 63 / 0 |
-| SMF-ORD-ATL:UA0700+UA1430 | ORD | 94% (325 of 345 days) | 9 | 8 | 3 | -458 / 69 / 92 / 142 | 2 / 0 |
-| SMF-ORD-ATL:UA1045+UA1830 | ORD | 93% (205 of 220 days) | 5 | 6 | 4 | -347 / 67 / 111 / 159 | 5 / 0 |
-| SMF-PHX-ATL:AA0600+AA0945 | PHX | 89% (265 of 297 days) | 26 | 2 | 4 | -1459 / 46 / 76 / 160 | 65 / 0 |
-| SMF-PHX-ATL:AA0955+AA1538 | PHX | 98% (269 of 275 days) | 3 | 1 | 2 | -1566 / 210 / 235 / 302 | 76 / 0 |
-| SMF-PHX-ATL:AA1257+AA1538 | PHX | 77% (246 of 319 days) | 71 | 1 | 1 | -335 / 31 / 57 / 123 | 45 / 0 |
-| SNA-ATL-PHL:DL0645+DL1509 | ATL | 89% (248 of 279 days) | 25 | 4 | 2 | -348 / 46 / 75 / 108 | 34 / 0 |
-| SNA-ATL-PHL:DL0645+DL1625 | ATL | 94% (207 of 220 days) | 10 | 1 | 2 | -388 / 118 / 155 / 205 | 93 / 0 |
-| SNA-ATL-PHL:DL1154+DL2055 | ATL | 89% (240 of 269 days) | 23 | 4 | 2 | -286 / 50 / 123 / 184 | 52 / 0 |
-| SNA-ATL-PHL:DL1154+DL2255 | ATL | 94% (267 of 285 days) | 5 | 9 | 4 | -141 / 178 / 232 / 278 | 36 / 0 |
-| SNA-DEN-PHL:UA1130+UA1750 | DEN | 98% (303 of 308 days) | 2 | 2 | 1 | -47 / 160 / 198 / 249 | 1 / 0 |
-| SNA-DEN-PHL:UA1319+UA1750 | DEN | 91% (330 of 364 days) | 31 | 1 | 2 | -246 / 47 / 78 / 126 | 0 / 0 |
-| SNA-DFW-PHL:AA0645+AA1235 | DFW | 78% (158 of 203 days) | 36 | 7 | 2 | -446 / 35 / 60 / 129 | 110 / 0 |
-| SNA-DFW-PHL:AA1029+AA1846 | DFW | 94% (336 of 357 days) | 4 | 16 | 1 | -295 / 163 / 211 / 286 | 7 / 0 |
-| SNA-DFW-PHL:AA1229+AA1846 | DFW | 82% (281 of 341 days) | 39 | 18 | 3 | -397 / 35 / 82 / 147 | 5 / 0 |
-| SNA-ORD-PHL:AA0749+AA1452 | ORD | 89% (263 of 294 days) | 27 | 2 | 2 | -612 / 46 / 76 / 123 | 16 / 0 |
-| SNA-ORD-PHL:AA1134+AA1853 | ORD | 83% (207 of 249 days) | 34 | 4 | 4 | -196 / 40 / 83 / 156 | 89 / 0 |
-| SNA-ORD-PHL:UA0700+UA1426 | ORD | 93% (290 of 311 days) | 18 | 1 | 2 | -447 / 57 / 87 / 144 | 2 / 0 |
-| SNA-ORD-PHL:UA1050+UA1825 | ORD | 95% (344 of 361 days) | 11 | 1 | 5 | -94 / 65 / 98 / 142 | 2 / 0 |
-| SNA-PHX-PHL:AA0645+AA0959 | PHX | 96% (191 of 200 days) | 7 | 1 | 1 | -69 / 101 / 124 / 155 | 112 / 0 |
-| SNA-PHX-PHL:AA0956+AA1226 | PHX | 89% (319 of 359 days) | 31 | 6 | 3 | -1189 / 46 / 77 / 107 | 0 / 1 |
-| SNA-PHX-PHL:AA1245+AA1626 | PHX | 95% (341 of 358 days) | 10 | 5 | 2 | -955 / 67 / 135 / 187 | 7 / 0 |
-| SNA-PHX-PHL:AA1927+AA2230 | PHX | 87% (164 of 189 days) | 16 | 9 | 0 | -893 / 45 / 105 / 143 | 107 / 0 |
-| SNA-PHX-PHL:AA1927+AA2345 | PHX | 95% (198 of 208 days) | 3 | 7 | 0 | -797 / 101 / 155 / 196 | 88 / 0 |
+| SJC-DEN-ATL:UA0830+UA1336 | DEN | 98% (232 of 236 days) | 3 | 1 | 0 | -257 / 90 / 108 / 141 | 46 / 0 |
+| SJC-DEN-ATL:UA1255+UA1745 | DEN | 94% (213 of 226 days) | 11 | 1 | 1 | -302 / 60 / 88 / 135 | 21 / 0 |
+| SJC-DFW-ATL:AA0610+AA1228 | DFW | 72% (245 of 338 days) | 77 | 11 | 5 | -277 / 33 / 54 / 106 | 27 / 0 |
+| SJC-DFW-ATL:AA0610+AA1428 | DFW | 94% (338 of 360 days) | 4 | 12 | 6 | -145 / 157 / 175 / 226 | 5 / 0 |
+| SJC-DFW-ATL:AA1158+AA1859 | DFW | 86% (283 of 329 days) | 27 | 14 | 5 | -1078 / 51 / 99 / 178 | 2 / 0 |
+| SJC-DFW-ATL:AA1158+AA2048 | DFW | 92% (249 of 270 days) | 3 | 17 | 1 | -966 / 165 / 213 / 278 | 61 / 0 |
+| SJC-DFW-ATL:AA1419+AA2048 | DFW | 75% (222 of 295 days) | 55 | 17 | 1 | -1092 / 25 / 75 / 153 | 60 / 0 |
+| SJC-LAX-ATL:DL0700+DL1056 | LAX | 98% (277 of 283 days) | 5 | 1 | 0 | -440 / 115 / 160 / 187 | 78 / 0 |
+| SJC-LAX-ATL:DL0700+DL1215 | LAX | 98% (259 of 263 days) | 3 | 1 | 0 | -275 / 183 / 232 / 273 | 98 / 0 |
+| SJC-LAX-ATL:DL0900+DL1215 | LAX | 97% (238 of 246 days) | 7 | 1 | 0 | -136 / 65 / 121 / 157 | 72 / 0 |
+| SJC-LAX-ATL:DL0900+DL1325 | LAX | 97% (231 of 239 days) | 5 | 2 | 1 | -143 / 129 / 184 / 231 | 79 / 0 |
+| SJC-LAX-ATL:DL0900+DL1426 | LAX | 98% (261 of 266 days) | 2 | 2 | 1 | -80 / 204 / 246 / 281 | 52 / 0 |
+| SJC-LAX-ATL:DL1400+DL1715 | LAX | 96% (302 of 314 days) | 6 | 4 | 2 | -6 / 75 / 130 / 211 | 31 / 0 |
+| SJC-LAX-ATL:DL2012+DL2250 | LAX | 91% (235 of 258 days) | 19 | 4 | 0 | -60 / 54 / 92 / 136 | 14 / 0 |
+| SJC-PHX-ATL:AA0600+AA0945 | PHX | 80% (231 of 287 days) | 51 | 2 | 3 | -312 / 37 / 71 / 140 | 54 / 0 |
+| SJC-PHX-ATL:AA1248+AA1538 | PHX | 75% (205 of 272 days) | 64 | 1 | 2 | -528 / 20 / 62 / 118 | 38 / 0 |
+| SMF-DEN-DFW:UA0517+UA0945 | DEN | 94% (335 of 356 days) | 16 | 4 | 1 | -115 / 51 / 76 / 104 | 7 / 0 |
+| SMF-DEN-DFW:UA0845+UA1328 | DEN | 93% (337 of 363 days) | 15 | 6 | 5 | -264 / 69 / 93 / 135 | 0 / 0 |
+| SMF-DEN-DFW:UA0845+UA1545 | DEN | 97% (220 of 227 days) | 3 | 3 | 1 | -139 / 207 / 229 / 260 | 136 / 0 |
+| SMF-DEN-DFW:UA1300+UA1750 | DEN | 96% (349 of 364 days) | 10 | 1 | 4 | -188 / 74 / 100 / 158 | 0 / 0 |
+| SMF-DEN-DFW:UA1605+UA2045 | DEN | 89% (291 of 328 days) | 29 | 7 | 1 | -148 / 50 / 87 / 150 | 17 / 0 |
+| SMF-LAX-DFW:AA0600+AA0915 | LAX | 92% (293 of 318 days) | 10 | 12 | 3 | -132 / 75 / 102 / 196 | 37 / 0 |
+| SMF-LAX-DFW:AA1146+AA1440 | LAX | 91% (222 of 243 days) | 18 | 2 | 1 | -540 / 54 / 89 / 140 | 1 / 0 |
+| SMF-LAX-DFW:DL0600+DL0835 | LAX | 85% (278 of 326 days) | 42 | 3 | 3 | -188 / 42 / 75 / 147 | 23 / 0 |
+| SMF-LAX-DFW:DL1459+DL1830 | LAX | 93% (307 of 329 days) | 21 | 1 | 0 | -331 / 67 / 120 / 175 | 27 / 0 |
+| SMF-PHX-DFW:AA0600+AA0952 | PHX | 90% (215 of 240 days) | 22 | 2 | 1 | -1458 / 45 / 111 / 182 | 122 / 0 |
+| SMF-PHX-DFW:AA0600+AA1127 | PHX | 93% (224 of 240 days) | 10 | 5 | 1 | -1389 / 149 / 202 / 269 | 122 / 0 |
+| SMF-PHX-DFW:AA0955+AA1521 | PHX | 98% (222 of 226 days) | 2 | 1 | 1 | -1654 / 200 / 228 / 288 | 125 / 0 |
+| SMF-PHX-DFW:AA1257+AA1635 | PHX | 86% (261 of 304 days) | 36 | 5 | 2 | -278 / 40 / 109 / 164 | 60 / 0 |
+| SMF-PHX-DFW:AA1257+AA1725 | PHX | 96% (319 of 334 days) | 7 | 8 | 0 | -229 / 100 / 155 / 194 | 30 / 0 |
+| SMF-PHX-DFW:AA1623+AA2000 | PHX | 73% (167 of 229 days) | 54 | 7 | 1 | -81 / 29 / 84 / 188 | 87 / 0 |
 
 ## Attribution
 

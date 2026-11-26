@@ -2,28 +2,28 @@
   "config_sha256": "62a1c9341211b4c7e5eed6bad22ce04e94d9bf9a97709d8415bf885d28f18f60",
   "outputs": {
     "airports.parquet": "acc6052914103af35586f0db1540568206bdf6f93afbde5b8bcde7777340b798",
-    "comparable_pairs.parquet": "45e4acb6cb1a8f8de009e2ad4da6049589b56e572c054a913de9d821d838aa32",
-    "daily_outcomes.parquet": "a12a16635120452a08fdfb96a12c3bb3a6616ac0fb392fba1349b74759ec76bc",
+    "comparable_pairs.parquet": "40094bdeea2fa76e07020fb2afb989a82b3aec1c73216a400e50552e7830cffe",
+    "daily_outcomes.parquet": "a6b15789ca447f485759155ab6dfc832213f01acfb752cdfbc42261f1525dc91",
     "flights.parquet": "0b528b68b4726e280c6c35dba349b7e571a91e8174f644b390a0b50881d625ab",
-    "hub_candidates.parquet": "d6c857aa2a0655386be2fd258427db202a2d2a29c6e4540957edb7c84ea2ebc9",
+    "hub_candidates.parquet": "4d172852dc0b643c12ed31be11db031065743c722fe62e8849a201834aaa36d1",
     "hub_selection.parquet": "c5f30273a8a114e55ab0a598462af37a24cdf5e064a5d36046b80b34cbfc5125",
-    "itineraries.parquet": "a5e4f2d35980d0a9d9da1957c0880fd93581ba96dd4d97c39c531d9c0849fccb",
-    "itinerary_days.parquet": "36ea9742e2856dbffa36bcc015733ffd035b76342d89a80916464ceac56c7051",
-    "itinerary_results.parquet": "8ad23e34df4329afd56356e22933a63332c9b9cfec6a55af30fa4e9f40826ff8",
+    "itineraries.parquet": "19d734e012e46ab2516e901f395ae31e883352e36a00ea143e7e13aee04e18b7",
+    "itinerary_days.parquet": "439924be0cd084664fde1a2f5b0f5e60072773181964ae21572ea9f98063688b",
+    "itinerary_results.parquet": "2e87b5517e240fd8a40d65da6fbd21b833fae5bcc042fa5a8616211a49068119",
     "nonstop.parquet": "55868ada1d47a92de7670f6c5ff6ca195541556a31096f5e145c7d8f1d0fe84c",
-    "od_exclusions.parquet": "2c2431632737c86e2c5021f1406729d64b1281f43abf760dba8bb0337832d90a",
-    "od_selection.parquet": "834ce75bc57fbb22c46b10764f85ae1fa948f106654713812b16ae784b736011",
+    "od_exclusions.parquet": "08d2eb7a812452ef06cc53049fe6c3e54899535da515eda838cb586a85cc9f47",
+    "od_selection.parquet": "8d9c5ef970ab37be9af9a9187b44c9e3a3c62b357f105598990818f15708d288",
     "passengers.parquet": "f90cf37047dd411e52ade6aba29af7b041840992350eab9299326e3be6618893",
     "quality.json": "62d6d36449e9834ff8d497e957129e598522365103d4d2d4c916cfe1575369be",
     "sensitivity_scenarios.parquet": "0ea7d52a79f7633adfdf3ea48caaa2dbdb8041e31f209b080c324377499feb9d",
-    "showcase_comparisons.parquet": "1d639210901b61c4bb8ba08e3893d052d3d464dd6570abf5e7dccb246654f944",
-    "showcase_routes.parquet": "e1426f19a4a0748e7760cce824291f908c0296f5321c40282912615c5f48f99e",
+    "showcase_comparisons.parquet": "c43d5da99780cf4b6ff3d37ffeabb602d441aec45f1614da118a14d237a16f90",
+    "showcase_routes.parquet": "431ed767a928754d2e9a496d5513ed8182d913b161ceb2f54ed29b3a5d960ba3",
     "slots.parquet": "ed3b3a58aed3d5f6044ab037dcb5a4a874c32231b1fe5d2a3b3aaedc478559ea",
     "slots_changes.parquet": "7636be4c4fdcf049306bf159698545e58685e98d775adfbcc2308ddc926a95ef",
     "slots_days.parquet": "c4470006d210cf90aae2786f706e2772611f7b65184e59e169301d86e5b88f16",
     "sold_routings.parquet": "8621225cfc3101935f2ab915fa5d1cc6a87d1e07e9fa81edd5278be0dccbcbab",
-    "summary.json": "7b4d5186002cb472c8f8d1c16b2e3af37fb98398ea5733f373e3425e0ad652ef",
-    "summary.md": "d0258bbf37044adc4a41b2da586661479ba62067ae45f5bf50216b44ec26b7b6"
+    "summary.json": "35711e94bac81c6ac35f65886d6f26ce39f9ceef11994381dc0bc88c2e9859ee",
+    "summary.md": "1a478fd8ba64eb79af29fee5f14577f6aa8f272b5bade4aa5f664ebc5705213b"
   },
   "packages": {
     "airportsdata": "20261123",
@@ -38,13 +38,14 @@
   "run": {
     "machine": {
       "cpu_count": 16,
-      "ram_gb": 15.4
+      "ram_gb": 15.4,
+      "thread_limit": 4
     },
-    "run_at": "2026-11-26T16:37:20+00:00",
+    "run_at": "2026-11-26T18:03:21+00:00",
     "runtime_exceeded": false,
     "runtime_limit_min": 30.0,
-    "runtime_measured_at": "2026-11-26T16:37:20+00:00",
-    "runtime_min": 28.35
+    "runtime_measured_at": "2026-11-26T18:03:21+00:00",
+    "runtime_min": 24.07
   },
   "sources": [
     {
