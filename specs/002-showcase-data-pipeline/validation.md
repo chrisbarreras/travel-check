@@ -28,7 +28,7 @@ The runtime was measured on the 16-core development machine with DuckDB and the 
 | Slider data reproduces the rate (SC-004) | Pass: for all 144 itineraries, the rate recomputed from the published daily series at the itinerary's transfer time equals the published rate and counts. The shared test cases pass in Python. |
 | Faster alternatives (SC-005) | Pass: all 59 listed alternatives have a lower bound of at least −2 points, a saving of at least 15 minutes and at least 30 shared days; each rate carries its sample |
 | Size (SC-007) | Pass: 152.5 KB gzip in all (budget 2 MB); `index.json` plus `landing.json` 7.0 KB (budget 150 KB); `landing.json` holds the landing comparison and both itineraries |
-| Reproducibility (SC-006) | Pass: `verify` and `schemas --check` (see review.md for the final run) |
+| Reproducibility (SC-006) | Pass: `verify` on 84557f0 reports "identical: 23 outputs"; `schemas --check` up to date (see review.md, Final verification) |
 
 ## Observations
 

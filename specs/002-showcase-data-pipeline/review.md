@@ -74,3 +74,7 @@ Reviews by a new `feature-reviewer` agent each round, given only this feature di
 | 5 | NIT | `tight_day_share_max` was optional. | **Fixed.** It is required, like every other value (Phase 0's configuration has no `[showcase]` section). |
 | 6 | NIT | The methodology, research R2 and the data model described the bound pre-filter and the tight flag inaccurately. | **Fixed.** All three now describe what the code does. |
 | 7 | NIT | ADR-0014 was amended in place. | **Kept as a dated clarification.** The amendment refines how slots are joined across schedule changes without changing the decision (schedule-slot identity), and it is dated and marked as an amendment. A superseding ADR is for a changed decision. |
+
+### Final verification
+
+- `verify --config ../config/phase1.toml` on 84557f0 (the round 3 fixes in ef35005, data regenerated from them): "identical: 23 outputs, the published showcase and the generated types match the committed files". ruff, format and pyright clean; 527 tests passed (2 network tests deselected); `schemas --check` up to date; all validation scenarios pass.

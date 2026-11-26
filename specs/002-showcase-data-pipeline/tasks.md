@@ -160,7 +160,7 @@ description: "Task list for the showcase data pipeline"
 - [X] T049 Run `uv run flight-pipeline verify --config ../config/phase1.toml` and `uv run flight-pipeline schemas --check`; both must pass
 - [X] T050 Run `uv run ruff check .`, `uv run ruff format --check .`, `uv run pyright` and `uv run pytest` in pipeline/ and fix any failures
 - [X] T051 Run the quickstart.md validation scenarios and record the results
-- [ ] T052 Run the independent review: a new `feature-reviewer` agent given only `specs/002-showcase-data-pipeline` and base branch `main`; save its report as specs/002-showcase-data-pipeline/review.md; fix BLOCKING findings, answer SHOULD-FIX findings in review.md, and repeat with a new reviewer until the verdict is APPROVE (constitution, Development Workflow)
+- [X] T052 Run the independent review: a new `feature-reviewer` agent given only `specs/002-showcase-data-pipeline` and base branch `main`; save its report as specs/002-showcase-data-pipeline/review.md; fix BLOCKING findings, answer SHOULD-FIX findings in review.md, and repeat with a new reviewer until the verdict is APPROVE (constitution, Development Workflow)
 
 ---
 
