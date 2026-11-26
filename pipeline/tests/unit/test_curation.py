@@ -168,3 +168,33 @@ def test_deterministic(_run: int) -> None:
     assert curate(routes, comps, cfg()) == curate(
         list(reversed(routes)), list(reversed(comps)), cfg()
     )
+
+
+def test_repair_removes_pairs_when_one_airline_is_over_and_others_are_at_the_cap() -> None:
+    """One removal can never fix AA above half while DL and UA sit at half; removing an AA-DL
+    and an AA-UA comparison together does (the real-data case)."""
+    from collections.abc import Sequence
+
+    from flight_pipeline.curation import _repair  # pyright: ignore[reportPrivateUsage]
+
+    kept = [
+        comp("CMH-SAN", 0, 0.40, ("ORD", "DFW"), ("AA", "DL")),
+        comp("CMH-SAN", 1, 0.39, ("ORD", "DFW"), ("AA", "DL")),
+        comp("CMH-SAN", 2, 0.38, ("ORD", "DFW"), ("AA", "UA")),
+        comp("CMH-SAN", 3, 0.37, ("ORD", "DFW"), ("AA", "UA")),
+        comp("CMH-SAN", 4, 0.36, ("ORD", "DFW"), ("AA", "AA")),
+        comp("CMH-SAN", 5, 0.35, ("ORD", "DFW"), ("DL", "UA")),
+    ]
+    rest: list[CandidateComparison] = []
+
+    def violation(cs: Sequence[CandidateComparison]) -> float:
+        counts: dict[str, int] = {}
+        for c in cs:
+            for a in c.airlines:
+                counts[a] = counts.get(a, 0) + 1
+        return sum(max(0.0, n / len(cs) - 0.5) for n in counts.values()) if cs else 0.0
+
+    _repair(kept, rest, violation, lambda c: True)
+    assert violation(kept) == 0
+    # two pair removals (AA-DL with AA-UA) leave AA, DL and UA at exactly half
+    assert sorted(c.comparison_id for c in kept) == ["CMH-SAN#4", "CMH-SAN#5"]

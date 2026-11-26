@@ -187,12 +187,13 @@ class Buffer(_Model):
 
 class Alternative(_Model):
     """A faster comparable itinerary whose feasibility is shown, by the paired interval, to
-    be no more than the margin worse (research R8)."""
+    be no more than the margin worse (research R8). Both rates carry their samples
+    (Principle I): the alternative may not be in the same file."""
 
     itinerary_id: str
     minutes_saved: Annotated[int, Field(ge=1)]
-    rate_this: Share
-    rate_other: Share
+    rate_this: Rate
+    rate_other: Rate
     ci_low: float
     ci_high: float
     shared_days: NonNegInt
@@ -411,11 +412,32 @@ class ManifestRef(_Model):
     manifest: str  # path of the manifest, relative to the output directory
 
 
+class BalanceCaps(_Model):
+    route: Share
+    airline: Share
+    hub: Share
+    cross_hub_min: Share
+
+
+class Balance(_Model):
+    """The showcase's balance (FR-008): the caps, the resulting shares of showcase
+    comparisons by airline and hub (a comparison counts for both itineraries' airlines and
+    hubs), the cross-hub share, and any cap curation could not meet. Route shares are in
+    ``routes[].share_of_showcase``."""
+
+    caps: BalanceCaps
+    airline_shares: dict[str, Share]
+    hub_shares: dict[str, Share]
+    cross_hub_share: Share
+    shortfalls: list[str]
+
+
 class ShowcaseIndex(_Model):
     schema_version: str
     period: DataPeriod
     assumptions: Assumptions
     coverage: Coverage
+    balance: Balance
     routes: list[RouteSummary]
     landing: LandingRef
     definitions: list[Definition]

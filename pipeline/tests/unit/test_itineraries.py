@@ -289,3 +289,69 @@ def test_hub_by_hub_matching_equals_one_hub_at_a_time(con: duckdb.DuckDBPyConnec
 def test_no_matching_hub_still_creates_empty_tables(con: duckdb.DuckDBPyConnection) -> None:
     assert build(con, hubs=["ZZZ"]) == []
     assert _rows(con, "itineraries_days") == []
+
+
+def test_share_counts_days_the_inbound_does_not_fly(con: duckdb.DuckDBPyConnection) -> None:
+    """ADR-0013 rule 2: the share is of the days in the period (less end-of-period days), so
+    a day without the inbound flight counts as not connecting."""
+    build(con)
+    iid = "CMH-ORD-DEN:UA0800+UA1000"
+    in_slot = con.execute(
+        "SELECT inbound_slot FROM itineraries WHERE itinerary_id = ?", [iid]
+    ).fetchone()[0]  # pyright: ignore[reportOptionalSubscript]
+    con.execute("CREATE OR REPLACE TABLE gap AS SELECT * FROM slots")
+    con.execute(
+        "CREATE OR REPLACE TABLE gap_days AS SELECT * FROM slots_days "
+        "WHERE NOT (slot_id = ? AND service_date IN (SELECT DISTINCT service_date "
+        "FROM slots_days WHERE slot_id = ? ORDER BY service_date LIMIT 4))",
+        [in_slot, in_slot],
+    )
+
+    def run(threshold: float) -> tuple[Any, ...] | None:
+        build_itineraries(
+            con,
+            "gap",
+            ["ORD"],
+            rules(),
+            "gap_it",
+            threshold,
+            flights="flights",
+            sold="sold",
+            period=PERIOD,
+        )
+        return con.execute(
+            "SELECT connect_share, eligible_days FROM gap_it WHERE itinerary_id = ?", [iid]
+        ).fetchone()
+
+    days = (PERIOD[1] - PERIOD[0]).days + 1
+    assert run(0.5) == (round((days - 4) / days, 6), days)
+    assert run(0.7) is None  # 6 of 10 days; the inbound's own days would give 6 of 6
+
+
+@settings(max_examples=200, deadline=None)
+@given(
+    arr=st.lists(st.integers(0, 1439), min_size=1, max_size=4),
+    dep=st.lists(st.integers(0, 1439), min_size=1, max_size=4),
+    min_conn=st.integers(20, 60),
+    max_lay=st.integers(120, 300),
+)
+def test_production_bounds_sql_equals_bounds_allow(
+    arr: list[int], dep: list[int], min_conn: int, max_lay: int
+) -> None:
+    """The SQL pre-filter the builder runs (``bounds_table``) keeps exactly the pairs
+    ``bounds_allow`` keeps, so its losslessness (tested above) carries over."""
+    from flight_pipeline.itineraries import bounds_table
+
+    c = duckdb.connect()
+    c.execute(
+        "CREATE TEMP TABLE _cand "
+        "(itinerary_id VARCHAR, in_slot VARCHAR, out_slot VARCHAR, min_conn INTEGER)"
+    )
+    c.execute("INSERT INTO _cand VALUES ('X', 'IN', 'OUT', ?)", [min_conn])
+    c.execute("CREATE TEMP TABLE _slot_inst (slot_id VARCHAR, arr_local INTEGER)")
+    c.executemany("INSERT INTO _slot_inst VALUES ('IN', ?)", [[a] for a in arr])
+    c.execute("CREATE TEMP TABLE d (slot_id VARCHAR, dep_local_min INTEGER)")
+    c.executemany("INSERT INTO d VALUES ('OUT', ?)", [[x] for x in dep])
+    bounds_table(c, "d", max_lay)
+    kept = c.execute("SELECT count(*) FROM _bounds_ok").fetchone() == (1,)
+    assert kept == bounds_allow(arr, dep, min_conn, max_lay)

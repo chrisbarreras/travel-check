@@ -659,3 +659,21 @@ def test_json_outputs_have_models() -> None:
         QualitySummary.model_validate({"by_month": {}})
     with pytest.raises(ValidationError):
         ScenarioSummary.model_validate({"scenario_id": "x"})
+
+
+def test_curation_section_states_shares_caps_and_shortfalls() -> None:
+    from flight_pipeline.report import curation_section
+
+    text = curation_section(
+        [("LGA-LAX", 10, 0.25), ("SMF-ATL", 30, 0.75)],
+        {"AA": 0.5, "DL": 0.55},
+        {"ATL": 0.5},
+        0.6,
+        ["airline DL supplies 55% of comparisons, above 50%"],
+        (1 / 3, 0.5, 0.5, 0.5),
+    )
+    assert "## Showcase curation" in text
+    assert "| SMF-ATL | 30 | 75% |" in text
+    assert "| DL | 55% |" in text
+    assert "at most 33% from one route, 50% from one airline" in text
+    assert "Cross-hub comparisons: 60%. Curation shortfalls: airline DL supplies 55%" in text

@@ -654,6 +654,39 @@ def breakdown_section(b: ShowcaseBreakdown) -> str:
     )
 
 
+def curation_section(
+    routes: Sequence[tuple[str, int, float]],
+    airline_shares: Mapping[str, float],
+    hub_shares: Mapping[str, float],
+    cross_hub_share: float,
+    shortfalls: Sequence[str],
+    caps: tuple[float, float, float, float],
+) -> str:
+    """The curated showcase's balance (specs/002 FR-008): shares of showcase comparisons by
+    route, airline and hub against the caps, and the cross-hub share."""
+    route_cap, airline_cap, hub_cap, cross_min = caps
+
+    def pct(v: float) -> str:
+        return f"{v:.0%}"
+
+    return "\n\n".join(
+        [
+            "## Showcase curation",
+            f"{len(routes)} routes and the showcase comparisons kept for the explorer. A "
+            "comparison counts toward both itineraries' airlines and hubs, so airline and hub "
+            f"shares add up to more than 100%. Caps: at most {pct(route_cap)} from one route, "
+            f"{pct(airline_cap)} from one airline, {pct(hub_cap)} from one hub; at least "
+            f"{pct(cross_min)} cross-hub.",
+            table(["Route", "Comparisons", "Share"], [[r, n, pct(s)] for r, n, s in routes]),
+            table(["Airline", "Share"], [[a, pct(s)] for a, s in sorted(airline_shares.items())]),
+            table(["Hub", "Share"], [[h, pct(s)] for h, s in sorted(hub_shares.items())]),
+            f"Cross-hub comparisons: {pct(cross_hub_share)}. Curation shortfalls: "
+            + ("; ".join(shortfalls) if shortfalls else "none")
+            + ".",
+        ]
+    )
+
+
 def finding_json(finding: Finding) -> str:
     return json.dumps(finding.model_dump(mode="json"), indent=2, sort_keys=True) + "\n"
 

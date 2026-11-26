@@ -82,8 +82,9 @@ DEFINITIONS: dict[str, tuple[str, str]] = {
         "connection-feasibility",
     ),
     "paired_days": (
-        "Days in the data period on which both scheduled flights of the itinerary were "
-        "flown as a connection; the sample behind each rate.",
+        "Days in the data period on which the itinerary's two flights were scheduled to "
+        "connect and passed the data-quality checks, including days a leg was cancelled or "
+        "diverted (counted as not feasible); the sample behind each rate.",
         "connection-feasibility",
     ),
     "insufficient_data": (

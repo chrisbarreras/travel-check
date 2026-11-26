@@ -71,8 +71,8 @@ def alt(**kw: Any) -> dict[str, Any]:
     base: dict[str, Any] = {
         "itinerary_id": "LGA-ATL-MCO:DL1200+DL1500",
         "minutes_saved": 60,
-        "rate_this": 0.95,
-        "rate_other": 0.97,
+        "rate_this": rate(rate=0.95, paired_days=100, count_feasible=95),
+        "rate_other": rate(rate=0.97, paired_days=100, count_feasible=97),
         "ci_low": -0.007,
         "ci_high": 0.049,
         "shared_days": 250,
@@ -214,6 +214,13 @@ def index(**kw: Any) -> dict[str, Any]:
             "faster_min_saving_min": 15,
         },
         "coverage": coverage(),
+        "balance": {
+            "caps": {"route": 0.333333, "airline": 0.5, "hub": 0.5, "cross_hub_min": 0.5},
+            "airline_shares": {"DL": 0.5},
+            "hub_shares": {"ATL": 0.5},
+            "cross_hub_share": 0.6,
+            "shortfalls": [],
+        },
         "routes": [],
         "landing": {"route_id": "LGA-MCO", "comparison_id": "c1", "reason": "strongest"},
         "definitions": [

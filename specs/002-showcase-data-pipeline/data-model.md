@@ -44,6 +44,7 @@ Phase 0's DailyOutcome, ItineraryResult, ComparablePair, SensitivityScenario and
 | `period` | DataPeriod | `start`, `end`, `db1b_quarters` |
 | `assumptions` | Assumptions | Minimum connection time (default, partner), boarding cutoff, recurrence, minimum sample, monthly minimum, buffer share, faster-alternative margin and minimum saving |
 | `coverage` | Coverage | FR-015a |
+| `balance` | Balance | FR-008: `caps` (`route`, `airline`, `hub`, `cross_hub_min`), `airline_shares`, `hub_shares`, `cross_hub_share`, `shortfalls[]` |
 | `routes` | list[RouteSummary] | One per showcase route |
 | `landing` | LandingRef | Route and comparison IDs, selection reason |
 | `definitions` | list[Definition] | `key`, `text`, `methodology_anchor`: every measure the files use |
@@ -87,7 +88,7 @@ Results under the other assumption scenarios (minimum connection time, cutoff, r
 `comparison_id`, `itinerary_a` (higher rate), `itinerary_b`, `difference` and `ci_low`/`ci_high` (points, whole numbers in display, 6 decimals stored), `shared_days`, `settings_compared`, `missing_settings_note`, `cross_hub`, `landing` (bool).
 
 ### Alternative
-`itinerary_id`, `minutes_saved`, `rate_this`, `rate_other`, `ci_low`, `ci_high`, `shared_days`. **Validation:** `ci_low` ≥ −margin; `minutes_saved` ≥ minimum saving.
+`itinerary_id`, `minutes_saved`, `rate_this` and `rate_other` (each a Rate, with its sample), `ci_low`, `ci_high`, `shared_days`. **Validation:** `ci_low` ≥ −margin; `minutes_saved` ≥ minimum saving.
 
 ### ConnectingOption
 `itinerary_id`, `outbound_dep_local_min`, `rate` (Rate), `better` (bool), `ci_low`/`ci_high` (vs this itinerary) or null.

@@ -52,3 +52,17 @@ def test_subset_names_airlines_with_itineraries_elsewhere() -> None:
     )
     assert "sells" in rows["WN"].note  # no itinerary anywhere: the analysis reason stands
     assert rows["DL"].note == ""
+
+
+def test_airline_below_the_sold_minimum_says_so() -> None:
+    rows = {
+        r.airline: r
+        for r in airline_coverage(
+            ["DL"], {"DL": 500, "NZ": 2, "WN": 300}, MAJORS, {"DL": 9}, {"DL": 4, "WN": 3}, 30
+        )
+    }
+    assert rows["NZ"].note == (
+        "sells connections through the selected hubs, but no routing reaches the minimum of "
+        "30 sampled passengers"
+    )
+    assert "recur and connect regularly" in rows["WN"].note

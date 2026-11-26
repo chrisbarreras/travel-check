@@ -118,6 +118,9 @@ def test_valid_note_parsed(tmp_path: Path) -> None:
         ('text = "An event."', 'text = ""', "text"),
         ('source = "https://example.gov/x"', 'source = "http://example.gov/x"', "https"),
         ('source = "https://example.gov/x"', "", "source"),
+        ("airports = []", 'airprots = ["EWR"]', "unknown keys"),
+        ('id = "x"', 'id = " "', "id is empty"),
+        ('id = "x"', "", "id"),
     ],
 )
 def test_invalid_notes_rejected(tmp_path: Path, old: str, new: str, message: str) -> None:

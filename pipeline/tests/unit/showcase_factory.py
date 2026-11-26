@@ -7,6 +7,8 @@ from typing import Any
 
 from flight_pipeline.showcase.models import (
     Assumptions,
+    Balance,
+    BalanceCaps,
     Buffer,
     DailySeries,
     DataPeriod,
@@ -152,6 +154,13 @@ def index(routes: list[RouteFile] | None = None, **kw: Any) -> ShowcaseIndex:
         "period": PERIOD,
         "assumptions": assumptions(),
         "coverage": coverage([r.route_id for r in routes], ["DEN", "DFW", "ORD"], [], PERIOD),
+        "balance": Balance(
+            caps=BalanceCaps(route=1 / 3, airline=0.5, hub=0.5, cross_hub_min=0.5),
+            airline_shares={"UA": 0.5},
+            hub_shares={"DEN": 0.5},
+            cross_hub_share=1.0,
+            shortfalls=[],
+        ),
         "routes": [
             RouteSummary(
                 route_id=r.route_id,

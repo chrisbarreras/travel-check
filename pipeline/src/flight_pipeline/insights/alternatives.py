@@ -103,8 +103,8 @@ def faster_alternatives(
                 Alternative(
                     itinerary_id=b.itinerary_id,
                     minutes_saved=saved,
-                    rate_this=rate_this,
-                    rate_other=rate_other,
+                    rate_this=this.rate,
+                    rate_other=b.rate,
                     ci_low=ci[0],
                     ci_high=ci[1],
                     shared_days=ci[2],

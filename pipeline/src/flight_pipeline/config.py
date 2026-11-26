@@ -447,6 +447,9 @@ class DisruptionNote(_Strict):
         return self
 
 
+_NOTE_KEYS = {"id", "start", "end", "airlines", "airports", "text", "source"}
+
+
 def load_disruption_notes(path: Path, period: tuple[dt.date, dt.date]) -> list[DisruptionNote]:
     """Read and validate the curated disruption notes, sorted by start date and id."""
     try:
@@ -457,9 +460,18 @@ def load_disruption_notes(path: Path, period: tuple[dt.date, dt.date]) -> list[D
     except tomllib.TOMLDecodeError as exc:
         raise ConfigError(f"disruption notes file is not valid TOML: {exc}") from exc
     notes: list[DisruptionNote] = []
+    unknown_top = sorted(set(data) - {"note"})
+    if unknown_top:
+        raise ConfigError(f"disruption notes: unknown keys {unknown_top}")
     for entry in data.get("note", []):
-        if "source" not in entry:
-            raise ConfigError(f"note {entry.get('id', '?')}: source is required")
+        unknown = sorted(set(entry) - _NOTE_KEYS)
+        if unknown:
+            raise ConfigError(f"note {entry.get('id', '?')}: unknown keys {unknown}")
+        missing = sorted({"id", "start", "end", "text", "source"} - set(entry))
+        if missing:
+            raise ConfigError(f"note {entry.get('id', '?')}: {', '.join(missing)} required")
+        if not str(entry["id"]).strip():
+            raise ConfigError("disruption note: id is empty")
         try:
             note = DisruptionNote(
                 note_id=entry.get("id", ""),

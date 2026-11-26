@@ -64,7 +64,8 @@ def test_equally_reliable_faster_itinerary_is_listed() -> None:
     [alt] = alts(this, [this, b])
     assert alt.itinerary_id == "B"
     assert alt.minutes_saved == 40
-    assert (alt.rate_this, alt.rate_other) == (1.0, 1.0)
+    assert (alt.rate_this.rate, alt.rate_other.rate) == (1.0, 1.0)
+    assert alt.rate_other.paired_days == 60  # each rate carries its own sample
     assert (alt.ci_low, alt.ci_high) == (0.0, 0.0)
     assert alt.shared_days == 60
 

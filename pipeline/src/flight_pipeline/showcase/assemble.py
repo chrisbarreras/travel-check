@@ -22,6 +22,7 @@ from flight_pipeline.models import (
     ComparablePair,
     CuratedComparisonRow,
     CuratedRouteRow,
+    CurationMeta,
     DailyOutcome,
     Itinerary,
     ItineraryResult,
@@ -30,6 +31,8 @@ from flight_pipeline.models import (
 from flight_pipeline.nonstop import nonstop_ratio
 from flight_pipeline.showcase.models import (
     Assumptions,
+    Balance,
+    BalanceCaps,
     DataPeriod,
     ExcludedDays,
     ItineraryInsights,
@@ -77,8 +80,11 @@ class Inputs:
     tight: frozenset[str]
     daily: Mapping[str, Sequence[DailyOutcome]]  # default scenario, paired days
     notes: Sequence[DisruptionNote]
+    curation: CurationMeta
     # Itineraries per inbound marketing airline in the whole analysis (coverage notes)
     analysis_itineraries: Mapping[str, int] = field(default_factory=_no_counts)
+    # Same-airline routings through the hubs at the sold-passenger minimum (coverage notes)
+    routings_at_minimum: Mapping[str, int] | None = None
 
 
 def data_period(cfg: Config) -> DataPeriod:
@@ -119,7 +125,7 @@ def showcase_itinerary(it: Itinerary, inputs: Inputs, cfg: Config) -> ShowcaseIt
         ),
         schedule=Schedule(
             dep_local_min=it.median_dep_local_min,
-            arr_local_min=inputs.arrival_local_min.get(it.outbound_slot, 0),
+            arr_local_min=inputs.arrival_local_min[it.outbound_slot],
             layover_min=it.median_layover_min,
             travel_min=it.median_travel_min,
             nonstop_median_min=ns_min,
@@ -267,8 +273,22 @@ def index_of(
                 inputs.sold_same_airline,
                 cfg.hubs.major_networks,
                 inputs.analysis_itineraries,
+                inputs.routings_at_minimum,
+                cfg.itineraries.min_sold_passengers,
             ),
             period,
+        ),
+        balance=Balance(
+            caps=BalanceCaps(
+                route=cfg.showcase.max_share_route,
+                airline=cfg.showcase.max_share_airline,
+                hub=cfg.showcase.max_share_hub,
+                cross_hub_min=cfg.showcase.cross_hub_share_min,
+            ),
+            airline_shares=dict(inputs.curation.airline_shares),
+            hub_shares=dict(inputs.curation.hub_shares),
+            cross_hub_share=inputs.curation.cross_hub_share,
+            shortfalls=list(inputs.curation.shortfalls),
         ),
         routes=summaries,
         landing=LandingRef(
@@ -298,7 +318,7 @@ def arrival_minutes(
         SELECT d.slot_id, quantile_disc(f.sched_arr_local_min, 0.5)
         FROM {slots_days} d JOIN {flights} f
           ON f.marketing_airline = d.marketing_airline AND f.flight_number = d.flight_number
-         AND f.origin = d.origin AND f.service_date = d.service_date
+         AND f.origin = d.origin AND f.dest = d.dest AND f.service_date = d.service_date
         WHERE f.quality_flag <> 'duplicate'
         GROUP BY d.slot_id
         """
@@ -316,5 +336,20 @@ def sold_same_airline(
     rows = con.execute(
         f"SELECT airline_in, sum(passengers) FROM {sold} "
         f"WHERE airline_in = airline_out AND hub IN ({listed}) GROUP BY airline_in"
+    ).fetchall()
+    return {str(a): int(n) for a, n in rows}
+
+
+def routings_at_minimum(
+    con: duckdb.DuckDBPyConnection, sold: str, hubs: Sequence[str], minimum: int
+) -> dict[str, int]:
+    """Sold same-airline routings through the selected hubs with at least ``minimum``
+    sampled passengers, per airline (the sold-routing rule, ADR-0013)."""
+    if not hubs:
+        return {}
+    listed = ", ".join(f"'{h}'" for h in hubs)
+    rows = con.execute(
+        f"SELECT airline_in, count(*) FROM {sold} WHERE airline_in = airline_out "
+        f"AND hub IN ({listed}) AND passengers >= {int(minimum)} GROUP BY airline_in"
     ).fetchall()
     return {str(a): int(n) for a, n in rows}

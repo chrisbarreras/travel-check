@@ -32,7 +32,7 @@
     },
     "Alternative": {
       "additionalProperties": false,
-      "description": "A faster comparable itinerary whose feasibility is shown, by the paired interval, to\nbe no more than the margin worse (research R8).",
+      "description": "A faster comparable itinerary whose feasibility is shown, by the paired interval, to\nbe no more than the margin worse (research R8). Both rates carry their samples\n(Principle I): the alternative may not be in the same file.",
       "properties": {
         "ci_high": {
           "type": "number"
@@ -48,14 +48,10 @@
           "type": "integer"
         },
         "rate_other": {
-          "maximum": 1.0,
-          "minimum": 0.0,
-          "type": "number"
+          "$ref": "#/$defs/Rate"
         },
         "rate_this": {
-          "maximum": 1.0,
-          "minimum": 0.0,
-          "type": "number"
+          "$ref": "#/$defs/Rate"
         },
         "shared_days": {
           "minimum": 0,
@@ -154,6 +150,84 @@
         "url"
       ],
       "title": "Attribution",
+      "type": "object"
+    },
+    "Balance": {
+      "additionalProperties": false,
+      "description": "The showcase's balance (FR-008): the caps, the resulting shares of showcase\ncomparisons by airline and hub (a comparison counts for both itineraries' airlines and\nhubs), the cross-hub share, and any cap curation could not meet. Route shares are in\n``routes[].share_of_showcase``.",
+      "properties": {
+        "airline_shares": {
+          "additionalProperties": {
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "type": "number"
+          },
+          "type": "object"
+        },
+        "caps": {
+          "$ref": "#/$defs/BalanceCaps"
+        },
+        "cross_hub_share": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "type": "number"
+        },
+        "hub_shares": {
+          "additionalProperties": {
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "type": "number"
+          },
+          "type": "object"
+        },
+        "shortfalls": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "caps",
+        "airline_shares",
+        "hub_shares",
+        "cross_hub_share",
+        "shortfalls"
+      ],
+      "title": "Balance",
+      "type": "object"
+    },
+    "BalanceCaps": {
+      "additionalProperties": false,
+      "properties": {
+        "airline": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "type": "number"
+        },
+        "cross_hub_min": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "type": "number"
+        },
+        "hub": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "type": "number"
+        },
+        "route": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "type": "number"
+        }
+      },
+      "required": [
+        "route",
+        "airline",
+        "hub",
+        "cross_hub_min"
+      ],
+      "title": "BalanceCaps",
       "type": "object"
     },
     "Buffer": {
@@ -958,6 +1032,9 @@
           },
           "type": "array"
         },
+        "balance": {
+          "$ref": "#/$defs/Balance"
+        },
         "coverage": {
           "$ref": "#/$defs/Coverage"
         },
@@ -991,6 +1068,7 @@
         "period",
         "assumptions",
         "coverage",
+        "balance",
         "routes",
         "landing",
         "definitions",

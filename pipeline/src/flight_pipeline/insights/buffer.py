@@ -5,7 +5,6 @@ from __future__ import annotations
 import math
 from collections.abc import Sequence
 
-from flight_pipeline.feasibility import lower_percentile
 from flight_pipeline.showcase.models import Buffer
 
 
@@ -24,11 +23,15 @@ def buffer(
 ) -> Buffer:
     """``operated`` holds (scheduled layover, actual slack) for each operated paired day
     (cancelled and diverted days excluded: no layover helps them). The recommendation is
-    the ``share`` quantile (lower discrete rule) of the needed layover, rounded up to
-    ``round_min`` minutes, never below zero; None without operated days."""
-    values = [needed_layover(threshold_min, lay, slack) for lay, slack in operated]
-    q = lower_percentile(values, share)
-    needed = None if q is None else max(0, math.ceil(q / round_min) * round_min)
+    the smallest needed layover that covers at least ``share`` of those days (the value at
+    position ceil(share * n) in ascending order), rounded up to ``round_min`` minutes, never
+    below zero; None without operated days. It covers at least ``share`` of the days, as
+    the published wording says ("enough on 95% of operated days")."""
+    values = sorted(needed_layover(threshold_min, lay, slack) for lay, slack in operated)
+    needed = None
+    if values:
+        q = values[max(1, math.ceil(round(share * len(values), 9))) - 1]
+        needed = max(0, math.ceil(q / round_min) * round_min)
     return Buffer(
         share=share,
         needed_layover_min=needed,

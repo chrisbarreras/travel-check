@@ -79,6 +79,7 @@ from flight_pipeline.report import (
     airline_coverage,
     airline_section,
     breakdown_section,
+    curation_section,
     describe_missing_settings,
     exclusions_section,
     finding_json,
@@ -106,6 +107,7 @@ from flight_pipeline.showcase.models import InsightsFile, ShowcaseManifest
 from flight_pipeline.showcase.publish import render, validation_context, write_files
 from flight_pipeline.slots import build_slots
 from flight_pipeline.storage import (
+    THREADS_ENV,
     models_to_table,
     read_models,
     read_table,
@@ -756,6 +758,10 @@ def stage_publish(con: duckdb.DuckDBPyConnection, cfg: Config, config_path: Path
         hubs=hubs,
         sold_same_airline=assemble.sold_same_airline(con, "sold_routings", hubs),
         analysis_itineraries=dict(Counter(i.airline_in for i in itineraries)),
+        curation=CurationMeta.model_validate(meta),
+        routings_at_minimum=assemble.routings_at_minimum(
+            con, "sold_routings", hubs, cfg.itineraries.min_sold_passengers
+        ),
         daily=_daily_by_itinerary(
             read_models(con, derived(cfg, "daily_outcomes.parquet"), DailyOutcome), shown
         ),
@@ -837,7 +843,7 @@ def write_showcase_manifest(
         "runtime_min": None if runtime_min is None else round(runtime_min, 2),
         "runtime_limit_min": cfg.runtime.limit_min,
         "runtime_exceeded": None if runtime_min is None else runtime_min > cfg.runtime.limit_min,
-        "machine": {"cpu_count": os.cpu_count(), "ram_gb": _ram_gb()},
+        "machine": _machine(),
     }
     path = out_dir / SHOWCASE_MANIFEST
     previous = json.loads(path.read_text(encoding="utf-8")) if path.exists() else None
@@ -878,6 +884,17 @@ PACKAGES = ("flight-pipeline", "duckdb", "pydantic", "numpy", "airportsdata", "t
 
 def _sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def _machine() -> dict[str, Any]:
+    """The machine the run was timed on, with the thread limit when one was set (SC-008:
+    a run limited to 4 threads stands in for the 4-core reference machine)."""
+    threads = os.environ.get(THREADS_ENV)
+    return {
+        "cpu_count": os.cpu_count(),
+        "ram_gb": _ram_gb(),
+        "thread_limit": int(threads) if threads else None,
+    }
 
 
 def _ram_gb() -> float | None:
@@ -967,7 +984,7 @@ def write_manifest(
             "runtime_exceeded": None
             if runtime_min is None
             else runtime_min > cfg.runtime.limit_min,
-            "machine": {"cpu_count": os.cpu_count(), "ram_gb": _ram_gb()},
+            "machine": _machine(),
         },
     }
     path = reports(cfg, "manifest.json")
@@ -1029,6 +1046,26 @@ def scenario_summaries(
             }
         )
     return out
+
+
+def _curation_sections(con: duckdb.DuckDBPyConnection, cfg: Config) -> list[str]:
+    """The showcase curation section, when the curate stage has run (Phase 1)."""
+    path = derived(cfg, "curation.json")
+    if not path.exists():
+        return []
+    meta = read_json(path, CurationMeta)
+    routes = read_models(con, derived(cfg, "showcase_routes.parquet"), CuratedRouteRow)
+    sc = cfg.showcase
+    return [
+        curation_section(
+            [(r.route_id, r.comparison_count, r.share_of_showcase) for r in routes],
+            meta["airline_shares"],
+            meta["hub_shares"],
+            meta["cross_hub_share"],
+            meta["shortfalls"],
+            (sc.max_share_route, sc.max_share_airline, sc.max_share_hub, sc.cross_hub_share_min),
+        )
+    ]
 
 
 def stage_report(
@@ -1182,6 +1219,7 @@ def stage_report(
             routing_itineraries=routing_itineraries(itineraries),
         ),
         *([breakdown_section(breakdown)] if breakdown else []),
+        *_curation_sections(con, cfg),
         sensitivity_section(
             summaries,
             [p for p in pairs if p.assumption_sensitive],

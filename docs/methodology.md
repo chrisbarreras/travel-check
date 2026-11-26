@@ -137,7 +137,7 @@ The rules run in this order (research R2), with the candidates each removes coun
 2. **Bound pre-filter**: a candidate is dropped only when no combination of its slots' earliest and latest local times over the year can give a layover within the limits (with an hour's margin for daylight-saving changes). It can never exclude an itinerary that would connect.
 3. **Sold routing**, as in Phase 0.
 4. **Daily matching**: on each day the inbound flight is scheduled, the earliest outbound flight of the slot scheduled at least the minimum connection time after its arrival, within 4 hours. Days whose matching window runs past the end of the period are excluded as *end of period*, not counted as failures. The layover limits apply only here; Phase 0's median-layover rule is gone.
-5. **Connection share**: the two flights connect on at least 60% of eligible days (`connect_share`).
+5. **Connection share**: the two flights connect on at least 60% of the days in the period, less end-of-period days (`connect_share`); a day the inbound flight is not scheduled counts as not connecting (ADR-0013).
 
 Median layover and travel time are taken over connecting days from daily UTC schedules.
 
@@ -167,7 +167,7 @@ The showcase is selected by a deterministic rule (research R4):
 
 1. Candidate routes have at least two itineraries and a showcase comparison. They are ranked by their strongest cross-hub showcase difference (routes with same-hub comparisons only come last), then by their number of comparisons, then by code.
 2. Routes are taken in rank order up to 12, keeping at least half with a **regional origin**: an airport outside the 30-airport candidate pool (Phase 0 counted any non-hub, so large airports such as LGA counted as regional). Fewer than 8 routes is reported as a shortfall.
-3. Balance applies to the comparisons kept: each route starts with its strongest comparison, and further comparisons are added, strongest first, while no route supplies more than a third of them, no airline or hub more than half (a comparison counts for both itineraries' airlines and hubs), at least half are cross-hub, and no route has more than 12 compared itineraries. Caps that still fail are reported as shortfalls.
+3. Balance applies to the comparisons kept: each route starts with its strongest comparison, and further comparisons are added, strongest first, while no route supplies more than a third of them, no airline or hub more than half (a comparison counts for both itineraries' airlines and hubs), at least half are cross-hub, and no route has more than 12 compared itineraries. If a cap still fails, comparisons are added or removed (one or two at a time, each route keeping at least one) while that lowers the total excess over the caps, and then added again within the caps; a cap that cannot be met is reported as a shortfall. The shares are published in `index.json` (`balance`) and the report.
 4. The **landing example** is the strongest remaining cross-hub comparison whose lower itinerary is not tight and which was compared at every setting.
 
 ### Published data
@@ -184,7 +184,7 @@ Connection feasibility within each calendar month of the period, by the inbound 
 
 ### Buffer
 
-On each operated paired day (cancelled and diverted days excluded, since no layover helps them), the scheduled layover that would just have left enough time is the transfer time plus the boarding cutoff plus that day's scheduled layover minus its actual slack; that is, the day's delays are kept. The buffer is the 95th percentile of that value over operated days (lower rule), rounded up to 5 minutes, shown next to the itinerary's scheduled layover: "a layover of 75 minutes would have been enough on 95% of operated days".
+On each operated paired day (cancelled and diverted days excluded, since no layover helps them), the scheduled layover that would just have left enough time is the transfer time plus the boarding cutoff plus that day's scheduled layover minus its actual slack; that is, the day's delays are kept. The buffer is the smallest of those values that covers at least 95% of operated days (the value at position ceil(0.95 × n) in ascending order), rounded up to 5 minutes, shown next to the itinerary's scheduled layover: "a layover of 75 minutes would have been enough on 95% of operated days".
 
 ### Faster alternatives
 

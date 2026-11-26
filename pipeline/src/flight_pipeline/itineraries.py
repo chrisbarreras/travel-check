@@ -15,8 +15,9 @@ destination). The rules run in this order (research R2):
    slot flies, the earliest outbound flight of the outbound slot scheduled at least the
    minimum connection time after the inbound's scheduled arrival connects if it leaves
    within the maximum layover. A day whose matching window runs past the loaded data is
-   excluded (end of period) rather than counted as not connecting. The share of connecting
-   days must reach the recurrence threshold.
+   excluded (end of period) rather than counted as not connecting. The connecting days must
+   reach the recurrence threshold share of the days in the period, less end-of-period days
+   (ADR-0013 rule 2): a day the inbound flight is not scheduled does not connect.
 
 Reported layover and travel time are medians of the daily scheduled values (UTC) on the
 connecting days.
@@ -46,6 +47,26 @@ def bounds_allow(
     Never False for a pair that connects (research R2)."""
     lo, hi = min_conn - DST_SLACK_MIN, max_layover + DST_SLACK_MIN
     return any(lo <= (d - a) % 1440 <= hi for a in arrivals for d in departures)
+
+
+def bounds_table(con: duckdb.DuckDBPyConnection, slot_days: str, max_layover: int) -> None:
+    """``_bounds_ok``: the candidates in ``_cand`` (itinerary_id, in_slot, out_slot,
+    min_conn) for which some local arrival minute of the inbound slot (``_slot_inst``) and
+    some local departure minute of the outbound slot (``slot_days``) are ``bounds_allow``-ed:
+    the SQL form of rule 2, tested against it."""
+    con.execute(
+        f"""
+        CREATE OR REPLACE TEMP TABLE _bounds_ok AS
+        WITH arr AS (SELECT DISTINCT slot_id, arr_local FROM _slot_inst),
+             dep AS (SELECT DISTINCT slot_id, dep_local_min AS dep_local FROM {slot_days})
+        SELECT DISTINCT c.itinerary_id
+        FROM _cand c
+        JOIN arr a ON a.slot_id = c.in_slot
+        JOIN dep d ON d.slot_id = c.out_slot
+        WHERE ((d.dep_local - a.arr_local) % 1440 + 1440) % 1440
+              BETWEEN c.min_conn - {DST_SLACK_MIN} AND {int(max_layover) + DST_SLACK_MIN}
+        """
+    )
 
 
 def _rule_tables(
@@ -162,19 +183,7 @@ def build_itineraries(
     _slot_instances(con, flights, slots)
 
     # 2. Bounds (lossless): some local arrival x departure combination within the limits
-    con.execute(
-        f"""
-        CREATE OR REPLACE TEMP TABLE _bounds_ok AS
-        WITH arr AS (SELECT DISTINCT slot_id, arr_local FROM _slot_inst),
-             dep AS (SELECT DISTINCT slot_id, dep_local_min AS dep_local FROM {slots}_days)
-        SELECT DISTINCT c.itinerary_id
-        FROM _cand c
-        JOIN arr a ON a.slot_id = c.in_slot
-        JOIN dep d ON d.slot_id = c.out_slot
-        WHERE ((d.dep_local - a.arr_local) % 1440 + 1440) % 1440
-              BETWEEN c.min_conn - {DST_SLACK_MIN} AND {rules.max_layover_min + DST_SLACK_MIN}
-        """
-    )
+    bounds_table(con, f"{slots}_days", rules.max_layover_min)
 
     # 3. Sold routing
     con.execute(
@@ -200,7 +209,7 @@ def build_itineraries(
         ).fetchall()
     ]
     con.execute(
-        "CREATE OR REPLACE TEMP TABLE _agg (itinerary_id VARCHAR, eligible_days BIGINT, "
+        "CREATE OR REPLACE TEMP TABLE _agg (itinerary_id VARCHAR, end_of_period_days BIGINT, "
         "connect_days BIGINT, layover DOUBLE, travel DOUBLE)"
     )
     con.execute("DROP TABLE IF EXISTS _match_all")
@@ -218,13 +227,13 @@ def build_itineraries(
         else:
             con.execute("INSERT INTO _match_all SELECT * FROM _match")
         con.execute("DROP TABLE _match")
-    _finish(con, target, threshold_scaled, days=days)
+    _finish(con, target, threshold_scaled, (end - start).days + 1, days=days)
 
 
-# Per-itinerary results of the daily matching (rule 4): eligible days, connecting days and
-# the median scheduled layover and travel time over connecting days.
+# Per-itinerary results of the daily matching (rule 4): end-of-period days, connecting days
+# and the median scheduled layover and travel time over connecting days.
 _AGG_COLUMNS = """
-    count(*) FILTER (WHERE status <> 'end_of_period'),
+    count(*) FILTER (WHERE status = 'end_of_period'),
     count(*) FILTER (WHERE status = 'connects'),
     quantile_disc((epoch(out_dep) - epoch(in_arr)) // 60, 0.5)
         FILTER (WHERE status = 'connects'),
@@ -365,17 +374,26 @@ def _match_hub(
 
 
 def _finish(
-    con: duckdb.DuckDBPyConnection, target: str, threshold_scaled: int, *, days: bool
+    con: duckdb.DuckDBPyConnection,
+    target: str,
+    threshold_scaled: int,
+    period_days: int,
+    *,
+    days: bool,
 ) -> None:
-    """Qualification, ``target``, ``{target}_exclusions`` and (with ``days``) ``{target}_days``."""
+    """Qualification, ``target``, ``{target}_exclusions`` and (with ``days``) ``{target}_days``.
+    Eligible days are the days in the period minus the end-of-period days (ADR-0013 rule 2,
+    data-model.md): a day the inbound flight is not scheduled counts as not connecting."""
     con.execute(
-        """
+        f"""
         CREATE OR REPLACE TEMP TABLE _cand_ok AS
-        SELECT c.*, coalesce(a.eligible_days, 0) AS eligible_days,
+        SELECT c.*, e.eligible_days,
                coalesce(a.connect_days, 0) AS connect_days, a.layover, a.travel,
-               CASE WHEN coalesce(a.eligible_days, 0) = 0 THEN 0.0
-                    ELSE round(a.connect_days / a.eligible_days, 6) END AS connect_share
-        FROM _cand_flags c LEFT JOIN _agg a USING (itinerary_id)
+               CASE WHEN e.eligible_days <= 0 THEN 0.0
+                    ELSE round(coalesce(a.connect_days, 0) / e.eligible_days, 6)
+               END AS connect_share
+        FROM _cand_flags c LEFT JOIN _agg a USING (itinerary_id),
+             LATERAL (SELECT {period_days} - coalesce(a.end_of_period_days, 0) AS eligible_days) e
         """
     )
     con.execute(

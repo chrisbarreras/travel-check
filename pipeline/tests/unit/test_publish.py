@@ -20,7 +20,17 @@ from flight_pipeline.showcase.publish import (
     wording_violations,
     write_files,
 )
-from tests.unit.showcase_factory import CONTEXT, PERIOD, A, B, C, index, itinerary, route_file
+from tests.unit.showcase_factory import (
+    CONTEXT,
+    PERIOD,
+    A,
+    B,
+    C,
+    index,
+    itinerary,
+    rate,
+    route_file,
+)
 
 
 def test_stable_bytes_are_sorted_compact_lf_and_rounded() -> None:
@@ -86,8 +96,8 @@ def test_insights_may_name_itineraries_outside_the_file() -> None:
     alt = Alternative(
         itinerary_id="CMH-ATL-SAN:DL0900+DL1300",  # on the route, not in the file
         minutes_saved=20,
-        rate_this=0.9,
-        rate_other=0.9,
+        rate_this=rate(40, 36),
+        rate_other=rate(40, 36),
         ci_low=-0.01,
         ci_high=0.02,
         shared_days=40,

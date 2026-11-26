@@ -116,6 +116,52 @@ def _strength(c: CandidateComparison) -> tuple[bool, float, str]:
     return (not c.cross_hub, -c.difference, c.comparison_id)
 
 
+def _repair(
+    kept: list[CandidateComparison],
+    rest: list[CandidateComparison],
+    violation: Callable[[Sequence[CandidateComparison]], float],
+    fits: Callable[[CandidateComparison], bool],
+) -> None:
+    """While the caps or the cross-hub minimum are not met, apply the move that lowers the
+    total excess most: add one comparison, or remove one or two (every route keeps at least
+    one). Two removals at once are needed when one airline is over its cap and others are at
+    theirs: removing a comparison of the first and one each of the others lowers them all.
+    Ties prefer adding, then fewer removals, then the stronger comparisons kept. Stops when
+    no move lowers the excess; what remains is reported as a shortfall."""
+    while (current := violation(kept)) > _EPS:
+        order = {c.comparison_id: i for i, c in enumerate(sorted([*kept, *rest], key=_strength))}
+        per_route: dict[str, int] = {}
+        for c in kept:
+            per_route[c.route_id] = per_route.get(c.route_id, 0) + 1
+        moves: list[tuple[float, int, int, list[CandidateComparison], list[CandidateComparison]]]
+        moves = []
+        for c in rest:
+            if fits(c):
+                moves.append((violation([*kept, c]), 0, order[c.comparison_id], [c], []))
+        removable = [c for c in kept if per_route[c.route_id] > 1]
+        for i, c in enumerate(removable):
+            others = [k for k in kept if k is not c]
+            moves.append((violation(others), 1, -order[c.comparison_id], [], [c]))
+            for d in removable[i + 1 :]:
+                if c.route_id == d.route_id and per_route[c.route_id] < 3:
+                    continue
+                pair = [k for k in others if k is not d]
+                weakest = -(order[c.comparison_id] + order[d.comparison_id])
+                moves.append((violation(pair), 2, weakest, [], [c, d]))
+        if not moves:
+            return
+        best = min(moves, key=lambda m: (round(m[0], 9), m[1], m[2]))
+        if best[0] >= current - _EPS:
+            return
+        for c in best[3]:
+            kept.append(c)
+            rest.remove(c)
+        for c in best[4]:
+            kept.remove(c)
+            rest.append(c)
+        rest.sort(key=_strength)
+
+
 def curate(
     routes: Sequence[RouteCandidate],
     comparisons: Sequence[CandidateComparison],
@@ -177,15 +223,20 @@ def curate(
         mine = {x for k in kept if k.route_id == c.route_id for x in (k.itinerary_a, k.itinerary_b)}
         return len(mine | {c.itinerary_a, c.itinerary_b}) <= cfg.itineraries_per_route_max
 
-    added = True
-    while added:
-        added = False
-        for c in rest:
-            if fits(c) and violation([*kept, c]) <= violation(kept) + _EPS:
-                kept.append(c)
-                rest.remove(c)
-                added = True
-                break
+    def add_while_balanced() -> None:
+        added = True
+        while added:
+            added = False
+            for c in rest:
+                if fits(c) and violation([*kept, c]) <= violation(kept) + _EPS:
+                    kept.append(c)
+                    rest.remove(c)
+                    added = True
+                    break
+
+    add_while_balanced()
+    _repair(kept, rest, violation, fits)
+    add_while_balanced()
 
     for name, key, cap in caps:
         for k, s in _shares(kept, key).items():

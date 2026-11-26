@@ -18,7 +18,8 @@ export interface AirlineCoverage {
 }
 /**
  * A faster comparable itinerary whose feasibility is shown, by the paired interval, to
- * be no more than the margin worse (research R8).
+ * be no more than the margin worse (research R8). Both rates carry their samples
+ * (Principle I): the alternative may not be in the same file.
  *
  * This interface was referenced by `Showcase`'s JSON-Schema
  * via the `definition` "Alternative".
@@ -28,9 +29,22 @@ export interface Alternative {
   ci_low: number;
   itinerary_id: string;
   minutes_saved: number;
-  rate_other: number;
-  rate_this: number;
+  rate_other: Rate;
+  rate_this: Rate;
   shared_days: number;
+}
+/**
+ * Connection feasibility with its sample. The data period is the file's ``period``.
+ *
+ * This interface was referenced by `Showcase`'s JSON-Schema
+ * via the `definition` "Rate".
+ */
+export interface Rate {
+  count_feasible: number;
+  definition: "connection_feasibility";
+  paired_days: number;
+  rate: number | null;
+  status: "ok" | "insufficient_data";
 }
 /**
  * This interface was referenced by `Showcase`'s JSON-Schema
@@ -58,6 +72,36 @@ export interface Attribution {
   url: string;
 }
 /**
+ * The showcase's balance (FR-008): the caps, the resulting shares of showcase
+ * comparisons by airline and hub (a comparison counts for both itineraries' airlines and
+ * hubs), the cross-hub share, and any cap curation could not meet. Route shares are in
+ * ``routes[].share_of_showcase``.
+ *
+ * This interface was referenced by `Showcase`'s JSON-Schema
+ * via the `definition` "Balance".
+ */
+export interface Balance {
+  airline_shares: {
+    [k: string]: number;
+  };
+  caps: BalanceCaps;
+  cross_hub_share: number;
+  hub_shares: {
+    [k: string]: number;
+  };
+  shortfalls: string[];
+}
+/**
+ * This interface was referenced by `Showcase`'s JSON-Schema
+ * via the `definition` "BalanceCaps".
+ */
+export interface BalanceCaps {
+  airline: number;
+  cross_hub_min: number;
+  hub: number;
+  route: number;
+}
+/**
  * This interface was referenced by `Showcase`'s JSON-Schema
  * via the `definition` "Buffer".
  */
@@ -78,19 +122,6 @@ export interface ConnectingOption {
   itinerary_id: string;
   outbound_dep_local_min: number;
   rate: Rate;
-}
-/**
- * Connection feasibility with its sample. The data period is the file's ``period``.
- *
- * This interface was referenced by `Showcase`'s JSON-Schema
- * via the `definition` "Rate".
- */
-export interface Rate {
-  count_feasible: number;
-  definition: "connection_feasibility";
-  paired_days: number;
-  rate: number | null;
-  status: "ok" | "insufficient_data";
 }
 /**
  * This interface was referenced by `Showcase`'s JSON-Schema
@@ -345,6 +376,7 @@ export interface RouteSummary {
 export interface ShowcaseIndex {
   assumptions: Assumptions;
   attribution: Attribution[];
+  balance: Balance;
   coverage: Coverage;
   definitions: Definition[];
   landing: LandingRef;
