@@ -52,6 +52,7 @@ def itinerary(iid: str, hub: str = "ORD", *, paired: int = 40, feasible: int = 3
         "airline": "UA",
         "airline_out": "UA",
         "partner_connection": False,
+        "min_connection_min": 30,
         "schedule": Schedule(
             dep_local_min=480,
             arr_local_min=840,
@@ -67,7 +68,11 @@ def itinerary(iid: str, hub: str = "ORD", *, paired: int = 40, feasible: int = 3
             diverted=0,
             dominant="too_little_time" if paired > feasible else "none",
         ),
-        "daily": DailySeries(day_offset=[], slack_min=[], outcome=""),
+        "daily": DailySeries(
+            day_offset=list(range(paired)),
+            slack_min=list[int | None]([60] * feasible + [10] * (paired - feasible)),
+            outcome="F" * feasible + "T" * (paired - feasible),
+        ),
         "excluded_days": ExcludedDays(not_connecting=0, quality=0, end_of_period=0),
         "monthly": [],
         "buffer": Buffer(

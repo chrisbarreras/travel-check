@@ -1047,6 +1047,10 @@
         "itinerary_id": {
           "type": "string"
         },
+        "min_connection_min": {
+          "minimum": 0,
+          "type": "integer"
+        },
         "monthly": {
           "items": {
             "$ref": "#/$defs/MonthRate"
@@ -1078,6 +1082,7 @@
         "airline",
         "airline_out",
         "partner_connection",
+        "min_connection_min",
         "schedule",
         "result",
         "failures",

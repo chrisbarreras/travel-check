@@ -91,9 +91,10 @@ DEFINITIONS: dict[str, tuple[str, str]] = {
         "connection-feasibility",
     ),
     "slack": (
-        "Minutes between the inbound flight's actual arrival plus the minimum connection "
-        "time and boarding cutoff, and the outbound flight's actual departure, on one day. "
-        "Zero or more means the connection was feasible that day.",
+        "Minutes between the inbound flight's actual arrival and the outbound flight's "
+        "actual departure on one paired day. The connection was feasible that day when the "
+        "slack was at least the transfer time (minimum connection time) plus the boarding "
+        "cutoff and neither leg was cancelled or diverted.",
         "connection-feasibility",
     ),
     "layover": (

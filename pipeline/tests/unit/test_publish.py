@@ -9,7 +9,7 @@ from pathlib import Path
 
 import pytest
 
-from flight_pipeline.showcase.models import NOT_COVERED_KINDS, Rate, RouteFile, ShowcaseIndex
+from flight_pipeline.showcase.models import NOT_COVERED_KINDS, RouteFile, ShowcaseIndex
 from flight_pipeline.showcase.publish import (
     MEASURES,
     PublishError,
@@ -39,16 +39,9 @@ def test_render_is_deterministic() -> None:
 
 def test_validation_failure_stops_the_run() -> None:
     # valid without context, but below the configured minimum sample of 30 days
-    small = Rate(
-        status="ok",
-        rate=0.9,
-        paired_days=10,
-        count_feasible=9,
-        definition="connection_feasibility",
-    )
-    route = route_file(
-        itineraries=[itinerary(A, result=small), itinerary(B, "DEN"), itinerary(C, "DFW")]
-    )
+    small = itinerary(A, paired=10, feasible=9)
+    assert small.result.status == "ok"
+    route = route_file(itineraries=[small, itinerary(B, "DEN"), itinerary(C, "DFW")])
     with pytest.raises(PublishError, match="fails validation"):
         render(index([route]), [route], CONTEXT)
 

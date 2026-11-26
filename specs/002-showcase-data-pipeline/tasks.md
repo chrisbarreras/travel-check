@@ -110,9 +110,9 @@ description: "Task list for the showcase data pipeline"
 
 **Independent Test**: recomputing from the stored daily values at the default assumptions equals the published rate for every curated itinerary.
 
-- [ ] T030 [P] [US4] Write shared/test-cases/slack-feasibility.json (research R7): hand-computed cases including boundary slack, negative slack, cancelled and diverted days, empty series and below-minimum samples
-- [ ] T031 [P] [US4] Write failing tests in pipeline/tests/unit/test_slack_cases.py that run every shared case against the pipeline's feasibility calculation, and in pipeline/tests/integration/test_showcase_slider.py that recompute every curated itinerary's rate from data-model.md `ShowcaseItinerary.daily` and compare it with data-model.md `ShowcaseItinerary.result` (SC-004)
-- [ ] T032 [US4] Write the columnar daily series (data-model.md `DailySeries.day_offset`, data-model.md `DailySeries.slack_min`, data-model.md `DailySeries.outcome`) and data-model.md `ShowcaseItinerary.excluded_days` in pipeline/src/flight_pipeline/showcase/publish.py, and the default assumptions in data-model.md `ShowcaseIndex.assumptions`, to pass T031
+- [X] T030 [P] [US4] Write shared/test-cases/slack-feasibility.json (research R7): hand-computed cases including boundary slack, negative slack, cancelled and diverted days, empty series and below-minimum samples
+- [X] T031 [P] [US4] Write failing tests in pipeline/tests/unit/test_slack_cases.py that run every shared case against the pipeline's feasibility calculation, and in pipeline/tests/integration/test_showcase_slider.py that recompute every curated itinerary's rate from data-model.md `ShowcaseItinerary.daily` and compare it with data-model.md `ShowcaseItinerary.result` (SC-004)
+- [X] T032 [US4] Write the columnar daily series (data-model.md `DailySeries.day_offset`, data-model.md `DailySeries.slack_min`, data-model.md `DailySeries.outcome`) and data-model.md `ShowcaseItinerary.excluded_days` in pipeline/src/flight_pipeline/showcase/publish.py, and the default assumptions in data-model.md `ShowcaseIndex.assumptions`, to pass T031
 
 ---
 

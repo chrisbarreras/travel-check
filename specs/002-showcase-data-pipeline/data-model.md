@@ -63,10 +63,11 @@ Phase 0's DailyOutcome, ItineraryResult, ComparablePair, SensitivityScenario and
 | Field | Type | Notes |
 |---|---|---|
 | `itinerary_id`, `hub`, `airline` / `airline_out` | str | |
+| `min_connection_min` | int | This itinerary's minimum connection time (hub, partner rule): the slider's default transfer time |
 | `schedule` | Schedule | Reference local departure and arrival, median layover and travel time, nonstop comparison |
 | `result` | Rate | Default-assumption result (below) |
 | `failures` | FailureBreakdown | `too_little_time`, `cancelled`, `diverted`, `dominant` |
-| `daily` | DailySeries | Columnar: `day_offset[]`, `slack_min[]` (null when cancelled or diverted), `outcome` as one string of codes, one per day (`F` feasible, `T` too little time, `C` cancelled, `D` diverted) |
+| `daily` | DailySeries | Columnar, one entry per paired day: `day_offset[]`, `slack_min[]` (actual minutes from inbound arrival to outbound departure; null when cancelled or diverted), `outcome` as one string of codes (`F` feasible, `T` too little time, `C` cancelled, `D` diverted, at the default assumptions). A day is feasible at transfer time T when its code is not C or D and `slack_min` ≥ T + boarding cutoff (shared/test-cases/slack-feasibility.json). **Validation:** one entry per `result.paired_days`; the code counts equal `result.count_feasible` and the `failures` counts |
 | `excluded_days` | ExcludedDays | `not_connecting`, `quality`, `end_of_period` |
 | `monthly` | list[MonthRate] | 12 entries: `month`, `status` (`ok`, `insufficient_data`, `no_flights`), `rate` or null, `paired_days`, `note_ids[]` |
 | `buffer` | Buffer | `share` (0.95), `needed_layover_min`, `actual_layover_min`, `operated_days` |

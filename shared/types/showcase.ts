@@ -273,6 +273,7 @@ export interface ShowcaseItinerary {
   find: FindParams;
   hub: string;
   itinerary_id: string;
+  min_connection_min: number;
   monthly: MonthRate[];
   partner_connection: boolean;
   result: Rate;

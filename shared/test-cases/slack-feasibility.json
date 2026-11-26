@@ -1,0 +1,87 @@
+{
+  "description": "Connection feasibility recomputed from a published daily series (specs/002 research R7, ADR-0006). Shared by the pipeline (Python) and the explorer (TypeScript); expected values are hand-computed. Edit only deliberately, with a review.",
+  "rule": "Each entry of slack_min is the actual minutes from the inbound flight's arrival to the outbound flight's departure on one paired day, or null when a leg was cancelled (C) or diverted (D). With threshold = transfer_min + boarding_cutoff_min, a day is feasible when its code is not C or D and slack_min >= threshold. paired_days is the number of entries (cancelled and diverted days included); count_feasible the feasible days. When paired_days >= min_sample_days the status is ok and rate = count_feasible / paired_days rounded to 6 decimals; otherwise the status is insufficient_data and rate is null. Codes F and T describe the default assumptions only and are not used in the recomputation.",
+  "cases": [
+    {
+      "name": "boundary: slack equal to the threshold is feasible, one minute less is not",
+      "slack_min": [45, 44, 46],
+      "outcome": "FTF",
+      "transfer_min": 30,
+      "boarding_cutoff_min": 15,
+      "min_sample_days": 3,
+      "expected": {"paired_days": 3, "count_feasible": 2, "status": "ok", "rate": 0.666667}
+    },
+    {
+      "name": "negative slack: the outbound left before the inbound arrived",
+      "slack_min": [-10, 50, -1, 100],
+      "outcome": "TFTF",
+      "transfer_min": 30,
+      "boarding_cutoff_min": 15,
+      "min_sample_days": 4,
+      "expected": {"paired_days": 4, "count_feasible": 2, "status": "ok", "rate": 0.5}
+    },
+    {
+      "name": "cancelled and diverted days count as paired days that were not feasible",
+      "slack_min": [null, 60, null, 20],
+      "outcome": "CFDT",
+      "transfer_min": 30,
+      "boarding_cutoff_min": 15,
+      "min_sample_days": 4,
+      "expected": {"paired_days": 4, "count_feasible": 1, "status": "ok", "rate": 0.25}
+    },
+    {
+      "name": "empty series",
+      "slack_min": [],
+      "outcome": "",
+      "transfer_min": 30,
+      "boarding_cutoff_min": 15,
+      "min_sample_days": 30,
+      "expected": {"paired_days": 0, "count_feasible": 0, "status": "insufficient_data", "rate": null}
+    },
+    {
+      "name": "below the minimum sample: counts only, no rate",
+      "slack_min": [60, 60, 60],
+      "outcome": "FFF",
+      "transfer_min": 30,
+      "boarding_cutoff_min": 15,
+      "min_sample_days": 30,
+      "expected": {"paired_days": 3, "count_feasible": 3, "status": "insufficient_data", "rate": null}
+    },
+    {
+      "name": "slider moved to a longer transfer time",
+      "slack_min": [45, 60, 75, 90, null],
+      "outcome": "FFFFC",
+      "transfer_min": 60,
+      "boarding_cutoff_min": 15,
+      "min_sample_days": 5,
+      "expected": {"paired_days": 5, "count_feasible": 2, "status": "ok", "rate": 0.4}
+    },
+    {
+      "name": "slider moved to no transfer time",
+      "slack_min": [45, 60, 75, 90, null],
+      "outcome": "FFFFC",
+      "transfer_min": 0,
+      "boarding_cutoff_min": 15,
+      "min_sample_days": 5,
+      "expected": {"paired_days": 5, "count_feasible": 4, "status": "ok", "rate": 0.8}
+    },
+    {
+      "name": "zero threshold: zero slack is feasible, negative is not",
+      "slack_min": [0, -1],
+      "outcome": "FT",
+      "transfer_min": 0,
+      "boarding_cutoff_min": 0,
+      "min_sample_days": 2,
+      "expected": {"paired_days": 2, "count_feasible": 1, "status": "ok", "rate": 0.5}
+    },
+    {
+      "name": "rate rounded to 6 decimals",
+      "slack_min": [50, 10, 10],
+      "outcome": "FTT",
+      "transfer_min": 30,
+      "boarding_cutoff_min": 15,
+      "min_sample_days": 3,
+      "expected": {"paired_days": 3, "count_feasible": 1, "status": "ok", "rate": 0.333333}
+    }
+  ]
+}

@@ -9,6 +9,7 @@ import json
 import os
 import statistics
 import sys
+from collections.abc import Mapping
 from dataclasses import asdict, replace
 from importlib import metadata
 from pathlib import Path
@@ -566,6 +567,16 @@ def stage_curate(con: duckdb.DuckDBPyConnection, cfg: Config) -> str:
 # --- Publish -----------------------------------------------------------------------------
 
 
+def _daily_by_itinerary(
+    rows: list[DailyOutcome], keep: Mapping[str, Any]
+) -> dict[str, list[DailyOutcome]]:
+    out: dict[str, list[DailyOutcome]] = {}
+    for r in rows:
+        if r.itinerary_id in keep:
+            out.setdefault(r.itinerary_id, []).append(r)
+    return out
+
+
 def stage_publish(con: duckdb.DuckDBPyConnection, cfg: Config, config_path: Path) -> str:
     """Write the validated, size-budgeted showcase JSON (specs/002 contracts/outputs.md)."""
     routes = read_models(con, derived(cfg, "showcase_routes.parquet"), CuratedRouteRow)
@@ -614,6 +625,9 @@ def stage_publish(con: duckdb.DuckDBPyConnection, cfg: Config, config_path: Path
         flight_numbers=assemble.flight_number_shares(con, "slots"),
         hubs=hubs,
         sold_same_airline=assemble.sold_same_airline(con, "sold_routings", hubs),
+        daily=_daily_by_itinerary(
+            read_models(con, derived(cfg, "daily_outcomes.parquet"), DailyOutcome), shown
+        ),
         tight=frozenset(
             tight_itineraries(
                 list(shown.values()), cfg.itineraries, cfg.feasibility.boarding_cutoff_min

@@ -23,6 +23,7 @@ from flight_pipeline.models import (
     ComparablePair,
     CuratedComparisonRow,
     CuratedRouteRow,
+    DailyOutcome,
     Itinerary,
     ItineraryResult,
     NonstopMedian,
@@ -31,7 +32,6 @@ from flight_pipeline.nonstop import nonstop_ratio
 from flight_pipeline.showcase.models import (
     Assumptions,
     Buffer,
-    DailySeries,
     DataPeriod,
     ExcludedDays,
     FailureBreakdown,
@@ -56,6 +56,7 @@ from flight_pipeline.showcase.publish import (
     definitions,
     notes_for_route,
 )
+from flight_pipeline.showcase.slider import daily_series
 
 
 @dataclass(frozen=True)
@@ -76,6 +77,7 @@ class Inputs:
     hubs: Sequence[str]
     sold_same_airline: Mapping[str, int]
     tight: frozenset[str]
+    daily: Mapping[str, Sequence[DailyOutcome]]  # default scenario, paired days
     notes: Sequence[DisruptionNote]
 
 
@@ -148,6 +150,9 @@ def showcase_itinerary(it: Itinerary, inputs: Inputs, cfg: Config) -> ShowcaseIt
         airline=it.airline_in,
         airline_out=it.airline_out,
         partner_connection=it.partner_connection,
+        min_connection_min=cfg.itineraries.min_connection_for(
+            it.hub, partner=it.partner_connection
+        ),
         schedule=Schedule(
             dep_local_min=it.median_dep_local_min,
             arr_local_min=inputs.arrival_local_min.get(it.outbound_slot, 0),
@@ -158,7 +163,7 @@ def showcase_itinerary(it: Itinerary, inputs: Inputs, cfg: Config) -> ShowcaseIt
         ),
         result=rate_of(r),
         failures=failures_of(r),
-        daily=DailySeries(day_offset=[], slack_min=[], outcome=""),
+        daily=daily_series(inputs.daily.get(it.itinerary_id, []), cfg.period.dates()[0]),
         excluded_days=ExcludedDays(
             not_connecting=r.excluded_not_connecting,
             quality=r.excluded_quality,

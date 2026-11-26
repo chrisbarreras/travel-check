@@ -260,6 +260,7 @@ class ShowcaseItinerary(_Model):
     airline: Airline
     airline_out: Airline
     partner_connection: bool
+    min_connection_min: NonNegInt  # the slider's default transfer time for this itinerary
     schedule: Schedule
     result: Rate
     failures: FailureBreakdown
@@ -273,6 +274,23 @@ class ShowcaseItinerary(_Model):
     find: FindParams
     tight_layover: bool
     sold: SoldRouting
+
+    @model_validator(mode="after")
+    def _series_matches_result(self) -> ShowcaseItinerary:
+        """The daily series reproduces the default result and failure counts (SC-004)."""
+        codes = self.daily.outcome
+        if len(codes) != self.result.paired_days:
+            raise ValueError("the daily series must have one entry per paired day")
+        counts = (codes.count("F"), codes.count("T"), codes.count("C"), codes.count("D"))
+        expected = (
+            self.result.count_feasible,
+            self.failures.too_little_time,
+            self.failures.cancelled,
+            self.failures.diverted,
+        )
+        if counts != expected:
+            raise ValueError("the daily outcome codes do not match the result and failures")
+        return self
 
 
 class ShowcaseComparison(_Model):
