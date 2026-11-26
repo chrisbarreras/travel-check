@@ -1,0 +1,130 @@
+{
+  "code_version": "0.1.0",
+  "config_sha256": "62a1c9341211b4c7e5eed6bad22ce04e94d9bf9a97709d8415bf885d28f18f60",
+  "git_commit": "ec8a78dd61adca4df8eec0e88f2337b3eba1c056",
+  "notes_sha256": "6f71211762688725b6a44a423dcd2c79b7f215c2e75317cdf2e2007e122ece6a",
+  "outputs": {
+    "index.json": "15c7dc53fe1a69302858d67b7d80c20183b7e0a3ba89ba210d30833a1f417f59",
+    "landing.json": "3b05b264eb0e306285e1b38ab8dda69fe03563627a29598044c4e12fef7955b4",
+    "routes/ASE-IAH.json": "41891fd07e1905f3099593d504207a1eaf1ea78dab7382622b9f8f2b3ea38f8a",
+    "routes/BOS-LAX.json": "658cf5c6ee9589035120d19424aefc22a3527d113f6ef88344132657c1740bf7",
+    "routes/COS-LGA.json": "f788a9f3562b5e9edcad6041a56f0858d1e315cf4c507105a2815e59a37e8fc3",
+    "routes/HNL-BOS.json": "e41b186079e8e22521ed8aa081defc216714affd613f1191fbc67fbbc39db494",
+    "routes/IAH-LGA.json": "7598a3075e2111d5062b4e2a37a67647eb363a8536a72aed3aeb97e215b68143",
+    "routes/LAX-LGA.json": "ae9cc577e77fbbb94010067d532d67fd14ceecc1a72b29fdbfefb62592d2af43",
+    "routes/LGA-LAX.json": "e88a1fd0a630e96aa05e6985ec2d136e7efa90f9d0d4efc7aca3e766e75cf39b",
+    "routes/LGA-PHX.json": "43c890b791a036ee316375a67e63b749f6a014692e8ec36e79f01735004a1b92",
+    "routes/MCO-LAX.json": "58da178c52b3fa9feb3d8240a8d0c026af924a0ceee1c60be83720089e3ddcae",
+    "routes/RDU-LAX.json": "3a124fde3374e77e7f125cca95737c03ab07877e516a315e8a05ece20ca693e8",
+    "routes/SAT-LGA.json": "2030e84613707a16017182e1b6e010b73bdf491731178073bfa4fd7fc018f619",
+    "routes/SMF-ATL.json": "3d2b2e2dea4990c22a9b904a9787e8dda82098903dd0a9ab6df6b9df30c24d42"
+  },
+  "packages": {
+    "airportsdata": "20261123",
+    "duckdb": "2.0.1",
+    "flight-pipeline": "0.1.0",
+    "httpx": "0.28.1",
+    "numpy": "2.5.5",
+    "pydantic": "2.14.4",
+    "python": "3.13",
+    "tzdata": "2026.6"
+  },
+  "run": {
+    "machine": {
+      "cpu_count": 16,
+      "ram_gb": 15.4
+    },
+    "run_at": "2026-11-26T15:34:32+00:00",
+    "runtime_exceeded": false,
+    "runtime_limit_min": 30.0,
+    "runtime_measured_at": "2026-11-26T15:34:32+00:00",
+    "runtime_min": 28.4
+  },
+  "sources": [
+    {
+      "name": "db1b/2024-3",
+      "pinned": true,
+      "sha256": "b67439c62446f8bc98dfdca72e1cd05a5727d92bd9ffd57e744d459094cc55cf"
+    },
+    {
+      "name": "db1b/2024-4",
+      "pinned": true,
+      "sha256": "e129d9f32abc0c920abfe485a109af95cb8862af80073ab17c400a3b0cc04145"
+    },
+    {
+      "name": "db1b/2025-1",
+      "pinned": true,
+      "sha256": "6541728831788264d4c7da33ba20eb69d1e65d3bf97f75c32ae79e7084725b41"
+    },
+    {
+      "name": "db1b/2025-2",
+      "pinned": true,
+      "sha256": "e137271888e48ff2b6eb404d0f2ea532b3266aba64362249b42d05858ad87db2"
+    },
+    {
+      "name": "ontime/2024-07",
+      "pinned": true,
+      "sha256": "b1b2dac29ad2d1e3bc52d5151ca43b1ee0d3e0e1c2a941b974f68bef3dd186ad"
+    },
+    {
+      "name": "ontime/2024-08",
+      "pinned": true,
+      "sha256": "1ca5f66b20a55ab993e10f51ce8c652abd4f56336dc77e8c6b6e86e7c33c6b8e"
+    },
+    {
+      "name": "ontime/2024-09",
+      "pinned": true,
+      "sha256": "c88adb575631d9a64def7b353916203cf4ca621ab08a5c72595320c9b2959558"
+    },
+    {
+      "name": "ontime/2024-10",
+      "pinned": true,
+      "sha256": "163f6d93d0c4d2e7f6b5d78dfa35e68f462125de16dcb4fc34a80b897c7bf62b"
+    },
+    {
+      "name": "ontime/2024-11",
+      "pinned": true,
+      "sha256": "e4fc261ea95a7e32d9d6bff8dc22eec53dca752f786f4edc13b5c27f48e88105"
+    },
+    {
+      "name": "ontime/2024-12",
+      "pinned": true,
+      "sha256": "86b6fccb118ac9c8df435b9aeb674f1053873d48cf958248457d03557c263a3f"
+    },
+    {
+      "name": "ontime/2025-01",
+      "pinned": true,
+      "sha256": "0feaabdbc9e4bd851ef717f342678cdcc5ea0822dd706359aab030bb1a5d1c24"
+    },
+    {
+      "name": "ontime/2025-02",
+      "pinned": true,
+      "sha256": "080ad48e2826a6b4c3f39690f75a08dea9ad4e0831ff82958656cdb61693dd15"
+    },
+    {
+      "name": "ontime/2025-03",
+      "pinned": true,
+      "sha256": "ad3f46a598bd529588bfcc004731b893b27999a681804a07a3841b2904d66d48"
+    },
+    {
+      "name": "ontime/2025-04",
+      "pinned": true,
+      "sha256": "88b88ae1a9b49a03cb82c835481ac8dcf86ff2d378614655638889866767608f"
+    },
+    {
+      "name": "ontime/2025-05",
+      "pinned": true,
+      "sha256": "261fb75b956abedca34a27db3ae7221437e1a2ce349b5ee9a49ec267d7555b29"
+    },
+    {
+      "name": "ontime/2025-06",
+      "pinned": true,
+      "sha256": "0cb4038a49962ab92cba33f9840a8eec9671ef19a5afeedfa27998984476b609"
+    },
+    {
+      "name": "t100",
+      "pinned": true,
+      "sha256": "35fc4d07c70740e6c7369602a6f5668118fa2605e3df9ec9f1d6928b55e4af1f"
+    }
+  ]
+}
