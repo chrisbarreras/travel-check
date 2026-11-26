@@ -1079,9 +1079,10 @@ def scenario_summaries(
     return out
 
 
-def _report_title(cfg: Config) -> str:
-    """Phase 0's title for its frozen report; Phase 1's for its rerun (``reports/phase1``)."""
-    if Path(cfg.paths.reports_dir).name == "phase1":
+def _report_title(config_path: Path) -> str:
+    """Phase 0's title for its frozen report; Phase 1's for its rerun. Taken from the
+    configuration file's name, which ``verify`` shares (its output directories differ)."""
+    if config_path.stem == "phase1":
         return "Phase 1 rerun: connection feasibility with schedule-slot itineraries"
     return "Phase 0 finding: connection feasibility experiment"
 
@@ -1286,7 +1287,7 @@ def stage_report(
             cfg.comparison.go_min_examples,
             cfg.comparison.go_min_hubs,
             appendix,
-            title=_report_title(cfg),
+            title=_report_title(config_path),
         ),
         encoding="utf-8",
         newline="\n",

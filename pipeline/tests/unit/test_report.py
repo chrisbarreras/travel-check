@@ -677,3 +677,13 @@ def test_curation_section_states_shares_caps_and_shortfalls() -> None:
     assert "| DL | 55% |" in text
     assert "at most 33% from one route, 50% from one airline" in text
     assert "Cross-hub comparisons: 60%. Curation shortfalls: airline DL supplies 55%" in text
+
+
+def test_report_title_follows_the_config_file_not_the_output_directory() -> None:
+    """verify writes to temporary directories, so the title must not depend on them."""
+    from pathlib import Path
+
+    from flight_pipeline.stages import _report_title  # pyright: ignore[reportPrivateUsage]
+
+    assert _report_title(Path("../config/phase1.toml")).startswith("Phase 1 rerun")
+    assert _report_title(Path("/tmp/x/phase0.toml")).startswith("Phase 0 finding")
