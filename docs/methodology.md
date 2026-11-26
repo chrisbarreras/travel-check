@@ -134,7 +134,7 @@ A slot's reference time is the lower median of its local departure minutes; its 
 The rules run in this order (research R2), with the candidates each removes counted per origin/destination pair:
 
 1. **Slot recurrence**: each slot is scheduled on at least 60% of days.
-2. **Bound pre-filter**: a candidate is dropped only when no combination of its slots' earliest and latest local times over the year can give a layover within the limits (with an hour's margin for daylight-saving changes). It can never exclude an itinerary that would connect.
+2. **Bound pre-filter**: a candidate is dropped only when no combination of the inbound slot's local arrival minutes and the outbound slot's local departure minutes over the year (every distinct value) can give a layover within the limits (with an hour's margin for daylight-saving changes). It can never exclude an itinerary that would connect.
 3. **Sold routing**, as in Phase 0.
 4. **Daily matching**: on each day the inbound flight is scheduled, the earliest outbound flight of the slot scheduled at least the minimum connection time after its arrival, within 4 hours. Days whose matching window runs past the end of the period are excluded as *end of period*, not counted as failures. The layover limits apply only here; Phase 0's median-layover rule is gone.
 5. **Connection share**: the two flights connect on at least 60% of the days in the period, less end-of-period days (`connect_share`); a day the inbound flight is not scheduled counts as not connecting (ADR-0013).

@@ -1,6 +1,6 @@
 {
   "description": "Connection feasibility recomputed from a published daily series (specs/002 research R7, ADR-0006). Shared by the pipeline (Python) and the explorer (TypeScript); expected values are hand-computed. Edit only deliberately, with a review.",
-  "rule": "Each entry of slack_min is the actual minutes from the inbound flight's arrival to the outbound flight's departure on one paired day, or null when a leg was cancelled (C) or diverted (D). With threshold = transfer_min + boarding_cutoff_min, a day is feasible when its code is not C or D and slack_min >= threshold. paired_days is the number of entries (cancelled and diverted days included); count_feasible the feasible days. When paired_days >= min_sample_days the status is ok and rate = count_feasible / paired_days rounded to 6 decimals; otherwise the status is insufficient_data and rate is null. Codes F and T describe the default assumptions only and are not used in the recomputation.",
+  "rule": "Each entry of slack_min is the actual minutes from the inbound flight's arrival to the outbound flight's departure on one paired day, or null when a leg was cancelled (C) or diverted (D). With threshold = transfer_min + boarding_cutoff_min, a day is feasible when its code is not C or D and slack_min >= threshold. paired_days is the number of entries (cancelled and diverted days included); count_feasible the feasible days. When paired_days >= min_sample_days the status is ok and rate = count_feasible / paired_days rounded to 6 decimals, halves away from zero (0.0078125 becomes 0.007813), as DuckDB's round and JavaScript's Math.round on non-negative values do; otherwise the status is insufficient_data and rate is null. Codes F and T describe the default assumptions only and are not used in the recomputation.",
   "cases": [
     {
       "name": "boundary: slack equal to the threshold is feasible, one minute less is not",
@@ -82,6 +82,24 @@
       "boarding_cutoff_min": 15,
       "min_sample_days": 3,
       "expected": {"paired_days": 3, "count_feasible": 1, "status": "ok", "rate": 0.333333}
+    },
+    {
+      "name": "rounding: a rate exactly halfway at the 7th decimal rounds up (1 of 128 days is 0.0078125)",
+      "slack_min": [60, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10],
+      "outcome": "FTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT",
+      "transfer_min": 30,
+      "boarding_cutoff_min": 15,
+      "min_sample_days": 30,
+      "expected": {"paired_days": 128, "count_feasible": 1, "status": "ok", "rate": 0.007813}
+    },
+    {
+      "name": "rounding: 77 of 128 days is 0.6015625, published as 0.601563",
+      "slack_min": [60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10],
+      "outcome": "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT",
+      "transfer_min": 30,
+      "boarding_cutoff_min": 15,
+      "min_sample_days": 30,
+      "expected": {"paired_days": 128, "count_feasible": 77, "status": "ok", "rate": 0.601563}
     }
   ]
 }

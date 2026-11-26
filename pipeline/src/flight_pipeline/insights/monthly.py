@@ -9,6 +9,7 @@ from collections.abc import Iterable, Mapping, Sequence
 
 from flight_pipeline.config import DisruptionNote
 from flight_pipeline.showcase.models import FailureBreakdown, MonthRate
+from flight_pipeline.showcase.slider import rate_of_days
 
 FAILURE_ORDER = ("too_little_time", "cancelled", "diverted")
 
@@ -71,7 +72,7 @@ def monthly_view(
     for key in months:
         n, k = paired.get(key, (0, 0))
         if n >= min_sample:
-            status, rate = "ok", round(k / n, 6)
+            status, rate = "ok", rate_of_days(k, n)
         elif n > 0 or key in flown_set:
             status, rate = "insufficient_data", None
         else:

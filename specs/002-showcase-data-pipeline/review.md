@@ -55,3 +55,22 @@ Reviews by a new `feature-reviewer` agent each round, given only this feature di
 - Landing example: LIT-ATL-LGA:DL1238+DL1700 against LIT-ORD-LGA:UA1515+UA1800, +28 points. The lower itinerary's median layover is 50 minutes against its 45-minute threshold, and 5.8% of its connecting days were scheduled below the threshold. The round-1 landing example is now tight.
 - 152.5 KB gzip in all, 7.0 KB for index and landing; runtime 25.0 minutes (thread limit 4).
 - All quickstart validation scenarios pass; `schemas --check` passes.
+
+## Round 3 (main...3a8e4b6)
+
+**Verdict:** APPROVE. 0 blocking, 3 should-fix, 4 nits. Automated checks all passed (ruff, format, pyright, 521 tests with 2 network tests deselected, `schemas --check`). The reviewer also checked the committed data:
+- Validated every committed showcase file against the models and recomputed every rate (146 entries, 0 mismatches).
+- Matched every file checksum with the manifests.
+- Checked the caps, monthly sums, intervals and flags.
+
+### Findings and responses
+
+| # | Severity | Finding | Response |
+|---|---|---|---|
+| 1 | SHOULD-FIX | The pipeline (DuckDB, halves away from zero) and the shared slider calculation (Python `round`, halves to even) could round a rate exactly halfway at the 7th decimal differently, for example 1 of 128 days. No current itinerary has such a count. | **Fixed.** The shared cases' rule now states halves away from zero, and two tie cases were added (1 and 77 of 128 days). `recompute` uses `rate_of_days`, which is exact integer arithmetic. An exhaustive check against DuckDB's `round` for every k/n with n ≤ 366 finds no mismatch. The monthly rate and the buffer share use the same helper. |
+| 2 | SHOULD-FIX | No record that `verify` passed on the final code. | **Fixed.** A `verify` run on 3a8e4b6 found one difference: `summary.md`. The Phase 1 report title was taken from the reports directory's name, which `verify` replaces with a temporary directory. The title now comes from the configuration file's name (commit b92c92d, with a test). The final `verify` line is recorded below. |
+| 3 | SHOULD-FIX | The roadmap showed superseded figures. | **Fixed.** It links to validation.md instead of repeating figures. |
+| 4 | NIT | The published definitions hard-code 10% and 5 minutes, which come from the configuration. | **Guarded.** A test fails when `config/phase1.toml` and the definition texts disagree. The definitions stay static text, so the published bytes don't depend on code paths that read the configuration. |
+| 5 | NIT | `tight_day_share_max` was optional. | **Fixed.** It is required, like every other value (Phase 0's configuration has no `[showcase]` section). |
+| 6 | NIT | The methodology, research R2 and the data model described the bound pre-filter and the tight flag inaccurately. | **Fixed.** All three now describe what the code does. |
+| 7 | NIT | ADR-0014 was amended in place. | **Kept as a dated clarification.** The amendment refines how slots are joined across schedule changes without changing the decision (schedule-slot identity), and it is dated and marked as an amendment. A superseding ADR is for a changed decision. |

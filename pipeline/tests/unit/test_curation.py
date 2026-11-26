@@ -23,6 +23,7 @@ def cfg(**kw: Any) -> Showcase:
         "size_budget_kb": 2048,
         "landing_budget_kb": 150,
         "output_dir": "site-data/showcase",
+        "tight_day_share_max": 0.1,
     }
     base.update(kw)
     return Showcase.model_validate(base)

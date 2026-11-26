@@ -6,6 +6,7 @@ import math
 from collections.abc import Sequence
 
 from flight_pipeline.showcase.models import Buffer
+from flight_pipeline.showcase.slider import rate_of_days
 
 
 def needed_layover(threshold_min: int, sched_layover_min: int, slack_min: int) -> int:
@@ -34,7 +35,7 @@ def buffer(
     if values:
         q = values[max(1, math.ceil(round(share * len(values), 9))) - 1]
         needed = max(0, math.ceil(q / round_min) * round_min)
-        at_least = round(sum(lay >= needed for lay, _ in operated) / len(operated), 6)
+        at_least = rate_of_days(sum(lay >= needed for lay, _ in operated), len(operated))
     return Buffer(
         share=share,
         needed_layover_min=needed,

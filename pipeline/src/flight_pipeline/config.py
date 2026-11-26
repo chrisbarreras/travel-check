@@ -312,8 +312,8 @@ class Showcase(_Strict):
     landing_budget_kb: Annotated[int, Field(ge=1)]
     output_dir: str
     # An itinerary is also tight when more than this share of its connecting days were
-    # scheduled below its feasibility threshold (None: the median alone, Phase 0's rule)
-    tight_day_share_max: Share | None = None
+    # scheduled below its feasibility threshold (research R4 step 6)
+    tight_day_share_max: Share
 
     @model_validator(mode="after")
     def _routes_range(self) -> Showcase:

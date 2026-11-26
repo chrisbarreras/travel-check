@@ -26,6 +26,13 @@ class Recomputed:
     rate: float | None
 
 
+def rate_of_days(feasible: int, paired: int) -> float:
+    """``feasible / paired`` rounded to 6 decimals with halves away from zero, exactly as
+    the pipeline's DuckDB ``round`` does (Python's ``round`` rounds halves to even): integer
+    arithmetic, so no float error decides a tie."""
+    return ((2 * feasible * 10**6 + paired) // (2 * paired)) / 10**6
+
+
 def recompute(
     slack_min: Sequence[int | None],
     outcome: str,
@@ -45,7 +52,7 @@ def recompute(
     )
     paired = len(slack_min)
     if paired >= min_sample_days and paired > 0:
-        return Recomputed(paired, feasible, "ok", round(feasible / paired, 6))
+        return Recomputed(paired, feasible, "ok", rate_of_days(feasible, paired))
     return Recomputed(paired, feasible, "insufficient_data", None)
 
 

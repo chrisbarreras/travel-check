@@ -76,7 +76,7 @@ Phase 0's DailyOutcome, ItineraryResult, ComparablePair, SensitivityScenario and
 | `connecting_options` | list[ConnectingOption] | Research R9 |
 | `schedule_warnings` | ScheduleWarnings | `connect_share` with `connecting_days` and `eligible_days`, `changes[]` (`date`, `leg`, `from_local_min`, `to_local_min`) |
 | `find` | FindParams | `origin`, `dest`, `airlines[]`, `legs[]` (`flight_number`, `share_of_days`) |
-| `tight_layover` | bool | Median layover below minimum connection time plus cutoff |
+| `tight_layover` | bool | Median scheduled layover below the minimum connection time plus cutoff, or more than `tight_day_share_max` of connecting days scheduled below it (research R4 step 6) |
 | `sold` | SoldRouting | `passengers`, `routing_itineraries` |
 
 Results under the other assumption scenarios (minimum connection time, cutoff, recurrence) stay internal (`itinerary_results.parquet`). The published data carries the default result, the daily series for the transfer-time slider, and, per comparison, `settings_compared` and `missing_settings_note`.

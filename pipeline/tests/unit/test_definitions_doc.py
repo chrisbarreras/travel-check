@@ -35,3 +35,14 @@ def test_every_definition_anchor_exists() -> None:
         path, _, anchor = d.methodology_anchor.partition("#")
         assert path == "docs/methodology.md"
         assert anchor in anchors, d.key
+
+
+def test_definition_texts_state_the_configured_values() -> None:
+    """The tight-layover and buffer texts name values from config/phase1.toml; changing the
+    configuration without the texts fails here (review round 3)."""
+    from flight_pipeline.config import load_config
+
+    cfg = load_config(DOC.parents[1] / "config" / "phase1.toml")
+    texts = {d.key: d.text for d in definitions()}
+    assert f"more than {round(cfg.showcase.tight_day_share_max * 100)}%" in texts["tight_layover"]
+    assert f"rounded up to {cfg.insights.buffer_round_min} minutes" in texts["buffer"]

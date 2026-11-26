@@ -357,7 +357,7 @@ def _tight(
     cutoff = cfg.feasibility.boarding_cutoff_min
     limit = cfg.showcase.tight_day_share_max
     path = derived(cfg, "itinerary_days.parquet")
-    if limit is None or not path.exists():
+    if not path.exists():
         return tight_itineraries(itineraries, cfg.itineraries, cutoff)
     con.execute("CREATE OR REPLACE TEMP TABLE _thresholds (itinerary_id VARCHAR, t INTEGER)")
     rows = [
