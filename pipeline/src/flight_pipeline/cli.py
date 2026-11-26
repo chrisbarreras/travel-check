@@ -38,6 +38,7 @@ from flight_pipeline.providers.bts_t100 import BtsT100Provider, load_passengers
 from flight_pipeline.providers.timezones import AirportsDataTimezones, MissingTimezoneError
 from flight_pipeline.showcase.publish import PublishError
 from flight_pipeline.stages import (
+    SHOWCASE_MANIFEST,
     stage_analyze,
     stage_build,
     stage_curate,
@@ -45,6 +46,7 @@ from flight_pipeline.stages import (
     stage_publish,
     stage_report,
     stage_select_hubs,
+    write_showcase_manifest,
 )
 from flight_pipeline.storage import connect, write_table
 
@@ -166,7 +168,7 @@ def cmd_prepare(cfg: Config, months: list[tuple[int, int]]) -> str:
     )
     progress(f"prepare: sold routings from {len(db1b)} DB1B quarter(s)")
     db1b_report = prepare_sold_routings(
-        con, db1b, cfg.itineraries.carrier_map, raw / "db1b" / "extract", "sold_routings"
+        con, db1b, cfg.itineraries.carrier_map, derived / "db1b_extract", "sold_routings"
     )
     n_sold = write_table(
         con,
@@ -213,6 +215,7 @@ def cmd_run(cfg: Config, config_path: Path, client: httpx.Client | None, *, acqu
     progress(f"publish: {stage_publish(connect(), cfg, config_path)}")
     runtime_min = (time.perf_counter() - started) / 60
     summary = stage_report(connect(), cfg, config_path, runtime_min)
+    write_showcase_manifest(cfg, config_path, runtime_min)
     if runtime_min > cfg.runtime.limit_min:
         progress(
             f"warning: runtime {runtime_min:.1f} min exceeds the {cfg.runtime.limit_min} min "
@@ -221,9 +224,43 @@ def cmd_run(cfg: Config, config_path: Path, client: httpx.Client | None, *, acqu
     return f"{summary}; runtime {runtime_min:.1f} min excluding downloads"
 
 
+MANIFEST_IDENTITY = ("config_sha256", "notes_sha256", "sources", "packages")
+
+
+def _tree(root: Path) -> dict[str, bytes]:
+    return (
+        {p.relative_to(root).as_posix(): p.read_bytes() for p in sorted(root.rglob("*.json"))}
+        if root.exists()
+        else {}
+    )
+
+
+def compare_showcase(committed: Path, fresh: Path) -> list[str]:
+    """Every published file byte for byte (the manifest by its input identities)."""
+    old, new = _tree(committed), _tree(fresh)
+    out: list[str] = []
+    for name in sorted(set(old) | set(new)):
+        if name == SHOWCASE_MANIFEST:
+            continue
+        if name not in old:
+            out.append(f"showcase/{name}: missing from the committed files")
+        elif name not in new:
+            out.append(f"showcase/{name}: not produced by the rerun")
+        elif old[name] != new[name]:
+            out.append(f"showcase/{name}: committed file differs from the rerun")
+    if SHOWCASE_MANIFEST not in old:
+        out.append(f"showcase/{SHOWCASE_MANIFEST}: missing from the committed files")
+    elif SHOWCASE_MANIFEST in new:
+        a, b = json.loads(old[SHOWCASE_MANIFEST]), json.loads(new[SHOWCASE_MANIFEST])
+        out += [f"showcase manifest {k} differs" for k in MANIFEST_IDENTITY if a.get(k) != b.get(k)]
+    return out
+
+
 def cmd_verify(cfg: Config, config_path: Path) -> str:
-    """SC-001: rerun every stage after acquire into a temporary directory and compare the
-    output hashes and summary with the committed reports."""
+    """SC-001, specs/002 FR-025: rerun every stage after acquire into a temporary directory
+    (DB1B extraction included) and compare every output with the committed files: the Phase 0
+    reports and output hashes, every published showcase file byte for byte, the showcase
+    manifest's inputs, and the generated schema and types. Each difference is named."""
     committed_manifest = cfg.path(cfg.paths.reports_dir) / "manifest.json"
     if not committed_manifest.exists():
         raise StageError(f"{committed_manifest} not found; run `run` first")
@@ -236,11 +273,13 @@ def cmd_verify(cfg: Config, config_path: Path) -> str:
                 "reports_dir": str(Path(tmp) / "reports"),
             }
         )
-        rerun_cfg = cfg.model_copy(update={"paths": paths})
+        showcase = cfg.showcase.model_copy(update={"output_dir": str(Path(tmp) / "showcase")})
+        rerun_cfg = cfg.model_copy(update={"paths": paths, "showcase": showcase})
         progress("verify: rerunning all stages after acquire")
         progress(cmd_prepare(rerun_cfg, rerun_cfg.period.months()))
         for stage in (stage_select_hubs, stage_build, stage_analyze, stage_curate, stage_insights):
             progress(stage(connect(), rerun_cfg))
+        progress(stage_publish(connect(), rerun_cfg, config_path))
         stage_report(connect(), rerun_cfg, config_path, None)
         fresh = json.loads((Path(tmp) / "reports" / "manifest.json").read_text(encoding="utf-8"))
         committed_dir = cfg.path(cfg.paths.reports_dir)
@@ -250,6 +289,7 @@ def cmd_verify(cfg: Config, config_path: Path) -> str:
             if not (committed_dir / name).exists()
             or (committed_dir / name).read_bytes() != (Path(tmp) / "reports" / name).read_bytes()
         ]
+        differences += compare_showcase(cfg.path(cfg.showcase.output_dir), Path(tmp) / "showcase")
     for key in ("config_sha256", "sources", "packages"):
         if committed.get(key) != fresh.get(key):
             differences.append(f"{key} differs")
@@ -257,9 +297,13 @@ def cmd_verify(cfg: Config, config_path: Path) -> str:
     for name in sorted(set(old) | set(new)):
         if old.get(name) != new.get(name):
             differences.append(f"{name}: {old.get(name)} != {new.get(name)}")
+    differences += schemas.differences(cfg.repo_root, schemas.generate(schemas.npx_generator))
     if differences:
         raise StageError("not reproducible:\n  " + "\n  ".join(differences))
-    return f"identical: {len(new)} outputs match the committed manifest"
+    return (
+        f"identical: {len(new)} outputs, the published showcase and the generated types match "
+        "the committed files"
+    )
 
 
 def cmd_schemas(cfg: Config, *, check: bool) -> str:

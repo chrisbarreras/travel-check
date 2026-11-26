@@ -210,13 +210,16 @@ export interface LandingRef {
   route_id: string;
 }
 /**
+ * Pointer to manifest.json. Only identities that change the data are here, so the
+ * published bytes do not change with every code commit (the commit is in the manifest).
+ *
  * This interface was referenced by `Showcase`'s JSON-Schema
  * via the `definition` "ManifestRef".
  */
 export interface ManifestRef {
   code_version: string;
   config_sha256: string;
-  generated: string;
+  manifest: string;
 }
 /**
  * This interface was referenced by `Showcase`'s JSON-Schema

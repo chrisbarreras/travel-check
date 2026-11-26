@@ -36,10 +36,16 @@ def test_two_runs_give_identical_outputs(
 
 
 def test_verify_passes_on_unchanged_run_and_fails_on_a_change(
-    run_root: tuple[Path, Path], capsys: pytest.CaptureFixture[str]
+    run_root: tuple[Path, Path],
+    capsys: pytest.CaptureFixture[str],
+    monkeypatch: pytest.MonkeyPatch,
 ) -> None:
+    from flight_pipeline import schemas
+
+    monkeypatch.setattr(schemas, "npx_generator", lambda schema: b"// stub types\n")
     root, config = run_root
     run_all(config)
+    assert main(["schemas", "--config", str(config)]) == 0
     capsys.readouterr()
     assert main(["verify", "--config", str(config)]) == 0
     out, _ = capsys.readouterr()

@@ -2,7 +2,9 @@
 
 A map-first explorer that compares how reliable flight itineraries are, using real historical on-time data: not only how long a trip takes, but how often its connection would actually have worked.
 
-**Status: Phase 0, the data feasibility experiment, is complete; the decision is GO.** Before building any interface, the project checked whether public flight data shows meaningful differences in connection feasibility between itineraries a traveler would otherwise consider equivalent. It does: 81 showcase examples in 9 origin/destination pairs across 5 hubs, from July 2024 to June 2025 (decision in [ADR-0012](docs/adr/0012-phase0-go-no-go.md); full report in [reports/phase0/summary.md](reports/phase0/summary.md)). The Phase 0 results are frozen at the git tag `phase0-final`. Next is Phase 1 in the [roadmap](docs/roadmap.md).
+**Status: Phase 0, the data feasibility experiment, is complete; the decision is GO.** Before building any interface, the project checked whether public flight data shows meaningful differences in connection feasibility between itineraries a traveler would otherwise consider equivalent. It does: 81 showcase examples in 9 origin/destination pairs across 5 hubs, from July 2024 to June 2025 (decision in [ADR-0012](docs/adr/0012-phase0-go-no-go.md); full report in [reports/phase0/summary.md](reports/phase0/summary.md)). The Phase 0 results are frozen at the git tag `phase0-final`.
+
+**Phase 1, the static showcase explorer, is in progress.** Its first feature, the showcase data pipeline ([spec](specs/002-showcase-data-pipeline/spec.md)), builds the curated, validated JSON the explorer will load, with schedule-based itinerary identity, per-day data for a transfer-time slider and traveler insights (faster alternatives, connecting options, buffer, monthly view, schedule changes). See the [roadmap](docs/roadmap.md).
 
 ## Run the Phase 0 pipeline
 
@@ -18,6 +20,20 @@ uv run flight-pipeline verify --config ../config/phase0.toml  # rerun and compar
 
 Every input is pinned by checksum in [config/phase0.toml](config/phase0.toml), so `run` reproduces the committed numbers exactly. Details: [quickstart](specs/001-bts-connection-experiment/quickstart.md). The analysis notebook (`uv run marimo edit ../notebooks/phase0_connection_experiment.py`) only reads the pipeline's outputs.
 
+## Build the Phase 1 showcase data
+
+The same data and pipeline, with [config/phase1.toml](config/phase1.toml) (the default). Generating the TypeScript types also needs Node.js 20 or later.
+
+```bash
+cd pipeline
+uv run flight-pipeline run --no-acquire    # every stage, through curate, insights and publish
+uv run flight-pipeline schemas            # JSON Schema and TypeScript types into shared/
+uv run flight-pipeline verify             # rerun and compare every output byte for byte
+uv run flight-pipeline schemas --check    # what CI runs: fails when shared/ is stale
+```
+
+The explorer reads `site-data/showcase/`; the data contract is [contracts/outputs.md](specs/002-showcase-data-pipeline/contracts/outputs.md), and every published definition links to [docs/methodology.md](docs/methodology.md#phase-1-showcase-data-feature-002-showcase-data-pipeline). Details: [quickstart](specs/002-showcase-data-pipeline/quickstart.md).
+
 ## Repository map
 
 | Path | Contents |
@@ -29,6 +45,9 @@ Every input is pinned by checksum in [config/phase0.toml](config/phase0.toml), s
 | [specs/](specs/) | Spec Kit feature specifications, plans, tasks and reviews |
 | [pipeline/](pipeline/) | Python data pipeline (`flight_pipeline`) and its tests |
 | [reports/phase0/](reports/phase0/) | Committed Phase 0 results, data-quality counts and run manifest |
+| [reports/phase1/](reports/phase1/) | The Phase 1 rerun's results with schedule-slot itineraries |
+| [site-data/showcase/](site-data/showcase/) | Published showcase JSON for the explorer, with its manifest |
+| [shared/](shared/) | The data contract shared by the pipeline and the explorer: JSON Schema, generated TypeScript types, shared test cases |
 | [notebooks/](notebooks/) | marimo analysis notebook |
 
 The project follows spec-driven development with [GitHub Spec Kit](https://github.com/github/spec-kit) under the rules in [.specify/memory/constitution.md](.specify/memory/constitution.md).

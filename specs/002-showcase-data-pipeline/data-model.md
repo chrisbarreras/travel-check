@@ -48,7 +48,7 @@ Phase 0's DailyOutcome, ItineraryResult, ComparablePair, SensitivityScenario and
 | `landing` | LandingRef | Route and comparison IDs, selection reason |
 | `definitions` | list[Definition] | `key`, `text`, `methodology_anchor`: every measure the files use |
 | `attribution` | list[Attribution] | `source`, `text`, `licence`, `url`: BTS (on-time, DB1B, T-100), airportsdata and tzdata; the explorer displays them (constitution, data licences) |
-| `manifest` | ManifestRef | Code version, config checksum, generated date |
+| `manifest` | ManifestRef | Package version, config checksum and the manifest's path; the git commit and run times are only in `manifest.json`, so the published bytes do not change with every code commit |
 
 ### Coverage
 `routes` (list of `ORIGIN-DEST`), `hubs`, `airlines` (each with itinerary count and sold passengers through the hubs), `period`, and `not_covered`: a list of `{kind, text}` with kinds `international`, `two_or_more_stops`, `separate_tickets`, `non_reporting_airline`, `outside_period`, `not_in_showcase`.
@@ -96,7 +96,7 @@ Results under the other assumption scenarios (minimum connection time, cutoff, r
 `note_id`, `start`, `end`, `airlines[]`, `airports[]`, `text`, `source_url`. From `config/disruption_notes.toml`; never used in a calculation.
 
 ### ShowcaseManifest (`site-data/showcase/manifest.json`)
-Sources and their checksums, config checksum, disruption-notes checksum, code version (package version and git commit), package versions, output checksums, and the run block (runtime, measured-at, machine) with Phase 0's carry-over rule extended to the code version (FR-027).
+Sources and their checksums, config checksum, disruption-notes checksum, code version (package version and git commit), package versions, output checksums, and the run block (runtime, measured-at, machine) with Phase 0's carry-over rule extended to the code version (FR-027). Written by `publish` and, with the measured runtime, by `run`. `verify` compares every other published file byte for byte and the manifest by its input identities (config, notes, sources, packages).
 
 ## Relationships
 

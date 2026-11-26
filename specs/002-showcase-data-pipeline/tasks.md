@@ -145,17 +145,17 @@ description: "Task list for the showcase data pipeline"
 
 **Independent Test**: two synthetic runs are identical; a one-byte edit in a committed showcase file or a stale type file fails `verify` and is named.
 
-- [ ] T042 [P] [US6] Write failing tests in pipeline/tests/integration/test_showcase_determinism.py: two runs give identical site-data/showcase/ and shared/ files; `verify` fails and names the file after a one-byte hand edit in a route file, in index.json and in shared/types/showcase.ts, and after a changed package or config (the Phase 0 follow-up regression test)
-- [ ] T043 [P] [US6] Write failing tests in pipeline/tests/unit/test_manifest.py: data-model.md `ShowcaseManifest` records sources, config and disruption-notes checksums, package versions, code version (package version and git commit) and output checksums; a carried runtime is kept only when config, sources and code version match (FR-027)
-- [ ] T044 [US6] Extend `verify` in pipeline/src/flight_pipeline/cli.py to rerun every stage into a temporary directory, extracting DB1B there too (contracts/cli.md; Phase 0 follow-up), and compare every output including site-data/showcase/ and shared/, to pass T042
-- [ ] T045 [US6] Implement the showcase manifest and the extended carry-over rule in pipeline/src/flight_pipeline/showcase/publish.py and pipeline/src/flight_pipeline/stages.py to pass T043
+- [X] T042 [P] [US6] Write failing tests in pipeline/tests/integration/test_showcase_determinism.py: two runs give identical site-data/showcase/ and shared/ files; `verify` fails and names the file after a one-byte hand edit in a route file, in index.json and in shared/types/showcase.ts, and after a changed package or config (the Phase 0 follow-up regression test)
+- [X] T043 [P] [US6] Write failing tests in pipeline/tests/unit/test_manifest.py: data-model.md `ShowcaseManifest` records sources, config and disruption-notes checksums, package versions, code version (package version and git commit) and output checksums; a carried runtime is kept only when config, sources and code version match (FR-027)
+- [X] T044 [US6] Extend `verify` in pipeline/src/flight_pipeline/cli.py to rerun every stage into a temporary directory, extracting DB1B there too (contracts/cli.md; Phase 0 follow-up), and compare every output including site-data/showcase/ and shared/, to pass T042
+- [X] T045 [US6] Implement the showcase manifest and the extended carry-over rule in pipeline/src/flight_pipeline/showcase/publish.py and pipeline/src/flight_pipeline/stages.py to pass T043
 
 ---
 
 ## Phase 9: Polish & cross-cutting
 
-- [ ] T046 [P] Update docs/methodology.md: schedule slots, layover by daily matching with the bound pre-filter, end-of-period exclusion, nonstop comparison, curation and caps, every insight's definition and threshold, the monthly minimum, disruption notes, and the published-data contract (FR-028)
-- [ ] T047 [P] Update README.md (Phase 1 status, how to build the showcase data, the `shared/` contract) and docs/roadmap.md (Phase 1 progress)
+- [X] T046 [P] Update docs/methodology.md: schedule slots, layover by daily matching with the bound pre-filter, end-of-period exclusion, nonstop comparison, curation and caps, every insight's definition and threshold, the monthly minimum, disruption notes, and the published-data contract (FR-028)
+- [X] T047 [P] Update README.md (Phase 1 status, how to build the showcase data, the `shared/` contract) and docs/roadmap.md (Phase 1 progress)
 - [ ] T048 Run `uv run flight-pipeline run --config ../config/phase1.toml` on the pinned real data; review coverage (SC-001), balance (SC-002), size (SC-007) and runtime; then rerun with DuckDB limited to 4 threads and record that runtime against the 30-minute limit (SC-008); commit site-data/showcase/ and shared/
 - [ ] T049 Run `uv run flight-pipeline verify --config ../config/phase1.toml` and `uv run flight-pipeline schemas --check`; both must pass
 - [ ] T050 Run `uv run ruff check .`, `uv run ruff format --check .`, `uv run pyright` and `uv run pytest` in pipeline/ and fix any failures

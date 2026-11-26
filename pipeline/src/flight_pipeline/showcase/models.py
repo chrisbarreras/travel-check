@@ -403,9 +403,12 @@ class Attribution(_Model):
 
 
 class ManifestRef(_Model):
-    code_version: str
+    """Pointer to manifest.json. Only identities that change the data are here, so the
+    published bytes do not change with every code commit (the commit is in the manifest)."""
+
+    code_version: str  # package version
     config_sha256: str
-    generated: dt.date
+    manifest: str  # path of the manifest, relative to the output directory
 
 
 class ShowcaseIndex(_Model):

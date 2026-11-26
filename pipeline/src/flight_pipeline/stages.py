@@ -100,7 +100,7 @@ from flight_pipeline.sensitivity import (
     settings_compared,
 )
 from flight_pipeline.showcase import assemble
-from flight_pipeline.showcase.models import InsightsFile
+from flight_pipeline.showcase.models import InsightsFile, ShowcaseManifest
 from flight_pipeline.showcase.publish import render, validation_context, write_files
 from flight_pipeline.slots import build_slots
 from flight_pipeline.storage import (
@@ -730,6 +730,7 @@ def stage_publish(con: duckdb.DuckDBPyConnection, cfg: Config, config_path: Path
         cfg.showcase.size_budget_kb,
         cfg.showcase.landing_budget_kb,
     )
+    write_showcase_manifest(cfg, config_path, None)
     total = sum(sizes.values()) / 1024
     first = (sizes["index.json"] + sizes["landing.json"]) / 1024
     return (
@@ -737,6 +738,69 @@ def stage_publish(con: duckdb.DuckDBPyConnection, cfg: Config, config_path: Path
         f"{sum(len(r.itineraries) for r in route_files)} itineraries; "
         f"{total:.1f} KB gzip in all, {first:.1f} KB for index and landing"
     )
+
+
+SHOWCASE_MANIFEST = "manifest.json"
+
+
+def showcase_outputs(out_dir: Path) -> dict[str, str]:
+    """sha256 of every published file except the manifest, by path relative to ``out_dir``."""
+    return {
+        p.relative_to(out_dir).as_posix(): _sha256(p)
+        for p in sorted(out_dir.rglob("*.json"))
+        if p.name != SHOWCASE_MANIFEST or p.parent != out_dir
+    }
+
+
+def showcase_manifest(
+    previous: dict[str, Any] | None,
+    *,
+    identity: dict[str, Any],
+    outputs: dict[str, str],
+    run: dict[str, Any],
+) -> dict[str, Any]:
+    """The showcase manifest (FR-027): ``identity`` holds sources, config and notes checksums,
+    packages, code version and git commit. A measured runtime is carried over from
+    ``previous`` only when every identity field matches (the Phase 0 rule, extended to the
+    code version)."""
+    same = previous is not None and all(previous.get(k) == v for k, v in identity.items())
+    return {
+        **identity,
+        "outputs": outputs,
+        "run": merge_run(previous and previous.get("run"), run, same_inputs=same),
+    }
+
+
+def write_showcase_manifest(
+    cfg: Config, config_path: Path, runtime_min: float | None
+) -> dict[str, Any]:
+    out_dir = cfg.path(cfg.showcase.output_dir)
+    version, commit = assemble.code_identity(cfg.repo_root)
+    identity: dict[str, Any] = {
+        "sources": source_records(cfg),
+        "config_sha256": _sha256(config_path),
+        "notes_sha256": _sha256(cfg.path(cfg.notes.disruption_file)),
+        "code_version": version,
+        "git_commit": commit,
+        "packages": {
+            **{p: metadata.version(p) for p in PACKAGES},
+            "python": ".".join(map(str, sys.version_info[:2])),
+        },
+    }
+    run = {
+        "run_at": dt.datetime.now(dt.UTC).isoformat(timespec="seconds"),
+        "runtime_min": None if runtime_min is None else round(runtime_min, 2),
+        "runtime_limit_min": cfg.runtime.limit_min,
+        "runtime_exceeded": None if runtime_min is None else runtime_min > cfg.runtime.limit_min,
+        "machine": {"cpu_count": os.cpu_count(), "ram_gb": _ram_gb()},
+    }
+    path = out_dir / SHOWCASE_MANIFEST
+    previous = json.loads(path.read_text(encoding="utf-8")) if path.exists() else None
+    manifest = showcase_manifest(
+        previous, identity=identity, outputs=showcase_outputs(out_dir), run=run
+    )
+    write_json(path, manifest, ShowcaseManifest)
+    return manifest
 
 
 # --- Report and manifest -----------------------------------------------------------------

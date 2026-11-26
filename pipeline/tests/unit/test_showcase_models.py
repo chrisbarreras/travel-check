@@ -223,7 +223,11 @@ def index(**kw: Any) -> dict[str, Any]:
             {"source": s, "text": f"{s} data", "licence": "public", "url": "https://example.org"}
             for s in ("BTS", "airportsdata", "tzdata")
         ],
-        "manifest": {"code_version": "0.2.0", "config_sha256": "0" * 64, "generated": "2026-11-25"},
+        "manifest": {
+            "code_version": "0.2.0",
+            "config_sha256": "0" * 64,
+            "manifest": "manifest.json",
+        },
     }
     base.update(kw)
     return base

@@ -188,14 +188,17 @@ ATTRIBUTION: tuple[Attribution, ...] = (
     ),
     Attribution(
         source="airportsdata",
-        text="Airport time zones from the airportsdata package.",
+        text=(
+            "Airport time zones from the airportsdata package, Copyright (c) 2020- Mike "
+            "Borsetti (includes data Copyright (c) 2014 mwgg)."
+        ),
         licence="MIT",
         url="https://github.com/mborsetti/airportsdata",
     ),
     Attribution(
         source="tzdata",
-        text="Time zone rules from the IANA Time Zone Database (tzdata).",
-        licence="Public domain",
+        text="Time zone rules from the IANA Time Zone Database, through the tzdata package.",
+        licence="IANA data public domain; tzdata package Apache License 2.0",
         url="https://www.iana.org/time-zones",
     ),
 )

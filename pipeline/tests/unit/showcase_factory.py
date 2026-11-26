@@ -174,7 +174,7 @@ def index(routes: list[RouteFile] | None = None, **kw: Any) -> ShowcaseIndex:
         "definitions": definitions(),
         "attribution": list(ATTRIBUTION),
         "manifest": ManifestRef(
-            code_version="0.2.0", config_sha256="0" * 64, generated=dt.date(2025, 6, 30)
+            code_version="0.2.0", config_sha256="0" * 64, manifest="manifest.json"
         ),
     }
     base.update(kw)

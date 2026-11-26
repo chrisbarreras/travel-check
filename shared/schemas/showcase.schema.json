@@ -548,6 +548,7 @@
     },
     "ManifestRef": {
       "additionalProperties": false,
+      "description": "Pointer to manifest.json. Only identities that change the data are here, so the\npublished bytes do not change with every code commit (the commit is in the manifest).",
       "properties": {
         "code_version": {
           "type": "string"
@@ -555,15 +556,14 @@
         "config_sha256": {
           "type": "string"
         },
-        "generated": {
-          "format": "date",
+        "manifest": {
           "type": "string"
         }
       },
       "required": [
         "code_version",
         "config_sha256",
-        "generated"
+        "manifest"
       ],
       "title": "ManifestRef",
       "type": "object"

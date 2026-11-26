@@ -7,7 +7,6 @@ result, schedule, per-day series and sold routing, and the traveler insights fro
 
 from __future__ import annotations
 
-import datetime as dt
 import subprocess
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
@@ -204,21 +203,20 @@ def route_files(inputs: Inputs, cfg: Config) -> list[RouteFile]:
     return out
 
 
-def code_version(repo_root: Path) -> tuple[str, dt.date | None]:
-    """Package version plus the git commit, and the commit date (None outside git)."""
+def code_identity(repo_root: Path) -> tuple[str, str]:
+    """The package version and the git commit (``unknown`` outside git)."""
     version = metadata.version("flight-pipeline")
     try:
         done = subprocess.run(
-            ["git", "log", "-1", "--format=%h %cs"],
+            ["git", "rev-parse", "HEAD"],
             cwd=repo_root,
             capture_output=True,
             text=True,
             check=True,
         )
-        commit, date = done.stdout.split()
-        return f"{version}+{commit}", dt.date.fromisoformat(date)
-    except (OSError, subprocess.CalledProcessError, ValueError):
-        return version, None
+        return version, done.stdout.strip()
+    except (OSError, subprocess.CalledProcessError):
+        return version, "unknown"
 
 
 def index_of(
@@ -232,7 +230,7 @@ def index_of(
     )
     by_route = {r.route_id: r for r in routes}
     shown = [i for r in routes for i in r.itineraries]
-    version, commit_date = code_version(cfg.repo_root)
+    version, _ = code_identity(cfg.repo_root)
     summaries = [
         RouteSummary(
             route_id=r.route_id,
@@ -274,7 +272,7 @@ def index_of(
         manifest=ManifestRef(
             code_version=version,
             config_sha256=config_sha256,
-            generated=commit_date or cfg.period.dates()[1],
+            manifest="manifest.json",
         ),
     )
 

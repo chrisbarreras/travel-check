@@ -82,7 +82,7 @@ How the flight intelligence app grows from a static showcase into a full-stack p
 
 | Feature | Delivers |
 |---|---|
-| `showcase-data-pipeline` | BTS → itineraries (schedule-based identity, ADR-0012 requirements) → slack distributions and traveler-insight data → validated JSON; Pydantic models and generated TypeScript types |
+| `showcase-data-pipeline` | BTS → itineraries (schedule-based identity, ADR-0012 requirements) → slack distributions and traveler-insight data → validated JSON; Pydantic models and generated TypeScript types. **In progress** ([specs/002](../specs/002-showcase-data-pipeline/spec.md)): implementation complete, real-data run and review next |
 | `web-foundation` | Vite/React scaffold, the full automated test setup (unit, component, Playwright end-to-end and visual in Docker, axe, Lighthouse CI), CI that blocks merges on failure, and a deployed placeholder page |
 | `explorer-core` | Map, list and timeline with synced selection; selection in the URL. Deployable on its own |
 | `explorer-insights` | Risk visuals, transfer-time slider, traveler-insight panels and "Find this itinerary" links, landing example, "How the numbers work" page |
