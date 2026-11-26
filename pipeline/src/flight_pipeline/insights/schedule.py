@@ -59,10 +59,21 @@ def schedule_changes(
 
 
 def schedule_warnings(
-    connect_share: float, inbound: Sequence[ScheduleChange], outbound: Sequence[ScheduleChange]
+    connect_share: float,
+    eligible_days: int,
+    inbound: Sequence[ScheduleChange],
+    outbound: Sequence[ScheduleChange],
 ) -> ScheduleWarnings:
+    """Changes on either leg by date, with the connection share and its sample. The share is
+    connecting days / eligible days rounded to 6 decimals, which recovers the count exactly
+    for any period of up to 366 days."""
     changes = sorted([*inbound, *outbound], key=lambda c: (c.date, c.leg))
-    return ScheduleWarnings(connect_share=connect_share, changes=changes)
+    return ScheduleWarnings(
+        connect_share=connect_share,
+        connecting_days=round(connect_share * eligible_days),
+        eligible_days=eligible_days,
+        changes=changes,
+    )
 
 
 def find_params(

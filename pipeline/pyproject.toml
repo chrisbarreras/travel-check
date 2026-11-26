@@ -51,4 +51,7 @@ venv = ".venv"
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-addopts = "-ra --strict-markers"
+addopts = "-ra --strict-markers -m 'not network'"
+markers = [
+    "network: needs the network (the npm registry for the type generator); not run by default, run with `pytest -m network` (constitution II: tests must not depend on the network)",
+]

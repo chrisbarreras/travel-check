@@ -102,6 +102,11 @@ export interface BalanceCaps {
   route: number;
 }
 /**
+ * The recommended layover against the scheduled one. ``actual_layover_min`` is the
+ * median scheduled layover; ``scheduled_at_least_share`` is the share of operated days
+ * whose scheduled layover was at least the recommendation, since a median hides a layover
+ * that varies by day (review round 2).
+ *
  * This interface was referenced by `Showcase`'s JSON-Schema
  * via the `definition` "Buffer".
  */
@@ -109,6 +114,7 @@ export interface Buffer {
   actual_layover_min: number;
   needed_layover_min: number | null;
   operated_days: number;
+  scheduled_at_least_share: number | null;
   share: number;
 }
 /**
@@ -329,12 +335,17 @@ export interface Schedule {
   travel_min: number;
 }
 /**
+ * The connection share with its sample: connecting days of the eligible days (days in
+ * the period less end-of-period days).
+ *
  * This interface was referenced by `Showcase`'s JSON-Schema
  * via the `definition` "ScheduleWarnings".
  */
 export interface ScheduleWarnings {
   changes: ScheduleChange[];
   connect_share: number;
+  connecting_days: number;
+  eligible_days: number;
 }
 /**
  * This interface was referenced by `Showcase`'s JSON-Schema

@@ -198,3 +198,26 @@ def test_repair_removes_pairs_when_one_airline_is_over_and_others_are_at_the_cap
     assert violation(kept) == 0
     # two pair removals (AA-DL with AA-UA) leave AA, DL and UA at exactly half
     assert sorted(c.comparison_id for c in kept) == ["CMH-SAN#4", "CMH-SAN#5"]
+
+
+def test_regional_places_are_not_held_for_candidates_that_do_not_exist() -> None:
+    """One regional candidate among many: the other places go to non-regional routes, and
+    only the regional share is reported short."""
+    routes = [route("CMH-SAN")] + [route(f"L{i:02d}-MCO", False) for i in range(8)]
+    comps = [comp("CMH-SAN", 0, 0.30, ("ORD", "DFW"))] + [
+        comp(f"L{i:02d}-MCO", 0, 0.20 - i * 0.01, ("ATL", "ORD")) for i in range(8)
+    ]
+    result = curate(
+        routes,
+        comps,
+        cfg(
+            routes_min=3,
+            routes_max=6,
+            max_share_route=1.0,
+            max_share_airline=1.0,
+            max_share_hub=1.0,
+        ),
+    )
+    assert len(result.routes) == 6
+    assert sum(r.regional_origin for r in result.routes) == 1
+    assert result.shortfalls == ["only 1 of 6 routes have a regional origin"]

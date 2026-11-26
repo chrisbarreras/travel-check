@@ -61,3 +61,15 @@ def test_thirty_days_cover_ninety_five_percent() -> None:
     # the review's case: needed 50, 55, ..., 195 -> 29 of 30 days need at most 190
     b = buffer([(0, -n) for n in range(50, 200, 5)], 0, 90, 0.95, 5)
     assert b.needed_layover_min == 190
+
+
+def test_share_of_days_scheduled_at_least_the_buffer() -> None:
+    # the review's case: a median of 134 hides 113 of 300 days scheduled at 50 or less
+    operated = [(134, 134)] * 187 + [(50, 50)] * 113  # needed layover 0 + lay - slack = 0
+    b = buffer(operated, 45, 134, 0.95, 5)
+    assert b.needed_layover_min == 45
+    assert b.scheduled_at_least_share == 1.0
+    late = [(134, 54)] * 187 + [(50, 10)] * 113  # needed 125 and 85
+    b = buffer(late, 45, 134, 0.95, 5)
+    assert b.needed_layover_min == 125
+    assert b.scheduled_at_least_share == round(187 / 300, 6)

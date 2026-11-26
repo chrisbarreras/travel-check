@@ -56,3 +56,46 @@ def test_sql_candidates_match_rule() -> None:
     assert ("CMH-ATL-SAN:DL7+DL8", "CMH-CLT-SAN:AA13+AA14", 0, 631) not in got
     assert ("CMH-CLT-SAN:AA13+AA14", "CMH-MSP-SAN:DL11+DL12", 60, 90) in got
     assert ("CMH-DFW-SAN:AA3+AA4", "CMH-ORD-SAN:AA1+AA2", 50, 120) in got
+
+
+def test_tight_by_median_or_by_share_of_days_below_the_threshold() -> None:
+    from flight_pipeline.compare import tight_itineraries
+    from flight_pipeline.models import Itinerary
+    from tests.unit.test_itineraries import rules as itinerary_rules
+
+    def it(name: str, median: int) -> Itinerary:
+        return Itinerary(
+            itinerary_id=IDS[name],
+            origin="CMH",
+            hub="ORD",
+            dest="SAN",
+            inbound_slot="AA-CMH-ORD-0800",
+            outbound_slot=f"AA-ORD-SAN-{IDS[name][-4:]}",
+            airline_in="AA",
+            airline_out="AA",
+            partner_connection=False,
+            median_layover_min=median,
+            median_travel_min=300,
+            median_dep_local_min=480,
+            connect_share=1.0,
+            eligible_days=300,
+            sold_passengers=40,
+            routing_itineraries=1,
+        )
+
+    IDS = {
+        "below": "CMH-ORD-SAN:AA0800+AA1000",
+        "at": "CMH-ORD-SAN:AA0800+AA1005",
+        "varies": "CMH-ORD-SAN:AA0800+AA1010",
+        "steady": "CMH-ORD-SAN:AA0800+AA1015",
+    }
+    rules = itinerary_rules()  # default minimum 30, no per-hub minimum
+    its = [it("below", 40), it("at", 45), it("varies", 60), it("steady", 60)]
+    # threshold 30 + 15 = 45; "at" has zero margin on 23% of days, "varies" on 15%
+    below = {IDS["at"]: 0.23, IDS["varies"]: 0.15, IDS["steady"]: 0.05}
+    assert tight_itineraries(its, rules, 15) == {IDS["below"]}  # the median alone (Phase 0)
+    assert tight_itineraries(its, rules, 15, days_below=below, max_day_share=0.1) == {
+        IDS["below"],
+        IDS["at"],
+        IDS["varies"],
+    }

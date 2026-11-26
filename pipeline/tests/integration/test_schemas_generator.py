@@ -1,4 +1,7 @@
-"""The real pinned TypeScript generator, and the committed shared/ files (FR-012)."""
+"""The real pinned TypeScript generator, and the committed shared/ files (FR-012).
+
+Opt-in (`pytest -m network`): npx may download the generator. CI checks the committed files
+with `flight-pipeline schemas --check` instead."""
 
 from __future__ import annotations
 
@@ -10,6 +13,7 @@ from flight_pipeline import schemas
 from tests.integration.conftest import REPO
 
 
+@pytest.mark.network
 @pytest.mark.skipif(shutil.which("npx") is None, reason="Node.js not available")
 def test_real_generator_produces_types() -> None:
     ts = schemas.npx_generator(schemas.schema_bytes()).decode("utf-8")
@@ -19,6 +23,7 @@ def test_real_generator_produces_types() -> None:
     assert "\r" not in ts
 
 
+@pytest.mark.network
 @pytest.mark.skipif(shutil.which("npx") is None, reason="Node.js not available")
 def test_committed_files_are_current() -> None:
     # the same check CI runs: `flight-pipeline schemas --check`

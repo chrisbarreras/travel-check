@@ -57,13 +57,14 @@ def test_warnings_merge_both_legs_by_date() -> None:
     outbound = schedule_changes(
         series((700, 10), (730, 50)), [], "outbound", min_shift_min=10, min_days=7
     )
-    w = schedule_warnings(0.92, inbound, outbound)
+    w = schedule_warnings(0.92, 300, inbound, outbound)
+    assert (w.connecting_days, w.eligible_days) == (276, 300)
     assert w.connect_share == 0.92
     assert [(c.leg, c.date) for c in w.changes] == [
         ("outbound", START + dt.timedelta(days=10)),
         ("inbound", START + dt.timedelta(days=30)),
     ]
-    assert schedule_warnings(1.0, [], []).changes == []
+    assert schedule_warnings(1.0, 300, [], []).changes == []
 
 
 def test_find_uses_the_most_frequent_flight_number_per_leg() -> None:

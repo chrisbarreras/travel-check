@@ -125,9 +125,10 @@ DEFINITIONS: dict[str, tuple[str, str]] = {
         "sensitivity",
     ),
     "tight_layover": (
-        "The median scheduled layover is shorter than the minimum connection time plus the "
-        "boarding cutoff, so the connection was feasible only on days when the inbound was "
-        "early or the outbound late.",
+        "The scheduled layover is shorter than the minimum connection time plus the "
+        "boarding cutoff at the median, or on more than 10% of connecting days; on those "
+        "days the connection was feasible only when the inbound was early or the outbound "
+        "late.",
         "connection-feasibility",
     ),
     "failure_types": (
@@ -142,7 +143,9 @@ DEFINITIONS: dict[str, tuple[str, str]] = {
     ),
     "buffer": (
         "The scheduled layover that would have left enough time on the configured share of "
-        "operated days, rounded up to 5 minutes.",
+        "operated days, rounded up to 5 minutes, shown with the itinerary's median scheduled "
+        "layover and the share of operated days on which its scheduled layover was at least "
+        "that long.",
         "buffer",
     ),
     "faster_alternative": (

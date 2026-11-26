@@ -22,6 +22,7 @@ from pydantic import TypeAdapter
 from flight_pipeline.compare import (
     BootstrapTask,
     comparable_candidates,
+    feasibility_threshold,
     go_criteria,
     is_showcase,
     order_pair,
@@ -347,6 +348,40 @@ def _write_itinerary_days(
     )
 
 
+def _tight(
+    con: duckdb.DuckDBPyConnection, cfg: Config, itineraries: Sequence[Itinerary]
+) -> set[str]:
+    """Tight itineraries (``compare.tight_itineraries``), with the share of connecting days
+    scheduled below the threshold from itinerary_days.parquet when the configuration sets
+    ``[showcase] tight_day_share_max``."""
+    cutoff = cfg.feasibility.boarding_cutoff_min
+    limit = cfg.showcase.tight_day_share_max
+    path = derived(cfg, "itinerary_days.parquet")
+    if limit is None or not path.exists():
+        return tight_itineraries(itineraries, cfg.itineraries, cutoff)
+    con.execute("CREATE OR REPLACE TEMP TABLE _thresholds (itinerary_id VARCHAR, t INTEGER)")
+    rows = [
+        (i.itinerary_id, feasibility_threshold(i, cfg.itineraries, cutoff)) for i in itineraries
+    ]
+    for start in range(0, len(rows), 500):
+        batch = rows[start : start + 500]
+        con.execute(
+            "INSERT INTO _thresholds VALUES " + ", ".join("(?, ?)" for _ in batch),
+            [v for row in batch for v in row],
+        )
+    below = {
+        str(iid): float(share)
+        for iid, share in con.execute(
+            "SELECT d.itinerary_id, avg(CAST(d.sched_layover_min < t.t AS INTEGER)) "
+            f"FROM read_parquet('{path.as_posix()}') d JOIN _thresholds t USING (itinerary_id) "
+            "WHERE d.match_status = 'connects' GROUP BY 1"
+        ).fetchall()
+    }
+    return tight_itineraries(
+        itineraries, cfg.itineraries, cutoff, days_below=below, max_day_share=limit
+    )
+
+
 def _defaults(cfg: Config) -> tuple[int, int, float]:
     return (
         cfg.itineraries.min_connection_default_min,
@@ -538,7 +573,7 @@ def stage_curate(con: duckdb.DuckDBPyConnection, cfg: Config) -> str:
         con, derived(cfg, "sensitivity_scenarios.parquet"), SensitivityScenario
     )
     by_id = {i.itinerary_id: i for i in itineraries}
-    tight = tight_itineraries(itineraries, cfg.itineraries, cfg.feasibility.boarding_cutoff_min)
+    tight = _tight(con, cfg, itineraries)
     counts: dict[str, int] = {}
     for i in itineraries:
         counts[f"{i.origin}-{i.dest}"] = counts.get(f"{i.origin}-{i.dest}", 0) + 1
@@ -765,11 +800,7 @@ def stage_publish(con: duckdb.DuckDBPyConnection, cfg: Config, config_path: Path
         daily=_daily_by_itinerary(
             read_models(con, derived(cfg, "daily_outcomes.parquet"), DailyOutcome), shown
         ),
-        tight=frozenset(
-            tight_itineraries(
-                list(shown.values()), cfg.itineraries, cfg.feasibility.boarding_cutoff_min
-            )
-        ),
+        tight=frozenset(_tight(con, cfg, list(shown.values()))),
         notes=load_disruption_notes(cfg.path(cfg.notes.disruption_file), cfg.period.dates()),
     )
     route_files = assemble.route_files(inputs, cfg)
@@ -1048,6 +1079,13 @@ def scenario_summaries(
     return out
 
 
+def _report_title(cfg: Config) -> str:
+    """Phase 0's title for its frozen report; Phase 1's for its rerun (``reports/phase1``)."""
+    if Path(cfg.paths.reports_dir).name == "phase1":
+        return "Phase 1 rerun: connection feasibility with schedule-slot itineraries"
+    return "Phase 0 finding: connection feasibility experiment"
+
+
 def _curation_sections(con: duckdb.DuckDBPyConnection, cfg: Config) -> list[str]:
     """The showcase curation section, when the curate stage has run (Phase 1)."""
     path = derived(cfg, "curation.json")
@@ -1134,7 +1172,7 @@ def stage_report(
             [(p.itinerary_a, p.itinerary_b) for p in examples], rates_by_scenario, scenario_rows
         ).items()
     }
-    tight_ids = tight_itineraries(itineraries, cfg.itineraries, cfg.feasibility.boarding_cutoff_min)
+    tight_ids = _tight(con, cfg, itineraries)
     by_itinerary = {i.itinerary_id: i for i in itineraries}
     breakdown = (
         showcase_breakdown(
@@ -1248,6 +1286,7 @@ def stage_report(
             cfg.comparison.go_min_examples,
             cfg.comparison.go_min_hubs,
             appendix,
+            title=_report_title(cfg),
         ),
         encoding="utf-8",
         newline="\n",

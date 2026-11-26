@@ -120,6 +120,7 @@ cross_hub_share_min = 0.5         # of showcase comparisons (SC-002)
 size_budget_kb = 2048             # gzip-compressed published files
 landing_budget_kb = 150           # gzip-compressed index.json + landing.json (SC-007 proxy)
 output_dir = "site-data/showcase"
+tight_day_share_max = 0.1         # tight if > 10% of connecting days scheduled below the threshold
 
 [insights]
 faster_min_saving_min = 15

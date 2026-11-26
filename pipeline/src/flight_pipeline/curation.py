@@ -174,7 +174,11 @@ def curate(
         (r for r in routes if r.itinerary_count >= 2 and r.route_id in with_comps),
         key=lambda r: _route_order(_score(r.route_id, comps)),
     )
-    required_regional = math.ceil(cfg.regional_share_min * cfg.routes_max)
+    # places held for regional routes, but never more than there are regional candidates
+    required_regional = min(
+        math.ceil(cfg.regional_share_min * cfg.routes_max),
+        sum(r.regional_origin for r in candidates),
+    )
     max_non_regional = cfg.routes_max - required_regional
     chosen: list[RouteCandidate] = []
     non_regional = 0
@@ -250,7 +254,7 @@ def curate(
 
     if len(chosen) < cfg.routes_min:
         shortfalls.append(
-            f"only {len(chosen)} routes qualify, below the minimum of {cfg.routes_min}"
+            f"only {len(chosen)} routes selected, below the minimum of {cfg.routes_min}"
         )
     regional = sum(r.regional_origin for r in chosen)
     if chosen and regional < math.ceil(cfg.regional_share_min * len(chosen)):

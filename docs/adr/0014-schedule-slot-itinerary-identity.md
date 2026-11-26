@@ -24,6 +24,8 @@ Phase 0 identified an itinerary's two flights by marketing airline and flight nu
 - Phase 0's results are frozen at the git tag `phase0-final`; later code does not reproduce them.
 - Reported layover and travel time are medians over connecting days.
 - The daily matching runs on more candidates than Phase 0's median pre-filter allowed; the lossless bound pre-filter and the sold-routing rule keep it within the runtime budget.
+- Departure minutes are clustered on the clock from 00:00 to 23:59, not around midnight: a flight scheduled at 23:55 on some days and 00:05 on others forms two slots, each of which may fall below the recurrence threshold. In the Phase 1 data, 59 same-airline, same-route slot pairs lie within 30 minutes of each other across midnight. Circular clustering is a candidate change for a later feature.
+- Departure times that vary by day of week or season (Southwest's) split into many slots, so such airlines still have few itineraries; the report lists itineraries per airline.
 
 ## Amendment (implementation, 2026-11-26)
 

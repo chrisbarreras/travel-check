@@ -179,9 +179,15 @@ class MonthRate(_Model):
 
 
 class Buffer(_Model):
+    """The recommended layover against the scheduled one. ``actual_layover_min`` is the
+    median scheduled layover; ``scheduled_at_least_share`` is the share of operated days
+    whose scheduled layover was at least the recommendation, since a median hides a layover
+    that varies by day (review round 2)."""
+
     share: Annotated[float, Field(gt=0.5, lt=1.0)]
     needed_layover_min: NonNegInt | None
     actual_layover_min: NonNegInt
+    scheduled_at_least_share: Share | None
     operated_days: NonNegInt
 
 
@@ -234,8 +240,25 @@ class ScheduleChange(_Model):
 
 
 class ScheduleWarnings(_Model):
+    """The connection share with its sample: connecting days of the eligible days (days in
+    the period less end-of-period days)."""
+
     connect_share: Share
+    connecting_days: NonNegInt
+    eligible_days: NonNegInt
     changes: list[ScheduleChange]
+
+    @model_validator(mode="after")
+    def _share(self) -> ScheduleWarnings:
+        if self.connecting_days > self.eligible_days:
+            raise ValueError("connecting_days exceeds eligible_days")
+        if (
+            self.eligible_days
+            and abs(self.connect_share - self.connecting_days / self.eligible_days)
+            > _RATE_TOLERANCE
+        ):
+            raise ValueError("connect_share does not match connecting_days / eligible_days")
+        return self
 
 
 class FindLeg(_Model):

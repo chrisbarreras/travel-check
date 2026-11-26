@@ -173,7 +173,9 @@ def _build(
                 boot=boot,
             ),
             connecting_options=connecting_options(f, peers, outbound_dep, boot=boot),
-            schedule_warnings=schedule_warnings(it.connect_share, legs[0], legs[1]),
+            schedule_warnings=schedule_warnings(
+                it.connect_share, it.eligible_days, legs[0], legs[1]
+            ),
             find=find_params(
                 it.origin,
                 it.dest,

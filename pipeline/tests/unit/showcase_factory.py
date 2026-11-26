@@ -78,11 +78,17 @@ def itinerary(iid: str, hub: str = "ORD", *, paired: int = 40, feasible: int = 3
         "excluded_days": ExcludedDays(not_connecting=0, quality=0, end_of_period=0),
         "monthly": [],
         "buffer": Buffer(
-            share=0.95, needed_layover_min=None, actual_layover_min=90, operated_days=0
+            share=0.95,
+            needed_layover_min=None,
+            actual_layover_min=90,
+            scheduled_at_least_share=None,
+            operated_days=0,
         ),
         "faster_alternatives": [],
         "connecting_options": [],
-        "schedule_warnings": ScheduleWarnings(connect_share=1.0, changes=[]),
+        "schedule_warnings": ScheduleWarnings(
+            connect_share=1.0, connecting_days=300, eligible_days=300, changes=[]
+        ),
         "find": FindParams(
             origin="CMH",
             dest="SAN",

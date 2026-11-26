@@ -232,6 +232,7 @@
     },
     "Buffer": {
       "additionalProperties": false,
+      "description": "The recommended layover against the scheduled one. ``actual_layover_min`` is the\nmedian scheduled layover; ``scheduled_at_least_share`` is the share of operated days\nwhose scheduled layover was at least the recommendation, since a median hides a layover\nthat varies by day (review round 2).",
       "properties": {
         "actual_layover_min": {
           "minimum": 0,
@@ -252,6 +253,18 @@
           "minimum": 0,
           "type": "integer"
         },
+        "scheduled_at_least_share": {
+          "anyOf": [
+            {
+              "maximum": 1.0,
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
         "share": {
           "exclusiveMaximum": 1.0,
           "exclusiveMinimum": 0.5,
@@ -262,6 +275,7 @@
         "share",
         "needed_layover_min",
         "actual_layover_min",
+        "scheduled_at_least_share",
         "operated_days"
       ],
       "title": "Buffer",
@@ -945,6 +959,7 @@
     },
     "ScheduleWarnings": {
       "additionalProperties": false,
+      "description": "The connection share with its sample: connecting days of the eligible days (days in\nthe period less end-of-period days).",
       "properties": {
         "changes": {
           "items": {
@@ -956,10 +971,20 @@
           "maximum": 1.0,
           "minimum": 0.0,
           "type": "number"
+        },
+        "connecting_days": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "eligible_days": {
+          "minimum": 0,
+          "type": "integer"
         }
       },
       "required": [
         "connect_share",
+        "connecting_days",
+        "eligible_days",
         "changes"
       ],
       "title": "ScheduleWarnings",

@@ -697,6 +697,7 @@ def render_summary(
     min_examples: int = 3,
     min_hubs: int = 2,
     appendix: Sequence[str] = (),
+    title: str = "Phase 0 finding: connection feasibility experiment",
 ) -> str:
     example_hubs = {
         hub_of_id(i) for p in finding.showcase_examples for i in (p.itinerary_a, p.itinerary_b)
@@ -722,7 +723,7 @@ def render_summary(
     excluded = ", ".join(f"{k}: {v:,}" for k, v in dq if k not in failures) or "none"
     kept = ", ".join(f"{k}: {v:,}" for k, v in dq if k in failures) or "none"
     parts = [
-        "# Phase 0 finding: connection feasibility experiment",
+        f"# {title}",
         f"Data period: {finding.ontime_period_start} to {finding.ontime_period_end} for every "
         "source: on-time flights, T-100 passengers and DB1B sold routings (DB1B quarters "
         + (
