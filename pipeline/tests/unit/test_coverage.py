@@ -37,3 +37,18 @@ def test_regional_origin_means_outside_the_candidate_pool() -> None:
     regional = {(r.origin, r.dest): r.regional_origin for r in rows}
     assert regional[("LGA", "SAN")] is False  # LGA is a large airport in the pool
     assert regional[("CMH", "SAN")] is True
+
+
+def test_subset_names_airlines_with_itineraries_elsewhere() -> None:
+    rows = {
+        r.airline: r
+        for r in airline_coverage(
+            ["DL"], {"DL": 500, "WN": 300, "F9": 80}, MAJORS, {"DL": 900, "F9": 49}
+        )
+    }
+    assert rows["F9"].itineraries == 0
+    assert rows["F9"].note == (
+        "has 49 itineraries through the selected hubs, none on the curated showcase routes"
+    )
+    assert "sells" in rows["WN"].note  # no itinerary anywhere: the analysis reason stands
+    assert rows["DL"].note == ""

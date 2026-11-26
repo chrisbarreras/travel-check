@@ -9,7 +9,7 @@ from __future__ import annotations
 
 import subprocess
 from collections.abc import Mapping, Sequence
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from importlib import metadata
 from pathlib import Path
 
@@ -53,6 +53,10 @@ from flight_pipeline.showcase.publish import (
 from flight_pipeline.showcase.slider import daily_series
 
 
+def _no_counts() -> dict[str, int]:
+    return {}
+
+
 @dataclass(frozen=True)
 class Inputs:
     """Everything the assembly reads, already loaded."""
@@ -73,6 +77,8 @@ class Inputs:
     tight: frozenset[str]
     daily: Mapping[str, Sequence[DailyOutcome]]  # default scenario, paired days
     notes: Sequence[DisruptionNote]
+    # Itineraries per inbound marketing airline in the whole analysis (coverage notes)
+    analysis_itineraries: Mapping[str, int] = field(default_factory=_no_counts)
 
 
 def data_period(cfg: Config) -> DataPeriod:
@@ -257,7 +263,10 @@ def index_of(
             [r.route_id for r in inputs.routes],
             sorted({i.hub for i in shown}),
             airline_coverage(
-                [i.airline for i in shown], inputs.sold_same_airline, cfg.hubs.major_networks
+                [i.airline for i in shown],
+                inputs.sold_same_airline,
+                cfg.hubs.major_networks,
+                inputs.analysis_itineraries,
             ),
             period,
         ),

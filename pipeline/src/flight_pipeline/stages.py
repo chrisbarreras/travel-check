@@ -9,6 +9,7 @@ import json
 import os
 import statistics
 import sys
+from collections import Counter
 from collections.abc import Mapping, Sequence
 from dataclasses import asdict, replace
 from importlib import metadata
@@ -754,6 +755,7 @@ def stage_publish(con: duckdb.DuckDBPyConnection, cfg: Config, config_path: Path
         ).itineraries,
         hubs=hubs,
         sold_same_airline=assemble.sold_same_airline(con, "sold_routings", hubs),
+        analysis_itineraries=dict(Counter(i.airline_in for i in itineraries)),
         daily=_daily_by_itinerary(
             read_models(con, derived(cfg, "daily_outcomes.parquet"), DailyOutcome), shown
         ),

@@ -11,11 +11,14 @@ def airline_coverage(
     itinerary_airlines: Sequence[str],
     sold_same_airline: Mapping[str, int],
     major_networks: Sequence[str],
+    analysis_itineraries: Mapping[str, int] | None = None,
 ) -> list[AirlineCoverage]:
     """Per marketing airline: itineraries (by inbound airline) and sampled DB1B passengers
     on sold same-airline routings through the selected hubs. Every major network appears;
-    one without itineraries carries a plain-language reason. Sorted by sold passengers,
-    then itineraries, then airline."""
+    one without itineraries carries a plain-language reason. When ``itinerary_airlines`` is
+    a subset (the curated showcase), ``analysis_itineraries`` gives each airline's count in
+    the whole analysis, so that an airline with itineraries but none in the subset says so.
+    Sorted by sold passengers, then itineraries, then airline."""
     counts: dict[str, int] = {}
     for a in itinerary_airlines:
         counts[a] = counts.get(a, 0) + 1
@@ -23,7 +26,13 @@ def airline_coverage(
     for a in set(counts) | set(sold_same_airline) | set(major_networks):
         n, sold = counts.get(a, 0), sold_same_airline.get(a, 0)
         note = ""
-        if n == 0 and sold > 0:
+        overall = (analysis_itineraries or {}).get(a, 0)
+        if n == 0 and overall > 0:
+            note = (
+                f"has {overall:,} itineraries through the selected hubs, none on the curated "
+                "showcase routes"
+            )
+        elif n == 0 and sold > 0:
             note = (
                 "sells connections through the selected hubs, but none of its schedules "
                 "connect regularly within the layover limits"
