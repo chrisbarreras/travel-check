@@ -1,7 +1,7 @@
 {
   "code_version": "0.1.0",
   "config_sha256": "db850b967337b207ec85dbcf14cfcc403f23bf1dbbac7f65f746124eef000705",
-  "git_commit": "7f95b7c7d3db5d4a8debe650e3ca30570f21795e",
+  "git_commit": "ef35005e28c9469e0e8d93ea04f1b12b1f1b6bac",
   "notes_sha256": "6f71211762688725b6a44a423dcd2c79b7f215c2e75317cdf2e2007e122ece6a",
   "outputs": {
     "index.json": "4a90de4d39e436bd9d398a0b917f2a4af733e1c23b5079bd9c5e5980fdc4f24a",
@@ -13,7 +13,7 @@
     "routes/LAX-DCA.json": "143b2a2950956d54906ba7a1176ccb5c15cb4dea39a140462224b557406d5294",
     "routes/LGA-LAX.json": "b9c2ba59f420c86613710283e355d9e6f225105931a12e7a72e9ff095c9d2091",
     "routes/LIT-LGA.json": "d441df26488f777fc228ea6164b543ce9fa206db6593b771d36540d3c80e1384",
-    "routes/MCO-LAS.json": "5a6b135de09afde7e63ab56e7323dd04b1fc1922f09005da8f56e34681a7b23c",
+    "routes/MCO-LAS.json": "f7531989d7869b5145dd1d6ac43f42ccfb353b30c8524d02f8e7601655015b25",
     "routes/MCO-LAX.json": "3495764212617739c7190cb20c8b91df12972311509e971f6b46adb038be8a65",
     "routes/SAT-LGA.json": "c073322d6d76fc690575a0cc5dd005fb9579df908c43ec7dcd03e16e00223d21",
     "routes/SJC-ATL.json": "691899649eb72534f457846227507df0223e43852a58d9666ddfca1781777efe",
@@ -35,11 +35,11 @@
       "ram_gb": 15.4,
       "thread_limit": 4
     },
-    "run_at": "2026-11-26T19:37:26+00:00",
+    "run_at": "2026-11-26T21:10:45+00:00",
     "runtime_exceeded": false,
     "runtime_limit_min": 30.0,
-    "runtime_measured_at": "2026-11-26T19:37:26+00:00",
-    "runtime_min": 24.99
+    "runtime_measured_at": "2026-11-26T21:10:45+00:00",
+    "runtime_min": 24.3
   },
   "sources": [
     {
