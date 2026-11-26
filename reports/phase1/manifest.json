@@ -40,11 +40,11 @@
       "cpu_count": 16,
       "ram_gb": 15.4
     },
-    "run_at": "2026-11-26T15:34:32+00:00",
+    "run_at": "2026-11-26T16:37:20+00:00",
     "runtime_exceeded": false,
     "runtime_limit_min": 30.0,
-    "runtime_measured_at": "2026-11-26T15:34:32+00:00",
-    "runtime_min": 28.4
+    "runtime_measured_at": "2026-11-26T16:37:20+00:00",
+    "runtime_min": 28.35
   },
   "sources": [
     {

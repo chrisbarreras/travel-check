@@ -157,9 +157,9 @@ description: "Task list for the showcase data pipeline"
 - [X] T046 [P] Update docs/methodology.md: schedule slots, layover by daily matching with the bound pre-filter, end-of-period exclusion, nonstop comparison, curation and caps, every insight's definition and threshold, the monthly minimum, disruption notes, and the published-data contract (FR-028)
 - [X] T047 [P] Update README.md (Phase 1 status, how to build the showcase data, the `shared/` contract) and docs/roadmap.md (Phase 1 progress)
 - [X] T048 Run `uv run flight-pipeline run --config ../config/phase1.toml` on the pinned real data; review coverage (SC-001), balance (SC-002), size (SC-007) and runtime; then rerun with DuckDB limited to 4 threads and record that runtime against the 30-minute limit (SC-008); commit site-data/showcase/ and shared/
-- [ ] T049 Run `uv run flight-pipeline verify --config ../config/phase1.toml` and `uv run flight-pipeline schemas --check`; both must pass
-- [ ] T050 Run `uv run ruff check .`, `uv run ruff format --check .`, `uv run pyright` and `uv run pytest` in pipeline/ and fix any failures
-- [ ] T051 Run the quickstart.md validation scenarios and record the results
+- [X] T049 Run `uv run flight-pipeline verify --config ../config/phase1.toml` and `uv run flight-pipeline schemas --check`; both must pass
+- [X] T050 Run `uv run ruff check .`, `uv run ruff format --check .`, `uv run pyright` and `uv run pytest` in pipeline/ and fix any failures
+- [X] T051 Run the quickstart.md validation scenarios and record the results
 - [ ] T052 Run the independent review: a new `feature-reviewer` agent given only `specs/002-showcase-data-pipeline` and base branch `main`; save its report as specs/002-showcase-data-pipeline/review.md; fix BLOCKING findings, answer SHOULD-FIX findings in review.md, and repeat with a new reviewer until the verdict is APPROVE (constitution, Development Workflow)
 
 ---
