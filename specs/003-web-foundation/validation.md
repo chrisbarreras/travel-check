@@ -75,7 +75,7 @@ Run on 2026-11-27. Local results are from Windows 11 with Docker Desktop. CI res
 | 4 | Budgets (SC-002) | Pass: scripts 85.0 KB gzip (budget 150 KB); first-view data 8.8 KB gzip (index 3.3, landing 3.7, manifest 1.8; budget 150 KB) |
 | 5 | Landing figures exact (US1, SC-003) | Pass: Delta via ATL worked on 92% of 298 days; United via ORD on 64% of 291 days; +28 points, 95% interval +22 to +35, over 242 days both flew; Jul 2024 – Jun 2025. Asserted against the data files at 4 widths |
 | 6 | Phone layout (SC-009) | Pass: no horizontal scroll at 320, 360, 768 and 1280 px, or at 200% text size; standalone targets at least 44 px |
-| 7 | Accessibility and keyboard (SC-004) | Pass: no axe violations (WCAG 2.2 AA) at 360 and 1280 px and in the error state; all 10 controls reached by Tab and Shift+Tab in order, each with a 3 px outline |
+| 7 | Accessibility and keyboard (SC-004) | Pass: no axe violations (WCAG 2.2 AA) at 360 and 1280 px and in the error state; all controls reached by Tab and Shift+Tab in order, each with a 3 px outline: 10 with the definitions closed, and 15 with them opened by keyboard, including the 5 "How this is computed" links (after review round 2) |
 | 8 | Visual references | Pass: 4 references (landing at 360 and 1280 px, the error and loading states at 360 px) match exactly |
 | 9 | Honest failures (US3) | Pass: malformed, missing and unreachable data show "This example could not be loaded" with no figures; loading shows the layout's shape without digits |
 | 10 | Lighthouse (SC-001) | Pass: median performance 100, accessibility 100, LCP 0.75 s, CLS 0 (locally); `web-lighthouse` passes in CI |

@@ -62,7 +62,7 @@ Build the Phase 1 web application in `web/`: React, TypeScript and Vite. It is a
 | IV. One data contract | Pass | Types come only from the generated `shared/types/showcase.ts`. Validators are compiled from the generated schema (R3), with no hand-written shapes. The page does no time-zone arithmetic: it formats the schedule's local minutes |
 | V. Accessible and clear | Pass | Text and position, not color alone. Keyboard and screen-reader labels. 320 px up and 200% zoom. Freshness shown as the period and build date. Budgets set (SC-001, SC-002) |
 | VI. Simplicity, replaceable providers | Pass | The `DataSource` interface is the provider boundary. No tool from ADR-0002's avoid list. One build-time code-generation step (R3), justified below |
-| Technology follows the ADRs | Pass, with a new ADR | GitHub Pages replaces ADR-0002's "Cloudflare Pages or Vercel" for the frontend. ADR-0015 records it and supersedes that row (R1) |
+| Technology follows the ADRs | Pass, with two new ADRs | GitHub Pages replaces ADR-0002's "Cloudflare Pages or Vercel" for the frontend: ADR-0015 records it and supersedes that row (R1). Plain CSS with design tokens replaces shadcn/ui and Tailwind, and the data-access module replaces TanStack Query (R10): ADR-0016 records both and supersedes those rows. It was added after review round 2 found the gap |
 | Licences and attributions | Pass | BTS and airportsdata attributions shown verbatim from the index. The font licences ship with the packages, and the footer notes them |
 | Workflow gates | Pass | Own branch. Owner approves spec and plan before implementation. Independent review rounds until APPROVE, saved in `review.md` |
 

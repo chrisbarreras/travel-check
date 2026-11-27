@@ -23,7 +23,9 @@ export function App() {
       </main>
       {landing.state === "ready" ? (
         <Footer index={landing.view.index} builtAt={landing.view.builtAt} />
-      ) : null}
+      ) : (
+        <Footer />
+      )}
     </>
   );
 }

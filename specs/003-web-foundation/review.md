@@ -30,3 +30,23 @@ Each round is a new `feature-reviewer` agent, given only `specs/003-web-foundati
 | 11 | NIT | The README called the site live before its first deployment; the roadmap cited "#1" for feature 002, which is this feature's number in the public repository. | **Fixed.** The README says the site deploys from `main` once this feature merges. The roadmap gives the merge date instead of a PR number. |
 
 **After the fixes:** 100 unit and component tests pass. 24 browser tests pass in the pinned image, with the visual references regenerated for the new flight and rate wording and reviewed. 15 e2e tests pass against the `/travel-check/` build. JS is 85.4 KB gzip.
+
+## Round 2 (main...7875d1a)
+
+**Verdict:** CHANGES REQUIRED. 1 blocking, 2 should-fix, 4 nits.
+
+**Automated checks, all passing:** `gen`, `format:check`, `lint`, `typecheck`, 100 unit and component tests, `build`, `size` (JS 85.39 KB gzip), and 24 browser tests in the pinned image. CI `web-lighthouse` passed. The reviewer confirmed the ruleset (active, no bypass actors, four required checks).
+
+### Findings and responses
+
+| # | Severity | Finding | Response |
+|---|---|---|---|
+| 1 | BLOCKING | ADR-0002's "shadcn/ui + Tailwind CSS" and "TanStack Query" rows were dropped without a superseding ADR, and the plan's Constitution Check claimed a pass. | **Fixed.** [ADR-0016](../../docs/adr/0016-plain-css-and-own-data-hook.md) records plain CSS with design tokens and native controls, and the data-access module instead of a data-fetching library. It states when to revisit each: composite widgets for styling, Phase 2's API for fetching. It supersedes both ADR-0002 rows, which are marked. The ADR index, the plan's Constitution Check row and research (R10, new R14) are updated. |
+| 2 | SHOULD-FIX | A definition the page shows could be missing from a contract-valid index, and the figure would appear without it. | **Fixed.** `buildLandingView` rejects an index that lacks any of the six definitions the page can show. There is one unit test per key. |
+| 3 | SHOULD-FIX | The keyboard test never reached the links inside the definitions. | **Fixed.** The test first opens every definition with Enter. It then walks all 15 controls, including the 5 "How this is computed" links, and checks order, Shift+Tab and the 3 px outline on each. |
+| 4 | NIT | The page shows the rate from its counts, and `Rate.rate` was never checked against them. | **Fixed.** A rate with status `ok` must equal its counts, rounded as the pipeline stores it. Otherwise the data is rejected (unit test). |
+| 5 | NIT | The rule that `itinerary_a` has the higher rate was assumed, not checked. | **Fixed.** A comparison with `difference < 0` or `ci_low > ci_high` is rejected (unit test). |
+| 6 | NIT | "Insufficient data" gave no threshold and no definition. | **Fixed.** When an itinerary is below the minimum sample, the summary says "fewer than 30" days (from `assumptions.min_sample_days`). The published `insufficient_data` definition is shown, and the edge-case test asserts both. |
+| 7 | NIT | The loading and error states had no footer, so no copyright line. | **Fixed.** The footer, with its links and copyright, appears in every state, including the error-boundary fallback. The data part (period, build date, attributions) appears only once data has loaded. The error message no longer repeats the footer's links. The loading and error visual references were regenerated and reviewed. |
+
+**After the fixes:** 109 unit and component tests pass. 24 browser tests pass in the pinned image. 15 e2e tests pass against the `/travel-check/` build. JS is 85.6 KB gzip.

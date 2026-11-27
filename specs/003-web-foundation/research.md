@@ -133,7 +133,15 @@ The app receives its source through a React context created once in `main.tsx`. 
 - One swap point for the Phase 2 API (FR-013; constitution, Principle VI on provider interfaces).
 - Tests can substitute data without any network (FR-022).
 
-**Alternatives:** a data-fetching library such as TanStack Query (unnecessary for three static files; revisit in Phase 2) and global fetch calls in components (no swap point).
+**Alternatives:** a data-fetching library such as TanStack Query (unnecessary for three static files; revisit in Phase 2) and global fetch calls in components (no swap point). Recorded in ADR-0016, which supersedes ADR-0002's data-fetching row.
+
+## R14. Styling
+
+**Decision:** plain CSS with the design.md color tokens as custom properties, and native controls. No component library or utility framework for now.
+
+**Rationale:** one page with a few cards fits easily in hand-written CSS. It keeps the script budget for the map to come, and maps one to one to design.md.
+
+**Alternatives:** shadcn/ui with Tailwind (ADR-0002). Revisit when composite widgets are needed. Recorded in ADR-0016, which supersedes ADR-0002's styling row.
 
 ## R11. Display rules
 

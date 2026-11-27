@@ -25,8 +25,14 @@ async function focused(page: import("@playwright/test").Page) {
 
 test("Tab reaches every control in order with a visible 3 px outline", async ({ page }) => {
   await openLanding(page, 1280);
+  // Open every definition with the keyboard, so the links inside them are walked too.
+  for (const summary of await page.locator("details > summary").all()) {
+    await summary.focus();
+    await page.keyboard.press("Enter");
+  }
+  await expect(page.locator("details:not([open])")).toHaveCount(0);
   const expected = await focusableInOrder(page);
-  expect(expected.length).toBeGreaterThan(5);
+  expect(expected.filter((name) => name.startsWith("How this is computed"))).toHaveLength(5);
   // Start the walk from the top of the document, as a keyboard user arriving on the page.
   await page.mouse.click(1, 1);
   const seen: string[] = [];

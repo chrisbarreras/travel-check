@@ -37,7 +37,11 @@ The types `ShowcaseIndex`, `RouteFile` and `ShowcaseManifest` are imported from 
 `buildLandingView(index, landing, manifest)` returns `Result<LandingView>`. It fails with `invalid` when:
 - `landing.route_id` differs from `index.landing.route_id`;
 - no comparison in `landing.comparisons` has `comparison_id == index.landing.comparison_id`;
-- either `itinerary_a` or `itinerary_b` of that comparison is missing from `landing.itineraries`.
+- either `itinerary_a` or `itinerary_b` of that comparison is missing from `landing.itineraries`;
+- an itinerary has more feasible days than paired days, or a rate with status `ok` that differs from its counts (`count_feasible / paired_days`, 6 decimals, halves away from zero);
+- the pair is not ordered higher first (`difference < 0` or `ci_low > ci_high`);
+- `index.definitions` lacks a definition the page shows: `connection_feasibility`, `paired_days`, `comparison_difference`, `insufficient_data`, `layover` or `travel_time`;
+- `manifest.run.run_at` is not a real timestamp.
 
 ## Hooks
 

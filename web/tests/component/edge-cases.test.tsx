@@ -50,7 +50,9 @@ describe("display rules on edge-case data (spec, Edge Cases)", () => {
     expect(text).not.toMatch(/worked more often/i);
     expect(text).not.toMatch(/similar share/i);
     expect(text).not.toMatch(/points/);
-    expect(text).toContain("too few days for a rate, so the two are not compared");
+    expect(text).toContain("too few days for a rate (fewer than 30), so the two are not compared");
+    const insufficient = index.definitions.find((d) => d.key === "insufficient_data");
+    expect(insufficient && text.includes(insufficient.text)).toBe(true);
   });
 
   it("says 'similar' when the interval includes zero (FR-002)", async () => {

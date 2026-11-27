@@ -25,7 +25,9 @@ export function LandingComparison({ view }: { view: LandingView }) {
           ? `${name(a)} and ${name(b)} worked on a similar share of days.`
           : null}
         {verdict === null
-          ? "One of these itineraries has too few days for a rate, so the two are not compared."
+          ? `One of these itineraries has too few days for a rate (fewer than ${String(
+              index.assumptions.min_sample_days,
+            )}), so the two are not compared.`
           : null}
       </p>
       <div className="cards">
@@ -44,6 +46,12 @@ export function LandingComparison({ view }: { view: LandingView }) {
           definition={definition("connection_feasibility")}
         />
         <Definition summary="Which days count" definition={definition("paired_days")} />
+        {comparable ? null : (
+          <Definition
+            summary="What “insufficient data” means"
+            definition={definition("insufficient_data")}
+          />
+        )}
         {comparable ? (
           <Definition
             summary="How the difference is measured"

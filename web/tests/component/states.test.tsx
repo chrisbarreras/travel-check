@@ -45,6 +45,16 @@ describe("page states", () => {
     expectNoFigures();
   });
 
+  it("keeps the footer's copyright and links in the loading and error states", async () => {
+    for (const source of [pendingSource, offlineSource]) {
+      const { unmount } = renderApp(source);
+      const footer = await screen.findByRole("contentinfo");
+      expect(footer).toHaveTextContent("© 2026 Christopher T. Barreras Consulting");
+      expect(footer).toHaveTextContent("Source code");
+      unmount();
+    }
+  });
+
   it("shows the plain message for a malformed landing file", async () => {
     const files = committedFiles();
     files["landing.json"] = { ...committedLanding(), itineraries: "not a list" };
@@ -82,6 +92,7 @@ describe("page states", () => {
     renderApp(source);
     expect(await screen.findByText(MESSAGE, { exact: false })).toBeInTheDocument();
     expect(screen.getByRole("main").textContent).not.toMatch(/\d/);
+    expect(screen.getByRole("contentinfo")).toHaveTextContent("All rights reserved");
     quiet.mockRestore();
   });
 

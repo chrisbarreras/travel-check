@@ -1,6 +1,6 @@
 # ADR-0002: Technology stack
 
-- **Status:** Accepted; frontend hosting superseded by [ADR-0015](0015-static-hosting-github-pages.md)
+- **Status:** Accepted; frontend hosting superseded by [ADR-0015](0015-static-hosting-github-pages.md); styling and data fetching superseded by [ADR-0016](0016-plain-css-and-own-data-hook.md)
 - **Date:** 2026-11-24
 
 ## Context
@@ -14,8 +14,8 @@ The stack should be widely used in industry (portfolio value), free to run, quic
 | Frontend | React + TypeScript + Vite |
 | Map | MapLibre GL JS via `react-map-gl`; Turf.js for great-circle route lines |
 | Basemap | OpenFreeMap styles, or self-hosted Protomaps PMTiles |
-| UI components and styling | shadcn/ui + Tailwind CSS |
-| Data fetching | TanStack Query |
+| UI components and styling | shadcn/ui + Tailwind CSS (superseded by [ADR-0016](0016-plain-css-and-own-data-hook.md): plain CSS with design tokens until a measured need) |
+| Data fetching | TanStack Query (superseded by [ADR-0016](0016-plain-css-and-own-data-hook.md): the data-access module until Phase 2 needs more) |
 | Charts | Observable Plot or visx (chosen during Phase 1 planning) |
 | Backend (Phase 2) | Python + FastAPI + Pydantic |
 | Shared types | TypeScript types generated from the Pydantic models / OpenAPI schema |

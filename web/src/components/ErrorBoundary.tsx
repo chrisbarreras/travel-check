@@ -1,4 +1,5 @@
 import { Component, type ErrorInfo, type ReactNode } from "react";
+import { Footer } from "./Footer";
 import { LoadError } from "./LoadError";
 
 /**
@@ -18,9 +19,12 @@ export class ErrorBoundary extends Component<{ children: ReactNode }, { failed: 
 
   override render(): ReactNode {
     return this.state.failed ? (
-      <main id="main">
-        <LoadError />
-      </main>
+      <>
+        <main id="main">
+          <LoadError />
+        </main>
+        <Footer />
+      </>
     ) : (
       this.props.children
     );

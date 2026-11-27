@@ -1,5 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 import { buildLandingView, memorySource, staticSource } from "../../src/data";
+import { REQUIRED_DEFINITIONS } from "../../src/data/landing";
 import {
   clone,
   committedFiles,
@@ -175,6 +176,38 @@ describe("buildLandingView (contracts/data-access.md, Cross-checks)", () => {
   it("fails when an itinerary has more feasible days than paired days", () => {
     const landing = clone(committedLanding());
     for (const itinerary of landing.itineraries) itinerary.result.count_feasible = 1000;
+    expect(buildLandingView(index, landing, manifest)).toMatchObject({
+      ok: false,
+      error: { kind: "invalid" },
+    });
+  });
+
+  it.each(REQUIRED_DEFINITIONS)("fails when the definition %s is missing", (key) => {
+    const partial = { ...index, definitions: index.definitions.filter((d) => d.key !== key) };
+    expect(buildLandingView(partial, committedLanding(), manifest)).toMatchObject({
+      ok: false,
+      error: { kind: "invalid", file: "index.json" },
+    });
+  });
+
+  it("fails when a published rate disagrees with its counts", () => {
+    const landing = clone(committedLanding());
+    const first = landing.itineraries[0];
+    if (!first) throw new Error("fixture has no itinerary");
+    first.result.rate = 0.85;
+    expect(buildLandingView(index, landing, manifest)).toMatchObject({
+      ok: false,
+      error: { kind: "invalid" },
+    });
+  });
+
+  it("fails when the pair is not ordered higher first", () => {
+    const landing = clone(committedLanding());
+    for (const c of landing.comparisons) {
+      c.difference = -0.2;
+      c.ci_low = -0.3;
+      c.ci_high = -0.1;
+    }
     expect(buildLandingView(index, landing, manifest)).toMatchObject({
       ok: false,
       error: { kind: "invalid" },
