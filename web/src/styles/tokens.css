@@ -1,0 +1,16 @@
+/* Color tokens from docs/design.md (Color). Change them only with that document. */
+:root {
+  --ground: #f4f6f9;
+  --surface: #ffffff;
+  --ink: #15202b;
+  --muted: #4a5868;
+  --border: #dce2ea;
+  --control-border: #8794a3;
+  --accent: #1c56c2;
+  --accent-strong: #123e8f;
+  --accent-tint: #eaf1fd;
+  --warn-text: #8a3f00;
+  --warn-tint: #fff1e3;
+  --warn-mark: #c2560e;
+  --hub-2: #6b4fa8;
+}
