@@ -161,6 +161,8 @@ describe("periodText and builtDate", () => {
       periodText({ start: "2024-13-01", end: "2025-06-30", db1b_quarters: [] }),
     ).toThrow();
     expect(() => builtDate("yesterday")).toThrow();
+    expect(() => builtDate("2026-13-45T00:00:00Z")).toThrow();
+    expect(() => builtDate("2026-02-31T00:00:00Z")).toThrow();
   });
 });
 
@@ -175,6 +177,19 @@ describe("rateText", () => {
         definition: "connection_feasibility",
       }),
     ).toEqual({ kind: "ok", percent: 92, days: 298, text: "worked on 92% of 298 days" });
+  });
+
+  it("carries the data period when given", () => {
+    const rate = {
+      status: "ok",
+      rate: 0.922819,
+      paired_days: 298,
+      count_feasible: 275,
+      definition: "connection_feasibility",
+    } as const;
+    expect(rateText(rate, "Jul 2024 – Jun 2025").text).toBe(
+      "worked on 92% of 298 days, Jul 2024 – Jun 2025",
+    );
   });
 
   it("never gives a percentage below the minimum sample", () => {
@@ -205,13 +220,22 @@ describe("excludedText", () => {
 });
 
 describe("flightNumbers", () => {
-  it("names each leg's most frequent number, with its share when below 95%", () => {
+  it("names each leg's most frequent number and never shows its share", () => {
+    const result = flightNumbers([
+      { flight_number: "DL3080", share_of_days: 0.352751 },
+      { flight_number: "DL524", share_of_days: 0.608309 },
+    ]);
+    expect(result).toEqual({ numbers: ["DL3080", "DL524"], varies: true });
+    expect(JSON.stringify(result)).not.toMatch(/%/);
+  });
+
+  it("notes other numbers only when a leg used them on more than 5% of days", () => {
     expect(
       flightNumbers([
-        { flight_number: "DL3080", share_of_days: 0.352751 },
-        { flight_number: "DL524", share_of_days: 0.608309 },
+        { flight_number: "UA4182", share_of_days: 0.96 },
+        { flight_number: "UA1006", share_of_days: 0.95 },
       ]),
-    ).toEqual(["DL3080 (on 35% of days)", "DL524 (on 61% of days)"]);
-    expect(flightNumbers([{ flight_number: "UA4182", share_of_days: 0.96 }])).toEqual(["UA4182"]);
+    ).toEqual({ numbers: ["UA4182", "UA1006"], varies: false });
+    expect(flightNumbers([{ flight_number: "UA1", share_of_days: 0.9496 }]).varies).toBe(true);
   });
 });

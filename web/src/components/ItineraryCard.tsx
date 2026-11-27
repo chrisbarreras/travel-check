@@ -35,15 +35,18 @@ function Time({ minutes, dayOffset = 0 }: { minutes: number; dayOffset?: number 
 export function ItineraryCard({
   itinerary,
   headingId,
+  period,
   badge,
 }: {
   itinerary: ShowcaseItinerary;
   headingId: string;
+  period: string;
   badge?: string | undefined;
 }) {
-  const rate = rateText(itinerary.result);
+  const rate = rateText(itinerary.result, period);
   const excluded = excludedText(itinerary.excluded_days);
-  const [inbound, outbound] = flightNumbers(itinerary.find.legs);
+  const flights = flightNumbers(itinerary.find.legs);
+  const [inbound, outbound] = flights.numbers;
   return (
     <article className="card" aria-labelledby={headingId}>
       {badge ? <p className="badge">{badge}</p> : null}
@@ -66,8 +69,12 @@ export function ItineraryCard({
         <div>
           <dt>Flights</dt>
           <dd>
+            {flights.varies ? "Most often " : null}
             {inbound}
             {outbound ? <>, then {outbound}</> : null}
+            {flights.varies ? (
+              <span className="flights-note">; flown under other numbers on some days</span>
+            ) : null}
           </dd>
         </div>
         <div>

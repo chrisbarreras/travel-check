@@ -5,6 +5,15 @@ import { defineConfig, devices } from "@playwright/test";
 
 const inDocker = process.env.PLAYWRIGHT_DOCKER === "1";
 const smokeUrl = process.env.SMOKE_URL;
+// The base path the build was made for: "/" locally, "/travel-check/" for GitHub Pages.
+const base = process.env.PREVIEW_BASE ?? "/";
+const local = `http://127.0.0.1:4173${base}`;
+
+if (!inDocker && !smokeUrl && process.env.TEST_WORKER_INDEX === undefined) {
+  console.warn(
+    "Visual tests are skipped outside the pinned container. Run `npm run test:browser:docker` to compare screenshots.",
+  );
+}
 
 export default defineConfig({
   testDir: "tests",
@@ -19,7 +28,7 @@ export default defineConfig({
     toHaveScreenshot: { maxDiffPixels: 0, threshold: 0, animations: "disabled", caret: "hide" },
   },
   use: {
-    baseURL: smokeUrl ?? "http://127.0.0.1:4173/",
+    baseURL: smokeUrl ?? local,
     trace: "retain-on-failure",
     reducedMotion: "reduce",
     locale: "en-US",
@@ -29,8 +38,8 @@ export default defineConfig({
     ? {}
     : {
         webServer: {
-          command: "npx vite preview --host 127.0.0.1 --port 4173 --strictPort",
-          url: "http://127.0.0.1:4173/",
+          command: `npx vite preview --host 127.0.0.1 --port 4173 --strictPort --base ${base}`,
+          url: local,
           reuseExistingServer: !process.env.CI,
           timeout: 60_000,
         },

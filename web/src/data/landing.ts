@@ -1,6 +1,17 @@
 // Cross-checks the schema cannot express (contracts/data-access.md, Cross-checks).
 import type { RouteFile, ShowcaseIndex, ShowcaseManifest } from "@contract";
+import { builtDate } from "../format/time";
 import type { LandingView, Result } from "./types";
+
+/** The manifest types `run` loosely, so the timestamp is checked by parsing it as displayed. */
+function isTimestamp(text: string): boolean {
+  try {
+    builtDate(text);
+    return true;
+  } catch {
+    return false;
+  }
+}
 
 function invalid(detail: string): Result<LandingView> {
   return { ok: false, error: { kind: "invalid", file: "landing.json", detail } };
@@ -21,8 +32,14 @@ export function buildLandingView(
   const a = landing.itineraries.find((i) => i.itinerary_id === comparison.itinerary_a);
   const b = landing.itineraries.find((i) => i.itinerary_id === comparison.itinerary_b);
   if (!a || !b) return invalid(`comparison ${comparison.comparison_id} lacks an itinerary`);
+  for (const itinerary of [a, b]) {
+    const { count_feasible, paired_days } = itinerary.result;
+    if (count_feasible > paired_days) {
+      return invalid(`${itinerary.itinerary_id}: more feasible days than paired days`);
+    }
+  }
   const builtAt = manifest.run.run_at;
-  if (typeof builtAt !== "string" || !/^\d{4}-\d{2}-\d{2}T/.test(builtAt)) {
+  if (typeof builtAt !== "string" || !isTimestamp(builtAt)) {
     return {
       ok: false,
       error: { kind: "invalid", file: "manifest.json", detail: "run.run_at is not a timestamp" },

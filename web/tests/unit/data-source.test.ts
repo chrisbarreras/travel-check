@@ -164,6 +164,23 @@ describe("buildLandingView (contracts/data-access.md, Cross-checks)", () => {
     });
   });
 
+  it("fails when a build timestamp cannot be a real date", () => {
+    const broken = { ...manifest, run: { ...manifest.run, run_at: "2026-13-45T00:00:00Z" } };
+    expect(buildLandingView(index, committedLanding(), broken)).toMatchObject({
+      ok: false,
+      error: { kind: "invalid", file: "manifest.json" },
+    });
+  });
+
+  it("fails when an itinerary has more feasible days than paired days", () => {
+    const landing = clone(committedLanding());
+    for (const itinerary of landing.itineraries) itinerary.result.count_feasible = 1000;
+    expect(buildLandingView(index, landing, manifest)).toMatchObject({
+      ok: false,
+      error: { kind: "invalid" },
+    });
+  });
+
   it("fails when the manifest has no build timestamp", () => {
     const broken = { ...manifest, run: { ...manifest.run, run_at: 42 } };
     expect(buildLandingView(index, committedLanding(), broken)).toMatchObject({

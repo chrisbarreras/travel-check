@@ -1,48 +1,39 @@
-// The page's figures equal the committed data (FR-018, SC-003), at every width (SC-009).
-import {
-  airlineName,
-  intervalText,
-  localTime,
-  percentOf,
-  periodText,
-  points,
-  signed,
-} from "../../src/format";
-import { committedIndex, committedLanding } from "../fixtures/committed";
+// Every figure on the page equals the committed data (FR-018, SC-003), at every width
+// (SC-009). Expected texts are written by hand in landing-expected.ts, not computed with the
+// formatting code under test, and are tied to the data by `checkRaw`.
+import { committedIndex, committedLanding, committedManifest } from "../fixtures/committed";
+import { EXPECTED, checkRaw } from "../fixtures/landing-expected";
 import { WIDTHS, expect, openLanding, test } from "../browser";
 
-const index = committedIndex();
-const landing = committedLanding();
-const comparison = landing.comparisons.find((c) => c.comparison_id === index.landing.comparison_id);
-if (!comparison) throw new Error("committed landing file lacks its comparison");
-const itineraries = [comparison.itinerary_a, comparison.itinerary_b].map((id) => {
-  const found = landing.itineraries.find((i) => i.itinerary_id === id);
-  if (!found) throw new Error(`missing ${id}`);
-  return found;
+test("the hand-checked expectations still describe the committed data", () => {
+  checkRaw(committedLanding(), committedManifest().run.run_at);
 });
 
 for (const width of WIDTHS) {
   test.describe(`at ${String(width)} px`, () => {
-    test("shows the landing figures exactly as in the data", async ({ page }) => {
+    test("shows every landing figure exactly as in the data", async ({ page }) => {
       await openLanding(page, width);
       await expect(page).toHaveTitle("Travel Check");
+      await expect(page.getByRole("heading", { level: 1 })).toHaveText("Travel Check");
+      await expect(page.getByRole("heading", { level: 2 })).toHaveText(EXPECTED.heading);
+      await expect(page.locator(".summary")).toHaveText(EXPECTED.summary);
       const cards = page.getByRole("article");
       await expect(cards).toHaveCount(2);
-      for (const [n, itinerary] of itineraries.entries()) {
-        const card = cards.nth(n);
-        const percent = percentOf(itinerary.result.count_feasible, itinerary.result.paired_days);
-        await expect(card).toContainText(`${airlineName(itinerary.airline)} via ${itinerary.hub}`);
-        await expect(card).toContainText(
-          `worked on ${String(percent)}% of ${String(itinerary.result.paired_days)} days`,
-        );
-        await expect(card).toContainText(localTime(itinerary.schedule.dep_local_min).text);
-        await expect(card).toContainText(localTime(itinerary.schedule.arr_local_min).text);
+      for (const text of EXPECTED.a) await expect(cards.nth(0)).toContainText(text);
+      for (const text of EXPECTED.b) await expect(cards.nth(1)).toContainText(text);
+      await expect(cards.nth(1)).not.toContainText("Not counted");
+      const difference = page.locator(".difference");
+      for (const text of EXPECTED.difference) await expect(difference).toContainText(text);
+      const footer = page.getByRole("contentinfo");
+      for (const text of EXPECTED.footer) await expect(footer).toContainText(text);
+      for (const attribution of committedIndex().attribution) {
+        await expect(footer).toContainText(attribution.text);
       }
-      const body = page.locator("body");
-      await expect(body).toContainText(`${signed(points(comparison.difference))} points`);
-      await expect(body).toContainText(intervalText(comparison.ci_low, comparison.ci_high));
-      await expect(body).toContainText(`${String(comparison.shared_days)} days both flew`);
-      await expect(body).toContainText(periodText(landing.period));
+      // No other percentage appears unexplained (constitution, Principle I).
+      const percentages = await page
+        .locator("main")
+        .evaluate((m) => m.textContent.match(/\d+%(?! interval)/g));
+      expect(percentages).toEqual(["92%", "92%", "64%", "64%"]);
     });
 
     test("has no horizontal scroll and 44 px touch targets", async ({ page }) => {

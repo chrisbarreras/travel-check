@@ -5,15 +5,18 @@ import "./styles/global.css";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { App } from "./App";
+import { ErrorBoundary } from "./components/ErrorBoundary";
 import { DataSourceProvider, staticSource } from "./data";
 
 const root = document.getElementById("root");
 if (root) {
   createRoot(root).render(
     <StrictMode>
-      <DataSourceProvider source={staticSource(import.meta.env.BASE_URL)}>
-        <App />
-      </DataSourceProvider>
+      <ErrorBoundary>
+        <DataSourceProvider source={staticSource(import.meta.env.BASE_URL)}>
+          <App />
+        </DataSourceProvider>
+      </ErrorBoundary>
     </StrictMode>,
   );
 }

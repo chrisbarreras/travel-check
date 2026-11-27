@@ -1,6 +1,6 @@
 // Loading and failure states, with only the data source swapped (US3; FR-013, FR-014).
 import { screen } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { memorySource, type DataSource, type Result } from "../../src/data";
 import { clone, committedFiles, committedLanding } from "../fixtures/committed";
 import { renderApp } from "../fixtures/render";
@@ -59,6 +59,30 @@ describe("page states", () => {
     renderApp(memorySource(files));
     expect(await screen.findByText(MESSAGE, { exact: false })).toBeInTheDocument();
     expectNoFigures();
+  });
+
+  it("shows the plain message, not a blank page, when rendering throws", async () => {
+    // Valid data, but reading one value throws while the cards render: an unexpected bug.
+    const source = memorySource(committedFiles());
+    const original = source.getLanding.bind(source);
+    source.getLanding = async () => {
+      const result = await original();
+      if (result.ok) {
+        for (const itinerary of result.value.itineraries) {
+          Object.defineProperty(itinerary.schedule, "travel_min", {
+            get() {
+              throw new Error("render-time failure");
+            },
+          });
+        }
+      }
+      return result;
+    };
+    const quiet = vi.spyOn(console, "error").mockImplementation(() => undefined);
+    renderApp(source);
+    expect(await screen.findByText(MESSAGE, { exact: false })).toBeInTheDocument();
+    expect(screen.getByRole("main").textContent).not.toMatch(/\d/);
+    quiet.mockRestore();
   });
 
   it("renders the example from the same App with the committed source", async () => {

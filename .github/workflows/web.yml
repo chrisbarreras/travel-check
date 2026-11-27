@@ -57,6 +57,10 @@ jobs:
       HOME: /root
     steps:
       - uses: actions/checkout@v4
+      # The image ships a newer Node; build with the project's Node, as every other job does.
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: web/.nvmrc
       - name: Install
         run: npm ci --no-audit --no-fund
       - name: Build
@@ -125,13 +129,17 @@ jobs:
         run: npm run build
         env:
           GITHUB_PAGES: "1"
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: End-to-end tests on the Pages build, before it goes live
+        run: npx playwright test --project=e2e
+        env:
+          PREVIEW_BASE: /travel-check/
       - uses: actions/upload-pages-artifact@v3
         with:
           path: web/dist
       - name: Deploy
         id: deployment
         uses: actions/deploy-pages@v4
-      - name: Install Chromium for the smoke check
-        run: npx playwright install --with-deps chromium
       - name: Smoke check of the live site
         run: npm run smoke -- "${{ steps.deployment.outputs.page_url }}"

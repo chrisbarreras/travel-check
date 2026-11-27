@@ -54,7 +54,9 @@ describe("the landing comparison, from the committed data (US1)", () => {
       if (!card) throw new Error("missing card");
       const text = card.textContent;
       expect(text).toContain(`${airlineName(itinerary.airline)} via ${itinerary.hub}`);
-      for (const number of flightNumbers(itinerary.find.legs)) expect(text).toContain(number);
+      for (const number of flightNumbers(itinerary.find.legs).numbers)
+        expect(text).toContain(number);
+      expect(text).not.toMatch(/of days\)/);
       expect(text).toContain(localTime(itinerary.schedule.dep_local_min).text);
       expect(text).toContain(localTime(itinerary.schedule.arr_local_min).text);
       expect(text).toContain("local time");

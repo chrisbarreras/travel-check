@@ -6,7 +6,7 @@ A map-first explorer that compares how reliable flight itineraries are, using re
 
 **Phase 1, the static showcase explorer, is in progress.**
 - **Showcase data pipeline (complete):** builds the curated, validated JSON the explorer loads ([spec](specs/002-showcase-data-pipeline/spec.md)). It has schedule-based itinerary identity, per-day data for a transfer-time slider, and traveler insights.
-- **Web foundation:** the live page, **https://chrisbarreras.github.io/travel-check/**, shows one real comparison from that data, with every rate's sample, period and definition ([spec](specs/003-web-foundation/spec.md)).
+- **Web foundation:** the page at **https://chrisbarreras.github.io/travel-check/** (deployed from `main` once this feature merges) shows one real comparison from that data, with every rate's sample, period and definition ([spec](specs/003-web-foundation/spec.md)).
 - **Next:** the map, list and insight panels. See the [roadmap](docs/roadmap.md).
 
 ## Run the Phase 0 pipeline

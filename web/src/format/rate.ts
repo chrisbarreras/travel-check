@@ -9,12 +9,13 @@ export type RateText =
   | { kind: "insufficient"; days: number; text: string };
 
 /** "worked on 92% of 298 days", or "insufficient data (12 days)" below the minimum sample. */
-export function rateText(rate: Rate): RateText {
+export function rateText(rate: Rate, period?: string): RateText {
+  const when = period ? `, ${period}` : "";
   if (rate.status === "insufficient_data" || rate.paired_days === 0) {
     return {
       kind: "insufficient",
       days: rate.paired_days,
-      text: `insufficient data (${days(rate.paired_days)})`,
+      text: `insufficient data (${days(rate.paired_days)}${when})`,
     };
   }
   const percent = percentOf(rate.count_feasible, rate.paired_days);
@@ -22,7 +23,7 @@ export function rateText(rate: Rate): RateText {
     kind: "ok",
     percent,
     days: rate.paired_days,
-    text: `worked on ${String(percent)}% of ${days(rate.paired_days)}`,
+    text: `worked on ${String(percent)}% of ${days(rate.paired_days)}${when}`,
   };
 }
 
@@ -43,12 +44,10 @@ export function excludedText(excluded: ExcludedDays): string[] {
 
 /**
  * Each leg's most frequent flight number. Schedule-slot itineraries can fly under several
- * numbers (ADR-0014), so the share of days is given when it is below 95%.
+ * numbers (ADR-0014). The share behind "most often" has no published definition, so it is
+ * never shown as a number (constitution, Principle I); a note says other numbers were used.
  */
-export function flightNumbers(legs: FindLeg[]): string[] {
-  return legs.map((leg) =>
-    leg.share_of_days >= 0.95
-      ? leg.flight_number
-      : `${leg.flight_number} (on ${String(Math.round(leg.share_of_days * 100))}% of days)`,
-  );
+export function flightNumbers(legs: FindLeg[]): { numbers: string[]; varies: boolean } {
+  const varies = legs.some((leg) => leg.share_of_days < 0.95);
+  return { numbers: legs.map((leg) => leg.flight_number), varies };
 }

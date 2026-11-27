@@ -68,10 +68,17 @@ export function periodText(period: DataPeriod): string {
 
 /** The UTC calendar date of a timestamp such as "2026-11-26T21:10:45+00:00": "26 Nov 2026". */
 export function builtDate(timestamp: string): string {
+  const match = /^(\d{4})-(\d{2})-(\d{2})T\d{2}:\d{2}/.exec(timestamp);
   const parsed = new Date(timestamp);
-  if (!/^\d{4}-\d{2}-\d{2}T/.test(timestamp) || Number.isNaN(parsed.getTime())) {
+  if (!match || Number.isNaN(parsed.getTime())) {
     throw new RangeError(`builtDate: invalid timestamp ${timestamp}`);
   }
-  const month = MONTHS[parsed.getUTCMonth()] ?? "";
-  return `${String(parsed.getUTCDate())} ${month} ${String(parsed.getUTCFullYear())}`;
+  // Reject impossible calendar dates, which Date would otherwise roll over (31 Feb → 3 Mar).
+  const [year, month, day] = [Number(match[1]), Number(match[2]), Number(match[3])];
+  const literal = new Date(Date.UTC(year, month - 1, day));
+  if (literal.getUTCMonth() !== month - 1 || literal.getUTCDate() !== day) {
+    throw new RangeError(`builtDate: invalid date ${timestamp}`);
+  }
+  const name = MONTHS[parsed.getUTCMonth()] ?? "";
+  return `${String(parsed.getUTCDate())} ${name} ${String(parsed.getUTCFullYear())}`;
 }

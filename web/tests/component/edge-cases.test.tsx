@@ -42,9 +42,15 @@ describe("display rules on edge-case data (spec, Edge Cases)", () => {
     );
     await screen.findByRole("heading", { level: 2 });
     const [, second] = screen.getAllByRole("article");
-    expect(second).toHaveTextContent("insufficient data (12 days)");
+    expect(second).toHaveTextContent("insufficient data (12 days, Jul 2024 – Jun 2025)");
     expect(second?.textContent).not.toMatch(/worked on \d+%/);
     expect(second?.querySelector(".rate-value")).toBeNull();
+    // Never ranked or compared (constitution, Principle I).
+    const text = document.body.textContent;
+    expect(text).not.toMatch(/worked more often/i);
+    expect(text).not.toMatch(/similar share/i);
+    expect(text).not.toMatch(/points/);
+    expect(text).toContain("too few days for a rate, so the two are not compared");
   });
 
   it("says 'similar' when the interval includes zero (FR-002)", async () => {
