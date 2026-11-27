@@ -12,6 +12,16 @@
 
 Phase 1 ships a static showcase explorer (roadmap, Phase 1; ADR-0001). Feature 002 produced the data: validated showcase files for 12 routes, an index and a landing file holding one striking comparison, with generated types. This feature builds the web application those files feed, with the checks every later Phase 1 feature relies on. It ends with a live page at a public address. The page is a placeholder, but it shows real numbers from the data. The map, list, timeline and insight panels come in `explorer-core` and `explorer-insights`.
 
+## Clarifications
+
+### Session 2026-11-27
+
+The owner asked for recommendations to be adopted directly, so each answer below is the recommended option.
+
+- Q: Which day count is N in "worked on X% of N days"? → A: The days the itinerary operated in the period and could be judged: the result's paired days, which is the rate's own denominator. Days at the end of the period, and days excluded for data reasons, are not in N. Each such category is counted on the page as "not counted".
+- Q: Should pull requests get their own preview deployment, and do the performance checks run against the live site? → A: No preview deployments are required. The performance and accessibility checks run in CI against the production build served locally, so they need no network and give stable results. The deployed site gets an automated smoke check after each deployment.
+- Q: In which time zone are scheduled times shown? → A: Each time is shown in the local time of its own airport and labelled as local, as in the showcase data. All stored times stay in UTC or schedule-local minutes from the pipeline. The page does no time-zone arithmetic of its own (constitution, Principle IV).
+
 ## User Scenarios & Testing *(mandatory)*
 
 ### User Story 1 - See a real example at a live link (Priority: P1)
@@ -88,7 +98,8 @@ The developer of the next features, and later the Phase 2 API, needs to change w
 - **FR-001**: The site MUST show the landing comparison from the committed showcase data:
   - the route, as origin and destination airport codes. The showcase data has no city names, and adding them is out of scope;
   - both itineraries, each with its airline, hub, flight numbers, scheduled local departure and arrival times, and scheduled layover;
-  - for each itinerary, the share of days it worked as a whole percent, with the number of days it operated and the data period.
+  - for each itinerary, the share of days it worked as a whole percent, with the number of days counted (the result's paired days) and the data period. Days not counted are given as a number with their reason;
+  - scheduled times in each airport's local time, labelled as local.
 - **FR-002**: The site MUST show the difference between the two itineraries in whole points. It MUST also show the 95% interval and the number of days both operated. When the interval includes zero, the wording MUST say the two are similar rather than that one is better.
 - **FR-003**: Below the minimum sample, the site MUST show "insufficient data" instead of a rate (constitution, Principle I). Precision MUST follow the methodology's precision rules: whole percent for rates and whole points for differences.
 - **FR-004**: Every figure MUST have a plain-language definition available on the page, taken from the definitions published in the showcase index, not written separately in the site. It MUST also state its sample size and data period. Wording MUST be historical, never predictive (design.md, Wording).
@@ -126,7 +137,7 @@ The developer of the next features, and later the Phase 2 API, needs to change w
 - **FR-022**: All tests MUST be deterministic and MUST NOT use the network. Tests that need data use the committed files or in-memory fixtures.
 - **FR-023**: Continuous integration MUST run every check above, together with the existing pipeline checks, on every pull request and on every push to `main`.
 - **FR-024**: Merges to `main` MUST be blocked unless all required checks pass.
-- **FR-025**: The site MUST deploy automatically from `main` once checks pass. A failed deployment MUST leave the previous version live.
+- **FR-025**: The site MUST deploy automatically from `main` once checks pass. A failed deployment MUST leave the previous version live. After each deployment, an automated smoke check MUST confirm that the live page loads and shows the landing figures. This is the only check that uses the network, and it runs outside the test suite. Performance and accessibility checks run in CI against the production build served locally; preview deployments for pull requests are not required.
 - **FR-026**: Developers MUST be able to run every check locally with documented commands. That includes the visual tests in the same container environment as CI.
 
 **Documentation**
