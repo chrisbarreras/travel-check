@@ -24,11 +24,7 @@ export function LandingComparison({ view }: { view: LandingView }) {
           : `${name(a)} and ${name(b)} worked on a similar share of days.`}
       </p>
       <div className="cards">
-        <ItineraryCard
-          itinerary={a}
-          headingId="itinerary-a"
-          badge={undefined}
-        />
+        <ItineraryCard itinerary={a} headingId="itinerary-a" badge={undefined} />
         <ItineraryCard itinerary={b} headingId="itinerary-b" />
       </div>
       <Difference comparison={comparison} />
