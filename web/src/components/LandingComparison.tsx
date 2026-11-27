@@ -27,7 +27,7 @@ export function LandingComparison({ view }: { view: LandingView }) {
         <ItineraryCard
           itinerary={a}
           headingId="itinerary-a"
-          badge={verdict === "more" ? "Worked more often" : undefined}
+          badge={undefined}
         />
         <ItineraryCard itinerary={b} headingId="itinerary-b" />
       </div>
