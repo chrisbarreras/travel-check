@@ -44,7 +44,7 @@ description: "Task list for the web foundation"
 
 ### Tests first
 
-- [ ] T007 [P] Write web/tests/unit/format.test.ts for web/src/format/:
+- [X] T007 [P] Write web/tests/unit/format.test.ts for web/src/format/:
   - **`percent`:** whole percent with halves rounded away from zero, at the boundaries (0.005, 0.995, 0.5, and the 1-of-128 tie cases of shared/test-cases/slack-feasibility.json).
   - **`points`:** signed whole points, negative halves.
   - **`interval`:** "95% interval +22 to +35 points".
@@ -55,8 +55,8 @@ description: "Task list for the web foundation"
   - **`rateText`:** `ok` against `insufficient_data` per data-model.md `Rate.status`, `Rate.rate` and `Rate.paired_days`.
   - **`excludedText`:** non-zero reasons only, per data-model.md `ShowcaseItinerary.excluded_days`.
   - **`flightNumbers`:** most frequent number, with "on N% of days" below 95%, per data-model.md `ShowcaseItinerary.find.legs[].flight_number`/`share_of_days`.
-- [ ] T008 [P] Write web/tests/unit/airlines.test.ts. Every `airline` and `airline_out` in the committed site-data/showcase/ files has a display name, and an unknown code falls back to the code (data-model.md, Airline names).
-- [ ] T009 [P] Write web/tests/unit/data-source.test.ts for `memorySource`, `staticSource` and `buildLandingView`:
+- [X] T008 [P] Write web/tests/unit/airlines.test.ts. Every `airline` and `airline_out` in the committed site-data/showcase/ files has a display name, and an unknown code falls back to the code (data-model.md, Airline names).
+- [X] T009 [P] Write web/tests/unit/data-source.test.ts for `memorySource`, `staticSource` and `buildLandingView`:
   - Valid committed files load as `ok`.
   - A malformed file, a missing required field and an extra field each return `kind: "invalid"`, with no partial value (data-model.md `DataError.kind`; contracts/data-access.md, Guarantees 1–2).
   - A 404 returns `not_found` and a network error returns `network`.
@@ -64,13 +64,13 @@ description: "Task list for the web foundation"
   - Each file is fetched once (Guarantee 4).
   - `buildLandingView` fails as `invalid` on each of the three cross-check cases (contracts/data-access.md, Cross-checks).
   - `staticSource` is tested with an injected `fetch` stub; there is no network.
-- [ ] T010 [P] Write web/tests/unit/lint-rules.test.ts. It checks that the ESLint configuration forbids `fetch` outside web/src/data/, by linting two fixture files (contracts/data-access.md, Enforcement).
+- [X] T010 [P] Write web/tests/unit/lint-rules.test.ts. It checks that the ESLint configuration forbids `fetch` outside web/src/data/, by linting two fixture files (contracts/data-access.md, Enforcement).
 
 ### Implementation
 
-- [ ] T011 [P] Implement web/src/format/ (`percent`, `points`, `interval`, `similarOrBetter`, `localTime`, `duration`, `period`, `rateText`, `excludedText`, `flightNumbers`) until T007 passes (research R11)
-- [ ] T012 [P] Implement web/src/format/airlines.ts until T008 passes
-- [ ] T013 Implement web/src/data/ until T009 and T010 pass:
+- [X] T011 [P] Implement web/src/format/ (`percent`, `points`, `interval`, `similarOrBetter`, `localTime`, `duration`, `period`, `rateText`, `excludedText`, `flightNumbers`) until T007 passes (research R11)
+- [X] T012 [P] Implement web/src/format/airlines.ts until T008 passes
+- [X] T013 Implement web/src/data/ until T009 and T010 pass:
   - `types.ts`: `DataSource`, plus `Result` and `DataError` per data-model.md `Result<T>` and `DataError.kind`.
   - `validate.ts`, over the generated validators.
   - `staticSource.ts`, `memorySource.ts` and `buildLandingView.ts`.
