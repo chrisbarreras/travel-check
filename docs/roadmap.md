@@ -82,7 +82,7 @@ How the flight intelligence app grows from a static showcase into a full-stack p
 
 | Feature | Delivers |
 |---|---|
-| `showcase-data-pipeline` | BTS → itineraries (schedule-based identity, ADR-0012 requirements) → slack distributions and traveler-insight data → validated JSON; Pydantic models and generated TypeScript types. **In progress** ([specs/002](../specs/002-showcase-data-pipeline/spec.md)): implementation, real-data run and independent review complete; results in [validation.md](../specs/002-showcase-data-pipeline/validation.md) |
+| `showcase-data-pipeline` | BTS → itineraries (schedule-based identity, ADR-0012 requirements) → slack distributions and traveler-insight data → validated JSON; Pydantic models and generated TypeScript types. **Complete** (merged in #1; [specs/002](../specs/002-showcase-data-pipeline/spec.md)); results in [validation.md](../specs/002-showcase-data-pipeline/validation.md) |
 | `web-foundation` | Vite/React scaffold, the full automated test setup (unit, component, Playwright end-to-end and visual in Docker, axe, Lighthouse CI), CI that blocks merges on failure, and a deployed placeholder page |
 | `explorer-core` | Map, list and timeline with synced selection; selection in the URL. Deployable on its own |
 | `explorer-insights` | Risk visuals, transfer-time slider, traveler-insight panels and "Find this itinerary" links, landing example, "How the numbers work" page |
@@ -110,6 +110,15 @@ How the flight intelligence app grows from a static showcase into a full-stack p
 **Exit criteria**
 - The frontend runs entirely on the API, with no static JSON left.
 - CI passes on every push; the API meets its response-time target for covered routes.
+
+**Decide before planning (raised 2026-11-27)**
+
+Settle these in `risk-api`'s `/speckit-specify` and `/speckit-plan`, and record the result as an ADR extending ADR-0001 and ADR-0003:
+- **Static files, API, or both.** The per-route static JSON from Phase 1 could cover every built itinerary with no backend. Each route would be one file fetched on demand. The browser would compute the rates and the bootstrap intervals, which take milliseconds for one itinerary. The API adds what static files can't do: search across routes, the paste box (codeshares, flights with no history) and the coverage fallbacks. Recommendation: per-route files as the data format, the API layered on top, and the files kept as a fallback when the API is unreachable.
+- **Spec questions:** must the app work without the API (offline or during an outage), and which routes must that cover?
+- **Plan questions:** what is precomputed and what is computed per request? In the Phase 1 batch run, the daily matching for an itinerary averages about 3 ms, and its full statistics, mostly bootstrap intervals, about 1 s. Recommendation: precompute the daily slack and the cheap statistics; compute the expensive comparisons on first request and cache them.
+- **Measure first:** write the daily data for all built itineraries split per route, and record the total size and the largest file. That number decides whether the all-static option is practical.
+- **Exit criteria:** "no static JSON left" above assumes the API replaces the files. Revise it if the static files stay as the data format or the fallback.
 
 **Spec Kit features:** `risk-api`, `route-search`
 
