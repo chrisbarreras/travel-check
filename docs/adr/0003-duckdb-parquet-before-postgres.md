@@ -5,7 +5,7 @@
 
 ## Context
 
-The product design doc proposed PostgreSQL/PostGIS. Through Phase 4, though, all data is historical and read-only: BTS flight records, derived itineraries and precomputed risk data. There are no accounts or saved trips. Airport geography is a few hundred points, which needs no spatial database.
+The original product concept proposed PostgreSQL/PostGIS. Through Phase 4, though, all data is historical and read-only: BTS flight records, derived itineraries and precomputed risk data. There are no accounts or saved trips. Airport geography is a few hundred points, which needs no spatial database.
 
 ## Decision
 
