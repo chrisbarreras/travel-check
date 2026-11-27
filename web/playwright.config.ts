@@ -16,7 +16,7 @@ export default defineConfig({
   reporter: process.env.CI ? [["list"], ["html", { open: "never" }]] : "list",
   snapshotPathTemplate: "{testDir}/visual/__screenshots__/{arg}-{projectName}{ext}",
   expect: {
-    toHaveScreenshot: { maxDiffPixels: 0, animations: "disabled", caret: "hide" },
+    toHaveScreenshot: { maxDiffPixels: 0, threshold: 0, animations: "disabled", caret: "hide" },
   },
   use: {
     baseURL: smokeUrl ?? "http://127.0.0.1:4173/",
