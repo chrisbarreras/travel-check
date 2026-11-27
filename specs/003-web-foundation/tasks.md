@@ -159,7 +159,7 @@ description: "Task list for the web foundation"
   - `web-deploy` on push to `main` only, needing all three: build with `GITHUB_PAGES=1`, `actions/upload-pages-artifact`, `actions/deploy-pages` with `pages: write` and `id-token: write`, then `npm run smoke` against the deployed URL.
 - [X] T033 [US2] Write docs/adr/0015-static-hosting-github-pages.md (research R1, R2), mark ADR-0002's frontend-hosting row as superseded by ADR-0015, and add it to docs/adr/README.md
 - [X] T034 [US2] With the owner's authorization, enable GitHub Pages with "GitHub Actions" as the source on `chrisbarreras/travel-check`. Create the ruleset on `main`: pull request required; the status checks `checks` (pipeline), `web-checks`, `web-browser` and `web-lighthouse` required; force pushes and deletion blocked (research R2, R13; FR-024). Record the `gh api` commands in docs/architecture.md
-- [ ] T035 [US2] Run the breakage tests of quickstart 11: one throwaway pull request per breakage (lint, type, unit, component, e2e, visual, a11y, keyboard, budget), each closed unmerged, plus a clean one. Record each pull request, its failing check and its blocked merge state in specs/003-web-foundation/validation.md (SC-005)
+- [X] T035 [US2] Run the breakage tests of quickstart 11: one throwaway pull request per breakage (lint, type, unit, component, e2e, visual, a11y, keyboard, budget), each closed unmerged, plus a clean one. Record each pull request, its failing check and its blocked merge state in specs/003-web-foundation/validation.md (SC-005)
 
 **Checkpoint**: the checks block bad merges, and `main` is live at https://chrisbarreras.github.io/travel-check/.
 
