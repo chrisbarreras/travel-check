@@ -307,3 +307,7 @@ main,
     scroll-behavior: auto !important;
   }
 }
+
+.cards {
+  min-width: 420px;
+}
