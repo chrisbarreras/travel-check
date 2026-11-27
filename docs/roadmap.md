@@ -1,6 +1,6 @@
 # Roadmap
 
-How the flight intelligence app grows from a static showcase into a full-stack product. The long-term vision lives in [flight_intelligence_product_design.md](../flight_intelligence_product_design.md). This document decides **what gets built, in what order, and when each phase is done**.
+How Travel Check grows from a static showcase into a full-stack product. The long-term vision lives in [flight_intelligence_product_design.md](../flight_intelligence_product_design.md). This document decides **what gets built, in what order, and when each phase is done**.
 
 ## Goals
 

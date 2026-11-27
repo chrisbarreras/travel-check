@@ -1,4 +1,4 @@
-# Flight App
+# Travel Check
 
 A map-first explorer that compares how reliable flight itineraries are, using real historical on-time data: not only how long a trip takes, but how often its connection would actually have worked.
 
@@ -59,3 +59,7 @@ The project follows spec-driven development with [GitHub Spec Kit](https://githu
 - Time-zone rules: tzdata, Apache License 2.0.
 
 Results describe **connection feasibility** from historical schedules and actual gate times. They are not predictions, and they do not describe what happened to any traveler.
+
+## Licence
+
+Copyright (c) 2026 Christopher T. Barreras Consulting. All rights reserved. The code and documentation are published for viewing only; see [LICENSE](LICENSE). Third-party data and software keep the licences listed above.

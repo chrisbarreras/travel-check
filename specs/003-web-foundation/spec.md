@@ -20,6 +20,7 @@ The owner asked for recommendations to be adopted directly, so each answer below
 
 - Q: Which day count is N in "worked on X% of N days"? → A: The days the itinerary operated in the period and could be judged: the result's paired days, which is the rate's own denominator. Days at the end of the period, and days excluded for data reasons, are not in N. Each such category is counted on the page as "not counted".
 - Q: Should pull requests get their own preview deployment, and do the performance checks run against the live site? → A: No preview deployments are required. The performance and accessibility checks run in CI against the production build served locally, so they need no network and give stable results. The deployed site gets an automated smoke check after each deployment.
+- Q: What is the app called on the page? → A: Travel Check, the product name from 2026-11-27 (owner decision). It is the page title and the main heading; the repository name stays `flight-app`.
 - Q: In which time zone are scheduled times shown? → A: Each time is shown in the local time of its own airport and labelled as local, as in the showcase data. All stored times stay in UTC or schedule-local minutes from the pipeline. The page does no time-zone arithmetic of its own (constitution, Principle IV).
 
 ## User Scenarios & Testing *(mandatory)*
@@ -108,7 +109,7 @@ The developer of the next features, and later the Phase 2 API, needs to change w
   - the data-source attributions published in the showcase index (BTS on-time performance, DB1B and T-100 data, and the airport data source);
   - the data period and the date the data was built, from the showcase manifest;
   - links to the methodology document and the source repository.
-- **FR-007**: The page MUST say plainly that this is an early version: one example, with the full explorer to follow. It MUST NOT show controls that do nothing.
+- **FR-007**: The page MUST carry the name Travel Check as its title and main heading, with a copyright line for Christopher T. Barreras Consulting in the footer. It MUST say plainly that this is an early version: one example, with the full explorer to follow. It MUST NOT show controls that do nothing.
 - **FR-008**: The page MUST follow `docs/design.md`: the color tokens and their contrast, the typography, the 44 px touch targets, the visible 3 px focus outline, the stacked phone layout, and no motion under `prefers-reduced-motion`.
 - **FR-009**: The page MUST work from 320 px wide up to desktop with no horizontal scrolling. It MUST also reflow at 200% text zoom.
 - **FR-010**: Every interactive element (links, and any disclosure that shows definitions) MUST work by keyboard, in a sensible order, with visible focus and screen-reader labels.

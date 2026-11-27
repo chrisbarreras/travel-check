@@ -1,6 +1,6 @@
-# Flight App Constitution
+# Travel Check Constitution
 
-Flight App is a map-first explorer that compares the reliability of flight itineraries using
+Travel Check is a map-first explorer that compares the reliability of flight itineraries using
 real historical on-time data. It is a portfolio-first full-stack project; commercial potential is
 secondary.
 
@@ -136,4 +136,4 @@ path open.
   Complexity Tracking section.
 - The independent reviewer MUST check compliance with every principle for each feature.
 
-**Version**: 1.2.0 | **Ratified**: 2026-11-24 | **Last Amended**: 2026-11-25
+**Version**: 1.2.1 | **Ratified**: 2026-11-24 | **Last Amended**: 2026-11-27
