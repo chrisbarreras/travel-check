@@ -269,6 +269,35 @@ main,
   padding-left: 1.25rem;
 }
 
+.skeleton {
+  margin: 16px 0 32px;
+}
+
+.skeleton-line {
+  height: 1rem;
+  max-width: 24rem;
+  margin: 0 0 12px;
+  border-radius: 6px;
+  background: var(--border);
+}
+
+.skeleton-heading {
+  height: 1.5rem;
+  max-width: 12rem;
+}
+
+.skeleton-card {
+  min-height: 18rem;
+}
+
+.load-error {
+  margin: 16px 0 32px;
+  padding: 16px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

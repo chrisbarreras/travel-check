@@ -171,12 +171,12 @@ description: "Task list for the web foundation"
 
 **Independent Test**: the page against the committed, a malformed and a failing source shows, respectively, the example, the plain error and the plain error, with no screen-code changes (spec, US3).
 
-- [ ] T036 [P] [US3] Write web/tests/component/states.test.tsx:
+- [X] T036 [P] [US3] Write web/tests/component/states.test.tsx:
   - the loading state shows the layout's shape and no digits;
   - a malformed landing file, a missing comparison and a network failure each show "This example could not be loaded", with no figures;
   - the same `App` renders all three with only the source swapped (FR-013, FR-014; data-model.md, State).
-- [ ] T037 [P] [US3] Add an e2e case to web/tests/e2e/states.spec.ts. Route interception serves a malformed landing.json, then delays the response, and the test asserts the error and loading states in the real browser.
-- [ ] T038 [US3] Implement web/src/components/Skeleton.tsx and web/src/components/LoadError.tsx, and wire the loading and error states in web/src/App.tsx, until T036 and T037 pass. The visual references from T026 for these states are updated deliberately.
+- [X] T037 [P] [US3] Add an e2e case to web/tests/e2e/states.spec.ts. Route interception serves a malformed landing.json, then delays the response, and the test asserts the error and loading states in the real browser.
+- [X] T038 [US3] Implement web/src/components/Skeleton.tsx and web/src/components/LoadError.tsx, and wire the loading and error states in web/src/App.tsx, until T036 and T037 pass. The visual references from T026 for these states are updated deliberately.
 
 **Checkpoint**: all three stories work independently.
 

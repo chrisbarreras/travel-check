@@ -1,5 +1,7 @@
 import { LandingComparison } from "./components/LandingComparison";
 import { Footer } from "./components/Footer";
+import { LoadError } from "./components/LoadError";
+import { Skeleton } from "./components/Skeleton";
 import { useLandingView } from "./data";
 
 export function App() {
@@ -15,7 +17,9 @@ export function App() {
         </p>
       </header>
       <main id="main" aria-busy={landing.state === "loading"}>
+        {landing.state === "loading" ? <Skeleton /> : null}
         {landing.state === "ready" ? <LandingComparison view={landing.view} /> : null}
+        {landing.state === "error" ? <LoadError /> : null}
       </main>
       {landing.state === "ready" ? (
         <Footer index={landing.view.index} builtAt={landing.view.builtAt} />
