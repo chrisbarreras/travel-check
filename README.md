@@ -4,7 +4,10 @@ A map-first explorer that compares how reliable flight itineraries are, using re
 
 **Status: Phase 0, the data feasibility experiment, is complete; the decision is GO.** Before building any interface, the project checked whether public flight data shows meaningful differences in connection feasibility between itineraries a traveler would otherwise consider equivalent. It does: 81 showcase examples in 9 origin/destination pairs across 5 hubs, from July 2024 to June 2025 (decision in [ADR-0012](docs/adr/0012-phase0-go-no-go.md); full report in [reports/phase0/summary.md](reports/phase0/summary.md)). The Phase 0 results are frozen at the git tag `phase0-final`.
 
-**Phase 1, the static showcase explorer, is in progress.** Its first feature, the showcase data pipeline ([spec](specs/002-showcase-data-pipeline/spec.md)), builds the curated, validated JSON the explorer will load, with schedule-based itinerary identity, per-day data for a transfer-time slider and traveler insights (faster alternatives, connecting options, buffer, monthly view, schedule changes). See the [roadmap](docs/roadmap.md).
+**Phase 1, the static showcase explorer, is in progress.**
+- **Showcase data pipeline (complete):** builds the curated, validated JSON the explorer loads ([spec](specs/002-showcase-data-pipeline/spec.md)). It has schedule-based itinerary identity, per-day data for a transfer-time slider, and traveler insights.
+- **Web foundation:** the live page, **https://chrisbarreras.github.io/travel-check/**, shows one real comparison from that data, with every rate's sample, period and definition ([spec](specs/003-web-foundation/spec.md)).
+- **Next:** the map, list and insight panels. See the [roadmap](docs/roadmap.md).
 
 ## Run the Phase 0 pipeline
 
@@ -34,6 +37,23 @@ uv run flight-pipeline schemas --check    # what CI runs: fails when shared/ is 
 
 The explorer reads `site-data/showcase/`; the data contract is [contracts/outputs.md](specs/002-showcase-data-pipeline/contracts/outputs.md), and every published definition links to [docs/methodology.md](docs/methodology.md#phase-1-showcase-data-feature-002-showcase-data-pipeline). Details: [quickstart](specs/002-showcase-data-pipeline/quickstart.md).
 
+## Run the web app
+
+Requires Node.js 24 (see [web/.nvmrc](web/.nvmrc)). The browser tests also need Docker, because screenshots are compared only inside the pinned Playwright image.
+
+```bash
+cd web
+npm ci
+npm run dev                  # local development server
+npm run lint && npm run typecheck && npm test   # static checks, unit and component tests
+npm run build && npm run size                   # build (data copied unchanged) and budgets
+npm run test:browser:docker  # end-to-end, visual, accessibility and keyboard tests in Docker
+npm run lighthouse           # performance and accessibility budgets (needs Chrome)
+npm run test:visual:update   # rewrite the visual references, then review the image diffs
+```
+
+Every command and CI job is listed in [contracts/checks.md](specs/003-web-foundation/contracts/checks.md). The page loads data only through `web/src/data/`, which validates each file against the generated schema ([docs/architecture.md](docs/architecture.md)).
+
 ## Repository map
 
 | Path | Contents |
@@ -44,6 +64,8 @@ The explorer reads `site-data/showcase/`; the data contract is [contracts/output
 | [docs/adr/](docs/adr/README.md) | Architecture decision records |
 | [specs/](specs/) | Spec Kit feature specifications, plans, tasks and reviews |
 | [pipeline/](pipeline/) | Python data pipeline (`flight_pipeline`) and its tests |
+| [web/](web/) | The Travel Check web app (React, TypeScript, Vite) and its tests |
+| [docs/architecture.md](docs/architecture.md) | System overview and data flow |
 | [reports/phase0/](reports/phase0/) | Committed Phase 0 results, data-quality counts and run manifest |
 | [reports/phase1/](reports/phase1/) | The Phase 1 rerun's results with schedule-slot itineraries |
 | [site-data/showcase/](site-data/showcase/) | Published showcase JSON for the explorer, with its manifest |

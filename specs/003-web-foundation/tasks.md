@@ -158,7 +158,7 @@ description: "Task list for the web foundation"
   - failure artifacts: the Playwright report, the diffs and the Lighthouse reports;
   - `web-deploy` on push to `main` only, needing all three: build with `GITHUB_PAGES=1`, `actions/upload-pages-artifact`, `actions/deploy-pages` with `pages: write` and `id-token: write`, then `npm run smoke` against the deployed URL.
 - [X] T033 [US2] Write docs/adr/0015-static-hosting-github-pages.md (research R1, R2), mark ADR-0002's frontend-hosting row as superseded by ADR-0015, and add it to docs/adr/README.md
-- [ ] T034 [US2] With the owner's authorization, enable GitHub Pages with "GitHub Actions" as the source on `chrisbarreras/travel-check`. Create the ruleset on `main`: pull request required; the status checks `checks` (pipeline), `web-checks`, `web-browser` and `web-lighthouse` required; force pushes and deletion blocked (research R2, R13; FR-024). Record the `gh api` commands in docs/architecture.md
+- [X] T034 [US2] With the owner's authorization, enable GitHub Pages with "GitHub Actions" as the source on `chrisbarreras/travel-check`. Create the ruleset on `main`: pull request required; the status checks `checks` (pipeline), `web-checks`, `web-browser` and `web-lighthouse` required; force pushes and deletion blocked (research R2, R13; FR-024). Record the `gh api` commands in docs/architecture.md
 - [ ] T035 [US2] Run the breakage tests of quickstart 11: one throwaway pull request per breakage (lint, type, unit, component, e2e, visual, a11y, keyboard, budget), each closed unmerged, plus a clean one. Record each pull request, its failing check and its blocked merge state in specs/003-web-foundation/validation.md (SC-005)
 
 **Checkpoint**: the checks block bad merges, and `main` is live at https://chrisbarreras.github.io/travel-check/.
@@ -184,8 +184,8 @@ description: "Task list for the web foundation"
 
 ## Phase 6: Polish and cross-cutting
 
-- [ ] T039 [P] Write docs/architecture.md: the one-page system overview. It covers the data flow from the pipeline, through site-data/showcase/ and the copy into dist/, then the `DataSource` and validators, to the page. It also lists the CI jobs and the deployment, and where Phase 2's API plugs in (FR-027)
-- [ ] T040 [P] Update README.md for Travel Check: status, live link, how to run, test and build web/ (the commands of contracts/checks.md), and the Docker requirement for browser tests (FR-027)
+- [X] T039 [P] Write docs/architecture.md: the one-page system overview. It covers the data flow from the pipeline, through site-data/showcase/ and the copy into dist/, then the `DataSource` and validators, to the page. It also lists the CI jobs and the deployment, and where Phase 2's API plugs in (FR-027)
+- [X] T040 [P] Update README.md for Travel Check: status, live link, how to run, test and build web/ (the commands of contracts/checks.md), and the Docker requirement for browser tests (FR-027)
 - [ ] T041 [P] Mark `web-foundation` done in the docs/roadmap.md Phase 1 table once deployed, linking to specs/003-web-foundation/
 - [ ] T042 Run every quickstart scenario and record the results in specs/003-web-foundation/validation.md:
   - the budgets measured: JS and data gzip, the Lighthouse medians;
