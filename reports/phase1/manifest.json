@@ -1,0 +1,137 @@
+{
+  "config_sha256": "db850b967337b207ec85dbcf14cfcc403f23bf1dbbac7f65f746124eef000705",
+  "outputs": {
+    "airports.parquet": "acc6052914103af35586f0db1540568206bdf6f93afbde5b8bcde7777340b798",
+    "comparable_pairs.parquet": "40094bdeea2fa76e07020fb2afb989a82b3aec1c73216a400e50552e7830cffe",
+    "daily_outcomes.parquet": "a6b15789ca447f485759155ab6dfc832213f01acfb752cdfbc42261f1525dc91",
+    "flights.parquet": "0b528b68b4726e280c6c35dba349b7e571a91e8174f644b390a0b50881d625ab",
+    "hub_candidates.parquet": "4d172852dc0b643c12ed31be11db031065743c722fe62e8849a201834aaa36d1",
+    "hub_selection.parquet": "c5f30273a8a114e55ab0a598462af37a24cdf5e064a5d36046b80b34cbfc5125",
+    "itineraries.parquet": "19d734e012e46ab2516e901f395ae31e883352e36a00ea143e7e13aee04e18b7",
+    "itinerary_days.parquet": "439924be0cd084664fde1a2f5b0f5e60072773181964ae21572ea9f98063688b",
+    "itinerary_results.parquet": "2e87b5517e240fd8a40d65da6fbd21b833fae5bcc042fa5a8616211a49068119",
+    "nonstop.parquet": "55868ada1d47a92de7670f6c5ff6ca195541556a31096f5e145c7d8f1d0fe84c",
+    "od_exclusions.parquet": "08d2eb7a812452ef06cc53049fe6c3e54899535da515eda838cb586a85cc9f47",
+    "od_selection.parquet": "8d9c5ef970ab37be9af9a9187b44c9e3a3c62b357f105598990818f15708d288",
+    "passengers.parquet": "f90cf37047dd411e52ade6aba29af7b041840992350eab9299326e3be6618893",
+    "quality.json": "62d6d36449e9834ff8d497e957129e598522365103d4d2d4c916cfe1575369be",
+    "sensitivity_scenarios.parquet": "0ea7d52a79f7633adfdf3ea48caaa2dbdb8041e31f209b080c324377499feb9d",
+    "showcase_comparisons.parquet": "26dde6280e6d02f5392285575c4c0f458c3b723be292471c97fec995bb6feacf",
+    "showcase_routes.parquet": "431ed767a928754d2e9a496d5513ed8182d913b161ceb2f54ed29b3a5d960ba3",
+    "slots.parquet": "ed3b3a58aed3d5f6044ab037dcb5a4a874c32231b1fe5d2a3b3aaedc478559ea",
+    "slots_changes.parquet": "7636be4c4fdcf049306bf159698545e58685e98d775adfbcc2308ddc926a95ef",
+    "slots_days.parquet": "c4470006d210cf90aae2786f706e2772611f7b65184e59e169301d86e5b88f16",
+    "sold_routings.parquet": "8621225cfc3101935f2ab915fa5d1cc6a87d1e07e9fa81edd5278be0dccbcbab",
+    "summary.json": "0a373e3b309575a354a3bf7e2288b06d69a754d2e3af93bf9fbb46fac8fd43e0",
+    "summary.md": "5fefaff86b47d7c37705ed22e076b5d5151fecbb39a331b5fd8474674e9e5768"
+  },
+  "packages": {
+    "airportsdata": "20261123",
+    "duckdb": "2.0.1",
+    "flight-pipeline": "0.1.0",
+    "httpx": "0.28.1",
+    "numpy": "2.5.5",
+    "pydantic": "2.14.4",
+    "python": "3.13",
+    "tzdata": "2026.6"
+  },
+  "run": {
+    "machine": {
+      "cpu_count": 16,
+      "ram_gb": 15.4,
+      "thread_limit": 4
+    },
+    "run_at": "2026-11-26T21:10:45+00:00",
+    "runtime_exceeded": false,
+    "runtime_limit_min": 30.0,
+    "runtime_measured_at": "2026-11-26T21:10:45+00:00",
+    "runtime_min": 24.3
+  },
+  "sources": [
+    {
+      "name": "db1b/2024-3",
+      "pinned": true,
+      "sha256": "b67439c62446f8bc98dfdca72e1cd05a5727d92bd9ffd57e744d459094cc55cf"
+    },
+    {
+      "name": "db1b/2024-4",
+      "pinned": true,
+      "sha256": "e129d9f32abc0c920abfe485a109af95cb8862af80073ab17c400a3b0cc04145"
+    },
+    {
+      "name": "db1b/2025-1",
+      "pinned": true,
+      "sha256": "6541728831788264d4c7da33ba20eb69d1e65d3bf97f75c32ae79e7084725b41"
+    },
+    {
+      "name": "db1b/2025-2",
+      "pinned": true,
+      "sha256": "e137271888e48ff2b6eb404d0f2ea532b3266aba64362249b42d05858ad87db2"
+    },
+    {
+      "name": "ontime/2024-07",
+      "pinned": true,
+      "sha256": "b1b2dac29ad2d1e3bc52d5151ca43b1ee0d3e0e1c2a941b974f68bef3dd186ad"
+    },
+    {
+      "name": "ontime/2024-08",
+      "pinned": true,
+      "sha256": "1ca5f66b20a55ab993e10f51ce8c652abd4f56336dc77e8c6b6e86e7c33c6b8e"
+    },
+    {
+      "name": "ontime/2024-09",
+      "pinned": true,
+      "sha256": "c88adb575631d9a64def7b353916203cf4ca621ab08a5c72595320c9b2959558"
+    },
+    {
+      "name": "ontime/2024-10",
+      "pinned": true,
+      "sha256": "163f6d93d0c4d2e7f6b5d78dfa35e68f462125de16dcb4fc34a80b897c7bf62b"
+    },
+    {
+      "name": "ontime/2024-11",
+      "pinned": true,
+      "sha256": "e4fc261ea95a7e32d9d6bff8dc22eec53dca752f786f4edc13b5c27f48e88105"
+    },
+    {
+      "name": "ontime/2024-12",
+      "pinned": true,
+      "sha256": "86b6fccb118ac9c8df435b9aeb674f1053873d48cf958248457d03557c263a3f"
+    },
+    {
+      "name": "ontime/2025-01",
+      "pinned": true,
+      "sha256": "0feaabdbc9e4bd851ef717f342678cdcc5ea0822dd706359aab030bb1a5d1c24"
+    },
+    {
+      "name": "ontime/2025-02",
+      "pinned": true,
+      "sha256": "080ad48e2826a6b4c3f39690f75a08dea9ad4e0831ff82958656cdb61693dd15"
+    },
+    {
+      "name": "ontime/2025-03",
+      "pinned": true,
+      "sha256": "ad3f46a598bd529588bfcc004731b893b27999a681804a07a3841b2904d66d48"
+    },
+    {
+      "name": "ontime/2025-04",
+      "pinned": true,
+      "sha256": "88b88ae1a9b49a03cb82c835481ac8dcf86ff2d378614655638889866767608f"
+    },
+    {
+      "name": "ontime/2025-05",
+      "pinned": true,
+      "sha256": "261fb75b956abedca34a27db3ae7221437e1a2ce349b5ee9a49ec267d7555b29"
+    },
+    {
+      "name": "ontime/2025-06",
+      "pinned": true,
+      "sha256": "0cb4038a49962ab92cba33f9840a8eec9671ef19a5afeedfa27998984476b609"
+    },
+    {
+      "name": "t100",
+      "pinned": true,
+      "sha256": "35fc4d07c70740e6c7369602a6f5668118fa2605e3df9ec9f1d6928b55e4af1f"
+    }
+  ]
+}

@@ -9,10 +9,33 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
+import duckdb
 import pytest
 
 from flight_pipeline.cli import main
 from flight_pipeline.models import Finding
+
+
+def itinerary_layovers(root: Path) -> dict[str, int]:
+    path = (root / "derived" / "itineraries.parquet").as_posix()
+    rows = (
+        duckdb.connect()
+        .execute(f"SELECT itinerary_id, median_layover_min FROM read_parquet('{path}')")
+        .fetchall()
+    )
+    return {i: int(v) for i, v in rows}
+
+
+def test_renumbering_airline_has_itineraries(finished: Path) -> None:
+    # WN alternates flight numbers daily: only schedule-slot identity sees it (SC-001)
+    path = (finished / "derived" / "itineraries.parquet").as_posix()
+    n = (
+        duckdb.connect()
+        .execute(f"SELECT count(*) FROM read_parquet('{path}') WHERE airline_in = 'WN'")
+        .fetchone()
+    )
+    assert n is not None
+    assert n[0] > 0
 
 
 def finding(root: Path) -> Finding:
@@ -34,6 +57,9 @@ def test_all_outputs_written(finished: Path) -> None:
         "daily_outcomes.parquet",
         "itinerary_results.parquet",
         "comparable_pairs.parquet",
+        "showcase_routes.parquet",
+        "showcase_comparisons.parquet",
+        "curation.json",
     ):
         assert (finished / "derived" / name).exists(), name
     for name in ("summary.json", "summary.md", "manifest.json", "quality.json"):
@@ -57,7 +83,10 @@ def test_pairs_and_results_follow_design(finished: Path) -> None:
     f = finding(finished)
     assert len(f.od_pairs) == 10
     assert all(p.regional_origin for p in f.od_pairs)
-    rates = {r.itinerary_id: r for r in f.default_results}
+    layover = itinerary_layovers(finished)
+    # compare weather hubs on the 90-minute connections only: the CMH second bank is tight
+    # by design, and the 210-minute connections absorb most delays
+    rates = {r.itinerary_id: r for r in f.default_results if layover[r.itinerary_id] == 90}
     assert all(r.status == "ok" for r in rates.values())
     reliable = [
         r.feasibility_rate
@@ -86,6 +115,91 @@ def test_showcases_and_decision_follow_design(finished: Path) -> None:
     assert f.criterion_min_examples_met
     assert f.criterion_min_hubs_met
     assert f.decision == "go"
+
+
+def test_curation_follows_design(finished: Path) -> None:
+    # caps hold on the synthetic showcase; the landing example is cross-hub (research R4)
+    con = duckdb.connect()
+    routes = (finished / "derived" / "showcase_routes.parquet").as_posix()
+    comps = (finished / "derived" / "showcase_comparisons.parquet").as_posix()
+    rows = con.execute(
+        f"SELECT route_id, rank, share_of_showcase FROM read_parquet('{routes}') ORDER BY rank"
+    ).fetchall()
+    assert rows
+    assert [r[1] for r in rows] == list(range(1, len(rows) + 1))
+    meta = json.loads((finished / "derived" / "curation.json").read_text())
+    if not any(s.startswith("route ") for s in meta["shortfalls"]):
+        assert max(r[2] for r in rows) <= 0.333 + 1e-9
+    landing = con.execute(
+        f"SELECT comparison_id, cross_hub FROM read_parquet('{comps}') WHERE landing"
+    ).fetchall()
+    assert len(landing) == 1
+    assert landing[0][0] == meta["landing_comparison_id"]
+    assert landing[0][1] is True
+
+
+def test_published_showcase_follows_contract(finished: Path) -> None:
+    # every file validates, the landing file stands alone, budgets hold (contracts/outputs.md)
+    from flight_pipeline.showcase.models import RouteFile, ShowcaseIndex
+    from flight_pipeline.showcase.publish import wording_violations
+
+    out = finished / "site-data" / "showcase"
+    ctx = {"min_sample": 30, "faster_margin": 0.02, "faster_min_saving_min": 15}
+    idx = ShowcaseIndex.model_validate_json((out / "index.json").read_bytes(), context=ctx)
+    assert idx.routes
+    for summary in idx.routes:
+        data = (out / summary.file).read_bytes()
+        route = RouteFile.model_validate_json(data, context=ctx)
+        assert route.route_id == summary.route_id
+        compared = {x for c in route.comparisons for x in (c.itinerary_a, c.itinerary_b)}
+        assert len(route.itineraries) <= 12
+        assert compared <= {i.itinerary_id for i in route.itineraries}
+        assert data.endswith(b"\n")
+        assert b"\r" not in data
+        assert wording_violations(json.loads(data)) == []
+    landing = RouteFile.model_validate_json((out / "landing.json").read_bytes(), context=ctx)
+    assert [c.comparison_id for c in landing.comparisons] == [idx.landing.comparison_id]
+    assert {c.landing for c in landing.comparisons} == {True}
+    assert sorted(n.kind for n in idx.coverage.not_covered) == sorted(
+        [
+            "international",
+            "two_or_more_stops",
+            "separate_tickets",
+            "non_reporting_airline",
+            "outside_period",
+            "not_in_showcase",
+        ]
+    )
+    assert "WN" in {a.airline for a in idx.coverage.airlines if a.itineraries > 0}
+
+
+def test_insights_follow_design(finished: Path) -> None:
+    # synthetic.py: the 210-minute connection is a better connecting option at weather hubs;
+    # the 90-minute one is a faster alternative at reliable hubs; nothing else is invented
+    from flight_pipeline.showcase.models import InsightsFile
+
+    ins = InsightsFile.model_validate_json(
+        (finished / "derived" / "insights.json").read_bytes()
+    ).itineraries
+    layover = itinerary_layovers(finished)
+    hub = {k: k.split("-")[1] for k in ins}
+    stormy, reliable = {"ORD", "MSP", "ATL", "PHX"}, {"DFW", "SEA", "CLT", "DEN"}
+    better = {(k, o.itinerary_id) for k, v in ins.items() for o in v.connecting_options if o.better}
+    assert better
+    assert all(layover[o] > layover[k] for k, o in better)  # more time absorbs delays
+    assert any(hub[k] in stormy and layover[o] == 210 for k, o in better)
+    faster = {(k, a.itinerary_id) for k, v in ins.items() for a in v.faster_alternatives}
+    assert any(hub[k] in reliable and layover[k] == 210 and layover[a] == 90 for k, a in faster)
+    for v in ins.values():
+        for a in v.faster_alternatives:
+            assert a.ci_low >= -0.02 - 1e-9
+            assert a.minutes_saved >= 15
+        assert len(v.monthly) == 12
+        assert v.buffer.operated_days <= sum(m.paired_days for m in v.monthly)
+    # the WN renumbering: each leg's most frequent number covers about half the days
+    wn = [v.find for k, v in ins.items() if ":WN" in k]
+    assert wn
+    assert all(0.45 < leg.share_of_days < 0.55 for f in wn for leg in f.legs)
 
 
 def test_manifest_records_sources_packages_and_hashes(finished: Path) -> None:
@@ -122,14 +236,17 @@ def test_sold_routing_rules_follow_design(finished: Path) -> None:
     assert {(e.origin, e.dest) for e in f.od_exclusions} == {(p.origin, p.dest) for p in f.od_pairs}
     for e in f.od_exclusions:
         assert e.excluded_recurrence == 0  # every first-bank connection works every day
-        assert e.excluded_layover > 0  # the later banks are outside the layover limit
+        assert e.excluded_bounds > 0  # the later banks can never connect within the limit
         assert e.qualifying > 0
     # UA through DEN to BOS is sold below the minimum: never an itinerary
     assert not any(
         ":UA" in r.itinerary_id and "-DEN-BOS:" in r.itinerary_id for r in f.default_results
     )
+    layover = itinerary_layovers(finished)
     for p in f.showcase_examples:
-        assert p.settings_compared == 9
+        tight = min(layover[p.itinerary_a], layover[p.itinerary_b]) < 45
+        # tight second-bank connections cannot be compared at a 45-minute minimum
+        assert p.settings_compared == (6 if tight else 9)
     text = (finished / "reports" / "summary.md").read_text(encoding="utf-8")
     assert "## Itinerary rules applied" in text
     assert "DB1B quarters 2024-3 to 2025-2" in text

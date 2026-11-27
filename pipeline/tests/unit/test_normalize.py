@@ -46,7 +46,7 @@ def iso(v: dt.datetime | None) -> str | None:
 
 def test_table_matches_flight_record_model(tmp_path: Path) -> None:
     con = run(tmp_path)
-    assert validate_table(con, "flights", FlightRecord) == 172
+    assert validate_table(con, "flights", FlightRecord) == 222
 
 
 def test_instants_match_hand_computed_values(tmp_path: Path) -> None:
@@ -142,4 +142,4 @@ def test_multiple_monthly_files_are_combined(tmp_path: Path) -> None:
     b.write_text("\n".join([lines[0], *lines[60:]]) + "\n")
     con = run(tmp_path, [a, b])
     row = con.execute("SELECT count(*) FROM flights").fetchone()
-    assert row == (172,)
+    assert row == (222,)

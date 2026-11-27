@@ -6,25 +6,43 @@ from __future__ import annotations
 import datetime as dt
 import hashlib
 from collections.abc import Mapping, Sequence
+from concurrent.futures import ProcessPoolExecutor
 
 import duckdb
 import numpy as np
 
 from flight_pipeline.config import Itineraries
 from flight_pipeline.models import Itinerary
+from flight_pipeline.storage import worker_count
+
+
+def feasibility_threshold(i: Itinerary, rules: Itineraries, boarding_cutoff: int) -> int:
+    """The minimum connection time for the itinerary's hub and connection type, plus the
+    boarding cutoff."""
+    return rules.min_connection_for(i.hub, partner=i.partner_connection) + boarding_cutoff
 
 
 def tight_itineraries(
-    itineraries: Sequence[Itinerary], rules: Itineraries, boarding_cutoff: int
+    itineraries: Sequence[Itinerary],
+    rules: Itineraries,
+    boarding_cutoff: int,
+    *,
+    days_below: Mapping[str, float] | None = None,
+    max_day_share: float | None = None,
 ) -> set[str]:
-    """Itineraries whose median scheduled layover is shorter than their own feasibility
-    threshold (minimum connection time for the hub and connection type, plus the boarding
-    cutoff): their connection is feasible only when the inbound is early or the outbound late."""
+    """Itineraries scheduled tighter than their own feasibility threshold, so that their
+    connection was feasible only when the inbound was early or the outbound late: the median
+    scheduled layover is below it or, with ``max_day_share``, more than that share of the
+    connecting days (``days_below``, by itinerary) were scheduled below it."""
     return {
         i.itinerary_id
         for i in itineraries
-        if i.median_layover_min
-        < rules.min_connection_for(i.hub, partner=i.partner_connection) + boarding_cutoff
+        if i.median_layover_min < feasibility_threshold(i, rules, boarding_cutoff)
+        or (
+            max_day_share is not None
+            and days_below is not None
+            and days_below.get(i.itinerary_id, 0.0) > max_day_share + 1e-9
+        )
     }
 
 
@@ -131,6 +149,26 @@ def paired_bootstrap(
     alpha = 1.0 - ci_level
     low, high = np.percentile(diffs, [100 * alpha / 2, 100 * (1 - alpha / 2)])
     return round(float(low), 6), round(float(high), 6)
+
+
+# Arguments of one paired_bootstrap call: a, b, resamples, ci_level, seed, key.
+type BootstrapTask = tuple[Mapping[dt.date, bool], Mapping[dt.date, bool], int, float, int, str]
+
+_PARALLEL_MIN_TASKS = 64
+
+
+def _run_bootstrap(task: BootstrapTask) -> tuple[float | None, float | None]:
+    return paired_bootstrap(*task)
+
+
+def paired_bootstraps(tasks: Sequence[BootstrapTask]) -> list[tuple[float | None, float | None]]:
+    """``paired_bootstrap`` for every task, in order, spread over worker processes. Each
+    task draws from its own stream seeded by its key, so the results equal sequential calls."""
+    workers = min(worker_count(), len(tasks) // _PARALLEL_MIN_TASKS)
+    if workers <= 1:
+        return [paired_bootstrap(*t) for t in tasks]
+    with ProcessPoolExecutor(max_workers=workers) as pool:
+        return list(pool.map(_run_bootstrap, tasks, chunksize=max(1, len(tasks) // (8 * workers))))
 
 
 # --- Showcase rules and go criterion (FR-029, FR-030) ------------------------------------

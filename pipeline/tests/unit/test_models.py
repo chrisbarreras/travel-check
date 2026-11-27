@@ -104,6 +104,7 @@ def result(**overrides: Any) -> dict[str, Any]:
         "paired_days": 40,
         "excluded_not_connecting": 2,
         "excluded_quality": 1,
+        "excluded_end_of_period": 0,
         "feasibility_rate": 0.75,
         "status": "ok",
         "count_feasible": 30,

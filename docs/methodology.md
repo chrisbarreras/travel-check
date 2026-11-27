@@ -1,6 +1,6 @@
 # Methodology
 
-How the project turns public flight records into connection-feasibility numbers. This version covers the Phase 0 experiment (feature `001-bts-connection-experiment`). Later phases add to it; calibration and holdout testing are Phase 3.
+How the project turns public flight records into connection-feasibility numbers. The sections up to Known limitations describe the Phase 0 experiment (feature `001-bts-connection-experiment`); [Phase 1](#phase-1-showcase-data-feature-002-showcase-data-pipeline) describes what the showcase data changes and adds. Calibration and holdout testing are Phase 3.
 
 Every number the project reports has a written definition, a sample size and a data period (constitution, Principle I). The definitions below are the ones the code implements; the tests that check them are named in brackets.
 
@@ -114,5 +114,90 @@ One command rebuilds everything from the pinned configuration, and `verify` reru
 - Weather is measured only through weather-attributed delays and weather cancellations.
 - Sold routings come from DB1B, a 10% ticket sample. A routing sold rarely can fall below the 30-passenger minimum and be left out. DB1B identifies the selling airline per leg but not the flight, so every flight pair on a sold routing that meets the other rules qualifies, even if most passengers on that routing use other flights. DB1B fares are not used.
 - The analysis period (July 2024 to June 2025) is set by DB1B's publication lag, so it is older than the latest on-time data.
-- Itineraries are identified by flight number, and each flight must be scheduled on most days. Airlines that reassign flight numbers often are therefore missing: Southwest has no itinerary, and American is underrepresented. The report lists itineraries per airline next to the sold passengers through the selected hubs.
-- "Regional origin" for pair selection means any airport that is not a selected hub, so large airports such as LGA count as regional. A stricter definition is a candidate change for Phase 1.
+- Itineraries are identified by flight number, and each flight must be scheduled on most days. Airlines that reassign flight numbers often are therefore missing: Southwest has no itinerary, and American is underrepresented. The report lists itineraries per airline next to the sold passengers through the selected hubs. (Phase 1 identifies itineraries by schedule slot instead.)
+- "Regional origin" for pair selection means any airport that is not a selected hub, so large airports such as LGA count as regional. (Phase 1 uses airports outside the candidate pool.)
+
+## Phase 1: showcase data (feature `002-showcase-data-pipeline`)
+
+Phase 1 reruns the analysis with `config/phase1.toml` (outputs in `data/derived/phase1/` and `reports/phase1/`) and publishes curated showcase data for the explorer in `site-data/showcase/`. Phase 0's results are frozen at the git tag `phase0-final`. The sections below say what changed and define every measure the published files use; each published definition links to its section here.
+
+### Itineraries
+
+Itineraries are identified by **schedule slots**, not flight numbers (ADR-0014, research R1). For each marketing airline, origin and destination, every flight-day is assigned to exactly one slot:
+
+1. Scheduled local departure minutes are clustered: a new cluster starts wherever the gap to the previous minute exceeds 30 minutes; a cluster wider than 60 minutes is split at its largest gap.
+2. A cluster with several flights on some day is split into ranked sub-slots; flights on other days go to the free sub-slot carrying their flight number, else the one with the nearest reference time.
+3. Schedule changes are joined, not split: each sub-slot is cut into runs at gaps longer than 7 days, and a run joins the run that starts at most 7 days after it ends and carries the same flight number across the boundary. A change and a change back (a winter schedule) is therefore one slot with both changes recorded. Each join is a schedule change.
+
+A slot's reference time is the lower median of its local departure minutes; its ID is `{airline}-{origin}-{dest}-{HHMM}`. An itinerary pairs an inbound slot with an outbound slot, with ID `{origin}-{hub}-{dest}:{airline}{HHMM}+{airline}{HHMM}`. An airline that gives the same flight a different number on different days (such as Southwest) now has itineraries. Departure minutes are clustered on the clock from 00:00 to 23:59, so a schedule that straddles midnight forms two slots (ADR-0014). Each slot must still be scheduled on most days, so an airline whose departure times vary by day of week or season has fewer: in the Phase 1 data, 5% of Southwest's slots meet the 60% recurrence threshold against 35–44% of American's, Delta's and United's, and Southwest has 117 itineraries through the selected hubs against 43,000–52,000 for each of the others.
+
+The rules run in this order (research R2), with the candidates each removes counted per origin/destination pair:
+
+1. **Slot recurrence**: each slot is scheduled on at least 60% of days.
+2. **Bound pre-filter**: a candidate is dropped only when no combination of the inbound slot's local arrival minutes and the outbound slot's local departure minutes over the year (every distinct value) can give a layover within the limits (with an hour's margin for daylight-saving changes). It can never exclude an itinerary that would connect.
+3. **Sold routing**, as in Phase 0.
+4. **Daily matching**: on each day the inbound flight is scheduled, the earliest outbound flight of the slot scheduled at least the minimum connection time after its arrival, within 4 hours. Days whose matching window runs past the end of the period are excluded as *end of period*, not counted as failures. The layover limits apply only here; Phase 0's median-layover rule is gone.
+5. **Connection share**: the two flights connect on at least 60% of the days in the period, less end-of-period days (`connect_share`); a day the inbound flight is not scheduled counts as not connecting (ADR-0013).
+
+Median layover and travel time are taken over connecting days from daily UTC schedules.
+
+### Connection feasibility
+
+Unchanged from Phase 0 (see [Connection feasibility (ADR-0005)](#connection-feasibility-adr-0005)), on the new itineraries. A **paired day** is a day on which both flights were scheduled as a connection and passed the quality checks; cancelled and diverted days count as paired days that were not feasible. **Slack** is the actual minutes from the inbound flight's arrival to the outbound flight's departure; a day is feasible when slack is at least the transfer time (the minimum connection time) plus the boarding cutoff. The published data keeps each paired day's slack and outcome, so the explorer can recompute the rate for any transfer time; `shared/test-cases/slack-feasibility.json` specifies that calculation, and both the pipeline and the explorer run it. With fewer than 30 paired days a rate is shown as **insufficient data**, with its counts only. An itinerary is **tight** when its median scheduled layover is below the minimum connection time plus the boarding cutoff, or when more than 10% of its connecting days were scheduled below it (`tight_day_share_max`): on those days the connection was feasible only if the inbound was early or the outbound late.
+
+### Nonstop comparison
+
+The typical scheduled nonstop time of an airport pair is the median scheduled elapsed time of all its nonstop flights in the period, any airline. Each itinerary reports its travel time divided by that, rounded to 0.1 (for example "1.8 times the nonstop time"); without a nonstop in the period, no ratio is given.
+
+### Sold routings
+
+As in Phase 0: sampled DB1B passengers on the same origin, hub, destination and selling airlines, summed over the period. Several itineraries can share one routing; each reports the routing's passengers and how many itineraries share it.
+
+### Comparisons
+
+As in Phase 0: two itineraries of a route are compared with a paired day-level bootstrap (10,000 resamples, 95%) over the days either was flown, and a showcase comparison differs by at least 10 points with an interval that excludes zero, on at least 30 shared days. Published comparisons list the higher itinerary first, with the difference and interval in points.
+
+### Sensitivity
+
+As in Phase 0: each comparison reports at how many of the 9 (minimum connection time, boarding cutoff) settings it was compared, and names the settings it was not.
+
+### Curation
+
+The showcase is selected by a deterministic rule (research R4):
+
+1. Candidate routes have at least two itineraries and a showcase comparison. They are ranked by their strongest cross-hub showcase difference (routes with same-hub comparisons only come last), then by their number of comparisons, then by code.
+2. Routes are taken in rank order up to 12, keeping at least half with a **regional origin**: an airport outside the 30-airport candidate pool (Phase 0 counted any non-hub, so large airports such as LGA counted as regional). Fewer than 8 routes is reported as a shortfall.
+3. Balance applies to the comparisons kept: each route starts with its strongest comparison, and further comparisons are added, strongest first, while no route supplies more than a third of them, no airline or hub more than half (a comparison counts for both itineraries' airlines and hubs), at least half are cross-hub, and no route has more than 12 compared itineraries. If a cap still fails, comparisons are added or removed (one or two at a time, each route keeping at least one) while that lowers the total excess over the caps, and then added again within the caps; a cap that cannot be met is reported as a shortfall. The shares are published in `index.json` (`balance`) and the report.
+4. The **landing example** is the strongest remaining cross-hub comparison whose lower itinerary is not tight and which was compared at every setting.
+
+### Published data
+
+`site-data/showcase/` holds `index.json` (coverage, routes, landing example, assumptions, definitions, attribution), `landing.json` (the landing comparison and its two itineraries, loadable alone) and one file per route under `routes/`. The shapes are Pydantic models (ADR-0007); `shared/schemas/showcase.schema.json` and `shared/types/showcase.ts` are generated from them and committed, and CI fails when they are stale. Every file is validated when written, written as sorted, compact, LF-terminated JSON with floats at 6 decimals, scanned for predictive or passenger-outcome wording, and kept within 2 MB gzip in all and 150 KB for `index.json` plus `landing.json`. `coverage` states the routes, hubs, airlines and period included, and what is not covered: international legs, two or more stops, separate tickets, airlines that do not report on-time data, flights outside the period, and anything not in the curated showcase. A route file holds every compared itinerary, then the route's others by sold passengers, up to 12; faster alternatives and connecting options may name itineraries of the route that are not in the file, and their entries carry every figure shown. `manifest.json` records sources, the configuration and disruption-notes checksums, package versions, the code version and git commit, every published file's checksum and the run time; `verify` reruns every stage and compares every published file byte for byte.
+
+### Failure types
+
+The paired days that were not feasible, by reason: too little time between operated flights, a cancelled leg, or a diverted leg; the **dominant** type is the largest (ties in that order).
+
+### Monthly view
+
+Connection feasibility within each calendar month of the period, by the inbound flight's date. A month needs at least 20 paired days for a rate; with fewer it shows **insufficient data**, and **no flights** when the itinerary was not scheduled that month. Twenty days keeps one day at 5 points or less. **Disruption notes** come from a curated list (`config/disruption_notes.toml`), each with dates, airlines or airports, a one-line description and a public source; a note is shown beside a month when its dates overlap the month and it names one of the itinerary's airlines or airports. Notes are labels only and never enter any calculation.
+
+### Buffer
+
+On each operated paired day (cancelled and diverted days excluded, since no layover helps them), the scheduled layover that would just have left enough time is the transfer time plus the boarding cutoff plus that day's scheduled layover minus its actual slack; that is, the day's delays are kept. The buffer is the smallest of those values that covers at least 95% of operated days (the value at position ceil(0.95 × n) in ascending order), rounded up to 5 minutes, shown next to the itinerary's median scheduled layover and the share of operated days on which its scheduled layover was at least that long (a median can hide a layover that varies by day): "a layover of 75 minutes would have been enough on 95% of operated days; this itinerary was scheduled with at least 75 minutes on 62% of them".
+
+### Faster alternatives
+
+For each itinerary, the other itineraries of the same route that leave within 3 hours and are at least 15 minutes shorter (the 60-minute travel-time tolerance of comparisons is lifted here), both with sufficient data on at least 30 shared days, whose paired 95% interval for the difference in feasibility (other minus this) has a lower bound no lower than −2 points. This is a non-inferiority test: a listed alternative was shown to be no more than 2 points worse, not merely "not significantly worse". Each reports the minutes saved, both rates, the interval and the shared days, sorted by minutes saved. An empty list means none met the rule.
+
+### Connecting options
+
+For each itinerary, the other qualifying itineraries with the same inbound flight and destination (other outbound flights at the hub), ranked by rate with their samples. One is flagged **better** only when the paired interval for its difference excludes zero.
+
+### Schedule changes
+
+A schedule change is a date from which a leg's scheduled local departure time differs from its most frequent value since the previous change by at least 10 minutes and stays at the new value for at least 7 consecutive scheduled days, plus every slot join (whatever its length). Each is reported with date, leg and old and new times, together with the itinerary's connection share.
+
+### Find this itinerary
+
+Per itinerary: origin, destination, marketing airlines, and for each leg the flight number used on most days with its share of days. The pipeline builds no URLs and fetches no fares or availability; the explorer builds search links from these fields.

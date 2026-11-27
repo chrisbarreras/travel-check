@@ -17,14 +17,14 @@ FIXTURES = Path(__file__).resolve().parents[1] / "fixtures"
 
 
 def make_config(tmp_path: Path, **replacements: str) -> Path:
-    text = (REPO / "config" / "phase0.toml").read_text()
+    text = (REPO / "config" / "phase1.toml").read_text()
     text = text.replace('raw_dir = "data/raw"', f'raw_dir = "{(tmp_path / "raw").as_posix()}"')
     text = text.replace(
-        'derived_dir = "data/derived/phase0"',
+        'derived_dir = "data/derived/phase1"',
         f'derived_dir = "{(tmp_path / "derived").as_posix()}"',
     )
     text = text.replace(
-        'reports_dir = "reports/phase0"', f'reports_dir = "{(tmp_path / "reports").as_posix()}"'
+        'reports_dir = "reports/phase1"', f'reports_dir = "{(tmp_path / "reports").as_posix()}"'
     )
     text = text.replace(
         'manual_file = "data/raw/t100/t100_segment.csv"',
@@ -39,7 +39,7 @@ def make_config(tmp_path: Path, **replacements: str) -> Path:
     text = text.replace('end   = "2025-06"', 'end   = "2026-09"')
     for old, new in replacements.items():
         text = text.replace(old, new)
-    path = tmp_path / "config" / "phase0.toml"
+    path = tmp_path / "config" / "phase1.toml"
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(text)
     return path
@@ -81,8 +81,8 @@ def test_prepare_writes_outputs_and_summary(
     out, err = capsys.readouterr()
     assert code == 0, err
     assert len(out.strip().splitlines()) == 1
-    assert "172 flights" in out
-    assert "7 sold routings" in out
+    assert "222 flights" in out
+    assert "8 sold routings" in out
     assert (tmp_path / "derived" / "flights.parquet").exists()
     assert (tmp_path / "derived" / "sold_routings.parquet").exists()
     assert not list((tmp_path / "raw" / "db1b" / "extract").glob("*.csv"))

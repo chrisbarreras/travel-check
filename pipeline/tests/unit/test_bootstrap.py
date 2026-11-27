@@ -78,3 +78,17 @@ def test_dates_where_only_one_itinerary_has_an_outcome() -> None:
 
 def test_no_overlap_or_empty_returns_none() -> None:
     assert _paired_bootstrap({}, {DAYS[0]: True}, 1_000, 0.95, seed=7, key="x") == (None, None)
+
+
+def test_parallel_bootstraps_equal_sequential(monkeypatch: pytest.MonkeyPatch) -> None:
+    from flight_pipeline.compare import BootstrapTask, paired_bootstraps
+    from flight_pipeline.storage import THREADS_ENV
+
+    start = dt.date(2024, 7, 1)
+    tasks: list[BootstrapTask] = []
+    for i in range(140):
+        a = {start + dt.timedelta(d): (d * 7 + i) % 5 != 0 for d in range(60)}
+        b = {start + dt.timedelta(d): (d * 3 + i) % 4 != 0 for d in range(5, 70)}
+        tasks.append((a, b, 200, 0.95, 7, f"pair{i}"))
+    monkeypatch.setenv(THREADS_ENV, "2")
+    assert paired_bootstraps(tasks) == [paired_bootstrap(*t) for t in tasks]

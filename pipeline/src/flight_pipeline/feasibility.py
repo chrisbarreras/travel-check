@@ -2,10 +2,11 @@
 
 For each itinerary and each in-period day its inbound flight was scheduled:
 
-1. The outbound instance is the earliest one of the outbound pattern scheduled to leave
-   within [minimum connection, maximum layover] after that day's inbound scheduled arrival
-   (so a next-day outbound is matched correctly). No such instance: the day is excluded as
-   ``not_connecting``.
+1. The outbound instance is the earliest one of the outbound schedule slot scheduled to
+   leave within [minimum connection, maximum layover] after that day's inbound scheduled
+   arrival (so a next-day outbound is matched correctly); this matching is done once, by
+   ``build_itineraries``. No such instance: the day is excluded as ``not_connecting``, or as
+   ``end_of_period`` when the window runs past the loaded data.
 2. If either leg failed a data-quality check, the day is excluded as ``quality``.
 3. Otherwise the day is paired and classified (data-model.md DailyOutcome state rule):
    cancelled (either leg) -> diverted (either leg) -> feasible when
@@ -23,8 +24,6 @@ from collections.abc import Sequence
 
 import duckdb
 
-from flight_pipeline.config import Itineraries
-
 PERCENTILES = {"slack_p10": 0.1, "slack_p50": 0.5, "slack_p90": 0.9}
 
 
@@ -36,9 +35,10 @@ def lower_percentile(values: Sequence[int], q: float) -> int | None:
     return ordered[math.floor(q * (len(ordered) - 1))]
 
 
-def _instances(con: duckdb.DuckDBPyConnection, flights: str) -> None:
-    """One row per flight instance. Identical duplicate copies are dropped; an instance with
-    no ``ok`` row (conflicting copies, missing times, clock mismatch) has ``ok_n = 0``."""
+def flight_instances(con: duckdb.DuckDBPyConnection, flights: str) -> None:
+    """``_inst``: one row per flight instance. Identical duplicate copies are dropped; an
+    instance with no ``ok`` row (conflicting copies, missing times, clock mismatch) has
+    ``ok_n = 0``."""
     con.execute(
         f"""
         CREATE OR REPLACE TEMP TABLE _inst AS
@@ -62,66 +62,49 @@ def _instances(con: duckdb.DuckDBPyConnection, flights: str) -> None:
 def daily_slack(
     con: duckdb.DuckDBPyConnection,
     flights: str,
-    itineraries: str,
-    rules: Itineraries,
-    period: tuple[dt.date, dt.date],
+    itinerary_days: str,
     target: str,
+    *,
+    reuse_instances: bool = False,
 ) -> None:
     """Create ``target`` (itinerary_id, service_date, status, min_connection_min,
-    any_cancelled, any_diverted, raw_slack_min): one row per in-period inbound day."""
-    _instances(con, flights)
-    con.execute("CREATE OR REPLACE TEMP TABLE _it_rules (itinerary_id VARCHAR, min_conn INTEGER)")
-    rows = con.execute(
-        f"SELECT itinerary_id, hub, partner_connection FROM {itineraries}"
-    ).fetchall()
-    if rows:
-        con.executemany(
-            "INSERT INTO _it_rules VALUES (?, ?)",
-            [(i, rules.min_connection_for(h, partner=bool(p))) for i, h, p in rows],
-        )
-    start, end = period
+    any_cancelled, any_diverted, raw_slack_min): one row per in-period inbound day of each
+    itinerary, from the daily matching ``itinerary_days`` written by ``build_itineraries``
+    (so the itinerary rules and the outcomes use the same matching, ADR-0014). Status:
+    ``end_of_period`` (matching window past the loaded data), ``quality`` (a leg failed a
+    data-quality check), ``not_connecting``, or ``paired``. With ``reuse_instances``, the
+    ``_inst`` table from an earlier ``flight_instances`` call on ``flights`` is reused."""
+    if not reuse_instances:
+        flight_instances(con, flights)
     con.execute(
         f"""
         CREATE OR REPLACE TABLE {target} AS
-        WITH it AS (
-            SELECT i.itinerary_id, i.inbound, i.outbound, r.min_conn
-            FROM {itineraries} i JOIN _it_rules r USING (itinerary_id)
-        ),
-        inb AS (
-            SELECT it.itinerary_id, it.min_conn, it.outbound, f.*
-            FROM it JOIN _inst f
-              ON f.marketing_airline = it.inbound.marketing_airline
-             AND f.flight_number = it.inbound.flight_number
-             AND f.origin = it.inbound.origin AND f.dest = it.inbound.dest
-            WHERE f.service_date BETWEEN DATE '{start}' AND DATE '{end}'
-        ),
-        m AS (
-            SELECT inb.itinerary_id, inb.service_date, inb.min_conn,
-                   inb.ok_n AS in_ok, inb.cancelled AS in_c, inb.diverted AS in_d,
-                   inb.actual_arr AS in_arr,
+        WITH m AS (
+            SELECT d.itinerary_id, d.service_date, d.match_status,
+                   d.min_connection_min,
+                   i.ok_n AS in_ok, i.cancelled AS in_c, i.diverted AS in_d,
+                   i.actual_arr AS in_arr,
                    o.ok_n AS out_ok, o.cancelled AS out_c, o.diverted AS out_d,
-                   o.actual_dep AS out_dep, o.sched_dep AS out_sched,
-                   row_number() OVER (
-                       PARTITION BY inb.itinerary_id, inb.service_date
-                       ORDER BY o.sched_dep NULLS LAST
-                   ) AS rn
-            FROM inb LEFT JOIN _inst o
-              ON o.marketing_airline = inb.outbound.marketing_airline
-             AND o.flight_number = inb.outbound.flight_number
-             AND o.origin = inb.outbound.origin AND o.dest = inb.outbound.dest
-             AND o.sched_dep >= inb.sched_arr + to_minutes(inb.min_conn)
-             AND o.sched_dep <= inb.sched_arr + to_minutes({rules.max_layover_min})
+                   o.actual_dep AS out_dep
+            FROM {itinerary_days} d
+            JOIN _inst i
+              ON i.marketing_airline = d.in_airline AND i.flight_number = d.in_number
+             AND i.origin = d.in_origin AND i.dest = d.in_dest AND i.service_date = d.service_date
+            LEFT JOIN _inst o
+              ON d.match_status_ok
+             AND o.marketing_airline = d.out_airline AND o.flight_number = d.out_number
+             AND o.origin = d.out_origin AND o.dest = d.out_dest AND o.service_date = d.out_date
         ),
         s AS (
             SELECT *,
-                   CASE WHEN in_ok = 0 THEN 'quality'
-                        WHEN out_sched IS NULL THEN 'not_connecting'
+                   CASE WHEN match_status = 'end_of_period' THEN 'end_of_period'
+                        WHEN in_ok = 0 THEN 'quality'
+                        WHEN match_status = 'not_connecting' THEN 'not_connecting'
                         WHEN out_ok = 0 THEN 'quality'
                         ELSE 'paired' END AS status
-            FROM m WHERE rn = 1
+            FROM m
         )
-        SELECT itinerary_id, service_date, status,
-               CAST(min_conn AS INTEGER) AS min_connection_min,
+        SELECT itinerary_id, service_date, status, min_connection_min,
                status = 'paired' AND (in_c OR out_c) AS any_cancelled,
                status = 'paired' AND (in_d OR out_d) AS any_diverted,
                CASE WHEN status = 'paired' AND NOT (in_c OR out_c OR in_d OR out_d)
@@ -181,6 +164,8 @@ def itinerary_results(
                    count(c.status) FILTER (WHERE c.status = 'not_connecting')
                        AS excluded_not_connecting,
                    count(c.status) FILTER (WHERE c.status = 'quality') AS excluded_quality,
+                   count(c.status) FILTER (WHERE c.status = 'end_of_period')
+                       AS excluded_end_of_period,
                    count(c.status) FILTER (WHERE c.outcome = 'feasible') AS count_feasible,
                    count(c.status) FILTER (WHERE c.outcome = 'insufficient_time')
                        AS count_insufficient_time,
@@ -198,6 +183,7 @@ def itinerary_results(
                CAST(paired_days AS INTEGER) AS paired_days,
                CAST(excluded_not_connecting AS INTEGER) AS excluded_not_connecting,
                CAST(excluded_quality AS INTEGER) AS excluded_quality,
+               CAST(excluded_end_of_period AS INTEGER) AS excluded_end_of_period,
                CASE WHEN paired_days >= {int(min_sample_days)}
                     THEN round(count_feasible / paired_days, 6) END AS feasibility_rate,
                CASE WHEN paired_days >= {int(min_sample_days)} THEN 'ok'

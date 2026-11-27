@@ -19,7 +19,12 @@ from collections.abc import Mapping, Sequence
 import duckdb
 
 from flight_pipeline.config import Itineraries, Sensitivity
-from flight_pipeline.feasibility import classify, daily_slack, itinerary_results
+from flight_pipeline.feasibility import (
+    classify,
+    daily_slack,
+    flight_instances,
+    itinerary_results,
+)
 from flight_pipeline.itineraries import build_itineraries
 from flight_pipeline.models import SensitivityScenario
 from flight_pipeline.od_selection import pairs_without_itineraries
@@ -67,7 +72,7 @@ def scenario_rules(rules: Itineraries, mct: int, default_mct: int | None = None)
 def evaluate_scenarios(
     con: duckdb.DuckDBPyConnection,
     flights: str,
-    patterns: str,
+    slots: str,
     hubs: Sequence[str],
     pairs: Sequence[tuple[str, str]],
     rules: Itineraries,
@@ -91,13 +96,14 @@ def evaluate_scenarios(
     result_tables: list[str] = []
     itinerary_tables: list[str] = []
     missing: list[str] = []
+    flight_instances(con, flights)  # the same for every scenario
     for mct, rec in itertools.product(
         sorted(sens.min_connection_min), sorted(sens.recurrence_threshold)
     ):
         r = scenario_rules(rules, mct, rules.min_connection_default_min)
         build_itineraries(
             con,
-            patterns,
+            slots,
             hubs,
             r,
             "_sc_it",
@@ -110,7 +116,7 @@ def evaluate_scenarios(
         available = {
             (o, d) for o, d in con.execute("SELECT DISTINCT origin, dest FROM _sc_it").fetchall()
         }
-        daily_slack(con, flights, "_sc_it", r, period, "_sc_slack")
+        daily_slack(con, flights, "_sc_it_days", "_sc_slack", reuse_instances=True)
         for cutoff in sorted(sens.boarding_cutoff_min):
             sid = scenario_id(mct, cutoff, rec)
             missing += [f"{p} ({sid})" for p in pairs_without_itineraries(pairs, available)]

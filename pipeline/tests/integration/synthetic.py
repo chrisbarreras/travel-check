@@ -5,10 +5,15 @@ Design (so the expected results follow from the design, not from the pipeline):
 - 8 hubs (the candidate pool), 6 regional origins and 4 destinations outside the pool.
   Each airline flies each of its hubs daily: one inbound flight per origin, all leaving at
   14:00 UTC (written as local time at the origin), and one outbound flight per destination
-  leaving 90 minutes after the inbound flights' scheduled arrival. Three later outbound banks
-  (5, 8 and 11 hours later, too late to connect) make the hubs the busiest airports, so they
-  form the candidate pool. Block times are equal everywhere, so every itinerary of an
-  origin/destination pair is comparable.
+  leaving 90 minutes after the inbound flights' scheduled arrival, and a second one 2 hours
+  later (a 210-minute layover, within the 240-minute limit). Later outbound banks (5 to 15
+  hours later, too late to connect) make the hubs the busiest airports, so they form the
+  candidate pool. Block times are equal everywhere, so the itineraries of an
+  origin/destination pair differ only in layover.
+- Insights (specs/002 User Story 5): at a weather hub the later outbound absorbs most
+  inbound delays, so it is a better connecting option for the 90-minute connection; at a
+  reliable hub the 90-minute connection is a faster alternative, 2 hours shorter and as
+  reliable, to the 210-minute one.
 - Weather at ORD and MSP in winter, ATL and PHX in summer, rare elsewhere. On a weather day
   an inbound flight to the hub is 80-180 minutes late (so the connection fails at every
   sensitivity threshold, 35-65 minutes), and a departure from the hub is 15 minutes late with
@@ -20,6 +25,17 @@ Design (so the expected results follow from the design, not from the pipeline):
   period, above the minimum of 30), except UA through DEN to BOS (5 per quarter, 20 in all),
   which is excluded as not sold. A few legs have no recorded selling airline.
 - The period is July 2024 to June 2025, the configured period.
+- Scheduled times are fixed local times all year, as airlines publish them (their summer
+  value), so UTC times move with daylight saving. Phoenix keeps no daylight saving: there
+  the first bank's layover is 30 minutes from November to March (tight, mostly failing),
+  and the second bank does not connect then.
+- Phase 1 (specs/002): WN flies the same schedules under alternating flight numbers (odd and
+  even days), so only schedule-slot identity sees its itineraries; DL flies nonstops from CMH
+  and TUL to every destination; and on AA's hubs CMH has a second inbound bank, 60 minutes
+  later, so CMH routes have more itineraries and dominate the showcase unless curation caps
+  them. The second bank's layover is the 30-minute minimum, so its connections are tight and
+  mostly fail. Six outbound banks (the first two connect) keep the hubs the busiest
+  airports, so the candidate pool is still the 8 hubs.
 """
 
 from __future__ import annotations
@@ -73,7 +89,18 @@ QUARTERS = ((2024, 3), (2024, 4), (2025, 1), (2025, 2))
 UNSOLD = ("UA", "DEN", "BOS")  # sold below the minimum
 DAYS = 365
 IN_BLOCK, OUT_BLOCK, LAYOVER = 100, 150, 90
-BANK_OFFSETS_MIN = (0, 300, 480, 660)  # only the first bank connects (max layover 240)
+BANK_OFFSETS_MIN = (0, 120, 300, 480, 660, 900)  # the first two connect (max 240)
+NONSTOP_ORIGINS = ("CMH", "TUL")
+NONSTOP_BLOCK = 200
+SECOND_BANK = {"CMH": 60}  # an extra inbound leaving this many minutes after the first
+SECOND_BANK_AIRLINE = "AA"  # only on this airline's hubs, so origins stay smaller than hubs
+RENUMBERING = "WN"  # flies the same schedules under alternating flight numbers
+
+
+def renumber(airline: str, number: int, day_index: int) -> int:
+    """The flight number flown on a given day: fixed, except for the renumbering airline,
+    which adds 5000 on odd days (only schedule-slot identity sees it as one flight)."""
+    return number + 5000 if airline == RENUMBERING and day_index % 2 == 1 else number
 
 
 def weather_probability(hub: str, month: int) -> float:
@@ -85,7 +112,10 @@ def weather_probability(hub: str, month: int) -> float:
 
 
 def _hhmm(instant: dt.datetime, tz: str) -> str:
-    t = instant.astimezone(ZoneInfo(tz))
+    """The scheduled local time, fixed all year as in airline schedules: the local time of
+    the instant's UTC time of day on the period's first day (summer time)."""
+    ref = dt.datetime.combine(START, instant.timetz())
+    t = ref.astimezone(ZoneInfo(tz))
     return f"{t.hour:02d}{t.minute:02d}"
 
 
@@ -101,6 +131,9 @@ def write_year(raw_dir: Path, seed: int = 7) -> None:
             for origin in sorted(ORIGINS):
                 n += 1
                 numbers[(airline, hub, origin)] = n
+                if origin in SECOND_BANK and airline == SECOND_BANK_AIRLINE:
+                    n += 1
+                    numbers[(airline, hub, origin + "2")] = n
             for dest in sorted(DESTS):
                 for bank in range(len(BANK_OFFSETS_MIN)):
                     n += 1
@@ -115,23 +148,41 @@ def write_year(raw_dir: Path, seed: int = 7) -> None:
             for hub in hubs:
                 p = weather_probability(hub, day.month)
                 for origin, tz in sorted(ORIGINS.items()):
-                    num = numbers[(airline, hub, origin)]
-                    crs = _hhmm(dep_utc, tz)
-                    roll = rng.random()
-                    if roll < 0.004:
-                        kw: dict[str, Any] = {"cancelled": True, "code": "A", "dep_delay": None}
-                    elif roll < 0.004 + p:
-                        late = rng.randint(80, 180)
-                        kw = {"dep_delay": late, "weather": late}
-                    else:
-                        kw = {"dep_delay": rng.randint(-5, 5)}
-                    row = fmt.Row(
-                        "synthetic", day, airline, num, airline, origin, hub, crs, IN_BLOCK, **kw
-                    )
-                    rows.setdefault(key, []).append(fmt.render(row))
+                    banks = [(origin, dep_utc)]
+                    if origin in SECOND_BANK and airline == SECOND_BANK_AIRLINE:
+                        later = dep_utc + dt.timedelta(minutes=SECOND_BANK[origin])
+                        banks.append((origin + "2", later))
+                    for bank_key, dep in banks:
+                        num = renumber(airline, numbers[(airline, hub, bank_key)], i)
+                        crs = _hhmm(dep, tz)
+                        roll = rng.random()
+                        if roll < 0.004:
+                            kw: dict[str, Any] = {
+                                "cancelled": True,
+                                "code": "A",
+                                "dep_delay": None,
+                            }
+                        elif roll < 0.004 + p:
+                            late = rng.randint(80, 180)
+                            kw = {"dep_delay": late, "weather": late}
+                        else:
+                            kw = {"dep_delay": rng.randint(-5, 5)}
+                        row = fmt.Row(
+                            "synthetic",
+                            day,
+                            airline,
+                            num,
+                            airline,
+                            origin,
+                            hub,
+                            crs,
+                            IN_BLOCK,
+                            **kw,
+                        )
+                        rows.setdefault(key, []).append(fmt.render(row))
                 for dest in sorted(DESTS):
                     for bank, offset in enumerate(BANK_OFFSETS_MIN):
-                        num = numbers[(airline, hub, f"{dest}{bank}")]
+                        num = renumber(airline, numbers[(airline, hub, f"{dest}{bank}")], i)
                         crs = _hhmm(out_utc + dt.timedelta(minutes=offset), HUB_TZ[hub])
                         if rng.random() < p:
                             kw = {"dep_delay": 15, "weather": 15}
@@ -141,6 +192,22 @@ def write_year(raw_dir: Path, seed: int = 7) -> None:
                             "synthetic", day, airline, num, airline, hub, dest, crs, OUT_BLOCK, **kw
                         )
                         rows.setdefault(key, []).append(fmt.render(row))
+        # DL nonstops from CMH and TUL to every destination, 08:00 local
+        for k, origin in enumerate(NONSTOP_ORIGINS):
+            for j, dest in enumerate(sorted(DESTS)):
+                row = fmt.Row(
+                    "synthetic",
+                    day,
+                    "DL",
+                    9000 + 10 * k + j,
+                    "DL",
+                    origin,
+                    dest,
+                    "0800",
+                    NONSTOP_BLOCK,
+                    dep_delay=rng.randint(-5, 5),
+                )
+                rows.setdefault(key, []).append(fmt.render(row))
     ontime = raw_dir / "ontime"
     ontime.mkdir(parents=True, exist_ok=True)
     for key, month_rows in rows.items():

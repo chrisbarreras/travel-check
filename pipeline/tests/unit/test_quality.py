@@ -78,7 +78,7 @@ def test_report_by_month_and_json() -> None:
     data = report.to_json()
     assert set(data["by_month"]) == {"2025-11", "2026-01", "2026-03"}
     assert data["by_month"]["2026-01"]["clock_time_mismatch"] == 1
-    assert data["totals"]["rows"] == 172
+    assert data["totals"]["rows"] == 222
     assert 0 < data["clock_mismatch_share"] < 0.02
     assert data["clock_mismatch_max_share"] == 0.2
     assert data["sched_arr_mismatch"] == 0
@@ -112,7 +112,7 @@ def test_rows_with_invalid_schedule_are_dropped_and_counted(tmp_path: Path) -> N
     path.write_text("\n".join([*lines, *bad]) + "\n")
     con, report = run(path=path)
     assert report.totals()["invalid_schedule"] == 2
-    assert report.totals()["rows"] == 172
+    assert report.totals()["rows"] == 222
     assert report.to_json()["by_month"]["2026-01"]["invalid_schedule"] == 2
     assert con.execute("SELECT count(*) FROM flights WHERE flight_number >= 9998").fetchone() == (
         0,

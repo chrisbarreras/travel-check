@@ -10,7 +10,7 @@ import pytest
 from flight_pipeline.config import Config, ConfigError, load_config, parse_config
 
 REPO = Path(__file__).resolve().parents[3]
-CONFIG_PATH = REPO / "config" / "phase0.toml"
+CONFIG_PATH = REPO / "config" / "phase1.toml"
 
 
 def raw() -> dict[str, Any]:
@@ -51,6 +51,9 @@ def test_every_contract_section_present() -> None:
         "sensitivity",
         "quality",
         "runtime",
+        "showcase",
+        "insights",
+        "notes",
     }
 
 

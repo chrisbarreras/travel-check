@@ -83,8 +83,9 @@ def _(finding, mo):
         {
             "Pair": f"{_e['origin']}-{_e['dest']}",
             "Candidates": _e["candidates"],
-            "Layover outside limits": _e["excluded_layover"],
+            "Times can never connect": _e["excluded_bounds"],
             "Routing not sold": _e["excluded_unsold"],
+            "Never connect within limits": _e["excluded_not_connecting"],
             "Connect on too few days": _e["excluded_recurrence"],
             "Qualifying": _e["qualifying"],
         }

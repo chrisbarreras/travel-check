@@ -18,6 +18,9 @@ jobs:
       - uses: astral-sh/setup-uv@v5
         with:
           enable-cache: true
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
       - name: Install
         run: uv sync --locked
       - name: Lint
@@ -28,3 +31,5 @@ jobs:
         run: uv run pyright
       - name: Tests
         run: uv run pytest
+      - name: Generated types up to date (ADR-0007)
+        run: uv run flight-pipeline schemas --check

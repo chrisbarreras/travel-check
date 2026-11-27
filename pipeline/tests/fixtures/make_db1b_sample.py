@@ -65,6 +65,7 @@ ROWS = [
     ("den_below_min", 2026, 1, 2, "CMH:ORD:DEN", "AA:AA", 12),
     ("phx", 2026, 1, 2, "CMH:ORD:PHX", "AA:AA", 50),
     ("ua_den", 2026, 1, 2, "CMH:ORD:DEN", "UA:UA", 60),
+    ("wn_den", 2026, 1, 2, "CMH:ORD:DEN", "WN:WN", 45),  # renumbering airline, sold
     ("dl_ua", 2026, 1, 2, "CMH:ORD:SAN", "DL:UA", 30),  # sold, but not a partner pair
     ("legacy_code", 2026, 1, 2, "CMH:ORD:SAN", "US:AA", 4),  # mapped to AA:AA by carrier_map
     ("unknown_out", 2026, 1, 2, "CMH:ORD:SAN", "AA:--", 5),

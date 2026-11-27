@@ -9,7 +9,7 @@ To change a decision, add a new ADR that supersedes the old one, and set the old
 | [0001](0001-static-first-delivery.md) | Ship a static site first; add the API in Phase 2 | Accepted |
 | [0002](0002-technology-stack.md) | Technology stack | Accepted |
 | [0003](0003-duckdb-parquet-before-postgres.md) | DuckDB/Parquet for v1; Postgres only once user data exists | Accepted |
-| [0004](0004-itinerary-definition.md) | What counts as an itinerary | Accepted; recurrence superseded by 0013 |
+| [0004](0004-itinerary-definition.md) | What counts as an itinerary | Accepted; recurrence superseded by 0013, identity and layover application by 0014 |
 | [0005](0005-connection-outcome-label.md) | Connection outcome label and same-day delay pairing | Accepted |
 | [0006](0006-risk-as-slack-distributions.md) | Store risk as slack distributions, not single probabilities | Accepted |
 | [0007](0007-pydantic-schema-source-of-truth.md) | Pydantic models are the single definition of the data shape | Accepted |
@@ -18,7 +18,8 @@ To change a decision, add a new ADR that supersedes the old one, and set the old
 | [0010](0010-url-selection-state.md) | The current selection lives in the URL | Accepted |
 | [0011](0011-airport-timezone-source.md) | Use the airportsdata package for airport time zones (supersedes the source in 0008) | Accepted |
 | [0012](0012-phase0-go-no-go.md) | Phase 0 go/no-go: GO | Accepted |
-| [0013](0013-sold-routings-and-connection-recurrence.md) | Itineraries must be sold routings (DB1B) that actually connect | Accepted |
+| [0013](0013-sold-routings-and-connection-recurrence.md) | Itineraries must be sold routings (DB1B) that actually connect | Accepted; identity superseded by 0014 |
+| [0014](0014-schedule-slot-itinerary-identity.md) | Identify itineraries by schedule slot; apply layover limits per day | Accepted |
 
 ## Template
 

@@ -184,43 +184,92 @@ class FlightPattern(_Model):
     recurrence: Share
 
 
+class FlightNumberShare(_Model):
+    flight_number: str
+    share_of_days: Share
+
+
+class ScheduleSlot(_Model):
+    """A cluster of one airline's flights on one route at about the same local time
+    (ADR-0014, specs/002 data-model.md)."""
+
+    slot_id: str
+    marketing_airline: Airline
+    origin: Iata
+    dest: Iata
+    ref_dep_local_min: LocalMinute
+    min_dep_local_min: LocalMinute
+    max_dep_local_min: LocalMinute
+    scheduled_days: Annotated[int, Field(ge=1)]
+    recurrence: Share
+    flight_numbers: list[FlightNumberShare]
+
+    @model_validator(mode="after")
+    def _shape(self) -> ScheduleSlot:
+        if not self.slot_id.startswith(f"{self.marketing_airline}-{self.origin}-{self.dest}-"):
+            raise ValueError("slot_id must start with airline, origin and destination")
+        if not self.min_dep_local_min <= self.ref_dep_local_min <= self.max_dep_local_min:
+            raise ValueError("reference time must lie within the slot's range")
+        return self
+
+
+class SlotDay(_Model):
+    slot_id: str
+    service_date: dt.date
+    marketing_airline: Airline
+    flight_number: Annotated[int, Field(ge=1)]
+    origin: Iata
+    dest: Iata
+    dep_local_min: LocalMinute
+
+
+class SlotChange(_Model):
+    slot_id: str
+    change_date: dt.date
+    from_local_min: LocalMinute
+    to_local_min: LocalMinute
+
+
+class NonstopMedian(_Model):
+    origin: Iata
+    dest: Iata
+    nonstop_median_min: Annotated[int, Field(ge=1)]
+    nonstop_days: Annotated[int, Field(ge=1)]
+
+
 class Itinerary(_Model):
+    """A slot pair through a hub (ADR-0014; specs/002 data-model.md)."""
+
     itinerary_id: str
     origin: Iata
     hub: Iata
     dest: Iata
-    inbound: PatternKey
-    outbound: PatternKey
+    inbound_slot: str
+    outbound_slot: str
+    airline_in: Airline
+    airline_out: Airline
     partner_connection: bool
     median_layover_min: NonNegInt
     median_travel_min: Annotated[int, Field(ge=1)]
     median_dep_local_min: LocalMinute
     connect_share: Share
+    eligible_days: NonNegInt
     sold_passengers: NonNegInt
+    routing_itineraries: Annotated[int, Field(ge=1)]
 
     @model_validator(mode="after")
     def _shape(self) -> Itinerary:
-        if self.inbound.origin != self.origin or self.inbound.dest != self.hub:
-            raise ValueError("inbound must fly origin -> hub")
-        if self.outbound.origin != self.hub or self.outbound.dest != self.dest:
-            raise ValueError("outbound must fly hub -> dest")
         if self.origin == self.dest:
             raise ValueError("origin and dest must differ")
-        partner = self.inbound.marketing_airline != self.outbound.marketing_airline
-        if partner != self.partner_connection:
+        if not self.inbound_slot.startswith(f"{self.airline_in}-{self.origin}-{self.hub}-"):
+            raise ValueError("inbound slot must fly origin -> hub for airline_in")
+        if not self.outbound_slot.startswith(f"{self.airline_out}-{self.hub}-{self.dest}-"):
+            raise ValueError("outbound slot must fly hub -> dest for airline_out")
+        if (self.airline_in != self.airline_out) != self.partner_connection:
             raise ValueError("partner_connection must be true exactly when airlines differ")
-        if self.itinerary_id != itinerary_id(self.inbound, self.outbound):
-            raise ValueError("itinerary_id does not match its legs")
+        if not self.itinerary_id.startswith(f"{self.origin}-{self.hub}-{self.dest}:"):
+            raise ValueError("itinerary_id does not match its route")
         return self
-
-
-def itinerary_id(inbound: PatternKey, outbound: PatternKey) -> str:
-    """Deterministic ID: ``{origin}-{hub}-{dest}:{airline1}{num1}+{airline2}{num2}``."""
-    return (
-        f"{inbound.origin}-{inbound.dest}-{outbound.dest}:"
-        f"{inbound.marketing_airline}{inbound.flight_number}"
-        f"+{outbound.marketing_airline}{outbound.flight_number}"
-    )
 
 
 # --- Outcomes and results ----------------------------------------------------------------
@@ -246,6 +295,7 @@ class ItineraryResult(_Model):
     paired_days: NonNegInt
     excluded_not_connecting: NonNegInt
     excluded_quality: NonNegInt
+    excluded_end_of_period: NonNegInt
     feasibility_rate: Share | None
     status: Literal["ok", "insufficient_data"]
     count_feasible: NonNegInt
@@ -311,14 +361,20 @@ class OdExclusions(_Model):
     origin: Iata
     dest: Iata
     candidates: NonNegInt
-    excluded_layover: NonNegInt
+    excluded_bounds: NonNegInt
     excluded_unsold: NonNegInt
+    excluded_not_connecting: NonNegInt
     excluded_recurrence: NonNegInt
     qualifying: NonNegInt
 
     @model_validator(mode="after")
     def _adds_up(self) -> OdExclusions:
-        removed = self.excluded_layover + self.excluded_unsold + self.excluded_recurrence
+        removed = (
+            self.excluded_bounds
+            + self.excluded_unsold
+            + self.excluded_not_connecting
+            + self.excluded_recurrence
+        )
         if self.candidates - removed != self.qualifying:
             raise ValueError("qualifying must equal candidates minus all exclusions")
         return self
@@ -343,6 +399,59 @@ class ComparablePair(_Model):
         if self.ci_low is not None and self.ci_high is not None and self.ci_low > self.ci_high:
             raise ValueError("ci_low must not exceed ci_high")
         return self
+
+
+class CuratedRouteRow(_Model):
+    """derived showcase_routes.parquet: one showcase route (specs/002 research R4)."""
+
+    route_id: str
+    origin: Iata
+    dest: Iata
+    regional_origin: bool
+    rank: Annotated[int, Field(ge=1)]
+    itinerary_count: NonNegInt
+    comparison_count: NonNegInt
+    share_of_showcase: Share
+
+
+class CuratedComparisonRow(_Model):
+    """derived showcase_comparisons.parquet: one showcase comparison kept by curation."""
+
+    comparison_id: str
+    route_id: str
+    itinerary_a: str
+    itinerary_b: str
+    cross_hub: bool
+    difference: float
+    landing: bool
+
+
+class ItineraryDay(_Model):
+    """derived itinerary_days.parquet: the default daily matching of the selected pairs
+    (specs/002 research R2),
+    with the day's scheduled layover when the flights connect."""
+
+    itinerary_id: str
+    service_date: dt.date
+    match_status: Literal["connects", "not_connecting", "end_of_period"]
+    sched_layover_min: int | None
+
+    @model_validator(mode="after")
+    def _layover(self) -> ItineraryDay:
+        if (self.match_status == "connects") != (self.sched_layover_min is not None):
+            raise ValueError("sched_layover_min is given exactly on connecting days")
+        return self
+
+
+class CurationMeta(_Model):
+    """derived curation.json."""
+
+    landing_comparison_id: str | None
+    landing_reason: str
+    airline_shares: dict[str, float]
+    hub_shares: dict[str, float]
+    cross_hub_share: Share
+    shortfalls: list[str]
 
 
 class AirlineCoverage(_Model):

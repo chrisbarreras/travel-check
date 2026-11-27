@@ -158,10 +158,11 @@ def airline_section(rows: Sequence[AirlineCoverage], *, recurrence_threshold: fl
             ),
             "**No itineraries:** "
             + (", ".join(missing) if missing else "none")
-            + ". An itinerary is identified by flight number, and each flight must be "
-            f"scheduled on at least {round(recurrence_threshold * 100)}% of days, so an airline "
-            "that reassigns flight numbers often (Southwest does) can sell many connections "
-            "without any qualifying itinerary.",
+            + ". An itinerary pairs two schedule slots (an airline's flights on a route at "
+            "about the same time of day, whatever their flight numbers), each scheduled on at "
+            f"least {round(recurrence_threshold * 100)}% of days, so an airline whose departure "
+            "times vary by day of week or season (Southwest's do) has fewer itineraries than "
+            "its sold passengers suggest.",
         ]
     )
 
@@ -215,8 +216,9 @@ def exclusions_section(
         [
             "Pair",
             "Candidates",
-            "Layover outside limits",
+            "Times can never connect",
             "Routing not sold",
+            "Never connect within the layover limits",
             "Connect on too few days",
             "Qualifying",
         ],
@@ -224,8 +226,9 @@ def exclusions_section(
             [
                 f"{r.origin}-{r.dest}",
                 r.candidates,
-                r.excluded_layover,
+                r.excluded_bounds,
                 r.excluded_unsold,
+                r.excluded_not_connecting,
                 r.excluded_recurrence,
                 r.qualifying,
             ]
@@ -235,13 +238,15 @@ def exclusions_section(
     return "\n\n".join(
         [
             "## Itinerary rules applied",
-            "For each selected pair, candidates are flight pairs through a selected hub, sold "
-            "by the same airline or a partner pair, with each flight scheduled on most days. "
-            "The rules then remove, in order: a median scheduled layover outside the limits; "
-            "a routing not sold, meaning DB1B does not show at least "
-            f"{min_sold_passengers} sampled passengers on that routing and pair of selling "
-            "airlines over the period; and flights that connect "
-            f"on fewer than {round(recurrence_threshold * 100)}% of days in the period.",
+            "For each selected pair, candidates are pairs of regular schedules (an airline's "
+            "flights on a route at about the same time of day, whatever their flight numbers) "
+            "through a selected hub, sold by the same airline or a partner pair, each "
+            "scheduled on most days. The rules then remove, in order: pairs whose times can "
+            "never give a layover within the limits; a routing not sold, meaning DB1B does not "
+            f"show at least {min_sold_passengers} sampled passengers on that routing and pair "
+            "of selling airlines over the period; pairs whose flights never connect within the "
+            "layover limits on any day; and flights that connect on fewer than "
+            f"{round(recurrence_threshold * 100)}% of days in the period.",
             body,
         ]
     )
@@ -323,9 +328,10 @@ LIMITATIONS = (
     "sampled passengers than the minimum and be left out. DB1B records the selling airline, "
     "not the flight numbers, so a sold routing qualifies every flight pair on it that meets "
     "the other rules.",
-    "Itineraries are identified by flight number. Airlines that reassign flight numbers "
-    "often, such as Southwest, have few flights scheduled on most days under one number, so "
-    "their connections are largely missing; the report lists itineraries per airline.",
+    "Itineraries are identified by schedule slot, whatever the flight numbers, but each slot "
+    "must be scheduled on most days. Airlines whose departure times vary by day of week or "
+    "season, such as Southwest, therefore have fewer itineraries than their sold passengers "
+    "suggest; the report lists itineraries per airline.",
 )
 
 CI_METHOD = (
@@ -545,7 +551,7 @@ def routing_itineraries(itineraries: Sequence[Itinerary]) -> dict[str, int]:
     so they are shared by all of these itineraries."""
 
     def key(i: Itinerary) -> tuple[str, str, str, str, str]:
-        return (i.origin, i.hub, i.dest, i.inbound.marketing_airline, i.outbound.marketing_airline)
+        return (i.origin, i.hub, i.dest, i.airline_in, i.airline_out)
 
     counts: dict[tuple[str, str, str, str, str], int] = {}
     for i in itineraries:
@@ -648,6 +654,39 @@ def breakdown_section(b: ShowcaseBreakdown) -> str:
     )
 
 
+def curation_section(
+    routes: Sequence[tuple[str, int, float]],
+    airline_shares: Mapping[str, float],
+    hub_shares: Mapping[str, float],
+    cross_hub_share: float,
+    shortfalls: Sequence[str],
+    caps: tuple[float, float, float, float],
+) -> str:
+    """The curated showcase's balance (specs/002 FR-008): shares of showcase comparisons by
+    route, airline and hub against the caps, and the cross-hub share."""
+    route_cap, airline_cap, hub_cap, cross_min = caps
+
+    def pct(v: float) -> str:
+        return f"{v:.0%}"
+
+    return "\n\n".join(
+        [
+            "## Showcase curation",
+            f"{len(routes)} routes and the showcase comparisons kept for the explorer. A "
+            "comparison counts toward both itineraries' airlines and hubs, so airline and hub "
+            f"shares add up to more than 100%. Caps: at most {pct(route_cap)} from one route, "
+            f"{pct(airline_cap)} from one airline, {pct(hub_cap)} from one hub; at least "
+            f"{pct(cross_min)} cross-hub.",
+            table(["Route", "Comparisons", "Share"], [[r, n, pct(s)] for r, n, s in routes]),
+            table(["Airline", "Share"], [[a, pct(s)] for a, s in sorted(airline_shares.items())]),
+            table(["Hub", "Share"], [[h, pct(s)] for h, s in sorted(hub_shares.items())]),
+            f"Cross-hub comparisons: {pct(cross_hub_share)}. Curation shortfalls: "
+            + ("; ".join(shortfalls) if shortfalls else "none")
+            + ".",
+        ]
+    )
+
+
 def finding_json(finding: Finding) -> str:
     return json.dumps(finding.model_dump(mode="json"), indent=2, sort_keys=True) + "\n"
 
@@ -658,6 +697,7 @@ def render_summary(
     min_examples: int = 3,
     min_hubs: int = 2,
     appendix: Sequence[str] = (),
+    title: str = "Phase 0 finding: connection feasibility experiment",
 ) -> str:
     example_hubs = {
         hub_of_id(i) for p in finding.showcase_examples for i in (p.itinerary_a, p.itinerary_b)
@@ -683,7 +723,7 @@ def render_summary(
     excluded = ", ".join(f"{k}: {v:,}" for k, v in dq if k not in failures) or "none"
     kept = ", ".join(f"{k}: {v:,}" for k, v in dq if k in failures) or "none"
     parts = [
-        "# Phase 0 finding: connection feasibility experiment",
+        f"# {title}",
         f"Data period: {finding.ontime_period_start} to {finding.ontime_period_end} for every "
         "source: on-time flights, T-100 passengers and DB1B sold routings (DB1B quarters "
         + (

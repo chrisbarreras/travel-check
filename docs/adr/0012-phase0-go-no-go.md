@@ -2,7 +2,7 @@
 
 - **Status:** Accepted (2026-11-24, by the owner, after independent review rounds 6–10 of amendment 1).
 - **Date:** 2026-11-24
-- **Evidence:** [reports/phase0/summary.md](../../reports/phase0/summary.md) (full results), [summary.json](../../reports/phase0/summary.json) (every example), [manifest.json](../../reports/phase0/manifest.json); method in [docs/methodology.md](../methodology.md); feature spec [specs/001-bts-connection-experiment](../../specs/001-bts-connection-experiment/spec.md); independent review [review.md](../../specs/001-bts-connection-experiment/review.md); itinerary rules in [ADR-0004](0004-itinerary-definition.md) and [ADR-0013](0013-sold-routings-and-connection-recurrence.md).
+- **Evidence:** [reports/phase0/summary.md](../../reports/phase0/summary.md) (full results), [summary.json](../../reports/phase0/summary.json) (every example), [manifest.json](../../reports/phase0/manifest.json); method in [docs/methodology.md](../methodology.md); feature spec [specs/001-bts-connection-experiment](../../specs/001-bts-connection-experiment/spec.md); independent review [review.md](../../specs/001-bts-connection-experiment/review.md); itinerary rules in [ADR-0004](0004-itinerary-definition.md) and [ADR-0013](0013-sold-routings-and-connection-recurrence.md). The results are reproduced from the git tag `phase0-final` (`flight-pipeline verify --config ../config/phase0.toml` on that tag); later code follows ADR-0014.
 
 ## Context
 

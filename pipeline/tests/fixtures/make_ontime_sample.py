@@ -233,6 +233,24 @@ def rows() -> list[Row]:
         dep_out = "0900" if d <= 4 else "1000"
         out.append(Row(f"ua7003_d{d}", JAN[d - 1], "UA", 7003, "UA", "ORD", "DEN", dep_out, 120))
 
+    # Renumbering airline (ADR-0014): WN flies CMH->ORD at 10:00 ET and ORD->DEN at 12:00 CT
+    # every day, but under WN1001/WN1002 on odd days and WN2001/WN2002 on even days. Each
+    # flight number recurs on 50% of days; each schedule slot on 100%.
+    for d in range(1, 11):
+        n_in, n_out = (1001, 1002) if d % 2 == 1 else (2001, 2002)
+        out.append(Row(f"wn_in_d{d}", JAN[d - 1], "WN", n_in, "WN", "CMH", "ORD", "1000", 80))
+        out.append(Row(f"wn_out_d{d}", JAN[d - 1], "WN", n_out, "WN", "ORD", "DEN", "1200", 120))
+
+    # Two regular schedules of one airline and route 20 minutes apart (inside one window):
+    # F9 CMH->ORD at 06:00 and 06:20 ET every day. They must stay two slots.
+    for d in range(1, 11):
+        out.append(Row(f"f9a_d{d}", JAN[d - 1], "F9", 300, "F9", "CMH", "ORD", "0600", 80))
+        out.append(Row(f"f9b_d{d}", JAN[d - 1], "F9", 302, "F9", "CMH", "ORD", "0620", 80))
+
+    # A nonstop on a connecting route: AA4000 CMH->SAN at 09:00 ET, 300 min scheduled.
+    for d in range(1, 11):
+        out.append(Row(f"aa4000_d{d}", JAN[d - 1], "AA", 4000, "AA", "CMH", "SAN", "0900", 300))
+
     # Midnight itinerary: AA2200 CMH->ORD 22:00 ET + AA2300 ORD->PHX 00:30 CT next day
     for d in range(1, 11):
         kw: dict[str, Any] = (

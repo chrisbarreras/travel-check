@@ -1,8 +1,11 @@
-"""Schedule patterns and itinerary rules (ADR-0004, ADR-0013, FR-013 to FR-018a, research R6
-and R12).
+"""Itineraries from schedule slots (ADR-0004, ADR-0013, ADR-0014; specs/002 research R1-R2).
 
-Covers User Story 2 acceptance scenarios 1-6 (as amended) on the reference fixtures.
+Covers the spec's User Story 1 scenarios and the Phase 0 itinerary rules on the reference
+fixtures, now with slot identity, a lossless bound pre-filter and layover limits applied
+only through daily matching.
 """
+
+from __future__ import annotations
 
 import datetime as dt
 import json
@@ -11,17 +14,30 @@ from typing import Any
 
 import duckdb
 import pytest
+from hypothesis import given, settings
+from hypothesis import strategies as st
 
 from flight_pipeline.config import Itineraries
-from flight_pipeline.itineraries import build_itineraries, build_patterns
-from flight_pipeline.models import FlightPattern, Itinerary, OdExclusions, validate_table
+from flight_pipeline.itineraries import bounds_allow, build_itineraries
+from flight_pipeline.models import Itinerary, OdExclusions, validate_table
 from flight_pipeline.prepare.db1b import load_sold_routings
 from flight_pipeline.prepare.normalize import normalize_ontime
 from flight_pipeline.providers.timezones import AirportsDataTimezones
+from flight_pipeline.slots import build_slots
 
 FIXTURES = Path(__file__).resolve().parents[1] / "fixtures"
-EXPECTED = json.loads((FIXTURES / "expected" / "itineraries.json").read_text())
+EXPECTED = json.loads((FIXTURES / "expected" / "itineraries.json").read_text(encoding="utf-8"))
 PERIOD = (dt.date(2026, 1, 5), dt.date(2026, 1, 14))
+FIELDS = [
+    "partner_connection",
+    "median_layover_min",
+    "median_travel_min",
+    "median_dep_local_min",
+    "connect_share",
+    "eligible_days",
+    "sold_passengers",
+    "routing_itineraries",
+]
 
 
 def rules(**overrides: Any) -> Itineraries:
@@ -34,6 +50,8 @@ def rules(**overrides: Any) -> Itineraries:
         "partners": [["AA", "AS"]],
         "min_sold_passengers": 30,
         "carrier_map": {},
+        "identity": "schedule",
+        "slot_window_min": 30,
     }
     base.update(overrides)
     return Itineraries.model_validate(base)
@@ -43,12 +61,9 @@ def rules(**overrides: Any) -> Itineraries:
 def con() -> duckdb.DuckDBPyConnection:
     c = duckdb.connect()
     normalize_ontime(
-        c,
-        [FIXTURES / "ontime_sample.csv"],
-        AirportsDataTimezones({}),
-        clock_mismatch_max_share=0.2,
+        c, [FIXTURES / "ontime_sample.csv"], AirportsDataTimezones({}), clock_mismatch_max_share=0.2
     )
-    build_patterns(c, "flights", PERIOD, "patterns")
+    build_slots(c, "flights", PERIOD, 30, "slots")
     load_sold_routings(c, [FIXTURES / "db1b_sample.csv"], {}, "sold")
     return c
 
@@ -68,7 +83,7 @@ def build(
 ) -> list[str]:
     build_itineraries(
         con,
-        "patterns",
+        "slots",
         hubs or ["ORD"],
         rules(**rule_overrides),
         "itineraries",
@@ -81,45 +96,16 @@ def build(
     return ids(con)
 
 
-def test_patterns_count_scheduled_days_including_cancellations(
-    con: duckdb.DuckDBPyConnection,
-) -> None:
-    for key, exp in EXPECTED["patterns"].items():
-        flight, route = key.split()
-        airline, number = flight[:2], int(flight[2:])
-        origin, dest = route.split("-")
-        row = con.execute(
-            "SELECT scheduled_days, recurrence FROM patterns WHERE marketing_airline = ? "
-            "AND flight_number = ? AND origin = ? AND dest = ?",
-            [airline, number, origin, dest],
-        ).fetchone()
-        assert row == (exp["scheduled_days"], exp["recurrence"]), key
-
-
-def test_pattern_table_matches_model(con: duckdb.DuckDBPyConnection) -> None:
-    cols = ", ".join(FlightPattern.model_fields)
-    con.execute(f"CREATE OR REPLACE VIEW pattern_view AS SELECT {cols} FROM patterns")
-    assert validate_table(con, "pattern_view", FlightPattern) > 0
-
-
 def test_itineraries_match_hand_checked_list(con: duckdb.DuckDBPyConnection) -> None:
     assert build(con) == [i["itinerary_id"] for i in EXPECTED["itineraries"]]
     rows = {
         r[0]: r[1:]
         for r in con.execute(
-            "SELECT itinerary_id, partner_connection, median_layover_min, median_travel_min, "
-            "median_dep_local_min, connect_share, sold_passengers FROM itineraries"
+            f"SELECT itinerary_id, {', '.join(FIELDS)} FROM itineraries"
         ).fetchall()
     }
     for exp in EXPECTED["itineraries"]:
-        assert rows[exp["itinerary_id"]] == (
-            exp["partner_connection"],
-            exp["median_layover_min"],
-            exp["median_travel_min"],
-            exp["median_dep_local_min"],
-            exp["connect_share"],
-            exp["sold_passengers"],
-        ), exp["itinerary_id"]
+        assert rows[exp["itinerary_id"]] == tuple(exp[f] for f in FIELDS), exp["itinerary_id"]
 
 
 def test_itinerary_table_matches_model(con: duckdb.DuckDBPyConnection) -> None:
@@ -127,94 +113,90 @@ def test_itinerary_table_matches_model(con: duckdb.DuckDBPyConnection) -> None:
     assert validate_table(con, "itineraries", Itinerary) == len(EXPECTED["itineraries"])
 
 
-def test_scenario1_same_marketing_airline_included(con: duckdb.DuckDBPyConnection) -> None:
-    assert "CMH-ORD-SAN:AA3100+AA1500" in build(con)
+def test_renumbering_airline_forms_one_itinerary(con: duckdb.DuckDBPyConnection) -> None:
+    # US1 scenario 1: WN changes flight numbers every day but keeps the schedule.
+    assert "CMH-ORD-DEN:WN1000+WN1200" in build(con)
 
 
-def test_scenario1_routing_below_sold_minimum_excluded(con: duckdb.DuckDBPyConnection) -> None:
-    # CMH:ORD:DEN on AA:AA has 12 sampled passengers; the 3-coupon row does not count.
-    assert "CMH-ORD-DEN:AA3100+AA1510" not in build(con)
-    assert "CMH-ORD-DEN:AA3100+AA1510" in build(con, min_sold_passengers=12)
-    assert "CMH-ORD-DEN:AA3100+AA1510" not in build(con, min_sold_passengers=13)
+def test_schedule_changes_do_not_break_an_itinerary(con: duckdb.DuckDBPyConnection) -> None:
+    # US1 scenario 2: both UA legs change schedule at different times; the layover is checked
+    # per day, and the median comes from the connecting days (40), not the slots' medians.
+    build(con)
+    row = con.execute(
+        "SELECT median_layover_min, connect_share FROM itineraries "
+        "WHERE itinerary_id = 'CMH-ORD-DEN:UA0800+UA1000'"
+    ).fetchone()
+    assert row == (40, 1.0)
 
 
-def test_routing_missing_from_db1b_excluded(con: duckdb.DuckDBPyConnection) -> None:
-    con.execute("CREATE OR REPLACE TABLE sold_no_sea AS SELECT * FROM sold WHERE dest <> 'SEA'")
-    assert "CMH-ORD-SEA:AA3100+AS700" not in build(con, sold="sold_no_sea")
-
-
-def test_scenario2_same_operator_different_marketing_airlines_excluded(
-    con: duckdb.DuckDBPyConnection,
-) -> None:
-    # A DL:UA ticket is sold, but DL and UA are not partners: never paired.
-    assert not any(i.startswith("CMH-ORD-SAN:DL5000") for i in build(con))
-    # Listing DL+UA as partners would pair them: the rule is about marketing airlines only.
-    assert "CMH-ORD-SAN:DL5000+UA6000" in build(con, partners=[["AA", "AS"], ["DL", "UA"]])
-
-
-def test_scenario3_partner_pair_labeled_with_partner_minimum(
-    con: duckdb.DuckDBPyConnection,
-) -> None:
-    got = build(con)
-    assert "CMH-ORD-SEA:AA3100+AS700" in got  # 70 min
-    assert "CMH-ORD-SEA:AA3100+AS702" not in got  # 40 min < 45 partner minimum
-    assert "CMH-ORD-SEA:AA3100+AS702" in build(con, min_connection_partner_min=40)
-    assert "CMH-ORD-SEA:AA3100+AS700" not in build(con, partners=[])
-
-
-def test_partner_routing_matched_on_mixed_ticket(con: duckdb.DuckDBPyConnection) -> None:
+def test_end_of_period_day_is_excluded_not_counted(con: duckdb.DuckDBPyConnection) -> None:
     build(con)
     assert con.execute(
-        "SELECT sold_passengers FROM itineraries WHERE itinerary_id = 'CMH-ORD-SEA:AA3100+AS700'"
-    ).fetchone() == (40,)
+        "SELECT connect_share, eligible_days FROM itineraries "
+        "WHERE itinerary_id = 'CMH-ORD-PHX:AA2200+AA0030'"
+    ).fetchone() == (1.0, 9)
 
 
-def test_scenario4_layover_limits(con: duckdb.DuckDBPyConnection) -> None:
-    got = build(con)
-    assert "CMH-ORD-SAN:AA3100+AA1502" not in got  # 20 min
-    assert "CMH-ORD-SAN:AA3100+AA1504" not in got  # 250 min
-    assert "CMH-ORD-SAN:AA3100+AA1506" in got  # 240 min, boundary
-    assert "CMH-ORD-SAN:AA3100+AA1502" in build(con, min_connection_by_hub={"ORD": 20})
-    assert "CMH-ORD-SAN:AA3100+AA1500" not in build(con, min_connection_by_hub={"ORD": 95})
-
-
-def test_scenario5_recurrence_threshold(con: duckdb.DuckDBPyConnection) -> None:
-    got = build(con, min_sold_passengers=10)
-    assert "CMH-ORD-DEN:AA3100+AA1508" not in got  # 50% < 60%
-    assert "CMH-ORD-DEN:AA3100+AA1510" in got  # 60% including 2 cancelled days
-    also = EXPECTED["with_min_sold_10_and_recurrence_0_50_also"]
-    assert set(also) <= set(build(con, threshold=0.50, min_sold_passengers=10))
-    assert "CMH-ORD-DEN:AA3100+AA1510" not in build(con, threshold=0.75, min_sold_passengers=10)
-
-
-def test_scenario6_connection_level_recurrence(con: duckdb.DuckDBPyConnection) -> None:
-    # Both UA flights run every day (recurrence 1.0) but connect on only 5 of 10 days.
-    assert "CMH-ORD-DEN:UA7000+UA7001" not in build(con)
-    assert "CMH-ORD-DEN:UA7000+UA7001" in build(con, threshold=0.50)
-    assert con.execute(
-        "SELECT connect_share FROM itineraries WHERE itinerary_id = 'CMH-ORD-DEN:UA7000+UA7001'"
-    ).fetchone() == (0.5,)
-
-
-def test_connect_share_counts_cancelled_flights_as_scheduled(
+def test_same_operator_different_marketing_airlines_never_paired(
     con: duckdb.DuckDBPyConnection,
 ) -> None:
+    assert not any(i.startswith("CMH-ORD-SAN:DL") for i in build(con))
+    assert "CMH-ORD-SAN:DL0700+UA0830" in build(con, partners=[["AA", "AS"], ["DL", "UA"]])
+
+
+def test_partner_minimum(con: duckdb.DuckDBPyConnection) -> None:
+    got = build(con)
+    assert "CMH-ORD-SEA:AA0800+AS0930" in got
+    assert "CMH-ORD-SEA:AA0800+AS0900" not in got
+    assert "CMH-ORD-SEA:AA0800+AS0900" in build(con, min_connection_partner_min=40)
+    assert "CMH-ORD-SEA:AA0800+AS0930" not in build(con, partners=[])
+
+
+def test_layover_limits_per_day(con: duckdb.DuckDBPyConnection) -> None:
+    got = build(con)
+    assert "CMH-ORD-SAN:AA0800+AA0840" not in got  # 20 min
+    assert "CMH-ORD-SAN:AA0800+AA1230" not in got  # 250 min
+    assert "CMH-ORD-SAN:AA0800+AA1220" in got  # 240 min, boundary
+    assert "CMH-ORD-SAN:AA0800+AA0840" in build(con, min_connection_by_hub={"ORD": 20})
+    assert "CMH-ORD-SAN:AA0800+AA0950" not in build(con, min_connection_by_hub={"ORD": 95})
+
+
+def test_sold_routing_minimum(con: duckdb.DuckDBPyConnection) -> None:
+    assert "CMH-ORD-DEN:AA0800+AA1030" not in build(con)
     build(con, min_sold_passengers=10)
-    # AA1510 flies d1-d6 (2 cancelled); AA3100 is cancelled on d4: 6 connecting days of 10.
-    assert con.execute(
-        "SELECT connect_share, sold_passengers FROM itineraries "
-        "WHERE itinerary_id = 'CMH-ORD-DEN:AA3100+AA1510'"
-    ).fetchone() == (0.6, 12)
+    row = con.execute(
+        "SELECT connect_share, median_layover_min FROM itineraries "
+        "WHERE itinerary_id = 'CMH-ORD-DEN:AA0800+AA1030'"
+    ).fetchone()
+    exp = EXPECTED["with_min_sold_10_also"]["CMH-ORD-DEN:AA0800+AA1030"]
+    assert row == (exp["connect_share"], exp["median_layover_min"])
+
+
+def test_connection_level_recurrence(con: duckdb.DuckDBPyConnection) -> None:
+    assert "CMH-ORD-DEN:UA0900+UA1000" in build(con)
+    assert "CMH-ORD-DEN:UA0900+UA1000" not in build(con, threshold=0.75)
+    row = con.execute(
+        "SELECT excluded_recurrence FROM itineraries_exclusions WHERE origin = 'CMH' "
+        "AND dest = 'DEN'"
+    ).fetchone()
+    assert row is not None
+    assert row[0] >= 1
 
 
 def test_exclusions_follow_rule_order(con: duckdb.DuckDBPyConnection) -> None:
     build(con)
-    names = ["candidates", "excluded_layover", "excluded_unsold", "excluded_recurrence"]
+    names = [
+        "candidates",
+        "excluded_bounds",
+        "excluded_unsold",
+        "excluded_not_connecting",
+        "excluded_recurrence",
+        "qualifying",
+    ]
     got = {
-        f"{r[0]}-{r[1]}": dict(zip([*names, "qualifying"], r[2:], strict=True))
+        f"{r[0]}-{r[1]}": dict(zip(names, r[2:], strict=True))
         for r in con.execute(
-            "SELECT origin, dest, candidates, excluded_layover, excluded_unsold, "
-            "excluded_recurrence, qualifying FROM itineraries_exclusions ORDER BY 1, 2"
+            f"SELECT origin, dest, {', '.join(names)} FROM itineraries_exclusions ORDER BY 1, 2"
         ).fetchall()
     }
     expected = {k: v for k, v in EXPECTED["od_exclusions"].items() if not k.startswith("_")}
@@ -222,55 +204,154 @@ def test_exclusions_follow_rule_order(con: duckdb.DuckDBPyConnection) -> None:
     assert validate_table(con, "itineraries_exclusions", OdExclusions) == len(expected)
 
 
-def test_od_pairs_filter_limits_output(con: duckdb.DuckDBPyConnection) -> None:
-    assert build(con, od_pairs=[("CMH", "SEA")]) == ["CMH-ORD-SEA:AA3100+AS700"]
-    assert con.execute("SELECT origin, dest FROM itineraries_exclusions").fetchall() == [
-        ("CMH", "SEA")
-    ]
+def test_od_pairs_filter(con: duckdb.DuckDBPyConnection) -> None:
+    assert build(con, od_pairs=[("CMH", "SEA")]) == ["CMH-ORD-SEA:AA0800+AS0930"]
 
 
-def test_layover_across_local_midnight(con: duckdb.DuckDBPyConnection) -> None:
-    assert "CMH-ORD-PHX:AA2200+AA2300" in build(con)
-
-
-def test_only_given_hubs_used(con: duckdb.DuckDBPyConnection) -> None:
+def test_only_given_hubs(con: duckdb.DuckDBPyConnection) -> None:
     assert build(con, hubs=["DEN"]) == []
 
 
-def test_ids_and_order_deterministic(con: duckdb.DuckDBPyConnection) -> None:
-    first = con.execute("SELECT * FROM itineraries").fetchall() if build(con) else []
+def test_deterministic(con: duckdb.DuckDBPyConnection) -> None:
     build(con)
-    second = con.execute("SELECT * FROM itineraries").fetchall()
-    assert first == second
-    assert [r[0] for r in second] == sorted(r[0] for r in second)
+    first = con.execute("SELECT * FROM itineraries ORDER BY itinerary_id").fetchall()
+    build(con)
+    assert con.execute("SELECT * FROM itineraries ORDER BY itinerary_id").fetchall() == first
 
 
-def test_layover_and_travel_come_from_daily_schedules_on_connecting_days(
-    con: duckdb.DuckDBPyConnection,
+# --- The bound pre-filter is lossless ----------------------------------------------------
+
+
+@settings(max_examples=300, deadline=None)
+@given(
+    arr=st.lists(st.integers(0, 1439), min_size=1, max_size=4),
+    dep=st.lists(st.integers(0, 1439), min_size=1, max_size=4),
+    min_conn=st.integers(20, 60),
+    max_lay=st.integers(120, 300),
+)
+def test_bounds_never_drop_a_pair_that_can_connect(
+    arr: list[int], dep: list[int], min_conn: int, max_lay: int
 ) -> None:
+    # A real day's layover is a local-time difference shifted by at most 60 min on a
+    # daylight-saving night; if any such day can lie within the limits, the bound keeps it.
+    for a in arr:
+        for d in dep:
+            for shift in (-60, 0, 60):
+                layover = (d - a) % 1440 + shift
+                if min_conn <= layover <= max_lay:
+                    assert bounds_allow(arr, dep, min_conn, max_lay)
+
+
+def test_bounds_drop_a_pair_that_cannot_connect() -> None:
+    assert not bounds_allow([1345], [590], 30, 240)  # 685 min at best
+    assert bounds_allow([500], [590], 30, 240)
+
+
+# --- Hub-by-hub matching and the optional daily table -------------------------------------
+
+
+def _rows(con: duckdb.DuckDBPyConnection, table: str) -> list[tuple[Any, ...]]:
+    return con.execute(f"SELECT * FROM {table} ORDER BY ALL").fetchall()
+
+
+def test_without_days_gives_the_same_itineraries(con: duckdb.DuckDBPyConnection) -> None:
+    build(con, hubs=["ORD", "DEN"])
+    with_days = (_rows(con, "itineraries"), _rows(con, "itineraries_exclusions"))
+    con.execute("DROP TABLE itineraries_days")
+    build_itineraries(
+        con,
+        "slots",
+        ["ORD", "DEN"],
+        rules(),
+        "itineraries",
+        flights="flights",
+        sold="sold",
+        period=PERIOD,
+        days=False,
+    )
+    assert (_rows(con, "itineraries"), _rows(con, "itineraries_exclusions")) == with_days
+    assert not con.execute(
+        "SELECT count(*) FROM duckdb_tables() WHERE table_name = 'itineraries_days'"
+    ).fetchone()[0]  # pyright: ignore[reportOptionalSubscript]
+
+
+def test_hub_by_hub_matching_equals_one_hub_at_a_time(con: duckdb.DuckDBPyConnection) -> None:
+    build(con, hubs=["ORD", "DEN"])
+    together = (_rows(con, "itineraries"), _rows(con, "itineraries_days"))
+    parts: list[list[tuple[Any, ...]]] = [[], []]
+    for hub in ("DEN", "ORD"):
+        build(con, hubs=[hub])
+        parts[0] += _rows(con, "itineraries")
+        parts[1] += _rows(con, "itineraries_days")
+    assert together == (sorted(parts[0]), sorted(parts[1]))
+
+
+def test_no_matching_hub_still_creates_empty_tables(con: duckdb.DuckDBPyConnection) -> None:
+    assert build(con, hubs=["ZZZ"]) == []
+    assert _rows(con, "itineraries_days") == []
+
+
+def test_share_counts_days_the_inbound_does_not_fly(con: duckdb.DuckDBPyConnection) -> None:
+    """ADR-0013 rule 2: the share is of the days in the period (less end-of-period days), so
+    a day without the inbound flight counts as not connecting."""
     build(con)
-    # Pattern medians alone would give 100 min for UA7002 + UA7003 (schedule changes).
-    assert con.execute(
-        "SELECT median_layover_min, median_travel_min, connect_share FROM itineraries "
-        "WHERE itinerary_id = 'CMH-ORD-DEN:UA7002+UA7003'"
-    ).fetchone() == (40, 240, 1.0)
-    assert con.execute(
-        "SELECT median_layover_min, connect_share FROM itineraries "
-        "WHERE itinerary_id = 'CMH-ORD-DEN:UA7000+UA7003'"
-    ).fetchone() == (40, 0.6)
+    iid = "CMH-ORD-DEN:UA0800+UA1000"
+    in_slot = con.execute(
+        "SELECT inbound_slot FROM itineraries WHERE itinerary_id = ?", [iid]
+    ).fetchone()[0]  # pyright: ignore[reportOptionalSubscript]
+    con.execute("CREATE OR REPLACE TABLE gap AS SELECT * FROM slots")
+    con.execute(
+        "CREATE OR REPLACE TABLE gap_days AS SELECT * FROM slots_days "
+        "WHERE NOT (slot_id = ? AND service_date IN (SELECT DISTINCT service_date "
+        "FROM slots_days WHERE slot_id = ? ORDER BY service_date LIMIT 4))",
+        [in_slot, in_slot],
+    )
+
+    def run(threshold: float) -> tuple[Any, ...] | None:
+        build_itineraries(
+            con,
+            "gap",
+            ["ORD"],
+            rules(),
+            "gap_it",
+            threshold,
+            flights="flights",
+            sold="sold",
+            period=PERIOD,
+        )
+        return con.execute(
+            "SELECT connect_share, eligible_days FROM gap_it WHERE itinerary_id = ?", [iid]
+        ).fetchone()
+
+    days = (PERIOD[1] - PERIOD[0]).days + 1
+    assert run(0.5) == (round((days - 4) / days, 6), days)
+    assert run(0.7) is None  # 6 of 10 days; the inbound's own days would give 6 of 6
 
 
-def test_tight_itineraries_use_their_own_threshold(con: duckdb.DuckDBPyConnection) -> None:
-    from flight_pipeline.compare import tight_itineraries
-    from flight_pipeline.models import rows_as_dicts
+@settings(max_examples=200, deadline=None)
+@given(
+    arr=st.lists(st.integers(0, 1439), min_size=1, max_size=4),
+    dep=st.lists(st.integers(0, 1439), min_size=1, max_size=4),
+    min_conn=st.integers(20, 60),
+    max_lay=st.integers(120, 300),
+)
+def test_production_bounds_sql_equals_bounds_allow(
+    arr: list[int], dep: list[int], min_conn: int, max_lay: int
+) -> None:
+    """The SQL pre-filter the builder runs (``bounds_table``) keeps exactly the pairs
+    ``bounds_allow`` keeps, so its losslessness (tested above) carries over."""
+    from flight_pipeline.itineraries import bounds_table
 
-    build(con)
-    cur = con.execute("SELECT * FROM itineraries")
-    cols = [d[0] for d in cur.description or []]
-    its = [Itinerary.model_validate(r) for r in rows_as_dicts(cols, cur.fetchall())]
-    # 40 < 30 + 15 (both UA DEN itineraries); AS700 is a partner connection: 70 >= 45 + 15
-    assert tight_itineraries(its, rules(), 15) == {
-        "CMH-ORD-DEN:UA7000+UA7003",
-        "CMH-ORD-DEN:UA7002+UA7003",
-    }
-    assert "CMH-ORD-SEA:AA3100+AS700" in tight_itineraries(its, rules(), 30)  # 70 < 45 + 30
+    c = duckdb.connect()
+    c.execute(
+        "CREATE TEMP TABLE _cand "
+        "(itinerary_id VARCHAR, in_slot VARCHAR, out_slot VARCHAR, min_conn INTEGER)"
+    )
+    c.execute("INSERT INTO _cand VALUES ('X', 'IN', 'OUT', ?)", [min_conn])
+    c.execute("CREATE TEMP TABLE _slot_inst (slot_id VARCHAR, arr_local INTEGER)")
+    c.executemany("INSERT INTO _slot_inst VALUES ('IN', ?)", [[a] for a in arr])
+    c.execute("CREATE TEMP TABLE d (slot_id VARCHAR, dep_local_min INTEGER)")
+    c.executemany("INSERT INTO d VALUES ('OUT', ?)", [[x] for x in dep])
+    bounds_table(c, "d", max_lay)
+    kept = c.execute("SELECT count(*) FROM _bounds_ok").fetchone() == (1,)
+    assert kept == bounds_allow(arr, dep, min_conn, max_lay)

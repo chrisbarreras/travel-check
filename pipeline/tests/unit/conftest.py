@@ -8,7 +8,8 @@ import duckdb
 import pytest
 
 from flight_pipeline.feasibility import classify, daily_slack
-from flight_pipeline.itineraries import build_itineraries, build_patterns
+from flight_pipeline.itineraries import build_itineraries
+from flight_pipeline.slots import build_slots
 from tests.unit.test_itineraries import PERIOD, rules
 
 FIXTURES = Path(__file__).resolve().parents[1] / "fixtures"
@@ -25,11 +26,11 @@ def con() -> duckdb.DuckDBPyConnection:
     )
     from flight_pipeline.prepare.db1b import load_sold_routings
 
-    build_patterns(c, "flights", PERIOD, "patterns")
+    build_slots(c, "flights", PERIOD, 30, "slots")
     load_sold_routings(c, [FIXTURES / "db1b_sample.csv"], {}, "sold")
     build_itineraries(
         c,
-        "patterns",
+        "slots",
         ["ORD"],
         rules(),
         "itineraries",
@@ -37,6 +38,6 @@ def con() -> duckdb.DuckDBPyConnection:
         sold="sold",
         period=PERIOD,
     )
-    daily_slack(c, "flights", "itineraries", rules(), PERIOD, "slack")
+    daily_slack(c, "flights", "itineraries_days", "slack")
     classify(c, "slack", 15, "classified")
     return c

@@ -1,6 +1,6 @@
 # ADR-0013: Itineraries must be sold routings that actually connect
 
-- **Status:** Accepted (2026-11-24, with spec amendment 1 of feature 001). Supersedes rule 3 (recurrence) of [ADR-0004](0004-itinerary-definition.md) and adds a rule; ADR-0004's other rules stand.
+- **Status:** Accepted (2026-11-24, with spec amendment 1 of feature 001). Supersedes rule 3 (recurrence) of [ADR-0004](0004-itinerary-definition.md) and adds a rule; ADR-0004's other rules stand. Its flight identity (flight numbers) is superseded by [ADR-0014](0014-schedule-slot-itinerary-identity.md) (schedule slots); the sold-routing and connection-recurrence rules stand.
 - **Date:** 2026-11-24
 
 ## Context

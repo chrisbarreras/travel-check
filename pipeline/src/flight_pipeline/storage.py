@@ -7,7 +7,8 @@ columns rounded to 6 decimals, then validated against its Pydantic model.
 from __future__ import annotations
 
 import hashlib
-from collections.abc import Sequence
+import os
+from collections.abc import Collection, Sequence
 from pathlib import Path
 from typing import Any, TypeVar
 
@@ -26,10 +27,25 @@ FLOAT_DECIMALS = 6
 _FLOAT_TYPES = {"DOUBLE", "FLOAT", "REAL", "DECIMAL"}
 
 
+THREADS_ENV = "FLIGHT_PIPELINE_THREADS"
+
+
+def worker_count() -> int:
+    """Threads or worker processes to use: ``FLIGHT_PIPELINE_THREADS`` when set, else the
+    machine's CPU count."""
+    threads = os.environ.get(THREADS_ENV)
+    return max(1, int(threads)) if threads else max(1, os.cpu_count() or 1)
+
+
 def connect() -> duckdb.DuckDBPyConnection:
+    """An in-memory DuckDB connection in UTC. ``FLIGHT_PIPELINE_THREADS`` limits its threads
+    (to time a run as on a smaller machine, SC-008); outputs never depend on it."""
     con = duckdb.connect()
     con.execute("SET TimeZone = 'UTC'")
     con.execute("SET preserve_insertion_order = true")
+    threads = os.environ.get(THREADS_ENV)
+    if threads:
+        con.execute(f"SET threads = {int(threads)}")
     return con
 
 
@@ -77,12 +93,29 @@ def _order_term(term: str) -> str:
 
 
 def read_models[M: BaseModel](
-    con: duckdb.DuckDBPyConnection, path: Path, model: type[M]
+    con: duckdb.DuckDBPyConnection,
+    path: Path,
+    model: type[M],
+    *,
+    only: tuple[str, Collection[str]] | None = None,
 ) -> list[M]:
-    """Load a Parquet table as validated model instances (naive timestamps read as UTC)."""
+    """Load a Parquet table as validated model instances (naive timestamps read as UTC), in
+    file order. With ``only=(column, values)``, just the rows whose ``column`` is one of
+    ``values`` (filtered before validation, for large tables)."""
     if not path.exists():
         raise FileNotFoundError(f"{path} not found; run the earlier pipeline stages first")
-    cur = con.execute(f"SELECT * FROM read_parquet({_quote_path(path)})")
+    source = f"SELECT * FROM read_parquet({_quote_path(path)})"
+    if only is not None:
+        column, values = only
+        con.execute("CREATE OR REPLACE TEMP TABLE _only_keys (k VARCHAR PRIMARY KEY)")
+        if values:
+            con.executemany("INSERT INTO _only_keys VALUES (?)", [[v] for v in sorted(values)])
+        source = (
+            f"SELECT * FROM read_parquet({_quote_path(path)}, file_row_number = true) "
+            f'WHERE "{column}" IN (SELECT k FROM _only_keys) ORDER BY file_row_number'
+        )
+        source = f"SELECT * EXCLUDE (file_row_number) FROM ({source})"
+    cur = con.execute(source)
     columns = [d[0] for d in cur.description or []]
     dt_fields = _datetime_fields(model)
     out: list[M] = []
@@ -183,10 +216,15 @@ def models_to_table(
     """Create ``table`` with one typed column per field of ``model`` and insert ``items``."""
     cols = ", ".join(f'"{n}" {duck_type(f.annotation)}' for n, f in model.model_fields.items())
     con.execute(f"CREATE OR REPLACE TABLE {table} ({cols})")
-    if items:
-        names = list(model.model_fields)
-        placeholders = ", ".join("?" for _ in names)
-        con.executemany(
-            f"INSERT INTO {table} VALUES ({placeholders})",
-            [[_plain(getattr(item, n)) for n in names] for item in items],
+    names = list(model.model_fields)
+    row = "(" + ", ".join("?" for _ in names) + ")"
+    # Multi-row INSERTs: executemany runs one statement per row, far slower on large tables.
+    for start in range(0, len(items), _INSERT_BATCH):
+        batch = items[start : start + _INSERT_BATCH]
+        con.execute(
+            f"INSERT INTO {table} VALUES " + ", ".join(row for _ in batch),
+            [_plain(getattr(item, n)) for item in batch for n in names],
         )
+
+
+_INSERT_BATCH = 500

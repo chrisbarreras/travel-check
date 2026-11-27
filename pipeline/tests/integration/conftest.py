@@ -25,16 +25,16 @@ OVERRIDES = {
 
 
 def make_config(root: Path, raw: Path) -> Path:
-    text = (REPO / "config" / "phase0.toml").read_text(encoding="utf-8")
+    text = (REPO / "config" / "phase1.toml").read_text(encoding="utf-8")
     for key, value in OVERRIDES.items():
         text, n = re.subn(rf"^{key} = .*$", f"{key} = {value}", text, flags=re.MULTILINE)
         assert n == 1, key
     text = text.replace('raw_dir = "data/raw"', f'raw_dir = "{raw.as_posix()}"')
     text = text.replace(
-        'derived_dir = "data/derived/phase0"', f'derived_dir = "{(root / "derived").as_posix()}"'
+        'derived_dir = "data/derived/phase1"', f'derived_dir = "{(root / "derived").as_posix()}"'
     )
     text = text.replace(
-        'reports_dir = "reports/phase0"', f'reports_dir = "{(root / "reports").as_posix()}"'
+        'reports_dir = "reports/phase1"', f'reports_dir = "{(root / "reports").as_posix()}"'
     )
     text = text.replace(
         'manual_file = "data/raw/t100/t100_segment.csv"',
@@ -52,8 +52,9 @@ def make_config(root: Path, raw: Path) -> Path:
         text[text.index('checksum = "') : text.index("\n", text.index('checksum = "'))],
         'checksum = ""',
     )
-    path = root / "config" / "phase0.toml"
+    path = root / "config" / "phase1.toml"
     path.parent.mkdir(parents=True, exist_ok=True)
+    shutil.copy(REPO / "config" / "disruption_notes.toml", path.parent)
     path.write_text(text, encoding="utf-8")
     return path
 
@@ -73,7 +74,7 @@ def run_root(tmp_path: Path, synthetic_raw: Path) -> tuple[Path, Path]:
     return tmp_path, make_config(tmp_path, raw)
 
 
-STAGES = ["prepare", "select-hubs", "build", "analyze", "report"]
+STAGES = ["prepare", "select-hubs", "build", "analyze", "curate", "insights", "publish", "report"]
 
 
 @pytest.fixture(scope="session")

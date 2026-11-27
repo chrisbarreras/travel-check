@@ -31,6 +31,10 @@ Hub: ORD. Main period for itinerary tests: 2026-01-05 to 2026-01-14 (10 days, d1
 | Recurrence | AA1508 on 5/10 days; AA1510 on 6/10 days with 2 cancelled | 50% excluded at 60%; cancellations count as scheduled |
 | Same operator | DL5000 CMH→ORD and UA6000 ORD→SAN, both operated by OO | Different marketing airlines, not partners: never paired |
 | Connection-level recurrence | UA7000 CMH→ORD 09:00 ET + UA7001 ORD→DEN, both daily; UA7001 leaves 10:20 CT on odd days, 14:30 CT on even days | Layover 60 min at the pattern level and sold, but connects on 5 of 10 days: excluded at 60% |
+| Renumbering airline (ADR-0014) | WN CMH→ORD 10:00 ET and ORD→DEN 12:00 CT every day, as WN1001/WN1002 on odd days and WN2001/WN2002 on even days | Each flight number recurs on 50% of days, each schedule slot on 100%: one itinerary, CMH-ORD-DEN:WN1000+WN1200 |
+| Two schedules in one window | F9 300 and F9 302 CMH→ORD at 06:00 and 06:20 ET every day | Split by order within the day into two slots |
+| Schedule changes joined | UA7002 08:00 → 09:00 ET from d7; UA7003 09:00 → 10:00 CT from d5 | Same flight number across the boundary: one slot each, with a recorded change |
+| Nonstop | AA4000 CMH→SAN 09:00 ET, 300 min | Nonstop median for CMH-SAN |
 | Midnight | AA2200 CMH→ORD 22:00 ET + AA2300 ORD→PHX 00:30 CT (next day) | Layover across local midnight; d2 inbound arrives at 00:00 local (`2400`); last inbound day has no next-day outbound → not connecting |
 | Daylight saving | WN101/102 on 2026-03-08; WN201/202 on 2025-11-02 | True slack 30 (spring) and 140 (fall) vs naive local 90 and 80 |
 | `2400` / `0000` | WN301 PHX→SAN `2400` on 01-07; WN302 `0000` on 01-08 | Same instant, 2026-01-08 07:00 UTC |
@@ -66,6 +70,7 @@ carrier and month (summed), a zero, and a month outside a one-month test period.
 
 - `timeconv.json`: UTC instants per case.
 - `quality.json`: data-quality flags and counts.
+- `slots.json`: schedule slots, reference times, flight-number shares and joined schedule changes (research R1).
 - `itineraries.json`: patterns, itineraries and per-pair exclusion counts for hub ORD over the
   10-day period, with the sold routings of `db1b_sample.csv`.
 - `sold_routings.json`: sold routings and the unknown-airline share from `db1b_sample.csv`.

@@ -1,6 +1,6 @@
 # ADR-0004: What counts as an itinerary
 
-- **Status:** Accepted; recurrence rule superseded, and a sold-routing rule added, by [ADR-0013](0013-sold-routings-and-connection-recurrence.md)
+- **Status:** Accepted; recurrence rule superseded, and a sold-routing rule added, by [ADR-0013](0013-sold-routings-and-connection-recurrence.md); flight identity (flight numbers) and how the layover rule is applied (per day, not on median schedules) superseded by [ADR-0014](0014-schedule-slot-itinerary-identity.md)
 - **Date:** 2026-11-24
 
 ## Context

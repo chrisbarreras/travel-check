@@ -60,9 +60,15 @@ def od_candidates(
 
 
 def select_od_pairs(
-    candidates: Sequence[OdCandidate], hubs: Iterable[str], cfg: Selection
+    candidates: Sequence[OdCandidate],
+    hubs: Iterable[str],
+    cfg: Selection,
+    *,
+    pool: Iterable[str] | None = None,
 ) -> list[OdSelection]:
-    hub_set = set(hubs)
+    """Rank and select pairs. A regional origin is one outside the candidate ``pool``
+    (specs/002 FR-006); without a pool, outside the selected hubs (Phase 0's rule)."""
+    outside = set(pool) if pool is not None else set(hubs)
     ranked = sorted(
         (c for c in candidates if c.itineraries >= 2),
         key=lambda c: (-c.comparable_pairs, c.origin, c.dest),
@@ -74,7 +80,7 @@ def select_od_pairs(
     non_regional = 0
     out: list[OdSelection] = []
     for rank, c in enumerate(ranked, start=1):
-        regional = c.origin not in hub_set
+        regional = c.origin not in outside
         take = (
             chosen < cfg.od_pairs_count
             and per_hub.get(c.main_hub, 0) < cfg.max_pairs_per_hub

@@ -9,7 +9,9 @@ import json
 import os
 import statistics
 import sys
-from dataclasses import replace
+from collections import Counter
+from collections.abc import Mapping, Sequence
+from dataclasses import asdict, replace
 from importlib import metadata
 from pathlib import Path
 from typing import Any
@@ -18,15 +20,18 @@ import duckdb
 from pydantic import TypeAdapter
 
 from flight_pipeline.compare import (
+    BootstrapTask,
     comparable_candidates,
+    feasibility_threshold,
     go_criteria,
     is_showcase,
     order_pair,
-    paired_bootstrap,
+    paired_bootstraps,
     shared_days,
     tight_itineraries,
 )
-from flight_pipeline.config import Config
+from flight_pipeline.config import Config, load_disruption_notes
+from flight_pipeline.curation import CandidateComparison, RouteCandidate, curate
 from flight_pipeline.hubs import (
     assign_roles,
     candidate_metrics,
@@ -34,28 +39,38 @@ from flight_pipeline.hubs import (
     count_eligible,
     select_hubs,
 )
-from flight_pipeline.itineraries import build_itineraries, build_patterns
+from flight_pipeline.insights.build import ItineraryData, SlotData, build_insights
+from flight_pipeline.itineraries import build_itineraries
 from flight_pipeline.models import (
     Airport,
     ComparablePair,
+    CuratedComparisonRow,
+    CuratedRouteRow,
+    CurationMeta,
     DailyOutcome,
     Finding,
     HubCandidate,
     HubSelection,
     HubSelectionMeta,
     Itinerary,
+    ItineraryDay,
     ItineraryResult,
     Manifest,
+    NonstopMedian,
     OdExclusions,
     OdSelection,
     OdSelectionMeta,
     QualitySummary,
     ScenarioSummary,
+    ScheduleSlot,
     SensitivityMeta,
     SensitivityScenario,
+    SlotChange,
+    SlotDay,
     SoldRoutingsSummary,
     validate_scenarios,
 )
+from flight_pipeline.nonstop import nonstop_medians
 from flight_pipeline.od_selection import od_candidates, select_od_pairs, selection_shortfalls
 from flight_pipeline.prepare.db1b import unmapped_airlines
 from flight_pipeline.providers.timezones import AirportsDataTimezones
@@ -65,6 +80,7 @@ from flight_pipeline.report import (
     airline_coverage,
     airline_section,
     breakdown_section,
+    curation_section,
     describe_missing_settings,
     exclusions_section,
     finding_json,
@@ -87,7 +103,12 @@ from flight_pipeline.sensitivity import (
     scenarios,
     settings_compared,
 )
+from flight_pipeline.showcase import assemble
+from flight_pipeline.showcase.models import InsightsFile, ShowcaseManifest
+from flight_pipeline.showcase.publish import render, validation_context, write_files
+from flight_pipeline.slots import build_slots
 from flight_pipeline.storage import (
+    THREADS_ENV,
     models_to_table,
     read_models,
     read_table,
@@ -140,21 +161,42 @@ def load_flights(con: duckdb.DuckDBPyConnection, cfg: Config) -> None:
     read_table(con, derived(cfg, "sold_routings.parquet"), "sold_routings")
 
 
+def load_slots(con: duckdb.DuckDBPyConnection, cfg: Config) -> None:
+    for name in ("slots", "slots_days", "slots_changes"):
+        read_table(con, derived(cfg, f"{name}.parquet"), name)
+
+
 def stage_select_hubs(con: duckdb.DuckDBPyConnection, cfg: Config) -> str:
     load_flights(con, cfg)
     read_table(con, derived(cfg, "passengers.parquet"), "passengers")
     pool = candidate_pool(con, "flights", cfg.hubs.candidate_pool_size)
     metrics = candidate_metrics(con, "flights", "passengers", pool, cfg.hubs)
-    build_patterns(con, "flights", cfg.period.dates(), "patterns")
+    build_slots(con, "flights", cfg.period.dates(), cfg.itineraries.slot_window_min, "slots")
+    write_table(con, "slots", derived(cfg, "slots.parquet"), ScheduleSlot, ["slot_id"])
+    write_table(
+        con,
+        "slots_days",
+        derived(cfg, "slots_days.parquet"),
+        SlotDay,
+        ["slot_id", "service_date"],
+    )
+    write_table(
+        con,
+        "slots_changes",
+        derived(cfg, "slots_changes.parquet"),
+        SlotChange,
+        ["slot_id", "change_date"],
+    )
     build_itineraries(
         con,
-        "patterns",
+        "slots",
         pool,
         cfg.itineraries,
         "pool_itineraries",
         flights="flights",
         sold="sold_routings",
         period=cfg.period.dates(),
+        days=False,
     )
     eligible = count_eligible(con, "pool_itineraries", pool)
     metrics = [replace(m, eligible_itineraries=eligible[m.airport]) for m in metrics]
@@ -202,17 +244,21 @@ def stage_select_hubs(con: duckdb.DuckDBPyConnection, cfg: Config) -> str:
 def stage_build(con: duckdb.DuckDBPyConnection, cfg: Config) -> str:
     """Itineraries through the selected hubs and the origin/destination pair selection."""
     load_flights(con, cfg)
-    hubs = read_json(derived(cfg, "hub_selection.json"), HubSelectionMeta)["selected"]
-    build_patterns(con, "flights", cfg.period.dates(), "patterns")
+    hub_meta = read_json(derived(cfg, "hub_selection.json"), HubSelectionMeta)
+    hubs, pool = hub_meta["selected"], hub_meta["pool"]
+    load_slots(con, cfg)
+    nonstop_medians(con, "flights", cfg.period.dates(), "nonstop")
+    write_table(con, "nonstop", derived(cfg, "nonstop.parquet"), NonstopMedian, ["origin", "dest"])
     build_itineraries(
         con,
-        "patterns",
+        "slots",
         hubs,
         cfg.itineraries,
         "itineraries",
         flights="flights",
         sold="sold_routings",
         period=cfg.period.dates(),
+        days=False,
     )
     write_table(
         con, "itineraries", derived(cfg, "itineraries.parquet"), Itinerary, ["itinerary_id"]
@@ -224,7 +270,9 @@ def stage_build(con: duckdb.DuckDBPyConnection, cfg: Config) -> str:
         cfg.comparison.departure_window_min,
         "comparable_all",
     )
-    rows = select_od_pairs(od_candidates(con, "itineraries", "comparable_all"), hubs, cfg.selection)
+    rows = select_od_pairs(
+        od_candidates(con, "itineraries", "comparable_all"), hubs, cfg.selection, pool=pool
+    )
     models_to_table(con, "od_selection", OdSelection, rows)
     write_table(con, "od_selection", derived(cfg, "od_selection.parquet"), OdSelection, ["rank"])
     con.execute("CREATE OR REPLACE TEMP TABLE _chosen (origin VARCHAR, dest VARCHAR)")
@@ -242,6 +290,7 @@ def stage_build(con: duckdb.DuckDBPyConnection, cfg: Config) -> str:
         OdExclusions,
         ["origin", "dest"],
     )
+    _write_itinerary_days(con, cfg, hubs, chosen_pairs)
     shortfalls = selection_shortfalls(rows, cfg.selection)
     write_json(derived(cfg, "od_selection.json"), {"shortfalls": shortfalls}, OdSelectionMeta)
     chosen = [r for r in rows if r.selected]
@@ -251,6 +300,85 @@ def stage_build(con: duckdb.DuckDBPyConnection, cfg: Config) -> str:
         f"built {n_it[0] if n_it else 0} itineraries through {len(hubs)} hubs; "
         f"selected {len(chosen)} origin/destination pairs "
         f"({sum(r.regional_origin for r in chosen)} regional){note}"
+    )
+
+
+def _write_itinerary_days(
+    con: duckdb.DuckDBPyConnection,
+    cfg: Config,
+    hubs: Sequence[str],
+    pairs: Sequence[tuple[str, str]],
+) -> None:
+    """itinerary_days.parquet for the selected pairs only: their daily matching, rebuilt for
+    those pairs (the full year's matching of every itinerary is too large to keep). The
+    rebuilt itineraries must equal the full build's for those pairs."""
+    build_itineraries(
+        con,
+        "slots",
+        hubs,
+        cfg.itineraries,
+        "chosen_itineraries",
+        flights="flights",
+        sold="sold_routings",
+        period=cfg.period.dates(),
+        od_pairs=list(pairs),
+    )
+    differing = con.execute(
+        "SELECT count(*) FROM ((SELECT * FROM chosen_itineraries EXCEPT ALL "
+        "SELECT i.* FROM itineraries i JOIN _chosen c USING (origin, dest)) UNION ALL "
+        "(SELECT i.* FROM itineraries i JOIN _chosen c USING (origin, dest) EXCEPT ALL "
+        "SELECT * FROM chosen_itineraries))"
+    ).fetchone()
+    if differing and differing[0]:
+        raise RuntimeError(
+            f"rebuilt itineraries of the selected pairs differ in {differing[0]} rows"
+        )
+    con.execute(
+        "CREATE OR REPLACE TABLE itinerary_days AS SELECT itinerary_id, service_date, "
+        "match_status, CASE WHEN match_status_ok THEN "
+        "CAST((epoch(out_dep) - epoch(in_arr)) // 60 AS INTEGER) END AS sched_layover_min "
+        "FROM chosen_itineraries_days"
+    )
+    write_table(
+        con,
+        "itinerary_days",
+        derived(cfg, "itinerary_days.parquet"),
+        ItineraryDay,
+        ["itinerary_id", "service_date"],
+    )
+
+
+def _tight(
+    con: duckdb.DuckDBPyConnection, cfg: Config, itineraries: Sequence[Itinerary]
+) -> set[str]:
+    """Tight itineraries (``compare.tight_itineraries``), with the share of connecting days
+    scheduled below the threshold from itinerary_days.parquet when the configuration sets
+    ``[showcase] tight_day_share_max``."""
+    cutoff = cfg.feasibility.boarding_cutoff_min
+    limit = cfg.showcase.tight_day_share_max
+    path = derived(cfg, "itinerary_days.parquet")
+    if not path.exists():
+        return tight_itineraries(itineraries, cfg.itineraries, cutoff)
+    con.execute("CREATE OR REPLACE TEMP TABLE _thresholds (itinerary_id VARCHAR, t INTEGER)")
+    rows = [
+        (i.itinerary_id, feasibility_threshold(i, cfg.itineraries, cutoff)) for i in itineraries
+    ]
+    for start in range(0, len(rows), 500):
+        batch = rows[start : start + 500]
+        con.execute(
+            "INSERT INTO _thresholds VALUES " + ", ".join("(?, ?)" for _ in batch),
+            [v for row in batch for v in row],
+        )
+    below = {
+        str(iid): float(share)
+        for iid, share in con.execute(
+            "SELECT d.itinerary_id, avg(CAST(d.sched_layover_min < t.t AS INTEGER)) "
+            f"FROM read_parquet('{path.as_posix()}') d JOIN _thresholds t USING (itinerary_id) "
+            "WHERE d.match_status = 'connects' GROUP BY 1"
+        ).fetchall()
+    }
+    return tight_itineraries(
+        itineraries, cfg.itineraries, cutoff, days_below=below, max_day_share=limit
     )
 
 
@@ -271,13 +399,13 @@ def stage_analyze(con: duckdb.DuckDBPyConnection, cfg: Config) -> str:
     pairs = [(r.origin, r.dest) for r in od_rows if r.selected]
     read_table(con, derived(cfg, "itineraries.parquet"), "itineraries")
     period = cfg.period.dates()
-    build_patterns(con, "flights", period, "patterns")
+    load_slots(con, cfg)
     defaults = _defaults(cfg)
     default_id = scenario_id(*defaults)
     missing = evaluate_scenarios(
         con,
         "flights",
-        "patterns",
+        "slots",
         hubs,
         pairs,
         cfg.itineraries,
@@ -359,21 +487,24 @@ def stage_analyze(con: duckdb.DuckDBPyConnection, cfg: Config) -> str:
     ).fetchall():
         days.setdefault(iid, {})[day] = outcome == "feasible"
     base = rates.get(default_id, {})
+    ordered = [order_pair(x, y, base.get(x), base.get(y)) for x, y, *_ in raw_pairs]
+    tasks: list[BootstrapTask] = [
+        (
+            days.get(a, {}),
+            days.get(b, {}),
+            cfg.comparison.bootstrap_resamples,
+            cfg.comparison.ci_level,
+            cfg.seed,
+            f"{a}|{b}",
+        )
+        for a, b in ordered
+        if status.get(a, False) and status.get(b, False)
+    ]
+    intervals = dict(zip((t[5] for t in tasks), paired_bootstraps(tasks), strict=True))
     out_pairs: list[ComparablePair] = []
-    for x, y, travel_diff, dep_diff_ in raw_pairs:
-        a, b = order_pair(x, y, base.get(x), base.get(y))
+    for (x, y, travel_diff, dep_diff_), (a, b) in zip(raw_pairs, ordered, strict=True):
         ra, rb = base.get(a), base.get(b)
-        sufficient = status.get(a, False) and status.get(b, False)
-        low, high = (None, None)
-        if sufficient:
-            low, high = paired_bootstrap(
-                days.get(a, {}),
-                days.get(b, {}),
-                cfg.comparison.bootstrap_resamples,
-                cfg.comparison.ci_level,
-                cfg.seed,
-                f"{a}|{b}",
-            )
+        low, high = intervals.get(f"{a}|{b}", (None, None))
         diff = None if ra is None or rb is None else round(ra - rb, 6)
         common = shared_days(days.get(a, {}), days.get(b, {}))
         sensitive = flags[(x, y)]
@@ -430,22 +561,353 @@ def stage_analyze(con: duckdb.DuckDBPyConnection, cfg: Config) -> str:
     )
 
 
+# --- Curation ----------------------------------------------------------------------------
+
+
+def stage_curate(con: duckdb.DuckDBPyConnection, cfg: Config) -> str:
+    """Showcase routes, balanced showcase comparisons and the landing example (research R4)."""
+    od_rows = read_models(con, derived(cfg, "od_selection.parquet"), OdSelection)
+    itineraries = read_models(con, derived(cfg, "itineraries.parquet"), Itinerary)
+    pairs = read_models(con, derived(cfg, "comparable_pairs.parquet"), ComparablePair)
+    scenario_rows = read_models(
+        con, derived(cfg, "sensitivity_scenarios.parquet"), SensitivityScenario
+    )
+    by_id = {i.itinerary_id: i for i in itineraries}
+    tight = _tight(con, cfg, itineraries)
+    counts: dict[str, int] = {}
+    for i in itineraries:
+        counts[f"{i.origin}-{i.dest}"] = counts.get(f"{i.origin}-{i.dest}", 0) + 1
+    routes = [
+        RouteCandidate(
+            route_id=f"{r.origin}-{r.dest}",
+            origin=r.origin,
+            dest=r.dest,
+            regional_origin=r.regional_origin,
+            itinerary_count=counts.get(f"{r.origin}-{r.dest}", 0),
+        )
+        for r in od_rows
+        if r.selected
+    ]
+    comps: list[CandidateComparison] = []
+    for p in pairs:
+        if not p.showcase or p.rate_diff is None:
+            continue
+        a, b = by_id[p.itinerary_a], by_id[p.itinerary_b]
+        lower = b if p.rate_diff > 0 else a
+        comps.append(
+            CandidateComparison(
+                comparison_id=f"{a.itinerary_id}|{b.itinerary_id}",
+                route_id=f"{a.origin}-{a.dest}",
+                itinerary_a=a.itinerary_id,
+                itinerary_b=b.itinerary_id,
+                airlines=frozenset({a.airline_in, a.airline_out, b.airline_in, b.airline_out}),
+                hubs=frozenset({a.hub, b.hub}),
+                cross_hub=a.hub != b.hub,
+                difference=abs(p.rate_diff),
+                settings_compared=p.settings_compared,
+                lower_tight=lower.itinerary_id in tight,
+            )
+        )
+    total_settings = len({(s.min_connection_min, s.boarding_cutoff_min) for s in scenario_rows})
+    result = curate(routes, comps, cfg.showcase, total_settings)
+    models_to_table(
+        con,
+        "showcase_routes",
+        CuratedRouteRow,
+        [CuratedRouteRow(**asdict(r)) for r in result.routes],
+    )
+    write_table(
+        con,
+        "showcase_routes",
+        derived(cfg, "showcase_routes.parquet"),
+        CuratedRouteRow,
+        ["rank"],
+    )
+    models_to_table(
+        con,
+        "showcase_comparisons",
+        CuratedComparisonRow,
+        [CuratedComparisonRow(**asdict(c)) for c in result.comparisons],
+    )
+    write_table(
+        con,
+        "showcase_comparisons",
+        derived(cfg, "showcase_comparisons.parquet"),
+        CuratedComparisonRow,
+        ["comparison_id"],
+    )
+    write_json(
+        derived(cfg, "curation.json"),
+        {
+            "landing_comparison_id": result.landing_comparison_id,
+            "landing_reason": result.landing_reason,
+            "airline_shares": result.airline_shares,
+            "hub_shares": result.hub_shares,
+            "cross_hub_share": result.cross_hub_share,
+            "shortfalls": result.shortfalls,
+        },
+        CurationMeta,
+    )
+    for s in result.shortfalls:
+        print(f"curate: shortfall: {s}", file=sys.stderr, flush=True)
+    return (
+        f"curated {len(result.routes)} routes and {len(result.comparisons)} showcase "
+        f"comparisons ({result.cross_hub_share:.0%} cross-hub); landing "
+        f"{result.landing_comparison_id or 'none'}; {len(result.shortfalls)} shortfall(s)"
+    )
+
+
+# --- Insights ----------------------------------------------------------------------------
+
+
+def stage_insights(con: duckdb.DuckDBPyConnection, cfg: Config) -> str:
+    """Traveler insights for every itinerary on a curated route (specs/002 User Story 5)."""
+    routes = {
+        r.route_id
+        for r in read_models(con, derived(cfg, "showcase_routes.parquet"), CuratedRouteRow)
+    }
+    its = [
+        i
+        for i in read_models(con, derived(cfg, "itineraries.parquet"), Itinerary)
+        if f"{i.origin}-{i.dest}" in routes
+    ]
+    ids = {i.itinerary_id for i in its}
+    default_id = scenario_id(*_defaults(cfg))
+    results = {
+        r.itinerary_id: r
+        for r in read_models(con, derived(cfg, "itinerary_results.parquet"), ItineraryResult)
+        if r.scenario_id == default_id and r.itinerary_id in ids
+    }
+    daily = _daily_by_itinerary(
+        read_models(con, derived(cfg, "daily_outcomes.parquet"), DailyOutcome), results
+    )
+    matched: dict[str, list[ItineraryDay]] = {}
+    for x in read_models(
+        con, derived(cfg, "itinerary_days.parquet"), ItineraryDay, only=("itinerary_id", ids)
+    ):
+        if x.itinerary_id in ids:
+            matched.setdefault(x.itinerary_id, []).append(x)
+    slot_ids = {s for i in its for s in (i.inbound_slot, i.outbound_slot)}
+    slot_days: dict[str, list[tuple[dt.date, int]]] = {}
+    for d in read_models(
+        con, derived(cfg, "slots_days.parquet"), SlotDay, only=("slot_id", slot_ids)
+    ):
+        if d.slot_id in slot_ids:
+            slot_days.setdefault(d.slot_id, []).append((d.service_date, d.dep_local_min))
+    joins: dict[str, list[tuple[dt.date, int, int]]] = {}
+    for c in read_models(con, derived(cfg, "slots_changes.parquet"), SlotChange):
+        if c.slot_id in slot_ids:
+            joins.setdefault(c.slot_id, []).append(
+                (c.change_date, c.from_local_min, c.to_local_min)
+            )
+    slots = {
+        s.slot_id: SlotData(
+            slot=s, days=slot_days.get(s.slot_id, []), joins=joins.get(s.slot_id, [])
+        )
+        for s in read_models(con, derived(cfg, "slots.parquet"), ScheduleSlot)
+        if s.slot_id in slot_ids
+    }
+    data = {
+        i.itinerary_id: ItineraryData(
+            itinerary=i,
+            result=results[i.itinerary_id],
+            daily=daily.get(i.itinerary_id, []),
+            days=matched.get(i.itinerary_id, []),
+        )
+        for i in its
+    }
+    notes = load_disruption_notes(cfg.path(cfg.notes.disruption_file), cfg.period.dates())
+    result = build_insights(data, slots, notes, cfg)
+    write_json(derived(cfg, "insights.json"), result.model_dump(mode="json"), InsightsFile)
+    rows = result.itineraries.values()
+    return (
+        f"insights for {len(rows)} itineraries on {len(routes)} routes: "
+        f"{sum(bool(x.faster_alternatives) for x in rows)} with a faster alternative, "
+        f"{sum(any(o.better for o in x.connecting_options) for x in rows)} with a better "
+        f"connecting option, {sum(bool(x.schedule_warnings.changes) for x in rows)} with a "
+        "schedule change"
+    )
+
+
+# --- Publish -----------------------------------------------------------------------------
+
+
+def _daily_by_itinerary(
+    rows: list[DailyOutcome], keep: Mapping[str, Any]
+) -> dict[str, list[DailyOutcome]]:
+    out: dict[str, list[DailyOutcome]] = {}
+    for r in rows:
+        if r.itinerary_id in keep:
+            out.setdefault(r.itinerary_id, []).append(r)
+    return out
+
+
+def stage_publish(con: duckdb.DuckDBPyConnection, cfg: Config, config_path: Path) -> str:
+    """Write the validated, size-budgeted showcase JSON (specs/002 contracts/outputs.md)."""
+    routes = read_models(con, derived(cfg, "showcase_routes.parquet"), CuratedRouteRow)
+    comps = read_models(con, derived(cfg, "showcase_comparisons.parquet"), CuratedComparisonRow)
+    meta = read_json(derived(cfg, "curation.json"), CurationMeta)
+    itineraries = read_models(con, derived(cfg, "itineraries.parquet"), Itinerary)
+    results = read_models(con, derived(cfg, "itinerary_results.parquet"), ItineraryResult)
+    pairs = read_models(con, derived(cfg, "comparable_pairs.parquet"), ComparablePair)
+    scenario_rows = read_models(
+        con, derived(cfg, "sensitivity_scenarios.parquet"), SensitivityScenario
+    )
+    nonstop = read_models(con, derived(cfg, "nonstop.parquet"), NonstopMedian)
+    hubs = read_json(derived(cfg, "hub_selection.json"), HubSelectionMeta)["selected"]
+    for name in ("flights", "sold_routings", "slots", "slots_days"):
+        path = derived(cfg, f"{name}.parquet").as_posix().replace("'", "''")
+        con.execute(f"CREATE OR REPLACE VIEW {name} AS SELECT * FROM read_parquet('{path}')")
+
+    default_id = scenario_id(*_defaults(cfg))
+    shown_routes = {r.route_id for r in routes}
+    shown = {i.itinerary_id: i for i in itineraries if f"{i.origin}-{i.dest}" in shown_routes}
+    rates_by_scenario: dict[str, dict[str, float | None]] = {}
+    for r in results:
+        rates_by_scenario.setdefault(r.scenario_id, {})[r.itinerary_id] = r.feasibility_rate
+    mcts = sorted({s.min_connection_min for s in scenario_rows})
+    cutoffs = sorted({s.boarding_cutoff_min for s in scenario_rows})
+    compared = [(c.itinerary_a, c.itinerary_b) for c in comps]
+    missing = {
+        k: describe_missing_settings(v, mcts, cutoffs)
+        for k, v in missing_settings(compared, rates_by_scenario, scenario_rows).items()
+    }
+    inputs = assemble.Inputs(
+        routes=routes,
+        comparisons=comps,
+        landing_comparison_id=meta["landing_comparison_id"],
+        landing_reason=meta["landing_reason"],
+        itineraries=shown,
+        results={
+            r.itinerary_id: r
+            for r in results
+            if r.scenario_id == default_id and r.itinerary_id in shown
+        },
+        pairs={(p.itinerary_a, p.itinerary_b): p for p in pairs},
+        missing_settings=missing,
+        nonstop={(n.origin, n.dest): n for n in nonstop},
+        arrival_local_min=assemble.arrival_minutes(con, "slots_days", "flights"),
+        insights=InsightsFile.model_validate(
+            read_json(derived(cfg, "insights.json"), InsightsFile)
+        ).itineraries,
+        hubs=hubs,
+        sold_same_airline=assemble.sold_same_airline(con, "sold_routings", hubs),
+        analysis_itineraries=dict(Counter(i.airline_in for i in itineraries)),
+        curation=CurationMeta.model_validate(meta),
+        routings_at_minimum=assemble.routings_at_minimum(
+            con, "sold_routings", hubs, cfg.itineraries.min_sold_passengers
+        ),
+        daily=_daily_by_itinerary(
+            read_models(con, derived(cfg, "daily_outcomes.parquet"), DailyOutcome), shown
+        ),
+        tight=frozenset(_tight(con, cfg, list(shown.values()))),
+        notes=load_disruption_notes(cfg.path(cfg.notes.disruption_file), cfg.period.dates()),
+    )
+    route_files = assemble.route_files(inputs, cfg)
+    index = assemble.index_of(route_files, inputs, cfg, _sha256(config_path))
+    files = render(index, route_files, validation_context(cfg))
+    sizes = write_files(
+        cfg.path(cfg.showcase.output_dir),
+        files,
+        cfg.showcase.size_budget_kb,
+        cfg.showcase.landing_budget_kb,
+    )
+    write_showcase_manifest(cfg, config_path, None)
+    total = sum(sizes.values()) / 1024
+    first = (sizes["index.json"] + sizes["landing.json"]) / 1024
+    return (
+        f"published {len(route_files)} route files and "
+        f"{sum(len(r.itineraries) for r in route_files)} itineraries; "
+        f"{total:.1f} KB gzip in all, {first:.1f} KB for index and landing"
+    )
+
+
+SHOWCASE_MANIFEST = "manifest.json"
+
+
+def showcase_outputs(out_dir: Path) -> dict[str, str]:
+    """sha256 of every published file except the manifest, by path relative to ``out_dir``."""
+    return {
+        p.relative_to(out_dir).as_posix(): _sha256(p)
+        for p in sorted(out_dir.rglob("*.json"))
+        if p.name != SHOWCASE_MANIFEST or p.parent != out_dir
+    }
+
+
+def showcase_manifest(
+    previous: dict[str, Any] | None,
+    *,
+    identity: dict[str, Any],
+    outputs: dict[str, str],
+    run: dict[str, Any],
+) -> dict[str, Any]:
+    """The showcase manifest (FR-027): ``identity`` holds sources, config and notes checksums,
+    packages, code version and git commit. A measured runtime is carried over from
+    ``previous`` only when every identity field matches (the Phase 0 rule, extended to the
+    code version)."""
+    same = previous is not None and all(previous.get(k) == v for k, v in identity.items())
+    return {
+        **identity,
+        "outputs": outputs,
+        "run": merge_run(previous and previous.get("run"), run, same_inputs=same),
+    }
+
+
+def write_showcase_manifest(
+    cfg: Config, config_path: Path, runtime_min: float | None
+) -> dict[str, Any]:
+    out_dir = cfg.path(cfg.showcase.output_dir)
+    version, commit = assemble.code_identity(cfg.repo_root)
+    identity: dict[str, Any] = {
+        "sources": source_records(cfg),
+        "config_sha256": _sha256(config_path),
+        "notes_sha256": _sha256(cfg.path(cfg.notes.disruption_file)),
+        "code_version": version,
+        "git_commit": commit,
+        "packages": {
+            **{p: metadata.version(p) for p in PACKAGES},
+            "python": ".".join(map(str, sys.version_info[:2])),
+        },
+    }
+    run = {
+        "run_at": dt.datetime.now(dt.UTC).isoformat(timespec="seconds"),
+        "runtime_min": None if runtime_min is None else round(runtime_min, 2),
+        "runtime_limit_min": cfg.runtime.limit_min,
+        "runtime_exceeded": None if runtime_min is None else runtime_min > cfg.runtime.limit_min,
+        "machine": _machine(),
+    }
+    path = out_dir / SHOWCASE_MANIFEST
+    previous = json.loads(path.read_text(encoding="utf-8")) if path.exists() else None
+    manifest = showcase_manifest(
+        previous, identity=identity, outputs=showcase_outputs(out_dir), run=run
+    )
+    write_json(path, manifest, ShowcaseManifest)
+    return manifest
+
+
 # --- Report and manifest -----------------------------------------------------------------
 
 DERIVED_TABLES = (
     "flights.parquet",
+    "slots.parquet",
+    "slots_days.parquet",
+    "slots_changes.parquet",
+    "nonstop.parquet",
     "passengers.parquet",
     "sold_routings.parquet",
     "airports.parquet",
     "hub_candidates.parquet",
     "hub_selection.parquet",
     "itineraries.parquet",
+    "itinerary_days.parquet",
     "od_selection.parquet",
     "od_exclusions.parquet",
     "sensitivity_scenarios.parquet",
     "daily_outcomes.parquet",
     "itinerary_results.parquet",
     "comparable_pairs.parquet",
+    "showcase_routes.parquet",
+    "showcase_comparisons.parquet",
 )
 REPORT_FILES = ("summary.json", "summary.md", "quality.json")
 PACKAGES = ("flight-pipeline", "duckdb", "pydantic", "numpy", "airportsdata", "tzdata", "httpx")
@@ -453,6 +915,17 @@ PACKAGES = ("flight-pipeline", "duckdb", "pydantic", "numpy", "airportsdata", "t
 
 def _sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def _machine() -> dict[str, Any]:
+    """The machine the run was timed on, with the thread limit when one was set (SC-008:
+    a run limited to 4 threads stands in for the 4-core reference machine)."""
+    threads = os.environ.get(THREADS_ENV)
+    return {
+        "cpu_count": os.cpu_count(),
+        "ram_gb": _ram_gb(),
+        "thread_limit": int(threads) if threads else None,
+    }
 
 
 def _ram_gb() -> float | None:
@@ -542,7 +1015,7 @@ def write_manifest(
             "runtime_exceeded": None
             if runtime_min is None
             else runtime_min > cfg.runtime.limit_min,
-            "machine": {"cpu_count": os.cpu_count(), "ram_gb": _ram_gb()},
+            "machine": _machine(),
         },
     }
     path = reports(cfg, "manifest.json")
@@ -604,6 +1077,34 @@ def scenario_summaries(
             }
         )
     return out
+
+
+def _report_title(config_path: Path) -> str:
+    """Phase 0's title for its frozen report; Phase 1's for its rerun. Taken from the
+    configuration file's name, which ``verify`` shares (its output directories differ)."""
+    if config_path.stem == "phase1":
+        return "Phase 1 rerun: connection feasibility with schedule-slot itineraries"
+    return "Phase 0 finding: connection feasibility experiment"
+
+
+def _curation_sections(con: duckdb.DuckDBPyConnection, cfg: Config) -> list[str]:
+    """The showcase curation section, when the curate stage has run (Phase 1)."""
+    path = derived(cfg, "curation.json")
+    if not path.exists():
+        return []
+    meta = read_json(path, CurationMeta)
+    routes = read_models(con, derived(cfg, "showcase_routes.parquet"), CuratedRouteRow)
+    sc = cfg.showcase
+    return [
+        curation_section(
+            [(r.route_id, r.comparison_count, r.share_of_showcase) for r in routes],
+            meta["airline_shares"],
+            meta["hub_shares"],
+            meta["cross_hub_share"],
+            meta["shortfalls"],
+            (sc.max_share_route, sc.max_share_airline, sc.max_share_hub, sc.cross_hub_share_min),
+        )
+    ]
 
 
 def stage_report(
@@ -672,7 +1173,7 @@ def stage_report(
             [(p.itinerary_a, p.itinerary_b) for p in examples], rates_by_scenario, scenario_rows
         ).items()
     }
-    tight_ids = tight_itineraries(itineraries, cfg.itineraries, cfg.feasibility.boarding_cutoff_min)
+    tight_ids = _tight(con, cfg, itineraries)
     by_itinerary = {i.itinerary_id: i for i in itineraries}
     breakdown = (
         showcase_breakdown(
@@ -686,7 +1187,7 @@ def stage_report(
         "INSERT INTO _sel_hubs VALUES (?)", [(s.airport,) for s in selection if s.selected]
     )
     coverage = airline_coverage(
-        [i.inbound.marketing_airline for i in itineraries],
+        [i.airline_in for i in itineraries],
         {
             str(a): int(n)
             for a, n in con.execute(
@@ -757,6 +1258,7 @@ def stage_report(
             routing_itineraries=routing_itineraries(itineraries),
         ),
         *([breakdown_section(breakdown)] if breakdown else []),
+        *_curation_sections(con, cfg),
         sensitivity_section(
             summaries,
             [p for p in pairs if p.assumption_sensitive],
@@ -785,6 +1287,7 @@ def stage_report(
             cfg.comparison.go_min_examples,
             cfg.comparison.go_min_hubs,
             appendix,
+            title=_report_title(config_path),
         ),
         encoding="utf-8",
         newline="\n",
