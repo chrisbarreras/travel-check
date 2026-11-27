@@ -32,7 +32,7 @@ Build the Phase 1 web application in `web/`: React, TypeScript and Vite. It is a
 
 **Testing**: Vitest, jsdom and Testing Library (unit, component); Playwright with Chromium (e2e, visual, keyboard) and `@axe-core/playwright` (accessibility), in `mcr.microsoft.com/playwright:v1.65.0-noble` pinned by digest; `@lhci/cli` (performance); size-limit (bundle).
 
-**Target Platform**: modern evergreen browsers on phones and desktops, served as a static site from GitHub Pages at `/flight-app/`.
+**Target Platform**: modern evergreen browsers on phones and desktops, served as a static site from GitHub Pages at `/travel-check/`.
 
 **Project Type**: static web application (frontend only). It reads the pipeline's committed output.
 

@@ -4,7 +4,7 @@ Decisions for [spec.md](spec.md), each with its rationale and the alternatives c
 
 ## R1. Hosting
 
-**Decision:** GitHub Pages, deployed from GitHub Actions with the official `actions/upload-pages-artifact` and `actions/deploy-pages` actions. It is a project site at `https://chrisbarreras.github.io/flight-app/`. This needs the repository to be public, or a paid GitHub plan; see R2. Record the choice in ADR-0015, which supersedes ADR-0002's hosting row for the frontend. The Phase 2 API host is still chosen in Phase 2.
+**Decision:** GitHub Pages, deployed from GitHub Actions with the official `actions/upload-pages-artifact` and `actions/deploy-pages` actions. It is a project site at `https://chrisbarreras.github.io/travel-check/`. This needs the repository to be public, or a paid GitHub plan; see R2. Record the choice in ADR-0015, which supersedes ADR-0002's hosting row for the frontend. The Phase 2 API host is still chosen in Phase 2.
 
 **Rationale:**
 - Free, with no second account or long-lived deploy token: the deploy job authenticates with the workflow's own short-lived OIDC token.
@@ -48,7 +48,7 @@ It is created with `gh api` once the owner authorizes it. Every required job run
 
 ## R4. How data reaches the page
 
-**Decision:** the build copies `site-data/showcase/` unchanged into the output at `data/showcase/` (FR-016). The data-access module fetches files relative to the site's base path. The first view loads only `index.json`, `landing.json` and `manifest.json`, about 9 KB compressed. The base path is `/flight-app/` in production and `/` locally, set at build time.
+**Decision:** the build copies `site-data/showcase/` unchanged into the output at `data/showcase/` (FR-016). The data-access module fetches files relative to the site's base path. The first view loads only `index.json`, `landing.json` and `manifest.json`, about 9 KB compressed. The base path is `/travel-check/` in production and `/` locally, set at build time.
 
 **Rationale:**
 - Keeps the data out of the script bundle (SC-002).
