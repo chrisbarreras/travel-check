@@ -159,7 +159,7 @@ main,
   overflow-wrap: anywhere;
 }
 
-.card:first-child {
+.cards > article:first-child {
   border: 2px solid var(--accent);
 }
 

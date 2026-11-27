@@ -1,0 +1,8 @@
+[
+  {
+    "name": "All scripts (gzip)",
+    "path": "dist/assets/*.js",
+    "limit": "150 kB",
+    "gzip": true
+  }
+]

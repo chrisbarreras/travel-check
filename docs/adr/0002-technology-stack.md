@@ -1,6 +1,6 @@
 # ADR-0002: Technology stack
 
-- **Status:** Accepted
+- **Status:** Accepted; frontend hosting superseded by [ADR-0015](0015-static-hosting-github-pages.md)
 - **Date:** 2026-11-24
 
 ## Context
@@ -25,7 +25,7 @@ The stack should be widely used in industry (portfolio value), free to run, quic
 | Python tooling | uv, ruff, pytest, pyright |
 | Frontend testing | Vitest + Testing Library; Playwright for key end-to-end flows |
 | Infrastructure | Docker; GitHub Actions CI |
-| Hosting | Static host for the frontend (Cloudflare Pages or Vercel); container host for the API (chosen in Phase 2) |
+| Hosting | Static host for the frontend (Cloudflare Pages or Vercel; superseded by [ADR-0015](0015-static-hosting-github-pages.md): GitHub Pages); container host for the API (chosen in Phase 2) |
 
 Repository layout: a single repo with `pipeline/`, `api/`, `web/`, `notebooks/`, `docs/` and `specs/`.
 

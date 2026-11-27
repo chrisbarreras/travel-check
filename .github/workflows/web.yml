@@ -1,0 +1,137 @@
+name: web
+
+# Checks for the Travel Check web app (specs/003-web-foundation/contracts/checks.md).
+# No path filters: required checks must report on every pull request (research R2).
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: web-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+defaults:
+  run:
+    working-directory: web
+
+jobs:
+  web-checks:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: web/.nvmrc
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - name: Install
+        run: npm ci --no-audit --no-fund
+      - name: Validators from the generated schema
+        run: npm run gen
+      - name: Format
+        run: npm run format:check
+      - name: Lint
+        run: npm run lint
+      - name: Types
+        run: npm run typecheck
+      - name: Unit and component tests
+        run: npm test
+      - name: Build (data copied unchanged)
+        run: npm run build
+      - name: Size budgets
+        run: npm run size
+
+  web-browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    # The pinned image makes screenshots identical on every machine (research R6).
+    container:
+      image: mcr.microsoft.com/playwright:v1.65.0-noble@sha256:9beb546099e11f52d62e505537914870e01a67e0e6b00ae41da4775324e73dbe
+      options: --ipc=host --init
+    env:
+      PLAYWRIGHT_DOCKER: "1"
+      HOME: /root
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install
+        run: npm ci --no-audit --no-fund
+      - name: Build
+        run: npm run build
+      - name: End-to-end, visual, accessibility and keyboard tests
+        run: npm run test:browser
+      - name: Upload report and diffs
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: |
+            web/playwright-report/
+            web/test-results/
+          retention-days: 14
+
+  web-lighthouse:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: web/.nvmrc
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - name: Install
+        run: npm ci --no-audit --no-fund
+      - name: Build
+        run: npm run build
+      - name: Lighthouse (median of 3 mobile runs)
+        run: npm run lighthouse
+      - name: Upload Lighthouse reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lighthouse
+          path: web/.lighthouseci/
+          retention-days: 14
+
+  web-deploy:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: [web-checks, web-browser, web-lighthouse]
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    concurrency:
+      group: pages
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: web/.nvmrc
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - name: Install
+        run: npm ci --no-audit --no-fund
+      - name: Build for GitHub Pages
+        run: npm run build
+        env:
+          GITHUB_PAGES: "1"
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: web/dist
+      - name: Deploy
+        id: deployment
+        uses: actions/deploy-pages@v4
+      - name: Install Chromium for the smoke check
+        run: npx playwright install --with-deps chromium
+      - name: Smoke check of the live site
+        run: npm run smoke -- "${{ steps.deployment.outputs.page_url }}"

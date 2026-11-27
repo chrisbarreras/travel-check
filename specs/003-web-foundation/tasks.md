@@ -137,27 +137,27 @@ description: "Task list for the web foundation"
 
 **Independent Test**: one throwaway pull request per kind of breakage, each blocked; a clean pull request passes; a merge updates the live site (spec, US2; quickstart 11–14).
 
-- [ ] T024 [US2] Write web/playwright.config.ts with the projects `e2e`, `visual`, `a11y`, `keyboard` and `smoke` (research R6):
+- [X] T024 [US2] Write web/playwright.config.ts with the projects `e2e`, `visual`, `a11y`, `keyboard` and `smoke` (research R6):
   - `webServer` runs `vite preview` on dist/;
   - a shared fixture blocks every request outside the local server (FR-022);
   - the `visual` project refuses to run unless `PLAYWRIGHT_DOCKER=1`;
   - animations are disabled;
   - `smoke` is excluded from `test:browser`.
-- [ ] T025 [P] [US2] Add web/docker/playwright.Dockerfile, based on `mcr.microsoft.com/playwright:v1.65.0-noble` pinned by digest, plus the `test:browser:docker` and `test:visual:update` scripts that mount the repository and run the matching projects in it (FR-019, FR-026)
-- [ ] T026 [P] [US2] Write web/tests/visual/landing.spec.ts: screenshots of the ready state at 360 and 1280 px, and of the loading and error states at 360 px. Generate the reference images in web/tests/visual/__screenshots__/ with `npm run test:visual:update`
-- [ ] T027 [P] [US2] Write web/tests/a11y/axe.spec.ts: `@axe-core/playwright` with the `wcag2a`, `wcag2aa`, `wcag21aa` and `wcag22aa` tags, at 360 and 1280 px, for the ready and error states, with zero violations allowed (FR-020, SC-004)
-- [ ] T028 [P] [US2] Write web/tests/keyboard/keyboard.spec.ts. It is a scripted Tab and Shift+Tab walk over every link and disclosure, asserting:
+- [X] T025 [P] [US2] Add web/scripts/docker-playwright.mjs, which runs `mcr.microsoft.com/playwright:v1.65.0-noble` pinned by digest (no Dockerfile is needed: the image is used as is, locally and as the CI job container), plus the `test:browser:docker` and `test:visual:update` scripts that mount the repository and run the matching projects in it (FR-019, FR-026)
+- [X] T026 [P] [US2] Write web/tests/visual/landing.spec.ts: screenshots of the ready state at 360 and 1280 px, and of the loading and error states at 360 px. Generate the reference images in web/tests/visual/__screenshots__/ with `npm run test:visual:update`
+- [X] T027 [P] [US2] Write web/tests/a11y/axe.spec.ts: `@axe-core/playwright` with the `wcag2a`, `wcag2aa`, `wcag21aa` and `wcag22aa` tags, at 360 and 1280 px, for the ready and error states, with zero violations allowed (FR-020, SC-004)
+- [X] T028 [P] [US2] Write web/tests/keyboard/keyboard.spec.ts. It is a scripted Tab and Shift+Tab walk over every link and disclosure, asserting:
   - the expected order;
   - a visible focus outline, as the computed 3 px outline;
   - Enter and Space open the definitions (FR-010, SC-004).
-- [ ] T029 [P] [US2] Write web/lighthouserc.json (3 runs, mobile preset, `staticDistDir` dist/; assertions performance ≥ 0.90, accessibility = 1.00, LCP ≤ 2,500 ms, CLS ≤ 0.1; reports kept locally) and web/.size-limit.json (all of dist/assets/*.js at most 150 KB gzip) (research R7, SC-001, SC-002)
-- [ ] T030 [P] [US2] Write web/scripts/check-data-size.mjs. It fails when the files the first view loads (index, landing and manifest) are above 150 KB gzip, and prints each file's size. Include it in `npm run size` (SC-002)
-- [ ] T031 [US2] Write web/tests/smoke/live.spec.ts, run by `npm run smoke -- <url>`. It loads the deployed URL and asserts the landing figures against dist/data/showcase/. It is the only network-using test, outside `test:browser` (FR-025)
-- [ ] T032 [US2] Write .github/workflows/web.yml per contracts/checks.md and research R12:
+- [X] T029 [P] [US2] Write web/lighthouserc.json (3 runs, mobile preset, `staticDistDir` dist/; assertions performance ≥ 0.90, accessibility = 1.00, LCP ≤ 2,500 ms, CLS ≤ 0.1; reports kept locally) and web/.size-limit.json (all of dist/assets/*.js at most 150 KB gzip) (research R7, SC-001, SC-002)
+- [X] T030 [P] [US2] Write web/scripts/check-data-size.mjs. It fails when the files the first view loads (index, landing and manifest) are above 150 KB gzip, and prints each file's size. Include it in `npm run size` (SC-002)
+- [X] T031 [US2] Write web/tests/smoke/live.spec.ts, run by `npm run smoke -- <url>`. It loads the deployed URL and asserts the landing figures against dist/data/showcase/. It is the only network-using test, outside `test:browser` (FR-025)
+- [X] T032 [US2] Write .github/workflows/web.yml per contracts/checks.md and research R12:
   - jobs `web-checks`, `web-browser` (the pinned container) and `web-lighthouse` on every push and pull request, with no path filters;
   - failure artifacts: the Playwright report, the diffs and the Lighthouse reports;
   - `web-deploy` on push to `main` only, needing all three: build with `GITHUB_PAGES=1`, `actions/upload-pages-artifact`, `actions/deploy-pages` with `pages: write` and `id-token: write`, then `npm run smoke` against the deployed URL.
-- [ ] T033 [US2] Write docs/adr/0015-static-hosting-github-pages.md (research R1, R2), mark ADR-0002's frontend-hosting row as superseded by ADR-0015, and add it to docs/adr/README.md
+- [X] T033 [US2] Write docs/adr/0015-static-hosting-github-pages.md (research R1, R2), mark ADR-0002's frontend-hosting row as superseded by ADR-0015, and add it to docs/adr/README.md
 - [ ] T034 [US2] With the owner's authorization, enable GitHub Pages with "GitHub Actions" as the source on `chrisbarreras/travel-check`. Create the ruleset on `main`: pull request required; the status checks `checks` (pipeline), `web-checks`, `web-browser` and `web-lighthouse` required; force pushes and deletion blocked (research R2, R13; FR-024). Record the `gh api` commands in docs/architecture.md
 - [ ] T035 [US2] Run the breakage tests of quickstart 11: one throwaway pull request per breakage (lint, type, unit, component, e2e, visual, a11y, keyboard, budget), each closed unmerged, plus a clean one. Record each pull request, its failing check and its blocked merge state in specs/003-web-foundation/validation.md (SC-005)
 
