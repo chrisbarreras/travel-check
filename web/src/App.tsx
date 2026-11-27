@@ -4,6 +4,7 @@ import { LoadError } from "./components/LoadError";
 import { Skeleton } from "./components/Skeleton";
 import { useLandingView } from "./data";
 
+const unusedValue = 1;
 export function App() {
   const landing = useLandingView();
   return (
