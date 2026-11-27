@@ -49,7 +49,7 @@ for (const width of WIDTHS) {
             const box = el.getBoundingClientRect();
             return { text: el.textContent.trim(), height: box.height, width: box.width };
           })
-          .filter((t) => t.height < 44 || t.width < 24),
+          .filter((t) => t.height < 44 || t.width < 44),
       );
       expect(small).toEqual([]);
       // Inline links still meet the 24 px minimum spacing of WCAG 2.5.8.

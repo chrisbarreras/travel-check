@@ -192,7 +192,7 @@ description: "Task list for the web foundation"
   - the CI job times (SC-007);
   - three reruns of `web-browser` on one commit (SC-006);
   - the deploy-to-live time (SC-008).
-- [ ] T043 Run the independent review: a new `feature-reviewer` agent, given only `specs/003-web-foundation` and the base branch `main`. Save its report as specs/003-web-foundation/review.md. Fix the BLOCKING findings and answer the SHOULD-FIX findings in review.md. Repeat with a new reviewer until the verdict is APPROVE (constitution, Development Workflow)
+- [X] T043 Run the independent review: a new `feature-reviewer` agent, given only `specs/003-web-foundation` and the base branch `main`. Save its report as specs/003-web-foundation/review.md. Fix the BLOCKING findings and answer the SHOULD-FIX findings in review.md. Repeat with a new reviewer until the verdict is APPROVE (constitution, Development Workflow)
 
 ---
 

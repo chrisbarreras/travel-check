@@ -94,5 +94,8 @@ describe("display rules on edge-case data (spec, Edge Cases)", () => {
     await screen.findByRole("heading", { level: 2 });
     const [first] = screen.getAllByRole("article");
     expect(first).toHaveTextContent("Delta and Alaska via ATL");
+    expect(document.querySelector(".summary")).toHaveTextContent(
+      "Delta and Alaska via ATL worked more often",
+    );
   });
 });

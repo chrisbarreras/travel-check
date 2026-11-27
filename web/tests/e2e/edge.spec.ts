@@ -39,3 +39,57 @@ test("very long names wrap at 320 px without horizontal scroll", async ({ page }
   );
   expect(overflow).toBeLessThanOrEqual(0);
 });
+
+/** The two cards' border widths, after serving a changed landing file. */
+async function borders(
+  page: import("@playwright/test").Page,
+  edit: (landing: ReturnType<typeof committedLanding>) => void,
+): Promise<string[]> {
+  const landing = committedLanding();
+  edit(landing);
+  await page.route("**/data/showcase/landing.json", (route) =>
+    route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify(landing) }),
+  );
+  await openLanding(page, 1280);
+  return page
+    .getByRole("article")
+    .evaluateAll((cards) => cards.map((c) => getComputedStyle(c).borderTopWidth));
+}
+
+test("only an itinerary that worked more often is set apart", async ({ page }) => {
+  expect(await borders(page, () => undefined)).toEqual(["2px", "1px"]);
+});
+
+test("similar itineraries get the same border (FR-002, FR-005)", async ({ page }) => {
+  const widths = await borders(page, (landing) => {
+    for (const c of landing.comparisons) {
+      c.ci_low = -0.01;
+      c.ci_high = 0.05;
+      c.difference = 0.02;
+    }
+  });
+  expect(widths).toEqual(["1px", "1px"]);
+});
+
+test("an itinerary below the minimum sample is not set apart or set below", async ({ page }) => {
+  const widths = await borders(page, (landing) => {
+    const b = landing.itineraries[1];
+    if (!b) throw new Error("fixture has no second itinerary");
+    b.result = {
+      status: "insufficient_data",
+      rate: null,
+      paired_days: 12,
+      count_feasible: 9,
+      definition: "connection_feasibility",
+    };
+  });
+  expect(widths).toEqual(["1px", "1px"]);
+  await expect(page.locator("main")).toContainText("so the two are not compared");
+});
+
+test("text stays readable when the fonts fail to load", async ({ page }) => {
+  await page.route("**/*.woff2", (route) => route.abort());
+  await openLanding(page, 360);
+  await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
+  await expect(page.getByRole("article").first()).toContainText("worked on 92% of 298 days");
+});

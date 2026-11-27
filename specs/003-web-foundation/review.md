@@ -50,3 +50,23 @@ Each round is a new `feature-reviewer` agent, given only `specs/003-web-foundati
 | 7 | NIT | The loading and error states had no footer, so no copyright line. | **Fixed.** The footer, with its links and copyright, appears in every state, including the error-boundary fallback. The data part (period, build date, attributions) appears only once data has loaded. The error message no longer repeats the footer's links. The loading and error visual references were regenerated and reviewed. |
 
 **After the fixes:** 109 unit and component tests pass. 24 browser tests pass in the pinned image. 15 e2e tests pass against the `/travel-check/` build. JS is 85.6 KB gzip.
+
+## Round 3 (main...a8b704c)
+
+**Verdict:** APPROVE. 0 blocking, 2 should-fix, 5 nits.
+
+**Automated checks, all passing:** `gen`, `format:check`, `lint`, `typecheck`, 109 unit and component tests, `build`, `size` (JS 85.63 KB gzip), 24 browser tests in the pinned image, and the pipeline's `schemas --check`. CI `web-lighthouse` passed on a8b704c.
+
+### Findings and responses
+
+| # | Severity | Finding | Response |
+|---|---|---|---|
+| 1 | SHOULD-FIX | The first card always had the accent border, which visually ranked it even when the page said "similar" or "not compared". | **Fixed.** The emphasis is a `card--higher` class, set only with the "Worked more often" badge. Three new e2e cases check the computed borders: 2 px and 1 px for "more", and 1 px and 1 px for the "similar" and insufficient-data cases. |
+| 2 | SHOULD-FIX | A rate with status `ok` but fewer paired days than the minimum sample would have been shown and ranked. | **Fixed.** `buildLandingView` rejects status `ok` below `assumptions.min_sample_days`, as invalid data (unit test). |
+| 3 | NIT | The summary named only the inbound airline for two-airline itineraries. | **Fixed.** One `itineraryName` function names both, in the card and the summary (component test). |
+| 4 | NIT | The web rate check was exact, while the pipeline allows 1e-6. | **Fixed.** The same 1e-6 tolerance (unit tests for inside and outside it). |
+| 5 | NIT | The touch-target test accepted a 24 px width. | **Fixed.** Standalone controls must be at least 44 px in both dimensions. |
+| 6 | NIT | A negative arrival-day offset was computed but not shown. | **Fixed.** "−1 day" is shown. A unit case covers an arrival on the previous local day. |
+| 7 | NIT | No tests for "fonts fail to load" and "prefers reduced motion". | **Fixed for fonts:** an e2e case aborts the font requests and checks the heading and a rate are visible. **Reduced motion is answered:** the page has no motion yet, and the CSS rule disables any future transitions. Playwright runs with `reducedMotion: "reduce"`, so the visual references are taken that way. A test belongs with the first animation (`explorer-core`). |
+
+**After the fixes:** 112 unit and component tests pass. 28 browser tests pass in the pinned image (e2e 19, visual 4, a11y 3, keyboard 2). 19 e2e tests pass against the `/travel-check/` build. The visual references are unchanged. With an APPROVE verdict and every finding fixed or answered, the review loop ends. The owner decides on the merge (constitution, Development Workflow).

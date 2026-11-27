@@ -1,8 +1,8 @@
 import type { LandingView } from "../data";
-import { airlineName, periodText, similarOrMore } from "../format";
+import { periodText, similarOrMore } from "../format";
 import { Definition } from "./Definition";
 import { Difference } from "./Difference";
-import { ItineraryCard } from "./ItineraryCard";
+import { ItineraryCard, itineraryName as name } from "./ItineraryCard";
 
 /** The landing comparison: two itineraries on one route, and how often each worked. */
 export function LandingComparison({ view }: { view: LandingView }) {
@@ -11,7 +11,6 @@ export function LandingComparison({ view }: { view: LandingView }) {
   // Below the minimum sample an itinerary is never ranked or compared (constitution, I).
   const comparable = a.result.status === "ok" && b.result.status === "ok";
   const verdict = comparable ? similarOrMore(comparison.ci_low, comparison.ci_high) : null;
-  const name = (i: typeof a) => `${airlineName(i.airline)} via ${i.hub}`;
   const definition = (key: string) => index.definitions.find((d) => d.key === key);
   return (
     <section className="comparison" aria-labelledby="route-heading">

@@ -201,6 +201,25 @@ describe("buildLandingView (contracts/data-access.md, Cross-checks)", () => {
     });
   });
 
+  it("fails when a rate is published below the minimum sample", () => {
+    const landing = clone(committedLanding());
+    const first = landing.itineraries[0];
+    if (!first) throw new Error("fixture has no itinerary");
+    first.result = { ...first.result, paired_days: 12, count_feasible: 9, rate: 0.75 };
+    expect(buildLandingView(index, landing, manifest)).toMatchObject({
+      ok: false,
+      error: { kind: "invalid" },
+    });
+  });
+
+  it("accepts a rate within the pipeline's 1e-6 tolerance", () => {
+    const landing = clone(committedLanding());
+    const first = landing.itineraries[0];
+    if (!first?.result.rate) throw new Error("fixture has no rate");
+    first.result.rate += 0.0000005;
+    expect(buildLandingView(index, landing, manifest).ok).toBe(true);
+  });
+
   it("fails when the pair is not ordered higher first", () => {
     const landing = clone(committedLanding());
     for (const c of landing.comparisons) {

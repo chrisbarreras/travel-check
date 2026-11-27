@@ -9,11 +9,14 @@ import {
   rateText,
 } from "../format";
 
-function airlines(itinerary: ShowcaseItinerary): string {
+/** "Delta via ATL", or "Delta and Alaska via ATL" when the flights are on two airlines. */
+export function itineraryName(itinerary: ShowcaseItinerary): string {
   const inbound = airlineName(itinerary.airline);
-  return itinerary.airline_out === itinerary.airline
-    ? inbound
-    : `${inbound} and ${airlineName(itinerary.airline_out)}`;
+  const airlines =
+    itinerary.airline_out === itinerary.airline
+      ? inbound
+      : `${inbound} and ${airlineName(itinerary.airline_out)}`;
+  return `${airlines} via ${itinerary.hub}`;
 }
 
 function Time({ minutes, dayOffset = 0 }: { minutes: number; dayOffset?: number }) {
@@ -21,10 +24,11 @@ function Time({ minutes, dayOffset = 0 }: { minutes: number; dayOffset?: number 
   return (
     <>
       {text}
-      {dayOffset > 0 ? (
+      {dayOffset !== 0 ? (
         <span className="day-offset">
           {" "}
-          +{dayOffset === 1 ? "1 day" : `${String(dayOffset)} days`}
+          {dayOffset > 0 ? "+" : "−"}
+          {Math.abs(dayOffset) === 1 ? "1 day" : `${String(Math.abs(dayOffset))} days`}
         </span>
       ) : null}
     </>
@@ -48,11 +52,9 @@ export function ItineraryCard({
   const flights = flightNumbers(itinerary.find.legs);
   const [inbound, outbound] = flights.numbers;
   return (
-    <article className="card" aria-labelledby={headingId}>
+    <article className={badge ? "card card--higher" : "card"} aria-labelledby={headingId}>
       {badge ? <p className="badge">{badge}</p> : null}
-      <h3 id={headingId}>
-        {airlines(itinerary)} via {itinerary.hub}
-      </h3>
+      <h3 id={headingId}>{itineraryName(itinerary)}</h3>
       <p className="rate">
         {rate.kind === "ok" ? (
           <>

@@ -52,9 +52,17 @@ export function buildLandingView(
     if (count_feasible > paired_days) {
       return invalid(`${itinerary.itinerary_id}: more feasible days than paired days`);
     }
-    // The page shows the rate from its counts; the published rate must agree with them.
-    if (status === "ok" && (rate === null || rate !== storedRate(count_feasible, paired_days))) {
+    // The page shows the rate from its counts; the published rate must agree with them, to
+    // the pipeline's own tolerance (showcase/models.py, _RATE_TOLERANCE).
+    if (
+      status === "ok" &&
+      (rate === null || Math.abs(rate - storedRate(count_feasible, paired_days)) > 1e-6)
+    ) {
       return invalid(`${itinerary.itinerary_id}: rate ${String(rate)} disagrees with its counts`);
+    }
+    // A rate below the minimum sample is never shown (constitution, Principle I).
+    if (status === "ok" && paired_days < index.assumptions.min_sample_days) {
+      return invalid(`${itinerary.itinerary_id}: a rate from ${String(paired_days)} days`);
     }
   }
   // `itinerary_a` is the higher rate, so the difference and its interval read upwards.

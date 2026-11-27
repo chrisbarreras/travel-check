@@ -125,6 +125,8 @@ describe("arrivalDayOffset (from clock times and travel time only)", () => {
     [360, 550, 370, 0],
     // ORD 11:50 pm CT → ORD 12:20 am CT, 30 min: next day.
     [1430, 20, 30, 1],
+    // 12:30 am, 4 h, five time zones west at 11:30 pm: the previous local day.
+    [30, 1410, 240, -1],
   ])("dep %i, arr %i, travel %i → %i", (dep, arr, travel, expected) => {
     expect(arrivalDayOffset({ dep_local_min: dep, arr_local_min: arr, travel_min: travel })).toBe(
       expected,
