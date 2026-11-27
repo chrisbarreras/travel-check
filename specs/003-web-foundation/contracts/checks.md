@@ -25,11 +25,13 @@ The workflow runs on every push and every pull request, with no path filters.
 
 | Job (status-check name) | Runs | Required for merge |
 |---|---|---|
-| `web / checks` | `npm ci`, `gen`, `format:check`, `lint`, `typecheck`, `test`, `build`, `size` | yes |
-| `web / browser` | `test:browser`, in the pinned Playwright container. Reports and diffs are uploaded on failure | yes |
-| `web / lighthouse` | `build`, `lighthouse`. Reports are uploaded as artifacts | yes |
-| `web / deploy` | Push to `main` only, after the three jobs above: build with the production base path, upload the Pages artifact, deploy, then `smoke` on the deployed URL | no; it runs after merge |
-| `pipeline / checks` | existing, unchanged | yes |
+| `web-checks` | `npm ci`, `gen`, `format:check`, `lint`, `typecheck`, `test`, `build`, `size` | yes |
+| `web-browser` | `test:browser`, in the pinned Playwright container. Reports and diffs are uploaded on failure | yes |
+| `web-lighthouse` | `build`, `lighthouse`. Reports are uploaded as artifacts | yes |
+| `web-deploy` | Push to `main` only, after the three jobs above: build with the production base path, upload the Pages artifact, deploy, then `smoke` on the deployed URL | no; it runs after merge |
+| `checks` (pipeline workflow) | existing, unchanged | yes |
+
+Web job names are prefixed with `web-`, because GitHub matches required checks by job name and the pipeline's job is already called `checks`.
 
 ## Reference images
 

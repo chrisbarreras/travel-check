@@ -29,6 +29,6 @@ npm run gen
 | 9 | Bad data gives an honest failure (US3) | `npm test` (malformed and failing source cases) and the `e2e` route-interception case | "This example could not be loaded"; no figures on the page |
 | 10 | Lighthouse budgets (SC-001) | `npm run lighthouse` | median performance ≥ 0.90, accessibility 1.00, LCP ≤ 2.5 s, CLS ≤ 0.1 |
 | 11 | Each breakage blocks a merge (SC-005) | a throwaway pull request per breakage: lint, type, unit, component, e2e, visual, a11y, keyboard, budget | the matching required check fails and the merge is blocked; the clean pull request passes. Results recorded in `validation.md` |
-| 12 | Deployment and smoke check (SC-008) | merge to `main` | `web / deploy` succeeds and `npm run smoke -- https://chrisbarreras.github.io/travel-check/` passes within 10 minutes of the checks passing |
+| 12 | Deployment and smoke check (SC-008) | merge to `main` | `web-deploy` succeeds and `npm run smoke -- https://chrisbarreras.github.io/travel-check/` passes within 10 minutes of the checks passing |
 | 13 | CI time (SC-007) | any pull request | every web job finishes, and the slowest within 15 minutes |
-| 14 | Reproducible screenshots (SC-006) | rerun the unchanged commit's `web / browser` job 3 times | all 3 pass |
+| 14 | Reproducible screenshots (SC-006) | rerun the unchanged commit's `web-browser` job 3 times | all 3 pass |

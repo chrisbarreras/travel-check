@@ -4,6 +4,8 @@
 
 **Input**: Feature specification from `specs/003-web-foundation/spec.md`
 
+**Approval**: spec and plan approved by the owner on 2026-11-27 (constitution, Development Workflow). The repository was published as `chrisbarreras/travel-check`, so the repository-visibility decision above is settled.
+
 ## Summary
 
 Build the Phase 1 web application in `web/`: React, TypeScript and Vite. It is a placeholder page showing the landing comparison from the committed showcase data, with its rates, samples, interval, definitions and attributions. It follows `docs/design.md` and works from 320 px up.

@@ -22,7 +22,7 @@ Decisions for [spec.md](spec.md), each with its rationale and the alternatives c
 
 **Decision:** a repository ruleset on `main`:
 - require a pull request;
-- require these status checks to pass: `pipeline / checks` plus the web workflow's `checks`, `browser` and `lighthouse`;
+- require these status checks to pass: the pipeline's `checks` plus the web workflow's `web-checks`, `web-browser` and `web-lighthouse`. Required checks are matched by job name, hence the `web-` prefix;
 - block force pushes and deletion.
 
 It is created with `gh api` once the owner authorizes it. Every required job runs on every pull request, with no path filters, because a filtered-out required check stays pending and blocks merging.
@@ -153,10 +153,10 @@ The app receives its source through a React context created once in `main.tsx`. 
 
 | Job | Contents | Needs |
 |---|---|---|
-| `checks` | `npm ci`; generate validators; Prettier, ESLint, `tsc`; Vitest; build; size-limit; data-size check | |
-| `browser` | In the pinned Playwright container: build, then the e2e, visual, a11y and keyboard projects; uploads the report and diffs on failure | |
-| `lighthouse` | Build, then Lighthouse CI with the assertions in R7 | |
-| `deploy` | Only on push to `main`: build, upload the Pages artifact, deploy, then a smoke test of the live URL with Playwright | `checks`, `browser`, `lighthouse` |
+| `web-checks` | `npm ci`; generate validators; Prettier, ESLint, `tsc`; Vitest; build; size-limit; data-size check | |
+| `web-browser` | In the pinned Playwright container: build, then the e2e, visual, a11y and keyboard projects; uploads the report and diffs on failure | |
+| `web-lighthouse` | Build, then Lighthouse CI with the assertions in R7 | |
+| `web-deploy` | Only on push to `main`: build, upload the Pages artifact, deploy, then a smoke test of the live URL with Playwright | `web-checks`, `web-browser`, `web-lighthouse` |
 
 Node 24 (LTS), pinned in `.nvmrc` and `engines`. npm with a committed `package-lock.json`, so `npm ci` is reproducible. Actions are pinned to major versions, as in `pipeline.yml`.
 
