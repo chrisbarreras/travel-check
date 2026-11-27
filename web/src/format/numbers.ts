@@ -8,7 +8,7 @@ export function percentOf(feasible: number, paired: number): number {
   if (!Number.isInteger(feasible) || !Number.isInteger(paired) || paired <= 0 || feasible < 0) {
     throw new RangeError(`percentOf: invalid counts ${String(feasible)} of ${String(paired)}`);
   }
-  return Math.floor((200 * feasible + paired) / (2 * paired));
+  return Math.floor((100 * feasible) / paired);
 }
 
 /**
