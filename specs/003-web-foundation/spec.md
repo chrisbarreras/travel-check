@@ -110,7 +110,7 @@ The developer of the next features, and later the Phase 2 API, needs to change w
   - the data period and the date the data was built, from the showcase manifest;
   - links to the methodology document and the source repository.
 - **FR-007**: The page MUST carry the name Travel Check as its title and main heading, with a copyright line for Christopher T. Barreras Consulting in the footer. It MUST say plainly that this is an early version: one example, with the full explorer to follow. It MUST NOT show controls that do nothing.
-- **FR-008**: The page MUST follow `docs/design.md`: the color tokens and their contrast, the typography, the 44 px touch targets, the visible 3 px focus outline, the stacked phone layout, and no motion under `prefers-reduced-motion`.
+- **FR-008**: The page MUST follow `docs/design.md`: the color tokens and their contrast, the typography, 44 px touch targets for standalone controls (links inside a sentence follow the inline exception of WCAG 2.2, criterion 2.5.8), the visible 3 px focus outline, the stacked phone layout, and no motion under `prefers-reduced-motion`.
 - **FR-009**: The page MUST work from 320 px wide up to desktop with no horizontal scrolling. It MUST also reflow at 200% text zoom.
 - **FR-010**: Every interactive element (links, and any disclosure that shows definitions) MUST work by keyboard, in a sensible order, with visible focus and screen-reader labels.
 

@@ -21,6 +21,23 @@ export function localTime(minutes: number): { text: string; dayOffset: number } 
   };
 }
 
+/**
+ * Days between the departure day and the arrival day, both in local time. The schedule gives
+ * clock times (0–1439) and the travel time, so the arrival clock minus the departure clock
+ * plus travel time is the airports' clock difference, taken within half a day either way.
+ * No time-zone data is needed or used.
+ */
+export function arrivalDayOffset(schedule: {
+  dep_local_min: number;
+  arr_local_min: number;
+  travel_min: number;
+}): number {
+  const atOriginClock = schedule.dep_local_min + schedule.travel_min;
+  const clockDifference =
+    ((((schedule.arr_local_min - atOriginClock) % 1440) + 1440 + 720) % 1440) - 720;
+  return Math.floor((atOriginClock + clockDifference) / 1440);
+}
+
 /** "1 h 39 min", "45 min" or "1 h". */
 export function duration(minutes: number): string {
   const hours = Math.floor(minutes / 60);

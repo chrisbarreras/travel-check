@@ -164,6 +164,14 @@ describe("buildLandingView (contracts/data-access.md, Cross-checks)", () => {
     });
   });
 
+  it("fails when the manifest has no build timestamp", () => {
+    const broken = { ...manifest, run: { ...manifest.run, run_at: 42 } };
+    expect(buildLandingView(index, committedLanding(), broken)).toMatchObject({
+      ok: false,
+      error: { kind: "invalid", file: "manifest.json" },
+    });
+  });
+
   it("fails when either itinerary is missing", () => {
     const landing = committedLanding();
     for (const keep of [0, 1]) {

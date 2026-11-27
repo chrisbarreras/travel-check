@@ -20,7 +20,7 @@ These total about 9 KB gzip today, against a 150 KB budget (SC-002). Route files
 | Hub | `ShowcaseItinerary.hub` | Airport code |
 | Airline | `ShowcaseItinerary.airline`, `airline_out` | Display name from a small web-side table (below); when the two differ, both are named. The code is shown when a name is missing |
 | Flight numbers | `ShowcaseItinerary.find.legs[].flight_number` with `share_of_days` | The leg's most frequent flight number, with "on N% of days" when below 95%. Schedule-slot itineraries can fly under several numbers (ADR-0014) |
-| Scheduled times | `Schedule.dep_local_min`, `arr_local_min` | Minutes after local midnight at each airport, shown as "12:38 pm"; above 1,440, "+1 day". Labelled "local time". No time-zone arithmetic in the browser |
+| Scheduled times | `Schedule.dep_local_min`, `arr_local_min`, `travel_min` | Minutes after local midnight at each airport (0–1439), shown as "12:38 pm" and labelled "local time". "+1 day" when the arrival falls on a later local day. That is found from the departure clock time plus `travel_min`, against the arrival clock time, taking the two airports' clock difference within ±12 hours. No time-zone data is used |
 | Layover, travel time | `Schedule.layover_min`, `travel_min` | "1 h 39 min" |
 | Worked on | `Rate.rate`, `Rate.paired_days`, `Rate.count_feasible`, `Rate.status` | `ok`: whole percent, rounded halves away from zero, with "of N days" (N = `paired_days`). `insufficient_data`: "insufficient data (N days)", no percentage |
 | Not counted | `ShowcaseItinerary.excluded_days` (`not_connecting`, `end_of_period`, `quality`) | Each non-zero count with its reason, for example "11 days the flights didn't connect on schedule" |

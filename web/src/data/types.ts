@@ -34,4 +34,6 @@ export interface LandingView {
   /** The itinerary with the higher rate (`itinerary_a`). */
   a: ShowcaseItinerary;
   b: ShowcaseItinerary;
+  /** `manifest.run.run_at`: the contract types `run` loosely, so it is checked here. */
+  builtAt: string;
 }

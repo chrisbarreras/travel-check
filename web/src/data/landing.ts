@@ -21,5 +21,12 @@ export function buildLandingView(
   const a = landing.itineraries.find((i) => i.itinerary_id === comparison.itinerary_a);
   const b = landing.itineraries.find((i) => i.itinerary_id === comparison.itinerary_b);
   if (!a || !b) return invalid(`comparison ${comparison.comparison_id} lacks an itinerary`);
-  return { ok: true, value: { index, landing, manifest, comparison, a, b } };
+  const builtAt = manifest.run.run_at;
+  if (typeof builtAt !== "string" || !/^\d{4}-\d{2}-\d{2}T/.test(builtAt)) {
+    return {
+      ok: false,
+      error: { kind: "invalid", file: "manifest.json", detail: "run.run_at is not a timestamp" },
+    };
+  }
+  return { ok: true, value: { index, landing, manifest, comparison, a, b, builtAt } };
 }

@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  arrivalDayOffset,
   builtDate,
   duration,
   excludedText,
@@ -107,6 +108,27 @@ describe("localTime", () => {
 
   it("rejects negative minutes", () => {
     expect(() => localTime(-1)).toThrow();
+  });
+});
+
+describe("arrivalDayOffset (from clock times and travel time only)", () => {
+  it.each([
+    // LIT 12:38 pm CT → LGA 7:13 pm ET, 5 h 27 min: same day.
+    [758, 1153, 327, 0],
+    // LAX 10:00 pm PT → BOS 6:30 am ET, 5 h 30 min: next day.
+    [1320, 390, 330, 1],
+    // BOS 11:00 pm ET → LAX 1:30 am PT, 5 h 30 min: next day.
+    [1380, 90, 330, 1],
+    // HNL 11:00 pm HST → BOS 3:40 pm ET, 10 h 40 min: next day.
+    [1380, 940, 640, 1],
+    // JFK 6:00 am ET → LAX 9:10 am PT, 6 h 10 min: same day.
+    [360, 550, 370, 0],
+    // ORD 11:50 pm CT → ORD 12:20 am CT, 30 min: next day.
+    [1430, 20, 30, 1],
+  ])("dep %i, arr %i, travel %i → %i", (dep, arr, travel, expected) => {
+    expect(arrivalDayOffset({ dep_local_min: dep, arr_local_min: arr, travel_min: travel })).toBe(
+      expected,
+    );
   });
 });
 

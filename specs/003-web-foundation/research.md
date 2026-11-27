@@ -102,7 +102,7 @@ All four run against the production build served by `vite preview`, with no netw
 
 ## R8. Fonts
 
-**Decision:** self-host the variable fonts `@fontsource-variable/inter` and `@fontsource-variable/space-grotesk`, Latin subset only, with `font-display: swap`. Fall back to the system UI stack.
+**Decision:** self-host the variable fonts `@fontsource-variable/inter` and `@fontsource-variable/space-grotesk`, with `font-display: swap`. The packages split each font by script with `unicode-range`, so a browser downloads only the Latin files this English page uses; the other subsets are in the build but never requested. Fall back to the system UI stack.
 
 **Rationale:**
 - No third-party requests, which keeps the tests offline.

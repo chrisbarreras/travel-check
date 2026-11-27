@@ -88,24 +88,24 @@ description: "Task list for the web foundation"
 
 ### Tests first
 
-- [ ] T014 [P] [US1] Write web/tests/component/LandingComparison.test.tsx against `memorySource` with the committed files:
+- [X] T014 [P] [US1] Write web/tests/component/LandingComparison.test.tsx against `memorySource` with the committed files:
   - Route, airlines, hubs, flight numbers, local times, layover, "worked on X% of N days" and "not counted" appear as in data-model.md, Fields shown.
   - The difference, interval and days both flew appear as specified.
   - The "worked more often" statement is text, and the higher itinerary comes first (FR-005).
   - Definitions are verbatim from `index.definitions`.
   - The wording contains none of "chance", "will", "probability", "likely" (FR-004).
-- [ ] T015 [P] [US1] Write web/tests/component/edge-cases.test.tsx with fixtures in web/tests/fixtures/:
+- [X] T015 [P] [US1] Write web/tests/component/edge-cases.test.tsx with fixtures in web/tests/fixtures/:
   - an `insufficient_data` itinerary shows "insufficient data (N days)" and no percentage (FR-003);
   - an interval containing zero shows "similar" (FR-002);
   - a next-day arrival shows "+1 day";
   - different inbound and outbound airlines are both named.
-- [ ] T016 [P] [US1] Write web/tests/component/Footer.test.tsx:
+- [X] T016 [P] [US1] Write web/tests/component/Footer.test.tsx:
   - attributions verbatim from `index.attribution` with links;
   - the data period;
   - "Built 26 Nov 2026" from data-model.md `ShowcaseManifest.run.run_at`;
   - links to docs/methodology.md and the repository;
   - the copyright line "© 2026 Christopher T. Barreras Consulting" (FR-006, FR-007).
-- [ ] T017 [US1] Write web/tests/e2e/landing.spec.ts. It reads site-data/showcase/ in the test, computes the expected texts with web/src/format/, and asserts them on the built page at 320, 360, 768 and 1280 px (FR-018, SC-003). It also asserts:
+- [X] T017 [US1] Write web/tests/e2e/landing.spec.ts. It reads site-data/showcase/ in the test, computes the expected texts with web/src/format/, and asserts them on the built page at 320, 360, 768 and 1280 px (FR-018, SC-003). It also asserts:
   - no horizontal scroll;
   - touch targets of at least 44 px;
   - reflow at 200% text zoom (SC-009);
@@ -113,13 +113,13 @@ description: "Task list for the web foundation"
 
 ### Implementation
 
-- [ ] T018 [P] [US1] Implement web/src/components/ItineraryCard.tsx: airline, hub, flight numbers, local times, layover, the rate text with its days, and not-counted days (data-model.md, Fields shown)
-- [ ] T019 [P] [US1] Implement web/src/components/Difference.tsx: points, interval, days both flew, and the similar or more-often wording
-- [ ] T020 [P] [US1] Implement web/src/components/Definition.tsx: a native `<details>` disclosure showing a definition's text verbatim, with a link to its methodology anchor in the repository and keyboard access (FR-004, FR-010)
-- [ ] T021 [P] [US1] Implement web/src/components/Footer.tsx: attributions, period, build date, methodology and repository links, the copyright line and the font licence note
-- [ ] T022 [US1] Implement web/src/components/LandingComparison.tsx and web/src/App.tsx (ready state): the "Travel Check" heading, the one-question lead, the "early version: one example" note (FR-007), the two cards in order and the difference. Wire the source in web/src/main.tsx with `staticSource(import.meta.env.BASE_URL)`. T014–T017 pass
-- [ ] T023 [US1] Write web/src/styles/global.css per docs/design.md:
-  - the fonts from `@fontsource-variable` (Latin, `font-display: swap`; research R8);
+- [X] T018 [P] [US1] Implement web/src/components/ItineraryCard.tsx: airline, hub, flight numbers, local times, layover, the rate text with its days, and not-counted days (data-model.md, Fields shown)
+- [X] T019 [P] [US1] Implement web/src/components/Difference.tsx: points, interval, days both flew, and the similar or more-often wording
+- [X] T020 [P] [US1] Implement web/src/components/Definition.tsx: a native `<details>` disclosure showing a definition's text verbatim, with a link to its methodology anchor in the repository and keyboard access (FR-004, FR-010)
+- [X] T021 [P] [US1] Implement web/src/components/Footer.tsx: attributions, period, build date, methodology and repository links, the copyright line and the font licence note
+- [X] T022 [US1] Implement web/src/components/LandingComparison.tsx and web/src/App.tsx (ready state): the "Travel Check" heading, the one-question lead, the "early version: one example" note (FR-007), the two cards in order and the difference. Wire the source in web/src/main.tsx with `staticSource(import.meta.env.BASE_URL)`. T014–T017 pass
+- [X] T023 [US1] Write web/src/styles/global.css per docs/design.md:
+  - the fonts from `@fontsource-variable` (`font-display: swap`, split by `unicode-range` so only Latin files are downloaded; research R8);
   - the 15 px base;
   - the 3 px accent focus outline;
   - 44 px targets;
