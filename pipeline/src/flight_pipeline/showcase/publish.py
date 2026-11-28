@@ -109,10 +109,13 @@ DEFINITIONS: dict[str, tuple[str, str]] = {
         "itineraries",
     ),
     "flight_times": (
-        "The inbound flight's scheduled arrival at the hub and its scheduled duration, the "
-        "medians over connecting days, in the hub's local time. The hub departure is that "
-        "arrival plus the median layover, and the outbound flight's duration is the travel "
-        "time less the inbound flight and the layover, so the parts add up to the travel time.",
+        "Scheduled local clock times and durations, each a separate median, so adding a "
+        "duration to a clock time can differ from the next time shown by some minutes. The "
+        "departure, the hub arrival and the inbound flight's duration are medians over "
+        "connecting days; the final arrival is the median over the outbound flight's days. The "
+        "hub departure is the hub arrival plus the median layover, and the outbound flight's "
+        "duration is the travel time less the inbound flight and the layover, so the three "
+        "durations add up to the travel time.",
         "itineraries",
     ),
     "nonstop_ratio": (

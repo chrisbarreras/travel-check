@@ -117,6 +117,9 @@ def showcase_itinerary(it: Itinerary, inputs: Inputs, cfg: Config) -> ShowcaseIt
     ns = inputs.nonstop.get((it.origin, it.dest))
     ns_min = ns.nonstop_median_min if ns else None
     hub = inputs.hub_times[it.itinerary_id]
+    hub_dep, outbound = hub_schedule(
+        hub.hub_arr_local_min, hub.inbound_min, it.median_layover_min, it.median_travel_min
+    )
     return ShowcaseItinerary(
         itinerary_id=it.itinerary_id,
         hub=it.hub,
@@ -134,9 +137,9 @@ def showcase_itinerary(it: Itinerary, inputs: Inputs, cfg: Config) -> ShowcaseIt
             nonstop_median_min=ns_min,
             nonstop_ratio=nonstop_ratio(it.median_travel_min, ns_min),
             hub_arr_local_min=hub.hub_arr_local_min,
-            hub_dep_local_min=(hub.hub_arr_local_min + it.median_layover_min) % 1440,
+            hub_dep_local_min=hub_dep,
             inbound_min=hub.inbound_min,
-            outbound_min=it.median_travel_min - hub.inbound_min - it.median_layover_min,
+            outbound_min=outbound,
         ),
         result=rate_of(r),
         failures=ins.failures,
@@ -321,12 +324,17 @@ def index_of(
 
 @dataclass(frozen=True)
 class SlotTimes:
-    """A slot's median scheduled times over its days: local departure and arrival minutes
-    at its own airports, and the scheduled flight duration."""
+    """A slot's median scheduled local arrival minute over its days."""
 
-    dep_local_min: int
     arr_local_min: int
-    block_min: int
+
+
+def hub_schedule(
+    hub_arr_local_min: int, inbound_min: int, layover_min: int, travel_min: int
+) -> tuple[int, int]:
+    """The hub departure (local minutes) and the outbound flight's duration, derived so they
+    agree with the median layover and travel time (specs/004-explorer-core FR-002)."""
+    return (hub_arr_local_min + layover_min) % 1440, travel_min - inbound_min - layover_min
 
 
 @dataclass(frozen=True)
@@ -371,13 +379,10 @@ def hub_times(
 def slot_times(
     con: duckdb.DuckDBPyConnection, slots_days: str, flights: str
 ) -> dict[str, SlotTimes]:
-    """Median scheduled departure, arrival and duration over each slot's days."""
+    """Median scheduled local arrival over each slot's days."""
     rows = con.execute(
         f"""
-        SELECT d.slot_id,
-               quantile_disc(f.sched_dep_local_min, 0.5),
-               quantile_disc(f.sched_arr_local_min, 0.5),
-               quantile_disc(f.sched_elapsed_min, 0.5)
+        SELECT d.slot_id, quantile_disc(f.sched_arr_local_min, 0.5)
         FROM {slots_days} d JOIN {flights} f
           ON f.marketing_airline = d.marketing_airline AND f.flight_number = d.flight_number
          AND f.origin = d.origin AND f.dest = d.dest AND f.service_date = d.service_date
@@ -385,10 +390,7 @@ def slot_times(
         GROUP BY d.slot_id
         """
     ).fetchall()
-    return {
-        str(s): SlotTimes(dep_local_min=int(dep), arr_local_min=int(arr), block_min=int(block))
-        for s, dep, arr, block in rows
-    }
+    return {str(s): SlotTimes(arr_local_min=int(arr)) for s, arr in rows}
 
 
 def sold_same_airline(

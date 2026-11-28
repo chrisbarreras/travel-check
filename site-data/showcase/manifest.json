@@ -1,10 +1,10 @@
 {
   "code_version": "0.1.0",
   "config_sha256": "db850b967337b207ec85dbcf14cfcc403f23bf1dbbac7f65f746124eef000705",
-  "git_commit": "053ffd985e10d804b3acbc643f6a768b49520faf",
+  "git_commit": "5b4fb19ee6adc7acff672c70be7f0fb812fb1250",
   "notes_sha256": "6f71211762688725b6a44a423dcd2c79b7f215c2e75317cdf2e2007e122ece6a",
   "outputs": {
-    "index.json": "ae3d9ca3bef8010098f0c14f016b379124ed34e4ffe1efb0dff440936396ffba",
+    "index.json": "d355be5a6dc6ef881c5a11512f239e502e433897e14c9a70e71cceb6d1fd5fa8",
     "landing.json": "127b8aba346b4b5193ca7aca7413b2d39ee08840f296fae1ea85aa53cb2c3ff8",
     "routes/COS-LGA.json": "e987da4d606566c67f11a0dce5d3ce3a088cf069b12f11a8769b379f2367b1e5",
     "routes/HNL-BOS.json": "765507fd95b7247984ede41556f503cb7bbe0fc2a9c278357b1033039b2dff37",
@@ -35,7 +35,7 @@
       "ram_gb": 15.4,
       "thread_limit": 4
     },
-    "run_at": "2026-11-28T01:51:17+00:00",
+    "run_at": "2026-11-28T03:19:14+00:00",
     "runtime_exceeded": null,
     "runtime_limit_min": 30.0,
     "runtime_measured_at": null,

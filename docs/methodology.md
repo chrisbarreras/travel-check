@@ -146,7 +146,7 @@ Median layover and travel time are taken over connecting days from daily UTC sch
 - **Hub departure:** that arrival plus the median layover.
 - **Outbound duration:** the travel time less the inbound flight and the layover.
 
-So the three parts always add up to the published travel time, and the hub departure always matches the layover. The medians of separate parts would not add up.
+So the three parts always add up to the published travel time, and the hub departure always matches the layover. The medians of separate parts would not add up. The clock times are separate medians, and the final arrival is the median over the outbound flight's days. So adding a duration to a clock time can differ from the next time shown by some minutes, more where a daylight-saving change or a schedule change falls in the period.
 
 ### Connection feasibility
 

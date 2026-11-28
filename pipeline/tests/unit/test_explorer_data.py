@@ -6,7 +6,13 @@ import duckdb
 import pytest
 
 from flight_pipeline.providers.airports import MissingAirportError, airport_infos
-from flight_pipeline.showcase.assemble import HubTimes, SlotTimes, hub_times, slot_times
+from flight_pipeline.showcase.assemble import (
+    HubTimes,
+    SlotTimes,
+    hub_schedule,
+    hub_times,
+    slot_times,
+)
 
 
 def test_airport_infos_from_airportsdata_sorted() -> None:
@@ -54,9 +60,7 @@ def test_slot_times_are_medians_over_each_slots_days() -> None:
         "INSERT INTO flights VALUES "
         "('DL', 'DL0', '2024-07-01', 'LIT', 'ATL', 0, 0, 999, 'duplicate')"
     )
-    assert slot_times(con, "slots_days", "flights") == {
-        "s1": SlotTimes(dep_local_min=605, arr_local_min=725, block_min=120)
-    }
+    assert slot_times(con, "slots_days", "flights") == {"s1": SlotTimes(arr_local_min=725)}
 
 
 def test_hub_times_are_medians_over_the_itinerarys_connecting_days() -> None:
@@ -95,3 +99,18 @@ def test_hub_times_are_medians_over_the_itinerarys_connecting_days() -> None:
     assert hub_times(con, "itineraries", "itinerary_days", "slots_days", "flights") == {
         "it": HubTimes(hub_arr_local_min=905, inbound_min=95)
     }
+
+
+@pytest.mark.parametrize(
+    ("hub_arr", "inbound", "layover", "travel", "expected"),
+    [
+        (913, 95, 99, 327, (1012, 133)),  # LIT-ATL-LGA
+        (1400, 60, 99, 300, (59, 141)),  # the hub departure passes midnight
+    ],
+)
+def test_hub_schedule_agrees_with_layover_and_travel(
+    hub_arr: int, inbound: int, layover: int, travel: int, expected: tuple[int, int]
+) -> None:
+    hub_dep, outbound = hub_schedule(hub_arr, inbound, layover, travel)
+    assert (hub_dep, outbound) == expected
+    assert inbound + layover + outbound == travel
