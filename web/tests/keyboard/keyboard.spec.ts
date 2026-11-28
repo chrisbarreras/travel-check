@@ -97,5 +97,64 @@ test("the explorer works by keyboard alone (US3)", async ({ page }) => {
     "true",
   );
   // The selection is announced.
-  await expect(page.locator('[aria-live="polite"]')).toContainText("Selected:");
+  await expect(page.locator('p.visually-hidden[aria-live="polite"]')).toContainText("Selected:");
+});
+
+test("the method view is reached and left by keyboard (FR-010)", async ({ page }) => {
+  await page.goto("./");
+  await expect(page.getByRole("region", { name: /^The example:/ })).toBeVisible();
+  await page.mouse.click(1, 1);
+  await page.keyboard.press("Tab");
+  await expect(page.getByRole("link", { name: "How the numbers work" }).first()).toBeFocused();
+  await page.keyboard.press("Enter");
+  await expect(page.getByRole("heading", { name: "How the numbers work" })).toBeVisible();
+  const back = page.getByRole("link", { name: "Back to the explorer" });
+  await back.focus();
+  await page.keyboard.press("Enter");
+  await expect(page.getByRole("region", { name: /^The example:/ })).toBeVisible();
+});
+
+test("the slider and a faster alternative work by keyboard (US1, US3)", async ({ page }) => {
+  // COS-DEN-LGA:UA0730+UA0958 has a faster alternative published on its route.
+  await page.goto("./?route=COS-LGA&itinerary=COS-DEN-LGA%3AUA0730%2BUA0958");
+  const slider = page.getByRole("slider");
+  await expect(slider).toBeVisible();
+  await slider.focus();
+  await page.keyboard.press("ArrowRight");
+  await expect(slider).toHaveValue("35");
+  await page.keyboard.press("ArrowLeft");
+  await expect(slider).toHaveValue("30");
+  const faster = page.getByRole("region", { name: "Faster, just as reliable" });
+  const button = faster.getByRole("button").first();
+  const target = await button.evaluate((b) => b.closest("li")?.getAttribute("data-alternative"));
+  await button.focus();
+  await page.keyboard.press("Enter");
+  await expect
+    .poll(() => new URL(page.url()).searchParams.get("itinerary"))
+    .toBe("COS-DEN-LGA:UA0530+UA0810");
+  expect(target).toBe("COS-DEN-LGA:UA0530+UA0810");
+  // The chosen button is gone; focus moves to the new details, not the top of the page.
+  await expect
+    .poll(() => page.evaluate(() => document.activeElement?.classList.contains("detail-slot")))
+    .toBe(true);
+});
+
+test("every control on a selected itinerary shows a 3 px focus outline", async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 900 });
+  await page.goto("./?route=COS-LGA&itinerary=COS-DEN-LGA%3AUA0730%2BUA0958");
+  await expect(page.getByRole("slider")).toBeVisible();
+  await settle(page);
+  await page.evaluate(() => {
+    for (const d of document.querySelectorAll("details")) d.open = true;
+  });
+  const count = (await focusableInOrder(page)).length;
+  expect(count).toBeGreaterThan(40);
+  await page.mouse.click(1, 1);
+  const missing: string[] = [];
+  for (let i = 0; i < count; i++) {
+    await page.keyboard.press("Tab");
+    const now = await focused(page);
+    if (now && now.outline < 3) missing.push(now.text.slice(0, 40));
+  }
+  expect(missing).toEqual([]);
 });

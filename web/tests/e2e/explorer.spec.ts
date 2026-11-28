@@ -93,6 +93,7 @@ test.describe("selection is shared by every view (SC-002)", () => {
 
     // From the map: click a point on a path, away from the airport markers, and expect the
     // path the map reports under the pointer to be selected.
+    await page.locator("#map-area").scrollIntoViewIfNeeded();
     const target = await page.evaluate((exclude) => {
       const map = window.__travelCheckMap;
       if (!map) throw new Error("no map");
@@ -266,6 +267,7 @@ test("clicking the selected path keeps the selection, even where paths overlap",
   if (shared.length < 2 || !chosen) throw new Error("MCO-LAS needs a shared hub");
   await list(page).locator(`[data-itinerary="${chosen.itinerary_id}"]`).click();
   await expect.poll(async () => (await drawnPaths(page)).selected).toEqual([chosen.itinerary_id]);
+  await page.locator("#map-area").scrollIntoViewIfNeeded();
   const point = await page.evaluate((id) => {
     const map = window.__travelCheckMap;
     if (!map) throw new Error("no map");

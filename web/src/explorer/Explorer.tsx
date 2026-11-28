@@ -57,6 +57,19 @@ export function Explorer({ index }: { index: ShowcaseIndex }) {
     if (resolved.note !== null) correct(resolved.selection, resolved.note);
   }, [route, selection, correct, index.landing.route_id]);
 
+  /** From the panels the chosen button disappears, so focus moves to the new details. */
+  const selectAndFocus = useCallback(
+    (itineraryId: string) => {
+      lastRouteChange.current = Number.NEGATIVE_INFINITY;
+      choose({ routeId: selection.routeId, itineraryId });
+      requestAnimationFrame(() => {
+        detailRef.current?.focus({ preventScroll: true });
+        detailRef.current?.scrollIntoView({ block: "start" });
+      });
+    },
+    [choose, selection.routeId],
+  );
+
   const select = useCallback(
     (itineraryId: string) => {
       lastRouteChange.current = Number.NEGATIVE_INFINITY;
@@ -105,11 +118,18 @@ export function Explorer({ index }: { index: ShowcaseIndex }) {
             {route.view.itineraries.length} one-stop itineraries,{" "}
             {periodText(route.view.route.period)}. Select one in the list, the timeline or the map.
           </p>
-          <div className="detail-slot" ref={detailRef}>
+          <div
+            className="detail-slot"
+            ref={detailRef}
+            tabIndex={-1}
+            aria-label="Selected itinerary details"
+          >
             {selected ? (
               <DetailPanel
                 itinerary={selected}
                 index={index}
+                route={route.view.route}
+                onSelect={selectAndFocus}
                 period={periodText(route.view.route.period)}
               />
             ) : isLanding ? (

@@ -43,3 +43,25 @@ for (const width of [360, 1280]) {
     expect(results.violations).toEqual([]);
   });
 }
+
+for (const width of [360, 1280]) {
+  test(`a selected itinerary's slider and panels at ${String(width)} px have no violations`, async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width, height: 900 });
+    await page.goto("./?route=LIT-LGA&itinerary=LIT-ATL-LGA%3ADL1238%2BDL1700&transfer=60");
+    await expect(page.getByRole("slider")).toBeVisible();
+    await page.evaluate(() => {
+      for (const d of document.querySelectorAll("details")) d.open = true;
+    });
+    const results = await new AxeBuilder({ page }).withTags(TAGS).analyze();
+    expect(results.violations).toEqual([]);
+  });
+}
+
+test("the method view has no violations", async ({ page }) => {
+  await page.goto("./?view=method");
+  await expect(page.getByRole("heading", { name: "How the numbers work" })).toBeVisible();
+  const results = await new AxeBuilder({ page }).withTags(TAGS).analyze();
+  expect(results.violations).toEqual([]);
+});

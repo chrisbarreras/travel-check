@@ -32,7 +32,8 @@ GitHub Pages: https://chrisbarreras.github.io/travel-check/
 - **One way in.** Screens read data only through `web/src/data/`, a `DataSource` with `getIndex`, `getLanding`, `getRoute` and `getManifest`. A lint rule forbids `fetch` anywhere else. Every file is validated whole before use, and a bad or missing file gives a plain error state, never partial figures ([contract](../specs/003-web-foundation/contracts/data-access.md)).
 - **One selection.** The address holds the route and itinerary (ADR-0010). The list, timeline, map and detail panel read it from there and write to it, so they can't disagree, and back and forward move between selections.
 - **Map.** MapLibre 5 with a local, muted style over OpenFreeMap's vector tiles. Path geometry and bounds are pure functions (`web/src/map/geometry.ts`). End-to-end tests read the rendered features from the map instance. Screenshots mask the map, because software rendering can move it by a pixel.
-- **Formatting only in the browser.** The page rounds and words values that the pipeline computed: whole percent, whole points, local clock times from the schedule. It does no statistics and no time-zone arithmetic. The transfer-time slider (feature `explorer-insights`) will be the first calculation in the browser, checked against the shared test cases in `shared/test-cases/`.
+- **One calculation in the browser.** The transfer-time slider recomputes a rate from the published daily slack (ADR-0006), by the rule in `shared/test-cases/slack-feasibility.json`. The pipeline and the browser pass the same cases, and the browser reproduces every published rate at its default setting.
+- **Formatting only in the browser.** The page rounds and words values that the pipeline computed: whole percent, whole points, local clock times from the schedule. It does no statistics and no time-zone arithmetic.
 
 ## Where Phase 2 plugs in
 
