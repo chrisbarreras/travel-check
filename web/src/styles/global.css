@@ -740,6 +740,16 @@ main,
   border-radius: 3px;
 }
 
+.month-days {
+  color: var(--muted);
+}
+
+.method-definitions code {
+  font-size: 0.8125rem;
+  text-transform: none;
+  color: var(--muted);
+}
+
 .month-value {
   font-weight: 600;
 }

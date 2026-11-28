@@ -22,3 +22,25 @@ Each round is a new `feature-reviewer` agent, given only `specs/005-explorer-ins
 | 8 | NIT | The `disruption_note` definition wasn't shown with the notes. | **Fixed.** It is under the monthly view and required by the route view's checks. |
 | 9 | NIT | architecture.md contradicted itself. | **Fixed.** The old sentence is removed. |
 | 10 | NIT | Insufficient data and a non-default minimum weren't tested in the UI. | **Fixed** by the synthetic test in finding 2. |
+
+## Round 2 (004-explorer-core...ecdb901)
+
+**Verdict:** CHANGES REQUIRED. 1 blocking, 3 should-fix, 5 nits.
+
+**Automated checks, all passing:** format, lint and typecheck; 387 tests; build; size (95.3 KB first view); 112 browser tests in the pinned image; `schemas --check`; the pipeline's slack and slider tests.
+
+The reviewer confirmed every round 1 fix.
+
+### Findings and responses
+
+| # | Severity | Finding | Response |
+|---|---|---|---|
+| 1 | BLOCKING | Monthly rates showed no visible sample size (Principle I); the days were only in screen-reader text. | **Fixed.** Every month with a rate shows its days under its percentage ("31 d"), with a legend. The per-itinerary test asserts each month's visible days. |
+| 2 | SHOULD-FIX | The other connecting options showed no interval (US3 AS2). | **Fixed.** Each shows "95% interval … against this one" where it is published. This is asserted on every itinerary. |
+| 3 | SHOULD-FIX | The selected card's published rate sat above the slider's recomputed one without naming its setting. | **Fixed.** A note under the card says its rate is "at the published 30-minute minimum connection time and 15-minute boarding cutoff", and points to the slider. This is asserted on every itinerary. |
+| 4 | SHOULD-FIX | The buffer and connection share had no minimum-sample rule, and the buffer's null case said something false. | **Fixed.** Below the minimum sample both say "Insufficient data (N days, period)", with no percentage. The null case (no operated days) says exactly that. A synthetic test covers both. |
+| 5 | NIT | T008 was unticked. | **Fixed.** T008 ticked; T009 is ticked at approval. |
+| 6 | NIT | Lighthouse audited only the landing view. | **Fixed.** `lighthouserc.json` also audits a selected itinerary with its slider and panels. Locally both score 100 for accessibility, with LCP under 1.5 s and CLS 0. |
+| 7 | NIT | The method view showed keys reworded. | **Fixed.** Each definition shows its readable name and its raw key (`connection_feasibility`). |
+| 8 | NIT | The focus-outline walk skipped the new controls. | **Fixed.** A keyboard test tabs through every control on a selected itinerary, with all definitions open (over 40 stops), and requires the 3 px outline on each. |
+| 9 | NIT | Two counts said "in the period" without naming it. | **Fixed.** Both name the period. |

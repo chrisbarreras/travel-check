@@ -37,7 +37,9 @@ export function MethodView({ index }: { index: ShowcaseIndex }) {
       <dl className="method-definitions">
         {index.definitions.map((d) => (
           <div key={d.key}>
-            <dt>{d.key.replaceAll("_", " ")}</dt>
+            <dt>
+              {d.key.replaceAll("_", " ")} <code>{d.key}</code>
+            </dt>
             <dd>
               {d.text}{" "}
               <a href={`${REPOSITORY}/blob/main/${d.methodology_anchor}`}>

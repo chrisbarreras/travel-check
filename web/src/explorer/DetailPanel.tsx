@@ -31,6 +31,11 @@ export function DetailPanel({
           badgeTone="warn"
         />
       </div>
+      <p className="muted setting-note">
+        The rate above is at the published {itinerary.min_connection_min}-minute minimum connection
+        time and {index.assumptions.boarding_cutoff_min}-minute boarding cutoff. Try your own
+        transfer time below.
+      </p>
       <TransferSlider
         key={itinerary.itinerary_id}
         itinerary={itinerary}

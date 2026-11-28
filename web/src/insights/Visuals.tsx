@@ -80,6 +80,11 @@ export function MonthChart({
                 <span className="month-fill" style={{ height: `${String(b.percent)}%` }} />
               ) : null}
             </span>
+            {b.kind === "ok" ? (
+              <span className="month-days" aria-hidden="true">
+                {b.days} d
+              </span>
+            ) : null}
             <span className="month-value">
               {b.kind === "ok"
                 ? `${String(b.percent)}%`
@@ -102,6 +107,9 @@ export function MonthChart({
           </li>
         ))}
       </ol>
+      <p className="muted">
+        Under each bar: the month&apos;s rate, then the days it is based on (&quot;31 d&quot;).
+      </p>
       {bars.some((b) => b.kind === "insufficient") ? (
         <p className="muted">"N d": the days counted in a month with too few for a rate.</p>
       ) : null}

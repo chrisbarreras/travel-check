@@ -51,6 +51,11 @@ function checkPanels(route: RouteFile, it: ShowcaseItinerary) {
     expect(meter).toBeNull();
   }
 
+  // The card's rate states the setting it assumes, next to the slider.
+  expect(document.querySelector(".setting-note")).toHaveTextContent(
+    `published ${String(it.min_connection_min)}-minute minimum connection time`,
+  );
+
   // Faster, just as reliable: content, direction of the difference, selectable only if shown.
   const faster = panel("Faster, just as reliable");
   if (it.faster_alternatives.length === 0) {
@@ -86,8 +91,12 @@ function checkPanels(route: RouteFile, it: ShowcaseItinerary) {
     }
   }
   for (const o of it.connecting_options.filter((x) => !x.better)) {
+    const interval =
+      o.ci_low !== null && o.ci_high !== null
+        ? `; ${intervalText(o.ci_low, o.ci_high)} against this one)`
+        : ")";
     expect(better).toHaveTextContent(
-      `${localTime(o.outbound_dep_local_min).text} (${rateText(o.rate, period).text})`,
+      `${localTime(o.outbound_dep_local_min).text} (${rateText(o.rate, period).text}${interval}`,
     );
   }
 
@@ -134,6 +143,10 @@ function checkPanels(route: RouteFile, it: ShowcaseItinerary) {
     ),
   );
   items.forEach((li, i) => {
+    const bar = bars[i];
+    if (bar?.kind === "ok") {
+      expect(li.querySelector(".month-days")?.textContent).toBe(`${String(bar.days)} d`);
+    }
     expect(li.querySelector("sup") !== null).toBe((bars[i]?.notes.length ?? 0) > 0);
   });
   for (const note of route.disruption_notes.filter((n) =>
@@ -150,7 +163,7 @@ function checkPanels(route: RouteFile, it: ShowcaseItinerary) {
   const about = panel("About this itinerary");
   const w = it.schedule_warnings;
   expect(about).toHaveTextContent(
-    `scheduled to connect on ${String(w.connecting_days)} of ${String(w.eligible_days)} days`,
+    `scheduled to connect on ${String(w.connecting_days)} of ${String(w.eligible_days)} days in ${period}`,
   );
   if (w.changes.length === 0) expect(about).toHaveTextContent("No lasting schedule changes");
   for (const c of w.changes) {
@@ -233,6 +246,50 @@ describe("the transfer-time slider (US1)", () => {
     expect(result).toHaveTextContent("insufficient data (12 days");
     expect(result?.querySelector(".meter")).toBeNull();
     expect(result?.textContent).not.toMatch(/\d+%/);
+  });
+});
+
+describe("minimum samples for the buffer and the connection share (Principle I)", () => {
+  const found = routes.find((r) => r.route_id === "LIT-LGA");
+  if (!found) throw new Error("fixture");
+  const route: RouteFile = found;
+
+  function openWith(edit: (it: ShowcaseItinerary) => void) {
+    const changed = clone(route);
+    const target = changed.itineraries[0];
+    if (!target) throw new Error("fixture");
+    edit(target);
+    open(
+      link("LIT-LGA", target.itinerary_id),
+      memorySource({ ...files, "routes/LIT-LGA.json": changed }),
+    );
+  }
+
+  it("gives no buffer or share percentage below the minimum sample", async () => {
+    openWith((it) => {
+      it.buffer = { ...it.buffer, operated_days: 8 };
+      it.schedule_warnings = { ...it.schedule_warnings, connecting_days: 7, eligible_days: 12 };
+    });
+    await screen.findByRole("slider");
+    const buffer = panel("Buffer you needed");
+    expect(buffer).toHaveTextContent("Insufficient data (8 days");
+    expect(buffer.querySelector("p")?.textContent).not.toMatch(/\d+%/);
+    const about = panel("About this itinerary");
+    expect(about).toHaveTextContent("Insufficient data (12 days");
+    expect(about).not.toHaveTextContent("7 of 12 days");
+  });
+
+  it("says plainly when there were no operated days", async () => {
+    openWith((it) => {
+      it.buffer = {
+        ...it.buffer,
+        operated_days: 0,
+        needed_layover_min: null,
+        scheduled_at_least_share: null,
+      };
+    });
+    await screen.findByRole("slider");
+    expect(panel("Buffer you needed")).toHaveTextContent("No operated days");
   });
 });
 

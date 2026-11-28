@@ -134,3 +134,23 @@ test("the slider and a faster alternative work by keyboard (US1, US3)", async ({
     .toBe("COS-DEN-LGA:UA0530+UA0810");
   expect(target).toBe("COS-DEN-LGA:UA0530+UA0810");
 });
+
+test("every control on a selected itinerary shows a 3 px focus outline", async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 900 });
+  await page.goto("./?route=COS-LGA&itinerary=COS-DEN-LGA%3AUA0730%2BUA0958");
+  await expect(page.getByRole("slider")).toBeVisible();
+  await settle(page);
+  await page.evaluate(() => {
+    for (const d of document.querySelectorAll("details")) d.open = true;
+  });
+  const count = (await focusableInOrder(page)).length;
+  expect(count).toBeGreaterThan(40);
+  await page.mouse.click(1, 1);
+  const missing: string[] = [];
+  for (let i = 0; i < count; i++) {
+    await page.keyboard.press("Tab");
+    const now = await focused(page);
+    if (now && now.outline < 3) missing.push(now.text.slice(0, 40));
+  }
+  expect(missing).toEqual([]);
+});

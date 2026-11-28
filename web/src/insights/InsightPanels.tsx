@@ -125,7 +125,10 @@ export function InsightPanels({
             {others
               .map(
                 (o) =>
-                  `${localTime(o.outbound_dep_local_min).text} (${rateText(o.rate, period).text})`,
+                  `${localTime(o.outbound_dep_local_min).text} (${rateText(o.rate, period).text}` +
+                  (o.ci_low !== null && o.ci_high !== null
+                    ? `; ${intervalText(o.ci_low, o.ci_high)} against this one)`
+                    : ")"),
               )
               .join("; ")}
             .
@@ -134,11 +137,15 @@ export function InsightPanels({
       </Panel>
 
       <Panel title="Buffer you needed" definition={def("buffer")} summary="How the buffer is found">
-        {itinerary.buffer.needed_layover_min === null ||
+        {itinerary.buffer.operated_days === 0 ||
+        itinerary.buffer.needed_layover_min === null ||
         itinerary.buffer.scheduled_at_least_share === null ? (
+          <p>No operated days, so no buffer can be given.</p>
+        ) : itinerary.buffer.operated_days < index.assumptions.min_sample_days ? (
           <p>
-            No layover would have been enough on {Math.round(itinerary.buffer.share * 100)}% of the{" "}
-            {itinerary.buffer.operated_days} operated days, or there are too few days to say.
+            Insufficient data ({itinerary.buffer.operated_days}{" "}
+            {itinerary.buffer.operated_days === 1 ? "day" : "days"}, {period}): too few operated
+            days to give a buffer.
           </p>
         ) : (
           <p>
@@ -179,11 +186,19 @@ export function InsightPanels({
         definition={def("connect_share")}
         summary="How often it connects"
       >
-        <p>
-          The two flights were scheduled to connect on {warnings.connecting_days} of{" "}
-          {warnings.eligible_days} days (
-          {percentOf(warnings.connecting_days, Math.max(warnings.eligible_days, 1))}%).
-        </p>
+        {warnings.eligible_days < index.assumptions.min_sample_days ? (
+          <p>
+            Insufficient data ({warnings.eligible_days}{" "}
+            {warnings.eligible_days === 1 ? "day" : "days"}, {period}) to say how often the two
+            flights were scheduled to connect.
+          </p>
+        ) : (
+          <p>
+            The two flights were scheduled to connect on {warnings.connecting_days} of{" "}
+            {warnings.eligible_days} days in {period} (
+            {percentOf(warnings.connecting_days, warnings.eligible_days)}%).
+          </p>
+        )}
         {warnings.changes.length === 0 ? (
           <p>No lasting schedule changes in the period.</p>
         ) : (
@@ -200,7 +215,7 @@ export function InsightPanels({
           </>
         )}
         <p>
-          {itinerary.sold.passengers} sampled passengers flew this routing in the period, shared by{" "}
+          {itinerary.sold.passengers} sampled passengers flew this routing in {period}, shared by{" "}
           {itinerary.sold.routing_itineraries} itineraries on it.
         </p>
         <Definition summary="What the schedule changes are" definition={def("schedule_change")} />
