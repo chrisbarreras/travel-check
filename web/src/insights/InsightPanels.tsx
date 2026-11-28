@@ -8,6 +8,14 @@ import { airlineName, duration, intervalText, localTime, percentOf, rateText } f
 import { findUrl } from "./find";
 import { FailureBar, MonthChart } from "./Visuals";
 
+/** "Delta via ATL" from an id such as "LIT-ATL-LGA:DL1238+DL1700". */
+export function nameFromId(itineraryId: string): string {
+  const [route = "", flights = ""] = itineraryId.split(":");
+  const hub = route.split("-")[1] ?? "";
+  const codes = [...new Set(flights.split("+").map((f) => f.replace(/\d+$/, "")))];
+  return `${codes.map(airlineName).join(" and ")} via ${hub}`;
+}
+
 function Panel({
   title,
   children,
@@ -62,19 +70,24 @@ export function InsightPanels({
             {itinerary.faster_alternatives.map((a) => {
               const other = byId.get(a.itinerary_id);
               return (
-                <li key={a.itinerary_id}>
-                  <button
-                    type="button"
-                    className="link-button"
-                    onClick={() => {
-                      onSelect(a.itinerary_id);
-                    }}
-                  >
-                    {other ? itineraryName(other) : a.itinerary_id}
-                  </button>
+                <li key={a.itinerary_id} data-alternative={a.itinerary_id}>
+                  {other ? (
+                    <button
+                      type="button"
+                      className="link-button"
+                      onClick={() => {
+                        onSelect(a.itinerary_id);
+                      }}
+                    >
+                      {itineraryName(other)}
+                    </button>
+                  ) : (
+                    // Not among this route's showcase itineraries: described, not selectable.
+                    <span>{nameFromId(a.itinerary_id)} (not shown on this route)</span>
+                  )}
                   : {a.minutes_saved} min shorter; {rateText(a.rate_other, period).text}, against{" "}
-                  {rateText(a.rate_this, period).text} for this one (difference{" "}
-                  {intervalText(a.ci_low, a.ci_high)}, over {a.shared_days} days both flew).
+                  {rateText(a.rate_this, period).text} for this one. The faster one minus this one:{" "}
+                  {intervalText(a.ci_low, a.ci_high)}, over {a.shared_days} days both flew.
                 </li>
               );
             })}
@@ -130,10 +143,11 @@ export function InsightPanels({
         ) : (
           <p>
             To have connected on {Math.round(itinerary.buffer.share * 100)}% of the{" "}
-            {itinerary.buffer.operated_days} operated days, the scheduled layover needed to be at
-            least {duration(itinerary.buffer.needed_layover_min)}. This itinerary&apos;s median is{" "}
-            {duration(itinerary.buffer.actual_layover_min)}; it was scheduled at least{" "}
-            {duration(itinerary.buffer.needed_layover_min)} on{" "}
+            {itinerary.buffer.operated_days} operated days in {period}, at the published{" "}
+            {itinerary.min_connection_min}-minute minimum connection time, the scheduled layover
+            needed to be at least {duration(itinerary.buffer.needed_layover_min)}. This
+            itinerary&apos;s median is {duration(itinerary.buffer.actual_layover_min)}; it was
+            scheduled at least {duration(itinerary.buffer.needed_layover_min)} on{" "}
             {Math.round(itinerary.buffer.scheduled_at_least_share * 100)}% of those days.
           </p>
         )}
@@ -144,11 +158,20 @@ export function InsightPanels({
         definition={def("failure_types")}
         summary="What the failure types are"
       >
+        <p className="muted">
+          At the published {itinerary.min_connection_min}-minute minimum connection time, of{" "}
+          {itinerary.result.paired_days} days, {period}. The slider above doesn&apos;t change these
+          counts.
+        </p>
         <FailureBar failures={itinerary.failures} />
       </Panel>
 
       <Panel title="By month" definition={def("monthly_rate")} summary="What the monthly rate is">
+        <p className="muted">
+          At the published {itinerary.min_connection_min}-minute minimum connection time, {period}.
+        </p>
         <MonthChart monthly={itinerary.monthly} notes={route.disruption_notes} />
+        <Definition summary="What the notes are" definition={def("disruption_note")} />
       </Panel>
 
       <Panel

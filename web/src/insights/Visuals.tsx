@@ -4,8 +4,8 @@ import { meterDots } from "./meter";
 import { monthBars } from "./months";
 
 /** Ten dots filled to the rate's nearest 10%. Decorative: the text beside it carries it. */
-export function Meter({ rate }: { rate: number }) {
-  const filled = meterDots(rate);
+export function Meter({ percent }: { percent: number }) {
+  const filled = meterDots(percent);
   return (
     <span className="meter" aria-hidden="true" data-filled={filled}>
       {Array.from({ length: 10 }, (_, i) => (
@@ -103,7 +103,7 @@ export function MonthChart({
         ))}
       </ol>
       {bars.some((b) => b.kind === "insufficient") ? (
-        <p className="muted">"d": days flown in a month with too few for a rate.</p>
+        <p className="muted">"N d": the days counted in a month with too few for a rate.</p>
       ) : null}
       {shown.length > 0 ? (
         <ul className="notes">

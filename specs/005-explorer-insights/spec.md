@@ -27,7 +27,7 @@ The owner asked for recommended decisions to be adopted directly. Each answer be
 - Q: What does the transfer-time slider change? → A: The minimum connection time (the time needed between the inbound flight's arrival and the outbound flight's departure), from 15 to 120 minutes in 5-minute steps. The boarding cutoff stays at the published 15 minutes. The rate is recomputed in the browser from the published daily slack, with the shared test cases' rule (ADR-0006). The default is the itinerary's own published minimum connection time, so the default reproduces the published rate.
 - Q: Does the slider's setting go in the address? → A: Yes, as `transfer=<minutes>` (ADR-0010). Moving it replaces the current history entry instead of adding one, and the parameter is left out at the default.
 - Q: Where does "Find this itinerary" go? → A: A Google Flights search for the route and airline, prefilled as text (for example "Flights from LIT to LGA on Delta"), opened in a new tab. No date is set, no fare is fetched or stored, and the link says prices come from that site.
-- Q: Where does "How the numbers work" live? → A: An in-app view at `?view=method`, linked from the header and from every definition. It shows a plain-language summary and the published definitions verbatim, and links to docs/methodology.md for the full detail.
+- Q: Where does "How the numbers work" live? → A: An in-app view at `?view=method`, linked from the header. Each definition links to its own section of docs/methodology.md, as since feature 003 (amended in review round 1: a second link in every definition would double the tab stops). It shows a plain-language summary and the published definitions verbatim, and links to docs/methodology.md for the full detail.
 - Q: What does the monthly view show below the monthly minimum sample? → A: The month's day count with "too few days", never a bar height or percentage. Months with no flights show a dash. Disruption notes appear beside the chart, never inside the measured values.
 
 ## User Scenarios & Testing *(mandatory)*
@@ -67,7 +67,7 @@ Known disruptions, such as the July 2024 CrowdStrike outage, appear as labelled 
 
 1. **Given** an itinerary with a rate, **When** it is shown, **Then** the meter fills the rate rounded to the nearest 10% of 10 dots, next to the exact text. The dots are hidden from screen readers; the text carries the meaning.
 2. **Given** the failure breakdown, **When** it is shown, **Then** each failure type's segment is sized by its count and drawn with its own pattern, with the counts and labels in text and a sentence on what helps for the dominant type.
-3. **Given** the monthly view, **When** it is shown, **Then** each month with a rate has a bar and a whole-percent label. A month below the monthly minimum shows "N days, too few" and no bar; a month with no flights shows a dash. Each disruption note is listed separately, with its dates, text and source link, and its months are marked.
+3. **Given** the monthly view, **When** it is shown, **Then** each month with a rate has a bar and a whole-percent label. A month below the monthly minimum shows its day count ("N d", with "N days, too few for a rate" for screen readers and a legend) and no bar; a month with no flights shows a dash. Each disruption note is listed separately, with its dates, text and source link, and its months are marked.
 
 ---
 

@@ -21,6 +21,7 @@ export const ROUTE_DEFINITIONS = [
   "connect_share",
   "schedule_change",
   "sold_passengers",
+  "disruption_note",
 ] as const;
 
 export function buildRouteView(

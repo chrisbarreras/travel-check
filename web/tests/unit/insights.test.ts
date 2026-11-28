@@ -64,15 +64,15 @@ describe("slackRate reproduces every published rate at its default (SC-001)", ()
 
 describe("meterDots (docs/design.md, Reliability meter)", () => {
   it.each([
-    [0.922819, 9],
-    [0.95, 10], // halves away from zero
-    [0.949999, 9],
-    [0.05, 1],
-    [0.04, 0],
-    [1, 10],
+    [92, 9],
+    [95, 10], // the text says 95%, so the meter fills 10, whatever the decimals
+    [94, 9],
+    [5, 1],
+    [4, 0],
+    [100, 10],
     [0, 0],
-  ])("%f fills %i of 10", (rate, filled) => {
-    expect(meterDots(rate)).toBe(filled);
+  ])("%i%% fills %i of 10", (percent, filled) => {
+    expect(meterDots(percent)).toBe(filled);
   });
 });
 

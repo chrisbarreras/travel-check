@@ -82,7 +82,7 @@ export function TransferSlider({
         }}
       />
       <p className="slider-result" aria-live="polite">
-        {text.kind === "ok" && result.rate !== null ? <Meter rate={result.rate} /> : null}
+        {text.kind === "ok" ? <Meter percent={text.percent} /> : null}
         <span>
           With {transfer} minutes: {text.text}
           {transfer === itinerary.min_connection_min ? " (the published figure)" : ""}
