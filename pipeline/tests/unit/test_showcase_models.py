@@ -319,10 +319,10 @@ def schedule(**kw: Any) -> dict[str, Any]:
         "travel_min": 327,
         "nonstop_median_min": 175,
         "nonstop_ratio": 1.9,
-        "hub_arr_local_min": 940,
-        "hub_dep_local_min": 1039,
-        "inbound_min": 122,
-        "outbound_min": 106,
+        "hub_arr_local_min": 913,
+        "hub_dep_local_min": 1012,
+        "inbound_min": 95,
+        "outbound_min": 133,
     }
     base.update(kw)
     return base
@@ -330,8 +330,8 @@ def schedule(**kw: Any) -> dict[str, Any]:
 
 def test_schedule_carries_hub_times_and_flight_durations() -> None:
     model = Schedule.model_validate(schedule())
-    assert (model.hub_arr_local_min, model.hub_dep_local_min) == (940, 1039)
-    assert (model.inbound_min, model.outbound_min) == (122, 106)
+    assert (model.hub_arr_local_min, model.hub_dep_local_min) == (913, 1012)
+    assert (model.inbound_min, model.outbound_min) == (95, 133)
 
 
 @pytest.mark.parametrize(
@@ -341,9 +341,17 @@ def test_schedule_carries_hub_times_and_flight_durations() -> None:
         ({"hub_dep_local_min": -1}, "hub_dep_local_min"),
         ({"inbound_min": 0}, "inbound_min"),
         ({"outbound_min": 0}, "outbound_min"),
-        ({"inbound_min": 300, "outbound_min": 300}, "travel"),
+        ({"inbound_min": 96}, "travel"),
+        ({"hub_dep_local_min": 1020}, "layover"),
     ],
 )
 def test_schedule_addition_rules(kw: dict[str, Any], message: str) -> None:
     with pytest.raises(ValidationError, match=message):
         Schedule.model_validate(schedule(**kw))
+
+
+def test_hub_departure_wraps_past_midnight() -> None:
+    model = Schedule.model_validate(
+        schedule(hub_arr_local_min=1400, hub_dep_local_min=(1400 + 99) % 1440)
+    )
+    assert model.hub_dep_local_min == 59

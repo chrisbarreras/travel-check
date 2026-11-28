@@ -755,7 +755,14 @@ def stage_publish(con: duckdb.DuckDBPyConnection, cfg: Config, config_path: Path
     )
     nonstop = read_models(con, derived(cfg, "nonstop.parquet"), NonstopMedian)
     hubs = read_json(derived(cfg, "hub_selection.json"), HubSelectionMeta)["selected"]
-    for name in ("flights", "sold_routings", "slots", "slots_days"):
+    for name in (
+        "flights",
+        "sold_routings",
+        "slots",
+        "slots_days",
+        "itineraries",
+        "itinerary_days",
+    ):
         path = derived(cfg, f"{name}.parquet").as_posix().replace("'", "''")
         con.execute(f"CREATE OR REPLACE VIEW {name} AS SELECT * FROM read_parquet('{path}')")
 
@@ -787,6 +794,7 @@ def stage_publish(con: duckdb.DuckDBPyConnection, cfg: Config, config_path: Path
         missing_settings=missing,
         nonstop={(n.origin, n.dest): n for n in nonstop},
         slot_times=assemble.slot_times(con, "slots_days", "flights"),
+        hub_times=assemble.hub_times(con, "itineraries", "itinerary_days", "slots_days", "flights"),
         insights=InsightsFile.model_validate(
             read_json(derived(cfg, "insights.json"), InsightsFile)
         ).itineraries,

@@ -909,7 +909,7 @@
     },
     "Schedule": {
       "additionalProperties": false,
-      "description": "Median scheduled times. Local minutes are clock times at each airport. The hub times and\nflight durations (specs/004-explorer-core FR-002) are each flight's own median over its\nslot's days, so the parts need not add up exactly to `travel_min`.",
+      "description": "Median scheduled times. Local minutes are clock times at each airport. The hub arrival\nand the inbound flight's duration (specs/004-explorer-core FR-002) are medians over the\nitinerary's connecting days, the days `layover_min` and `travel_min` use. The hub\ndeparture is the hub arrival plus `layover_min`, and the outbound flight's duration is\n`travel_min` less the inbound flight and the layover, so the parts agree with the totals.",
       "properties": {
         "arr_local_min": {
           "maximum": 1439,

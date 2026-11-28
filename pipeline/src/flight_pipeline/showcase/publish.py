@@ -108,6 +108,13 @@ DEFINITIONS: dict[str, tuple[str, str]] = {
         "median over connecting days.",
         "itineraries",
     ),
+    "flight_times": (
+        "The inbound flight's scheduled arrival at the hub and its scheduled duration, the "
+        "medians over connecting days, in the hub's local time. The hub departure is that "
+        "arrival plus the median layover, and the outbound flight's duration is the travel "
+        "time less the inbound flight and the layover, so the parts add up to the travel time.",
+        "itineraries",
+    ),
     "nonstop_ratio": (
         "Travel time divided by the typical scheduled nonstop time between the same "
         "airports, when a nonstop was flown in the data period.",
@@ -193,8 +200,8 @@ ATTRIBUTION: tuple[Attribution, ...] = (
     Attribution(
         source="airportsdata",
         text=(
-            "Airport time zones from the airportsdata package, Copyright (c) 2020- Mike "
-            "Borsetti (includes data Copyright (c) 2014 mwgg)."
+            "Airport names, cities, locations and time zones from the airportsdata package, "
+            "Copyright (c) 2020- Mike Borsetti (includes data Copyright (c) 2014 mwgg)."
         ),
         licence="MIT",
         url="https://github.com/mborsetti/airportsdata",

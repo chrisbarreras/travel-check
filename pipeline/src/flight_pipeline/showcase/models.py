@@ -97,9 +97,11 @@ class Rate(_Model):
 
 
 class Schedule(_Model):
-    """Median scheduled times. Local minutes are clock times at each airport. The hub times and
-    flight durations (specs/004-explorer-core FR-002) are each flight's own median over its
-    slot's days, so the parts need not add up exactly to `travel_min`."""
+    """Median scheduled times. Local minutes are clock times at each airport. The hub arrival
+    and the inbound flight's duration (specs/004-explorer-core FR-002) are medians over the
+    itinerary's connecting days, the days `layover_min` and `travel_min` use. The hub
+    departure is the hub arrival plus `layover_min`, and the outbound flight's duration is
+    `travel_min` less the inbound flight and the layover, so the parts agree with the totals."""
 
     dep_local_min: LocalMinute
     arr_local_min: LocalMinute
@@ -113,12 +115,15 @@ class Schedule(_Model):
     outbound_min: Annotated[int, Field(ge=1)]
 
     @model_validator(mode="after")
-    def _flights_within_travel(self) -> Schedule:
-        if self.inbound_min + self.outbound_min > self.travel_min:
+    def _parts_agree(self) -> Schedule:
+        parts = self.inbound_min + self.layover_min + self.outbound_min
+        if parts != self.travel_min:
             raise ValueError(
-                f"inbound_min + outbound_min ({self.inbound_min + self.outbound_min}) "
-                f"exceeds travel_min ({self.travel_min})"
+                f"inbound_min + layover_min + outbound_min ({parts}) must equal travel_min "
+                f"({self.travel_min})"
             )
+        if self.hub_dep_local_min != (self.hub_arr_local_min + self.layover_min) % 1440:
+            raise ValueError("hub_dep_local_min must be hub_arr_local_min plus layover_min")
         return self
 
 

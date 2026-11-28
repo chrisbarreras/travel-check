@@ -6,7 +6,7 @@ import duckdb
 import pytest
 
 from flight_pipeline.providers.airports import MissingAirportError, airport_infos
-from flight_pipeline.showcase.assemble import SlotTimes, slot_times
+from flight_pipeline.showcase.assemble import HubTimes, SlotTimes, hub_times, slot_times
 
 
 def test_airport_infos_from_airportsdata_sorted() -> None:
@@ -56,4 +56,42 @@ def test_slot_times_are_medians_over_each_slots_days() -> None:
     )
     assert slot_times(con, "slots_days", "flights") == {
         "s1": SlotTimes(dep_local_min=605, arr_local_min=725, block_min=120)
+    }
+
+
+def test_hub_times_are_medians_over_the_itinerarys_connecting_days() -> None:
+    con = duckdb.connect()
+    con.execute("CREATE TABLE itineraries (itinerary_id VARCHAR, inbound_slot VARCHAR)")
+    con.execute("INSERT INTO itineraries VALUES ('it', 's1')")
+    con.execute(
+        "CREATE TABLE itinerary_days (itinerary_id VARCHAR, service_date DATE,"
+        " match_status VARCHAR, sched_layover_min INTEGER)"
+    )
+    con.execute(
+        "CREATE TABLE slots_days (slot_id VARCHAR, service_date DATE, marketing_airline VARCHAR,"
+        " flight_number VARCHAR, origin VARCHAR, dest VARCHAR, dep_local_min INTEGER)"
+    )
+    con.execute(
+        "CREATE TABLE flights (marketing_airline VARCHAR, flight_number VARCHAR,"
+        " service_date DATE, origin VARCHAR, dest VARCHAR, sched_dep_local_min INTEGER,"
+        " sched_arr_local_min INTEGER, sched_elapsed_min INTEGER, quality_flag VARCHAR)"
+    )
+    days = [
+        ("2024-07-01", "connects", 900, 95),
+        ("2024-07-02", "connects", 910, 100),
+        ("2024-07-03", "connects", 905, 90),
+        # The slot also flies on a day the itinerary did not connect: not counted.
+        ("2024-07-04", "not_connecting", 1300, 200),
+    ]
+    for day, status, arr, block in days:
+        con.execute("INSERT INTO itinerary_days VALUES ('it', ?, ?, 60)", [day, status])
+        con.execute(
+            "INSERT INTO slots_days VALUES ('s1', ?, 'DL', 'DL1', 'LIT', 'ATL', 700)", [day]
+        )
+        con.execute(
+            "INSERT INTO flights VALUES ('DL', 'DL1', ?, 'LIT', 'ATL', 700, ?, ?, 'ok')",
+            [day, arr, block],
+        )
+    assert hub_times(con, "itineraries", "itinerary_days", "slots_days", "flights") == {
+        "it": HubTimes(hub_arr_local_min=905, inbound_min=95)
     }

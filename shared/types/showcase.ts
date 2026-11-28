@@ -336,9 +336,11 @@ export interface ShowcaseItinerary {
   tight_layover: boolean;
 }
 /**
- * Median scheduled times. Local minutes are clock times at each airport. The hub times and
- * flight durations (specs/004-explorer-core FR-002) are each flight's own median over its
- * slot's days, so the parts need not add up exactly to `travel_min`.
+ * Median scheduled times. Local minutes are clock times at each airport. The hub arrival
+ * and the inbound flight's duration (specs/004-explorer-core FR-002) are medians over the
+ * itinerary's connecting days, the days `layover_min` and `travel_min` use. The hub
+ * departure is the hub arrival plus `layover_min`, and the outbound flight's duration is
+ * `travel_min` less the inbound flight and the layover, so the parts agree with the totals.
  *
  * This interface was referenced by `Showcase`'s JSON-Schema
  * via the `definition` "Schedule".
