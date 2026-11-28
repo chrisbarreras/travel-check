@@ -298,6 +298,283 @@ main,
   border-radius: 12px;
 }
 
+/* Explorer (specs/004-explorer-core) */
+.explorer {
+  margin: 16px 0 32px;
+}
+
+.route-picker {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+  margin: 0 0 16px;
+}
+
+.route-picker label {
+  font-weight: 600;
+}
+
+.route-picker select {
+  min-height: 44px;
+  max-width: 100%;
+  padding: 0 36px 0 12px;
+  border: 1px solid var(--control-border);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--ink);
+  font: inherit;
+}
+
+.note,
+.prompt {
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.note {
+  background: var(--warn-tint);
+  color: var(--warn-text);
+}
+
+.detail-slot {
+  scroll-margin-top: 16px;
+}
+
+.cards.single {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.explorer-grid {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-areas: "list" "timeline" "map";
+  margin-top: 16px;
+}
+
+@media (min-width: 768px) {
+  .explorer-grid {
+    grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+    grid-template-areas: "list map" "list timeline";
+    align-items: start;
+  }
+}
+
+.itinerary-list {
+  grid-area: list;
+}
+
+.timeline {
+  grid-area: timeline;
+}
+
+.map-panel {
+  grid-area: map;
+}
+
+.itinerary-list ul,
+.timeline ul {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.list-card,
+.timeline-row {
+  display: grid;
+  gap: 2px;
+  width: 100%;
+  min-height: 44px;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface);
+  color: var(--ink);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.list-card:hover,
+.timeline-row:hover {
+  border-color: var(--control-border);
+}
+
+/* Selected: accent border, heavier weight and the word "Selected" (never color alone). */
+.list-card.selected,
+.timeline-row.selected {
+  border: 2px solid var(--accent);
+  background: var(--accent-tint);
+  padding: 9px 11px;
+}
+
+.list-card-title {
+  font-weight: 600;
+}
+
+.list-card.selected .list-card-title,
+.timeline-row.selected .timeline-name {
+  font-weight: 700;
+}
+
+.selected-label {
+  color: var(--accent-strong);
+}
+
+.list-card-rate {
+  font-weight: 600;
+}
+
+.badge.warn {
+  background: var(--warn-tint);
+  color: var(--warn-text);
+  justify-self: start;
+}
+
+.list-definitions {
+  margin: 0 0 8px;
+}
+
+.timeline-times {
+  color: var(--muted);
+  font-size: 0.875rem;
+}
+
+.timeline-axis {
+  position: relative;
+  height: 1.25rem;
+  margin: 0 12px 4px;
+  color: var(--muted);
+  font-size: 0.8125rem;
+}
+
+.timeline-axis span {
+  position: absolute;
+  transform: translateX(-50%);
+}
+
+.timeline-axis span:first-child {
+  transform: none;
+}
+
+.timeline-axis span:last-child {
+  transform: translateX(-100%);
+  white-space: nowrap;
+}
+
+.timeline-track {
+  position: relative;
+  display: block;
+  height: 14px;
+  margin-top: 4px;
+  border-radius: 4px;
+  background: var(--ground);
+}
+
+.seg {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+}
+
+.seg.flight {
+  background: var(--accent);
+  border-radius: 3px;
+}
+
+.seg.layover {
+  background: repeating-linear-gradient(
+    45deg,
+    var(--accent-tint),
+    var(--accent-tint) 3px,
+    var(--control-border) 3px,
+    var(--control-border) 4px
+  );
+}
+
+.timeline-row.selected .seg.flight {
+  background: var(--accent-strong);
+}
+
+.map-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.map-toggle {
+  min-height: 44px;
+  padding: 0 14px;
+  border: 1px solid var(--control-border);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--accent);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.map-area {
+  height: 360px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--ground);
+}
+
+@media (min-width: 768px) {
+  .map-area {
+    height: 420px;
+  }
+}
+
+.map-area .maplibregl-canvas:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: -3px;
+}
+
+.map-fallback {
+  padding: 16px;
+  color: var(--muted);
+}
+
+.map-airport {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  pointer-events: none;
+}
+
+.map-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--ink);
+  border: 2px solid var(--surface);
+}
+
+.map-airport.hub .map-dot {
+  width: 14px;
+  height: 14px;
+  background: var(--surface);
+  border: 3px solid var(--hub-2);
+}
+
+.map-label {
+  padding: 0 4px;
+  border-radius: 4px;
+  background: var(--surface);
+  color: var(--ink);
+  font-weight: 700;
+  font-size: 0.8125rem;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

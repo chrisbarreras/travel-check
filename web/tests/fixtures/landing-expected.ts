@@ -32,12 +32,13 @@ export const RAW = {
   shared_days: 242,
   start: "2024-07-01",
   end: "2025-06-30",
-  run_at: "2026-11-26T21:10:45+00:00",
+  run_at: "2026-11-28T03:19:14+00:00",
 } as const;
 
 /** 275/298 = 92.28%; 186/291 = 63.92%; 0.2836 = 28 points; 0.2231 and 0.3457 = 22 and 35. */
 export const EXPECTED = {
-  heading: "LIT to LGA",
+  heading: "Little Rock (LIT) to New York (LGA)",
+  comparison: "The example: Delta via ATL against United via ORD",
   summary: "Delta via ATL worked more often than United via ORD.",
   a: [
     "Worked more often",
@@ -60,7 +61,7 @@ export const EXPECTED = {
     "4 h 59 min",
   ],
   difference: ["+28 points", "95% interval +22 to +35 points, over 242 days both flew."],
-  footer: ["Data period Jul 2024 – Jun 2025.", "Data built 26 Nov 2026."],
+  footer: ["Data period Jul 2024 – Jun 2025.", "Data built 28 Nov 2026."],
 } as const;
 
 /** Throws when the committed data no longer matches `RAW`, naming the first difference. */

@@ -1,8 +1,14 @@
 [
   {
-    "name": "All scripts (gzip)",
-    "path": "dist/assets/*.js",
+    "name": "First-view scripts (gzip)",
+    "path": "dist/assets/index-*.js",
     "limit": "150 kB",
+    "gzip": true
+  },
+  {
+    "name": "Map scripts, loaded after the first view (gzip)",
+    "path": ["dist/assets/MapView-*.js", "dist/assets/maplibre-gl-*.js"],
+    "limit": "300 kB",
     "gzip": true
   }
 ]

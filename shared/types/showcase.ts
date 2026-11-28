@@ -17,6 +17,19 @@ export interface AirlineCoverage {
   sold_passengers: number;
 }
 /**
+ * An airport on the showcase map (specs/004-explorer-core FR-001), from airportsdata.
+ *
+ * This interface was referenced by `Showcase`'s JSON-Schema
+ * via the `definition` "AirportInfo".
+ */
+export interface AirportInfo {
+  city: string;
+  code: string;
+  lat: number;
+  lon: number;
+  name: string;
+}
+/**
  * A faster comparable itinerary whose feasibility is shown, by the paired interval, to
  * be no more than the margin worse (research R8). Both rates carry their samples
  * (Principle I): the alternative may not be in the same file.
@@ -323,15 +336,25 @@ export interface ShowcaseItinerary {
   tight_layover: boolean;
 }
 /**
+ * Median scheduled times. Local minutes are clock times at each airport. The hub arrival
+ * and the inbound flight's duration (specs/004-explorer-core FR-002) are medians over the
+ * itinerary's connecting days, the days `layover_min` and `travel_min` use. The hub
+ * departure is the hub arrival plus `layover_min`, and the outbound flight's duration is
+ * `travel_min` less the inbound flight and the layover, so the parts agree with the totals.
+ *
  * This interface was referenced by `Showcase`'s JSON-Schema
  * via the `definition` "Schedule".
  */
 export interface Schedule {
   arr_local_min: number;
   dep_local_min: number;
+  hub_arr_local_min: number;
+  hub_dep_local_min: number;
+  inbound_min: number;
   layover_min: number;
   nonstop_median_min: number | null;
   nonstop_ratio: number | null;
+  outbound_min: number;
   travel_min: number;
 }
 /**
@@ -385,6 +408,7 @@ export interface RouteSummary {
  * via the `definition` "ShowcaseIndex".
  */
 export interface ShowcaseIndex {
+  airports: AirportInfo[];
   assumptions: Assumptions;
   attribution: Attribution[];
   balance: Balance;

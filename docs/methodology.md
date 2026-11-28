@@ -11,7 +11,7 @@ Every number the project reports has a written definition, a sample size and a d
 | BTS **Marketing Carrier On-Time Performance** (monthly pre-zipped files) | every scheduled flight: marketing and operating airline, schedule, delays, cancellations, diversions, delay causes | July 2024 to June 2025 |
 | BTS **Airline Origin and Destination Survey, DB1B Market** (quarterly pre-zipped files) | which one-connection routings are actually sold, and by which airlines (a 10% ticket sample) | quarters 2024-3 to 2025-2 |
 | BTS **T-100 Domestic Segment (U.S. Carriers)** | passengers boarded per airport, for the hub score only | July 2024 to June 2025 |
-| `airportsdata` (MIT) | IANA time zone of each airport | pinned package version; one override (PBI) in configuration |
+| `airportsdata` (MIT) | IANA time zone of each airport; since feature 004, also the name, city and coordinates of each showcase airport for the explorer map | pinned package version; one override (PBI) in configuration |
 | `tzdata` (Apache 2.0) | time-zone rules | pinned package version; the pipeline never reads a system time-zone database, so the same rules apply on every operating system |
 
 All sources cover the same 12 months, in whole quarters (ADR-0013). DB1B is published about 15 months after a quarter ends, so it sets the period: July 2024 to June 2025 is the latest year for which all three sources exist.
@@ -140,6 +140,13 @@ The rules run in this order (research R2), with the candidates each removes coun
 5. **Connection share**: the two flights connect on at least 60% of the days in the period, less end-of-period days (`connect_share`); a day the inbound flight is not scheduled counts as not connecting (ADR-0013).
 
 Median layover and travel time are taken over connecting days from daily UTC schedules.
+
+<a id="flight-times"></a>**Flight times on the timeline** (feature 004):
+- **Hub arrival and inbound duration:** the inbound flight's scheduled arrival at the hub (hub local time) and its scheduled duration, each the median over the same connecting days.
+- **Hub departure:** that arrival plus the median layover.
+- **Outbound duration:** the travel time less the inbound flight and the layover.
+
+So the three parts always add up to the published travel time, and the hub departure always matches the layover. The medians of separate parts would not add up. The clock times are separate medians, and the final arrival is the median over the outbound flight's days. So adding a duration to a clock time can differ from the next time shown by some minutes, more where a daylight-saving change or a schedule change falls in the period.
 
 ### Connection feasibility
 

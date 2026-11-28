@@ -1,5 +1,6 @@
 // Browser-only types of the data-access module (data-model.md, Web-side types).
 import type {
+  AirportInfo,
   RouteFile,
   ShowcaseComparison,
   ShowcaseIndex,
@@ -36,4 +37,12 @@ export interface LandingView {
   b: ShowcaseItinerary;
   /** `manifest.run.run_at`: the contract types `run` loosely, so it is checked here. */
   builtAt: string;
+}
+
+/** A route for the explorer: validated, cross-checked, itineraries in departure order. */
+export interface RouteView {
+  route: RouteFile;
+  origin: AirportInfo;
+  dest: AirportInfo;
+  itineraries: ShowcaseItinerary[];
 }

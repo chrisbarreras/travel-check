@@ -14,6 +14,7 @@ import {
   signed,
 } from "../../src/format";
 import { committedIndex, committedLanding } from "../fixtures/committed";
+import { landingRegion } from "../fixtures/landing-region";
 import { renderApp } from "../fixtures/render";
 
 const index = committedIndex();
@@ -30,22 +31,24 @@ const b = byId(comparison.itinerary_b);
 
 async function ready() {
   renderApp();
-  return screen.findByRole("heading", { level: 2 });
+  return landingRegion();
 }
 
 describe("the landing comparison, from the committed data (US1)", () => {
   it("names the app and the route with its period", async () => {
-    const heading = await ready();
+    await ready();
+    const heading = screen.getByRole("heading", { level: 2 });
     expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent("Travel Check");
     const origin = a.find.origin;
     const dest = a.find.dest;
-    expect(heading).toHaveTextContent(`${origin} to ${dest}`);
+    expect(heading).toHaveTextContent(`(${origin}) to`);
+    expect(heading).toHaveTextContent(`(${dest})`);
     expect(document.body).toHaveTextContent(periodText(landing.period));
   });
 
   it("shows each itinerary's flights, times, layover and rate with its days", async () => {
-    await ready();
-    const cards = screen.getAllByRole("article");
+    const landing = await ready();
+    const cards = landing.getAllByRole("article");
     expect(cards).toHaveLength(2);
     for (const [card, itinerary] of [
       [cards[0], a],
@@ -71,8 +74,8 @@ describe("the landing comparison, from the committed data (US1)", () => {
   });
 
   it("puts the itinerary that worked more often first, and says so in words", async () => {
-    await ready();
-    const [first] = screen.getAllByRole("article");
+    const landing = await ready();
+    const [first] = landing.getAllByRole("article");
     if (!first) throw new Error("missing card");
     expect(within(first).getByText(/worked more often/i)).toBeInTheDocument();
     expect(first).toHaveTextContent(`${airlineName(a.airline)} via ${a.hub}`);
@@ -92,7 +95,7 @@ describe("the landing comparison, from the committed data (US1)", () => {
     for (const key of ["connection_feasibility", "paired_days", "comparison_difference"]) {
       const definition = index.definitions.find((d) => d.key === key);
       if (!definition) throw new Error(`no definition ${key}`);
-      expect(screen.getByText(definition.text)).toBeInTheDocument();
+      expect(screen.getAllByText(definition.text).length).toBeGreaterThan(0);
     }
     const summaries = document.querySelectorAll("details > summary");
     expect(summaries.length).toBeGreaterThanOrEqual(3);
@@ -110,8 +113,8 @@ describe("the landing comparison, from the committed data (US1)", () => {
     }
   });
 
-  it("says this is an early version", async () => {
+  it("introduces the explorer", async () => {
     await ready();
-    expect(screen.getByText(/early version/i)).toBeInTheDocument();
+    expect(screen.getByText(/Twelve example routes/)).toBeInTheDocument();
   });
 });

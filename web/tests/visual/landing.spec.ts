@@ -1,11 +1,15 @@
 // Visual references (FR-019). Runs only inside the pinned container (playwright.config.ts);
 // references change only with `npm run test:visual:update` and a reviewed diff.
-import { expect, openLanding, test } from "../browser";
+import { expect, openLanding, settle, test } from "../browser";
 
 for (const width of [360, 1280]) {
   test(`landing page at ${String(width)} px`, async ({ page }) => {
     await openLanding(page, width);
-    await expect(page).toHaveScreenshot(`landing-${String(width)}.png`, { fullPage: true });
+    await settle(page);
+    await expect(page).toHaveScreenshot(`landing-${String(width)}.png`, {
+      fullPage: true,
+      mask: [page.locator("#map-area")],
+    });
   });
 }
 
@@ -17,7 +21,10 @@ test("error state at 360 px", async ({ page }) => {
   await page.goto("./");
   await expect(page.getByText("This example could not be loaded")).toBeVisible();
   await page.evaluate(() => document.fonts.ready);
-  await expect(page).toHaveScreenshot("error-360.png", { fullPage: true });
+  await expect(page).toHaveScreenshot("error-360.png", {
+    fullPage: true,
+    mask: [page.locator("#map-area")],
+  });
 });
 
 test("loading state at 360 px", async ({ page }) => {
@@ -26,5 +33,8 @@ test("loading state at 360 px", async ({ page }) => {
   await page.goto("./");
   await expect(page.getByTestId("skeleton")).toBeVisible();
   await page.evaluate(() => document.fonts.ready);
-  await expect(page).toHaveScreenshot("loading-360.png", { fullPage: true });
+  await expect(page).toHaveScreenshot("loading-360.png", {
+    fullPage: true,
+    mask: [page.locator("#map-area")],
+  });
 });

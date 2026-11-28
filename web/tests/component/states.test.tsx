@@ -25,6 +25,19 @@ const offlineSource: DataSource = {
   getManifest: () => failure("manifest.json"),
 };
 
+/**
+ * A bad landing file affects only the landing comparison: its slot shows the plain message
+ * and no figures, while the route's list still works.
+ */
+function expectSlotError(message: HTMLElement) {
+  const slot = message.closest(".detail-slot");
+  expect(slot).not.toBeNull();
+  expect(slot?.textContent).not.toMatch(/\d/);
+  expect(
+    screen.getByRole("region", { name: /Itineraries, by departure time/ }),
+  ).toBeInTheDocument();
+}
+
 function expectNoFigures() {
   const main = screen.getByRole("main");
   expect(main.textContent).not.toMatch(/\d/);
@@ -59,16 +72,14 @@ describe("page states", () => {
     const files = committedFiles();
     files["landing.json"] = { ...committedLanding(), itineraries: "not a list" };
     renderApp(memorySource(files));
-    expect(await screen.findByText(MESSAGE, { exact: false })).toBeInTheDocument();
-    expectNoFigures();
+    expectSlotError(await screen.findByText(MESSAGE, { exact: false }));
   });
 
   it("shows the plain message when the landing comparison is missing", async () => {
     const files = committedFiles();
     files["landing.json"] = { ...clone(committedLanding()), comparisons: [] };
     renderApp(memorySource(files));
-    expect(await screen.findByText(MESSAGE, { exact: false })).toBeInTheDocument();
-    expectNoFigures();
+    expectSlotError(await screen.findByText(MESSAGE, { exact: false }));
   });
 
   it("shows the plain message, not a blank page, when rendering throws", async () => {

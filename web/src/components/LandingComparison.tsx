@@ -13,10 +13,10 @@ export function LandingComparison({ view }: { view: LandingView }) {
   const verdict = comparable ? similarOrMore(comparison.ci_low, comparison.ci_high) : null;
   const definition = (key: string) => index.definitions.find((d) => d.key === key);
   return (
-    <section className="comparison" aria-labelledby="route-heading">
-      <h2 id="route-heading">
-        {a.find.origin} to {a.find.dest}
-      </h2>
+    <section className="comparison" aria-labelledby="comparison-heading">
+      <h3 id="comparison-heading">
+        The example: {name(a)} against {name(b)}
+      </h3>
       <p className="muted">Two one-stop itineraries on the same route, {period}.</p>
       <p className="summary">
         {verdict === "more" ? `${name(a)} worked more often than ${name(b)}.` : null}

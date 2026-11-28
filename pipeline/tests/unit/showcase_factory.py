@@ -6,6 +6,7 @@ import datetime as dt
 from typing import Any
 
 from flight_pipeline.showcase.models import (
+    AirportInfo,
     Assumptions,
     Balance,
     BalanceCaps,
@@ -62,6 +63,10 @@ def itinerary(iid: str, hub: str = "ORD", *, paired: int = 40, feasible: int = 3
             travel_min=400,
             nonstop_median_min=None,
             nonstop_ratio=None,
+            hub_arr_local_min=630,
+            hub_dep_local_min=720,
+            inbound_min=150,
+            outbound_min=160,
         ),
         "result": rate(paired, feasible),
         "failures": FailureBreakdown(
@@ -180,6 +185,10 @@ def index(routes: list[RouteFile] | None = None, **kw: Any) -> ShowcaseIndex:
                 file=f"routes/{r.route_id}.json",
             )
             for r in routes
+        ],
+        "airports": [
+            AirportInfo(code=c, name=f"{c} airport", city=f"{c} city", lat=40.0, lon=-90.0)
+            for c in sorted({x for r in routes for x in (r.route_id[:3], r.route_id[4:])})
         ],
         "landing": LandingRef(
             route_id=routes[0].route_id,

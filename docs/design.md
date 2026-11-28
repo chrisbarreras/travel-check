@@ -21,7 +21,13 @@ The constitution's Principles I (statistical honesty) and V (accessible and clea
 | **Search** | Two tabs, *Browse flights* (from, to, date, filters) and *Paste from another site*, leading to the same results list | 2 |
 | **How the numbers work** | Plain-language methodology with links to `docs/methodology.md` | 1 |
 
-Layout: a header with the route and data period; on wide screens the map and itinerary list side by side, with the detail panel below; on phones everything stacks, the map collapses, and the selected itinerary expands in place. Content width is capped at about 1360 px.
+Layout (as built in `explorer-core`, 2026-11-28):
+- **Top:** a header, the route picker, and the route with its data period.
+- **Detail slot, next:** the landing comparison, or the selected itinerary. Selecting an itinerary scrolls the slot into view.
+- **Wide screens:** below the slot, the itinerary list on the left, with the map above the timeline on the right.
+- **Phones:** everything stacks as list, timeline, map, with the map hidden behind a "Show map" button.
+
+Content width is capped at about 1360 px. The detail slot moved above the list from the mockup's "detail panel below", so a selection is visible without scrolling past the list.
 
 ## Color
 
@@ -63,7 +69,7 @@ Both fonts are SIL Open Font License, served from Google Fonts or self-hosted.
 
 ## Map
 
-- MapLibre with a muted, low-contrast basemap, so the routes carry the color.
+- MapLibre with a muted, low-contrast basemap, so the routes carry the color. The style (`web/public/basemap-style.json`) draws only water and state and country lines from OpenFreeMap's vector tiles. Airport labels are HTML, so no font server is needed. When tiles fail, the background and routes still draw.
 - Curved great-circle-style route lines through each hub; the selected itinerary's route is thicker and solid, the others thin and dashed. Selection is never shown by color alone.
 - Airport and hub labels in text; hubs drawn as outlined circles.
 - The basemap provider's attribution is always visible (constitution, data licences).

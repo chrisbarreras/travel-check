@@ -37,7 +37,7 @@ from flight_pipeline.showcase.models import (
     ShowcaseIndex,
 )
 
-SCHEMA_VERSION = "1.0.0"
+SCHEMA_VERSION = "1.1.0"  # 1.1.0: airports and schedule hub times (specs/004)
 FLOAT_DECIMALS = 6
 
 # Phrases that describe a prediction or a passenger outcome rather than a historical
@@ -106,6 +106,16 @@ DEFINITIONS: dict[str, tuple[str, str]] = {
     "travel_time": (
         "Scheduled minutes from departure at the origin to arrival at the destination, the "
         "median over connecting days.",
+        "itineraries",
+    ),
+    "flight_times": (
+        "Scheduled local clock times and durations, each a separate median, so adding a "
+        "duration to a clock time can differ from the next time shown by some minutes. The "
+        "departure, the hub arrival and the inbound flight's duration are medians over "
+        "connecting days; the final arrival is the median over the outbound flight's days. The "
+        "hub departure is the hub arrival plus the median layover, and the outbound flight's "
+        "duration is the travel time less the inbound flight and the layover, so the three "
+        "durations add up to the travel time.",
         "itineraries",
     ),
     "nonstop_ratio": (
@@ -193,8 +203,8 @@ ATTRIBUTION: tuple[Attribution, ...] = (
     Attribution(
         source="airportsdata",
         text=(
-            "Airport time zones from the airportsdata package, Copyright (c) 2020- Mike "
-            "Borsetti (includes data Copyright (c) 2014 mwgg)."
+            "Airport names, cities, locations and time zones from the airportsdata package, "
+            "Copyright (c) 2020- Mike Borsetti (includes data Copyright (c) 2014 mwgg)."
         ),
         licence="MIT",
         url="https://github.com/mborsetti/airportsdata",
