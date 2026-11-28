@@ -2,9 +2,11 @@
 
 ## R1. Map library and loading
 
-**Decision:** `maplibre-gl` 6.18.0 through `@vis.gl/react-maplibre` 8.1.3, imported with `React.lazy` after the first view renders. The style URL comes from configuration (`VITE_BASEMAP_STYLE`), and defaults to OpenFreeMap's `positron` style.
+**Decision:** `maplibre-gl` 5.24.1 through `@vis.gl/react-maplibre` 8.1.3, imported with `React.lazy` after the first view renders. The style URL comes from configuration (`VITE_BASEMAP_STYLE`), and defaults to OpenFreeMap's `positron` style.
 
 **Rationale:** these are ADR-0002's choices. Lazy loading keeps the first view within its 150 KB budget, and the list and timeline don't depend on the map.
+
+**Why 5.24.1, not 6:** MapLibre 6 ships its main code and its web worker as separate ES modules, and starts the worker from a URL inside the dependency. With Vite, the worker either failed to load or, once bundled separately, never completed the map's `load`. That also put the map at about 450 KB gzip. MapLibre 5.24.1 (released 2026-11-11) ships one bundle with the worker built in, works with Vite unchanged, and is 273 KB gzip. Revisit 6 when its bundler integration settles.
 
 **Alternatives:**
 - **A static SVG map with a projection library:** smaller, but no basemap context, and it would break with ADR-0002.
@@ -52,7 +54,7 @@
 
 **Decision:**
 - first-view JS at most 150 KB gzip;
-- the map chunk at most 300 KB gzip (size-limit with two entries);
+- the map scripts at most 300 KB gzip (size-limit with two entries; MapLibre 5.24.1 with its built-in worker measures 273 KB);
 - the largest route file at most 150 KB gzip (check-data-size extended);
 - the Lighthouse thresholds unchanged.
 

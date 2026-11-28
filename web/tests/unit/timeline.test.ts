@@ -8,7 +8,11 @@ const it_ = (id: string, dep: number, inbound: number, layover: number, travel: 
 
 describe("byDeparture (never by rate; spec Clarifications)", () => {
   it("orders by scheduled departure, then by id", () => {
-    const ordered = byDeparture([it_("c", 900, 60, 60, 300), it_("b", 600, 60, 60, 300), it_("a", 900, 60, 60, 300)]);
+    const ordered = byDeparture([
+      it_("c", 900, 60, 60, 300),
+      it_("b", 600, 60, 60, 300),
+      it_("a", 900, 60, 60, 300),
+    ]);
     expect(ordered.map((i) => i.itinerary_id)).toEqual(["b", "a", "c"]);
   });
 

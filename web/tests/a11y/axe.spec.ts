@@ -23,3 +23,23 @@ test("error state has no violations", async ({ page }) => {
   const results = await new AxeBuilder({ page }).withTags(TAGS).analyze();
   expect(results.violations).toEqual([]);
 });
+
+for (const width of [360, 1280]) {
+  test(`a route with a selected itinerary at ${String(width)} px has no violations`, async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width, height: 900 });
+    await page.goto("./?route=MCO-LAS");
+    const list = page.getByRole("region", { name: /Itineraries, by departure time/ });
+    await list.getByRole("button").nth(2).click();
+    await expect(page.getByRole("article")).toBeVisible();
+    if (width < 768) await page.getByRole("button", { name: "Show map" }).click();
+    await page.waitForFunction(() => window.__travelCheckMap?.loaded() === true);
+    // Open every definition so their contents are checked too.
+    await page.evaluate(() => {
+      for (const d of document.querySelectorAll("details")) d.open = true;
+    });
+    const results = await new AxeBuilder({ page }).withTags(TAGS).analyze();
+    expect(results.violations).toEqual([]);
+  });
+}

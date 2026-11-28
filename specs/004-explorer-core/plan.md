@@ -24,7 +24,7 @@ All views read and write one selection held in the address (`route`, `itinerary`
 **Language/Version**: TypeScript strict on Node 24 (web); Python 3.13 (pipeline addition).
 
 **Primary Dependencies**:
-- `maplibre-gl` 6.18.0 with `@vis.gl/react-maplibre` 8.1.3 (react-map-gl's MapLibre package; ADR-0002);
+- `maplibre-gl` 5.24.1 with `@vis.gl/react-maplibre` 8.1.3 (react-map-gl's MapLibre package; ADR-0002);
 - `@turf/great-circle` 7.4.0 for the curved paths (ADR-0002);
 - no router library: the selection is two query parameters read and written with the History API.
 
@@ -38,7 +38,7 @@ All views read and write one selection held in the address (`route`, `itinerary`
 
 **Performance Goals**:
 - first-view scripts at most 150 KB gzip;
-- the lazily loaded map chunk at most 300 KB gzip;
+- the lazily loaded map scripts at most 300 KB gzip (MapLibre 5.24.1 with its built-in worker measures 273 KB);
 - Lighthouse mobile performance at least 0.90 and accessibility 1.00 on the default view;
 - the largest route file at most 150 KB gzip (it is about 25 KB today).
 
@@ -93,4 +93,4 @@ web/tests/
 
 | Addition | Why needed | Simpler alternative rejected because |
 |---|---|---|
-| A second script budget for a lazily loaded map chunk | MapLibre is about 250 KB gzip, above the 150 KB first-view budget | Loading it in the first view would break SC-004. A static map image would not support selection or rendered-feature tests |
+| A second script budget for a lazily loaded map chunk | MapLibre is about 275 KB gzip, above the 150 KB first-view budget | Loading it in the first view would break SC-004. A static map image would not support selection or rendered-feature tests |

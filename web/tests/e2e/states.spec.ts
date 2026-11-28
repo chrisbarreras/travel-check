@@ -7,7 +7,9 @@ test("a malformed landing file shows the plain error and no figures", async ({ p
   );
   await page.goto("./");
   await expect(page.getByText("This example could not be loaded")).toBeVisible();
-  await expect(page.getByRole("main")).not.toContainText(/\d/);
+  // Only the landing comparison fails; the route's list still works.
+  await expect(page.locator(".detail-slot")).not.toContainText(/\d/);
+  await expect(page.getByRole("region", { name: /Itineraries, by departure time/ })).toBeVisible();
 });
 
 test("a missing landing file shows the plain error", async ({ page }) => {
@@ -28,9 +30,8 @@ test("slow data shows the layout's shape without numbers", async ({ page }) => {
     await route.continue();
   });
   await page.goto("./");
-  await expect(page.getByTestId("skeleton")).toBeVisible();
-  await expect(page.getByRole("main")).toHaveAttribute("aria-busy", "true");
-  await expect(page.getByRole("main")).not.toContainText(/\d/);
+  await expect(page.locator(".detail-slot").getByTestId("skeleton")).toBeVisible();
+  await expect(page.locator(".detail-slot")).not.toContainText(/\d/);
   release();
-  await expect(page.getByRole("heading", { level: 2 })).toBeVisible();
+  await expect(page.getByRole("region", { name: /^The example:/ })).toBeVisible();
 });

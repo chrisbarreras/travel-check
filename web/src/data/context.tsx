@@ -39,7 +39,6 @@ function useLoaded<T>(key: string, load: () => Promise<Result<T>>): Loaded<T> {
   });
   useEffect(() => {
     let current = true;
-    setState({ key, loaded: { state: "loading" } });
     void load().then((result) => {
       if (current) {
         setState({

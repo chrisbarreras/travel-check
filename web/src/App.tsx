@@ -1,28 +1,27 @@
-import { LandingComparison } from "./components/LandingComparison";
 import { Footer } from "./components/Footer";
 import { LoadError } from "./components/LoadError";
 import { Skeleton } from "./components/Skeleton";
-import { useLandingView } from "./data";
+import { useShowcase } from "./data";
+import { Explorer } from "./explorer/Explorer";
 
 export function App() {
-  const landing = useLandingView();
+  const showcase = useShowcase();
   return (
     <>
       <header className="header">
         <h1>Travel Check</h1>
         <p className="lead">How often did a flight connection actually work?</p>
         <p className="notice">
-          Early version: one real example from a year of U.S. on-time data. The full explorer, with
-          more routes, follows.
+          Twelve example routes from a year of U.S. on-time data. Pick a route, then an itinerary.
         </p>
       </header>
-      <main id="main" aria-busy={landing.state === "loading"}>
-        {landing.state === "loading" ? <Skeleton /> : null}
-        {landing.state === "ready" ? <LandingComparison view={landing.view} /> : null}
-        {landing.state === "error" ? <LoadError /> : null}
+      <main id="main" aria-busy={showcase.state === "loading"}>
+        {showcase.state === "loading" ? <Skeleton /> : null}
+        {showcase.state === "ready" ? <Explorer index={showcase.view.index} /> : null}
+        {showcase.state === "error" ? <LoadError /> : null}
       </main>
-      {landing.state === "ready" ? (
-        <Footer index={landing.view.index} builtAt={landing.view.builtAt} />
+      {showcase.state === "ready" ? (
+        <Footer index={showcase.view.index} builtAt={showcase.view.builtAt} />
       ) : (
         <Footer />
       )}

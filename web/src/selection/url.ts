@@ -31,7 +31,10 @@ export function parseSelection(search: string, index: IndexLike): Parsed {
   if (!index.routes.some((r) => r.route_id === route)) {
     return { selection: fallback, note: NOT_FOUND };
   }
-  return { selection: { routeId: route, itineraryId: itinerary || null }, note: null };
+  return {
+    selection: { routeId: route, itineraryId: itinerary === "" ? null : itinerary },
+    note: null,
+  };
 }
 
 /** Checks the itinerary once the route's itineraries are known. */

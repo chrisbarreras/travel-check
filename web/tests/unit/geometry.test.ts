@@ -23,7 +23,9 @@ describe("routePaths (pure map geometry, constitution II)", () => {
     const coords = paths.features[0]?.geometry.coordinates ?? [];
     expect(coords[0]?.[0]).toBeCloseTo(-92.22, 2);
     expect(coords.at(-1)?.[0]).toBeCloseTo(-73.87, 2);
-    const atHub = coords.some(([lon, lat]) => Math.abs((lon ?? 0) + 84.43) < 0.01 && Math.abs((lat ?? 0) - 33.64) < 0.01);
+    const atHub = coords.some(
+      ([lon, lat]) => Math.abs(lon + 84.43) < 0.01 && Math.abs(lat - 33.64) < 0.01,
+    );
     expect(atHub).toBe(true);
   });
 
@@ -39,12 +41,14 @@ describe("routePaths (pure map geometry, constitution II)", () => {
 
 describe("airportPoints and bounds", () => {
   it("marks the hubs and the route ends", () => {
-    expect(airportPoints(airports, "LIT", "LGA", itineraries).map((p) => [p.code, p.role])).toEqual([
-      ["LIT", "origin"],
-      ["LGA", "destination"],
-      ["ATL", "hub"],
-      ["ORD", "hub"],
-    ]);
+    expect(airportPoints(airports, "LIT", "LGA", itineraries).map((p) => [p.code, p.role])).toEqual(
+      [
+        ["LIT", "origin"],
+        ["LGA", "destination"],
+        ["ATL", "hub"],
+        ["ORD", "hub"],
+      ],
+    );
   });
 
   it("covers every point with a margin", () => {

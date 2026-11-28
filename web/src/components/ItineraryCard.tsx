@@ -41,19 +41,24 @@ export function ItineraryCard({
   headingId,
   period,
   badge,
+  emphasis = badge !== undefined,
+  badgeTone = "accent",
 }: {
   itinerary: ShowcaseItinerary;
   headingId: string;
   period: string;
   badge?: string | undefined;
+  /** Sets the card apart; only for the itinerary that worked more often. */
+  emphasis?: boolean;
+  badgeTone?: "accent" | "warn";
 }) {
   const rate = rateText(itinerary.result, period);
   const excluded = excludedText(itinerary.excluded_days);
   const flights = flightNumbers(itinerary.find.legs);
   const [inbound, outbound] = flights.numbers;
   return (
-    <article className={badge ? "card card--higher" : "card"} aria-labelledby={headingId}>
-      {badge ? <p className="badge">{badge}</p> : null}
+    <article className={emphasis ? "card card--higher" : "card"} aria-labelledby={headingId}>
+      {badge ? <p className={badgeTone === "warn" ? "badge warn" : "badge"}>{badge}</p> : null}
       <h3 id={headingId}>{itineraryName(itinerary)}</h3>
       <p className="rate">
         {rate.kind === "ok" ? (

@@ -28,19 +28,19 @@ description: "Task list for the explorer core"
 
 ## Phase 3: US1, explore any showcase route in three linked views (P1)
 
-- [ ] T010 [US1] Add RoutePicker, ItineraryList (cards as buttons with `aria-pressed`, tight-layover badge) and DetailPanel (reusing ItineraryCard and the definitions), with component tests for selection sync (FR-004, FR-005, FR-009)
-- [ ] T011 [US1] Add the Timeline (SVG bars inside one labelled button per itinerary) with a component test (FR-007)
-- [ ] T012 [US1] Add the lazily loaded MapView: airports as HTML markers, paths as a GeoJSON line layer (selected solid and thick, others dashed), click to select, attribution, and a test-only map handle (FR-006, FR-012)
-- [ ] T013 [US1] Add the e2e tests: for every route, the list, timeline and map features match the route file; selecting from each view updates the others (SC-001, SC-002)
+- [X] T010 [US1] Add RoutePicker, ItineraryList (cards as buttons with `aria-pressed`, tight-layover badge) and DetailPanel (reusing ItineraryCard and the definitions), with component tests for selection sync (FR-004, FR-005, FR-009)
+- [X] T011 [US1] Add the Timeline (SVG bars inside one labelled button per itinerary) with a component test (FR-007)
+- [X] T012 [US1] Add the lazily loaded MapView: airports as HTML markers, paths as a GeoJSON line layer (selected solid and thick, others dashed), click to select, attribution, and a test-only map handle (FR-006, FR-012)
+- [X] T013 [US1] Add the e2e tests: for every route, the list, timeline and map features match the route file; selecting from each view updates the others (SC-001, SC-002)
 
 ## Phase 4: US2, every view has a link (P1)
 
-- [ ] T014 [US2] Wire the selection hook into the explorer, with the landing default and the fallback note. E2e tests: every route and itinerary reopens from its address; back and forward; invalid addresses (FR-008, FR-010, SC-003)
+- [X] T014 [US2] Wire the selection hook into the explorer, with the landing default and the fallback note. E2e tests: every route and itinerary reopens from its address; back and forward; invalid addresses (FR-008, FR-010, SC-003)
 
 ## Phase 5: US3, keyboard, assistive technology and phones (P2)
 
-- [ ] T015 [US3] Phone layout (stacked order; map hidden behind a labelled toggle), map text description, and a live region announcing the selection (FR-013, FR-014)
-- [ ] T016 [US3] Extend the axe and keyboard tests to the explorer (route picker, list, timeline, toggle), and the visual references for each view at 360 and 1280 px (SC-005)
+- [X] T015 [US3] Phone layout (stacked order; map hidden behind a labelled toggle), map text description, and a live region announcing the selection (FR-013, FR-014)
+- [X] T016 [US3] Extend the axe and keyboard tests to the explorer (route picker, list, timeline, toggle), and the visual references for each view at 360 and 1280 px (SC-005)
 
 ## Phase 6: Polish
 

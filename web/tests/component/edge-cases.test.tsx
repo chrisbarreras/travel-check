@@ -1,8 +1,8 @@
-import { screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import type { RouteFile } from "@contract";
 import { memorySource } from "../../src/data";
 import { clone, committedFiles, committedIndex, committedLanding } from "../fixtures/committed";
+import { landingRegion } from "../fixtures/landing-region";
 import { renderApp } from "../fixtures/render";
 
 const index = committedIndex();
@@ -40,8 +40,8 @@ describe("display rules on edge-case data (spec, Edge Cases)", () => {
         };
       }),
     );
-    await screen.findByRole("heading", { level: 2 });
-    const [, second] = screen.getAllByRole("article");
+    const landing = await landingRegion();
+    const [, second] = landing.getAllByRole("article");
     expect(second).toHaveTextContent("insufficient data (12 days, Jul 2024 – Jun 2025)");
     expect(second?.textContent).not.toMatch(/worked on \d+%/);
     expect(second?.querySelector(".rate-value")).toBeNull();
@@ -64,7 +64,7 @@ describe("display rules on edge-case data (spec, Edge Cases)", () => {
         comparison.ci_high = 0.05;
       }),
     );
-    await screen.findByRole("heading", { level: 2 });
+    await landingRegion();
     expect(document.body).toHaveTextContent(/worked on a similar share of days/i);
     expect(document.body.textContent).not.toMatch(/worked more often/i);
   });
@@ -78,8 +78,8 @@ describe("display rules on edge-case data (spec, Edge Cases)", () => {
         a.schedule.arr_local_min = 390; // 6:30 am, three time zones east
       }),
     );
-    await screen.findByRole("heading", { level: 2 });
-    const [first] = screen.getAllByRole("article");
+    const landing = await landingRegion();
+    const [first] = landing.getAllByRole("article");
     expect(first).toHaveTextContent("6:30 am");
     expect(first).toHaveTextContent("+1 day");
   });
@@ -91,8 +91,8 @@ describe("display rules on edge-case data (spec, Edge Cases)", () => {
         a.airline_out = "AS";
       }),
     );
-    await screen.findByRole("heading", { level: 2 });
-    const [first] = screen.getAllByRole("article");
+    const landing = await landingRegion();
+    const [first] = landing.getAllByRole("article");
     expect(first).toHaveTextContent("Delta and Alaska via ATL");
     expect(document.querySelector(".summary")).toHaveTextContent(
       "Delta and Alaska via ATL worked more often",

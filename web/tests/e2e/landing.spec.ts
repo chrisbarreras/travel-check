@@ -3,7 +3,7 @@
 // formatting code under test, and are tied to the data by `checkRaw`.
 import { committedIndex, committedLanding, committedManifest } from "../fixtures/committed";
 import { EXPECTED, checkRaw } from "../fixtures/landing-expected";
-import { WIDTHS, expect, openLanding, test } from "../browser";
+import { WIDTHS, expect, landing, openLanding, test } from "../browser";
 
 test("the hand-checked expectations still describe the committed data", () => {
   checkRaw(committedLanding(), committedManifest().run.run_at);
@@ -16,13 +16,17 @@ for (const width of WIDTHS) {
       await expect(page).toHaveTitle("Travel Check");
       await expect(page.getByRole("heading", { level: 1 })).toHaveText("Travel Check");
       await expect(page.getByRole("heading", { level: 2 })).toHaveText(EXPECTED.heading);
-      await expect(page.locator(".summary")).toHaveText(EXPECTED.summary);
-      const cards = page.getByRole("article");
+      const example = landing(page);
+      await expect(example.getByRole("heading", { level: 3 }).first()).toHaveText(
+        EXPECTED.comparison,
+      );
+      await expect(example.locator(".summary")).toHaveText(EXPECTED.summary);
+      const cards = example.getByRole("article");
       await expect(cards).toHaveCount(2);
       for (const text of EXPECTED.a) await expect(cards.nth(0)).toContainText(text);
       for (const text of EXPECTED.b) await expect(cards.nth(1)).toContainText(text);
       await expect(cards.nth(1)).not.toContainText("Not counted");
-      const difference = page.locator(".difference");
+      const difference = example.locator(".difference");
       for (const text of EXPECTED.difference) await expect(difference).toContainText(text);
       const footer = page.getByRole("contentinfo");
       for (const text of EXPECTED.footer) await expect(footer).toContainText(text);
@@ -31,7 +35,7 @@ for (const width of WIDTHS) {
       }
       // No other percentage appears unexplained (constitution, Principle I).
       const percentages = await page
-        .locator("main")
+        .getByRole("region", { name: /^The example:/ })
         .evaluate((m) => m.textContent.match(/\d+%(?! interval)/g));
       expect(percentages).toEqual(["92%", "92%", "64%", "64%"]);
     });

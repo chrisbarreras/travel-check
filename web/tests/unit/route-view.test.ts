@@ -13,7 +13,9 @@ describe("buildRouteView (FR-011)", () => {
     expect(view.ok).toBe(true);
     if (!view.ok) return;
     expect(view.value.itineraries.map((i) => i.itinerary_id).sort()).toEqual(
-      routeFile(id).itineraries.map((i) => i.itinerary_id).sort(),
+      routeFile(id)
+        .itineraries.map((i) => i.itinerary_id)
+        .sort(),
     );
     expect(view.value.origin.code).toBe(id.slice(0, 3));
     expect(view.value.dest.code).toBe(id.slice(4));

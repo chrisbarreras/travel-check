@@ -9,9 +9,11 @@ test("the live site shows the landing comparison", async ({ page }) => {
   await expect(page.getByRole("heading", { level: 2 })).toHaveText(EXPECTED.heading, {
     timeout: 30_000,
   });
-  const cards = page.getByRole("article");
+  const example = page.getByRole("region", { name: /^The example:/ });
+  await expect(example).toContainText(EXPECTED.comparison);
+  const cards = example.getByRole("article");
   for (const text of EXPECTED.a) await expect(cards.nth(0)).toContainText(text);
   for (const text of EXPECTED.b) await expect(cards.nth(1)).toContainText(text);
   for (const text of EXPECTED.difference)
-    await expect(page.locator(".difference")).toContainText(text);
+    await expect(example.locator(".difference")).toContainText(text);
 });
