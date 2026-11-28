@@ -160,10 +160,11 @@ test.describe("links (US2, SC-003)", () => {
     expect(new URL(page.url()).search).toBe("");
   });
 
-  test("an itinerary not on the route keeps the route, with a note", async ({ page }) => {
+  test("an itinerary not on the route opens the default view with a note", async ({ page }) => {
     await page.goto("./?route=MCO-LAS&itinerary=nope");
-    await expect(page.getByRole("status")).toContainText("linked itinerary was not found");
-    expect(new URL(page.url()).search).toBe("?route=MCO-LAS");
+    await expect(page.getByRole("status")).toContainText("was not found");
+    await expect(page.getByRole("region", { name: /^The example:/ })).toBeVisible();
+    expect(new URL(page.url()).search).toBe("");
   });
 });
 
@@ -196,4 +197,33 @@ test("on a phone the map is hidden behind a labelled button (FR-013)", async ({ 
     ),
   );
   expect([...order].sort((x, y) => x - y)).toEqual(order);
+});
+
+test("with the real basemap style but no tiles, the routes still draw (spec, Edge Cases)", async ({
+  page,
+}) => {
+  // Serve the real style; its tile requests leave the local server and are blocked.
+  await page.route("**/basemap-style.json", (route) => route.continue());
+  await page.setViewportSize({ width: 1280, height: 900 });
+  await page.goto("./?route=LAX-DCA");
+  await waitForMap(page);
+  expect((await drawnPaths(page)).all.length).toBe(routeFile("LAX-DCA").itineraries.length);
+  await expect(page.locator(".maplibregl-ctrl-attrib")).toContainText("OpenStreetMap");
+});
+
+test.describe("every itinerary on every route selects in all views (SC-002)", () => {
+  for (const routeId of routeIds) {
+    test(routeId, async ({ page }) => {
+      await page.setViewportSize({ width: 1280, height: 900 });
+      await page.goto(`./?route=${routeId}`);
+      await waitForMap(page);
+      for (const it of routeFile(routeId).itineraries) {
+        await list(page).locator(`[data-itinerary="${it.itinerary_id}"]`).click();
+        await expect(
+          timeline(page).locator(`[data-itinerary="${it.itinerary_id}"]`),
+        ).toHaveAttribute("aria-pressed", "true");
+        await expect.poll(async () => (await drawnPaths(page)).selected).toEqual([it.itinerary_id]);
+      }
+    });
+  }
 });

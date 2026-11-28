@@ -93,4 +93,5 @@ web/tests/
 
 | Addition | Why needed | Simpler alternative rejected because |
 |---|---|---|
+| Visual references mask the map area | Under the software renderer, the map can shift by a pixel between runs, so exact screenshots of it flake | The map is checked through its rendered features instead, which is what the constitution asks of map tests (Principle II). The rest of each page is compared exactly |
 | A second script budget for a lazily loaded map chunk | MapLibre is about 275 KB gzip, above the 150 KB first-view budget | Loading it in the first view would break SC-004. A static map image would not support selection or rendered-feature tests |

@@ -18,7 +18,6 @@ interface IndexLike {
 }
 
 export const NOT_FOUND = "The linked example was not found, so the default example is shown.";
-export const ITINERARY_NOT_FOUND = "The linked itinerary was not found on this route.";
 
 export function parseSelection(search: string, index: IndexLike): Parsed {
   const params = new URLSearchParams(search);
@@ -37,12 +36,19 @@ export function parseSelection(search: string, index: IndexLike): Parsed {
   };
 }
 
-/** Checks the itinerary once the route's itineraries are known. */
-export function resolveItinerary(selection: Selection, itineraryIds: readonly string[]): Parsed {
+/**
+ * Checks the itinerary once the route's itineraries are known. An itinerary not on the route
+ * opens the default view, like an unknown route (FR-010).
+ */
+export function resolveItinerary(
+  selection: Selection,
+  itineraryIds: readonly string[],
+  landingRouteId: string,
+): Parsed {
   if (selection.itineraryId === null || itineraryIds.includes(selection.itineraryId)) {
     return { selection, note: null };
   }
-  return { selection: { ...selection, itineraryId: null }, note: ITINERARY_NOT_FOUND };
+  return { selection: { routeId: landingRouteId, itineraryId: null }, note: NOT_FOUND };
 }
 
 /** The query string for a selection; the default view has none. */

@@ -3,7 +3,13 @@ import { byDeparture, timelineRows } from "../../src/format/timeline";
 
 const it_ = (id: string, dep: number, inbound: number, layover: number, travel: number) => ({
   itinerary_id: id,
-  schedule: { dep_local_min: dep, inbound_min: inbound, layover_min: layover, travel_min: travel },
+  schedule: {
+    dep_local_min: dep,
+    inbound_min: inbound,
+    layover_min: layover,
+    outbound_min: travel - inbound - layover,
+    travel_min: travel,
+  },
 });
 
 describe("byDeparture (never by rate; spec Clarifications)", () => {
@@ -42,8 +48,8 @@ describe("timelineRows", () => {
     expect(timelineRows([])).toEqual({ rows: [], start: 0, extent: 0 });
   });
 
-  it("never gives a negative segment", () => {
-    const { rows } = timelineRows([it_("x", 0, 200, 150, 300)]);
-    expect(rows[0]?.outbound).toBe(0);
+  it("uses the published durations", () => {
+    const { rows } = timelineRows([it_("x", 0, 95, 99, 327)]);
+    expect(rows[0]).toEqual({ id: "x", offset: 0, inbound: 95, layover: 99, outbound: 133 });
   });
 });

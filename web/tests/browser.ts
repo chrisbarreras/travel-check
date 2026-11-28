@@ -1,5 +1,13 @@
 // Shared Playwright fixture: no request may leave the local preview server (FR-022).
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
 import { test as base, expect, type Page } from "@playwright/test";
+
+/** The local blank basemap every test uses instead of the real style (FR-016, research R5). */
+const BLANK_STYLE = readFileSync(
+  join(process.cwd(), "tests", "fixtures", "blank-style.json"),
+  "utf8",
+);
 
 export const test = base.extend({
   page: async ({ page, baseURL }, use) => {
@@ -12,6 +20,9 @@ export const test = base.extend({
       const url = new URL(route.request().url());
       return url.origin === allowed ? route.continue() : route.abort("blockedbyclient");
     });
+    await page.route("**/basemap-style.json", (route) =>
+      route.fulfill({ status: 200, contentType: "application/json", body: BLANK_STYLE }),
+    );
     await use(page);
   },
 });

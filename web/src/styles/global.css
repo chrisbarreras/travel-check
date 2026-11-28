@@ -436,6 +436,11 @@ main,
   justify-self: start;
 }
 
+.timeline-times {
+  color: var(--muted);
+  font-size: 0.875rem;
+}
+
 .timeline-axis {
   position: relative;
   height: 1.25rem;

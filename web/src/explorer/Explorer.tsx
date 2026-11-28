@@ -26,6 +26,9 @@ export function Explorer({ index }: { index: ShowcaseIndex }) {
   const { selection, note, choose, correct } = useSelection(index);
   const route = useRouteView(selection.routeId);
   const detailRef = useRef<HTMLDivElement>(null);
+  // Arrow keys in a native select change the route once per keypress; consecutive route
+  // changes replace one history entry instead of adding one each.
+  const lastWasRoute = useRef(false);
 
   // An itinerary that is not on the route falls back, with a note (FR-010).
   useEffect(() => {
@@ -33,12 +36,14 @@ export function Explorer({ index }: { index: ShowcaseIndex }) {
     const resolved = resolveItinerary(
       selection,
       route.view.itineraries.map((i) => i.itinerary_id),
+      index.landing.route_id,
     );
     if (resolved.note !== null) correct(resolved.selection, resolved.note);
-  }, [route, selection, correct]);
+  }, [route, selection, correct, index.landing.route_id]);
 
   const select = useCallback(
     (itineraryId: string) => {
+      lastWasRoute.current = false;
       choose({ routeId: selection.routeId, itineraryId });
       detailRef.current?.scrollIntoView({ block: "start" });
     },
@@ -59,7 +64,8 @@ export function Explorer({ index }: { index: ShowcaseIndex }) {
         index={index}
         routeId={selection.routeId}
         onChoose={(routeId) => {
-          choose({ routeId, itineraryId: null });
+          choose({ routeId, itineraryId: null }, lastWasRoute.current ? "replace" : "push");
+          lastWasRoute.current = true;
         }}
       />
       {note !== null ? (
@@ -104,6 +110,8 @@ export function Explorer({ index }: { index: ShowcaseIndex }) {
             <Timeline
               itineraries={route.view.itineraries}
               originCode={originCode}
+              destCode={destCode}
+              definition={index.definitions.find((d) => d.key === "flight_times")}
               selectedId={selection.itineraryId}
               onSelect={select}
             />

@@ -36,16 +36,16 @@ describe("parseSelection (ADR-0010)", () => {
 describe("resolveItinerary (after the route file loads)", () => {
   const ids = ["a", "b"];
   it("keeps an itinerary on the route", () => {
-    expect(resolveItinerary({ routeId: "MCO-LAS", itineraryId: "b" }, ids)).toEqual({
+    expect(resolveItinerary({ routeId: "MCO-LAS", itineraryId: "b" }, ids, "LIT-LGA")).toEqual({
       selection: { routeId: "MCO-LAS", itineraryId: "b" },
       note: null,
     });
   });
 
-  it("drops an itinerary that is not on the route, with a note", () => {
-    expect(resolveItinerary({ routeId: "MCO-LAS", itineraryId: "z" }, ids)).toEqual({
-      selection: { routeId: "MCO-LAS", itineraryId: null },
-      note: "The linked itinerary was not found on this route.",
+  it("opens the default view, with a note, for an itinerary not on the route (FR-010)", () => {
+    expect(resolveItinerary({ routeId: "MCO-LAS", itineraryId: "z" }, ids, "LIT-LGA")).toEqual({
+      selection: { routeId: "LIT-LGA", itineraryId: null },
+      note: "The linked example was not found, so the default example is shown.",
     });
   });
 });

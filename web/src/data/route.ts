@@ -12,6 +12,7 @@ export const ROUTE_DEFINITIONS = [
   "layover",
   "travel_time",
   "tight_layover",
+  "flight_times",
 ] as const;
 
 export function buildRouteView(

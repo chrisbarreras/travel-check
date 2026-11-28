@@ -38,7 +38,7 @@ test("Tab reaches every control in order with a visible 3 px outline", async ({ 
   });
   await expect(page.locator("details:not([open])")).toHaveCount(0);
   const expected = await focusableInOrder(page);
-  expect(expected.filter((name) => name.startsWith("How this is computed"))).toHaveLength(5);
+  expect(expected.filter((name) => name.startsWith("How this is computed"))).toHaveLength(6);
   // Start the walk from the top of the document, as a keyboard user arriving on the page.
   await page.mouse.click(1, 1);
   const seen: string[] = [];

@@ -6,6 +6,7 @@ interface Scheduled {
     dep_local_min: number;
     inbound_min: number;
     layover_min: number;
+    outbound_min: number;
     travel_min: number;
   };
 }
@@ -25,7 +26,6 @@ export interface TimelineRow {
   offset: number;
   inbound: number;
   layover: number;
-  /** The rest of the published travel time, so the bar's length equals it. */
   outbound: number;
 }
 
@@ -42,18 +42,14 @@ export function timelineRows(itineraries: readonly Scheduled[]): {
   const first = ordered[0];
   if (!first) return { rows: [], start: 0, extent: 0 };
   const start = first.schedule.dep_local_min;
-  const rows = ordered.map((it) => {
-    const s = it.schedule;
-    const inbound = Math.min(s.inbound_min, s.travel_min);
-    const layover = Math.min(s.layover_min, s.travel_min - inbound);
-    return {
-      id: it.itinerary_id,
-      offset: s.dep_local_min - start,
-      inbound,
-      layover,
-      outbound: s.travel_min - inbound - layover,
-    };
-  });
+  // The published parts add up to the travel time (pipeline Schedule check).
+  const rows = ordered.map((it) => ({
+    id: it.itinerary_id,
+    offset: it.schedule.dep_local_min - start,
+    inbound: it.schedule.inbound_min,
+    layover: it.schedule.layover_min,
+    outbound: it.schedule.outbound_min,
+  }));
   const extent = Math.max(
     ...ordered.map((it) => it.schedule.dep_local_min - start + it.schedule.travel_min),
   );

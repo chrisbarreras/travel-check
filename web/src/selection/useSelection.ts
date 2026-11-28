@@ -11,7 +11,7 @@ interface IndexLike {
 export function useSelection(index: IndexLike): {
   selection: Selection;
   note: string | null;
-  choose: (next: Selection) => void;
+  choose: (next: Selection, mode?: "push" | "replace") => void;
   correct: (next: Selection, note: string | null) => void;
 } {
   const read = useCallback(() => parseSelection(window.location.search, index), [index]);
@@ -45,11 +45,15 @@ export function useSelection(index: IndexLike): {
   }, [read]);
 
   const choose = useCallback(
-    (next: Selection) => {
-      write(next, "push");
+    (next: Selection, mode: "push" | "replace" = "push") => {
+      // Choosing what is already selected adds no history entry, so Back still moves.
+      const same =
+        next.routeId === state.selection.routeId &&
+        next.itineraryId === state.selection.itineraryId;
+      if (!same) write(next, mode);
       setState({ selection: next, note: null });
     },
-    [write],
+    [write, state.selection],
   );
 
   const correct = useCallback(

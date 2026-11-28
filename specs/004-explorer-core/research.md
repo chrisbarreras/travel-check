@@ -2,7 +2,7 @@
 
 ## R1. Map library and loading
 
-**Decision:** `maplibre-gl` 5.24.1 through `@vis.gl/react-maplibre` 8.1.3, imported with `React.lazy` after the first view renders. The style URL comes from configuration (`VITE_BASEMAP_STYLE`), and defaults to OpenFreeMap's `positron` style.
+**Decision:** `maplibre-gl` 5.24.1 through `@vis.gl/react-maplibre` 8.1.3, imported with `React.lazy` after the first view renders. The style URL comes from configuration (`VITE_BASEMAP_STYLE`). It defaults to a small local style, `web/public/basemap-style.json`: background, water, and state and country lines from OpenFreeMap's vector tiles (`tiles.openfreemap.org/planet`), with no labels or glyphs.
 
 **Rationale:** these are ADR-0002's choices. Lazy loading keeps the first view within its 150 KB budget, and the list and timeline don't depend on the map.
 
@@ -42,7 +42,7 @@
 
 ## R5. Basemap in tests
 
-**Decision:** the Playwright fixture intercepts the style URL and serves `tests/fixtures/blank-style.json`, a style with only a background layer, no sources and no glyphs. Labels for airports are HTML markers, not map symbols, so they need no glyph server.
+**Decision:** the Playwright fixture intercepts the style URL and serves `tests/fixtures/blank-style.json`, a style with only a background layer, no sources and no glyphs. Labels for airports are HTML markers, not map symbols, so they need no glyph server. One end-to-end test serves the real style instead, with its tile requests blocked, to cover the "no basemap" edge case.
 
 **Rationale:** no network in tests (FR-016), and deterministic screenshots in the pinned image.
 

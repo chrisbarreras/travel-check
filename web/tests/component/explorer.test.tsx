@@ -6,6 +6,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import type { RouteFile } from "@contract";
 import { byDeparture } from "../../src/format/timeline";
 import { committedFiles, committedIndex } from "../fixtures/committed";
+import { memorySource } from "../../src/data";
 import { renderApp } from "../fixtures/render";
 
 vi.mock("../../src/map/MapView", () => ({
@@ -151,12 +152,13 @@ describe("the address (US2)", () => {
     });
   });
 
-  it("drops an itinerary that is not on the route, with a note", async () => {
+  it("opens the default view, with a note, for an itinerary not on the route", async () => {
     open("?route=MCO-LAS&itinerary=nope");
-    expect(await screen.findByText(/linked itinerary was not found/)).toBeInTheDocument();
+    expect(await screen.findByText(/linked example was not found/)).toBeInTheDocument();
     await waitFor(() => {
-      expect(window.location.search).toBe("?route=MCO-LAS");
+      expect(window.location.search).toBe("");
     });
+    expect(await screen.findByRole("region", { name: /^The example:/ })).toBeInTheDocument();
   });
 
   it("goes back to the previous selection", async () => {
@@ -174,5 +176,42 @@ describe("the address (US2)", () => {
     await waitFor(() => {
       expect(first).toHaveAttribute("aria-pressed", "false");
     });
+  });
+});
+
+describe("history (FR-008, FR-010)", () => {
+  it("adds one entry per choice, none for repeats or corrections", async () => {
+    const user = userEvent.setup();
+    const push = vi.spyOn(window.history, "pushState");
+    const replace = vi.spyOn(window.history, "replaceState");
+    open("?route=XXX-YYY");
+    await screen.findByRole("status");
+    expect(push).not.toHaveBeenCalled(); // the fallback replaced the address
+    expect(replace).toHaveBeenCalled();
+    await screen.findByRole("region", { name: /Itineraries/ });
+    const [first] = within(list()).getAllByRole("button");
+    if (!first) throw new Error("no itinerary");
+    await user.click(first);
+    expect(push).toHaveBeenCalledTimes(1);
+    await user.click(first); // already selected
+    expect(push).toHaveBeenCalledTimes(1);
+    const picker = screen.getByLabelText("Route");
+    await user.selectOptions(picker, "MCO-LAS");
+    await user.selectOptions(picker, "HNL-BOS"); // consecutive route changes share one entry
+    expect(push).toHaveBeenCalledTimes(2);
+    expect(window.location.search).toBe("?route=HNL-BOS");
+  });
+});
+
+describe("one bad route file (spec, Edge Cases; FR-011)", () => {
+  it("shows the error for that route only", async () => {
+    const user = userEvent.setup();
+    const broken = { ...files, "routes/MCO-LAS.json": { route_id: "MCO-LAS" } };
+    window.history.replaceState(null, "", "/?route=MCO-LAS");
+    renderApp(memorySource(broken));
+    expect(await screen.findByText(/This example could not be loaded/)).toBeInTheDocument();
+    await user.selectOptions(screen.getByLabelText("Route"), "HNL-BOS");
+    expect(await screen.findByRole("region", { name: /Itineraries/ })).toBeInTheDocument();
+    expect(screen.queryByText(/This example could not be loaded/)).not.toBeInTheDocument();
   });
 });

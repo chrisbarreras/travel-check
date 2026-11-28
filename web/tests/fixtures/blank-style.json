@@ -1,0 +1,8 @@
+{
+  "version": 8,
+  "name": "Blank test basemap (research R5)",
+  "sources": {},
+  "layers": [
+    { "id": "background", "type": "background", "paint": { "background-color": "#eef1f5" } }
+  ]
+}
