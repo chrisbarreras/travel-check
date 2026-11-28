@@ -16,7 +16,7 @@ description: "Task list for the explorer core"
 - [X] T001 Write the failing model tests for `AirportInfo` and the `Schedule` additions in pipeline/tests/unit/test_showcase_models.py, and the slot-time and airport tests in pipeline/tests/unit/test_explorer_data.py (FR-001, FR-002)
 - [X] T002 Implement `AirportInfo`, `ShowcaseIndex.airports` (sorted, unique, covering route airports), the `Schedule` hub times and flight durations (flights within travel time), `providers/airports.py`, `assemble.slot_times`, and schema 1.1.0
 - [X] T003 Republish the showcase data and regenerate the schema and types. Commit them (c72cf16)
-- [ ] T004 Run the full pipeline test suite, `schemas --check` and `verify`, and record the result in specs/004-explorer-core/validation.md (FR-003, SC-006)
+- [X] T004 Run the full pipeline test suite, `schemas --check` and `verify`, and record the result in specs/004-explorer-core/validation.md (FR-003, SC-006)
 
 ## Phase 2: Foundation (web)
 
@@ -44,5 +44,5 @@ description: "Task list for the explorer core"
 
 ## Phase 6: Polish
 
-- [ ] T017 Budgets and Lighthouse on the default view; README, docs/architecture.md and roadmap; specs/004-explorer-core/validation.md (SC-004)
+- [X] T017 Budgets and Lighthouse on the default view; README, docs/architecture.md and roadmap; specs/004-explorer-core/validation.md (SC-004)
 - [ ] T018 Independent review: a new `feature-reviewer` per round, given only `specs/004-explorer-core` and `main`, until APPROVE; save the rounds as review.md
