@@ -30,6 +30,43 @@
       "title": "AirlineCoverage",
       "type": "object"
     },
+    "AirportInfo": {
+      "additionalProperties": false,
+      "description": "An airport on the showcase map (specs/004-explorer-core FR-001), from airportsdata.",
+      "properties": {
+        "city": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "code": {
+          "pattern": "^[A-Z0-9]{3}$",
+          "type": "string"
+        },
+        "lat": {
+          "maximum": 90,
+          "minimum": -90,
+          "type": "number"
+        },
+        "lon": {
+          "maximum": 180,
+          "minimum": -180,
+          "type": "number"
+        },
+        "name": {
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "code",
+        "name",
+        "city",
+        "lat",
+        "lon"
+      ],
+      "title": "AirportInfo",
+      "type": "object"
+    },
     "Alternative": {
       "additionalProperties": false,
       "description": "A faster comparable itinerary whose feasibility is shown, by the paired interval, to\nbe no more than the margin worse (research R8). Both rates carry their samples\n(Principle I): the alternative may not be in the same file.",
@@ -872,6 +909,7 @@
     },
     "Schedule": {
       "additionalProperties": false,
+      "description": "Median scheduled times. Local minutes are clock times at each airport. The hub times and\nflight durations (specs/004-explorer-core FR-002) are each flight's own median over its\nslot's days, so the parts need not add up exactly to `travel_min`.",
       "properties": {
         "arr_local_min": {
           "maximum": 1439,
@@ -881,6 +919,20 @@
         "dep_local_min": {
           "maximum": 1439,
           "minimum": 0,
+          "type": "integer"
+        },
+        "hub_arr_local_min": {
+          "maximum": 1439,
+          "minimum": 0,
+          "type": "integer"
+        },
+        "hub_dep_local_min": {
+          "maximum": 1439,
+          "minimum": 0,
+          "type": "integer"
+        },
+        "inbound_min": {
+          "minimum": 1,
           "type": "integer"
         },
         "layover_min": {
@@ -907,6 +959,10 @@
             }
           ]
         },
+        "outbound_min": {
+          "minimum": 1,
+          "type": "integer"
+        },
         "travel_min": {
           "minimum": 1,
           "type": "integer"
@@ -918,7 +974,11 @@
         "layover_min",
         "travel_min",
         "nonstop_median_min",
-        "nonstop_ratio"
+        "nonstop_ratio",
+        "hub_arr_local_min",
+        "hub_dep_local_min",
+        "inbound_min",
+        "outbound_min"
       ],
       "title": "Schedule",
       "type": "object"
@@ -1048,6 +1108,12 @@
     "ShowcaseIndex": {
       "additionalProperties": false,
       "properties": {
+        "airports": {
+          "items": {
+            "$ref": "#/$defs/AirportInfo"
+          },
+          "type": "array"
+        },
         "assumptions": {
           "$ref": "#/$defs/Assumptions"
         },
@@ -1095,6 +1161,7 @@
         "coverage",
         "balance",
         "routes",
+        "airports",
         "landing",
         "definitions",
         "attribution",

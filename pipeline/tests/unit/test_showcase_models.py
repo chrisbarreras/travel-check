@@ -17,6 +17,7 @@ from flight_pipeline.showcase.models import (
     FailureBreakdown,
     MonthRate,
     Rate,
+    Schedule,
     ShowcaseIndex,
 )
 
@@ -222,6 +223,7 @@ def index(**kw: Any) -> dict[str, Any]:
             "shortfalls": [],
         },
         "routes": [],
+        "airports": [],
         "landing": {"route_id": "LGA-MCO", "comparison_id": "c1", "reason": "strongest"},
         "definitions": [
             {"key": "connection_feasibility", "text": "Share of days", "methodology_anchor": "#x"}
@@ -255,3 +257,93 @@ def test_index_valid() -> None:
 def test_index_rules(kw: dict[str, Any], message: str) -> None:
     with pytest.raises(ValidationError, match=message):
         ShowcaseIndex.model_validate(index(**kw))
+
+
+# --- Explorer additions (specs/004-explorer-core FR-001, FR-002) ---------------------------
+
+
+def airport(code: str, **kw: Any) -> dict[str, Any]:
+    base: dict[str, Any] = {
+        "code": code,
+        "name": f"{code} airport",
+        "city": f"{code} city",
+        "lat": 40.0,
+        "lon": -90.0,
+    }
+    base.update(kw)
+    return base
+
+
+def route(origin: str, dest: str) -> dict[str, Any]:
+    return {
+        "route_id": f"{origin}-{dest}",
+        "origin": origin,
+        "dest": dest,
+        "regional_origin": False,
+        "itinerary_count": 1,
+        "comparison_count": 1,
+        "share_of_showcase": 1.0,
+        "nonstop_median_min": None,
+        "file": f"routes/{origin}-{dest}.json",
+    }
+
+
+def test_index_lists_airports_sorted_by_code() -> None:
+    model = ShowcaseIndex.model_validate(
+        index(routes=[route("LIT", "LGA")], airports=[airport("LGA"), airport("LIT")])
+    )
+    assert [a.code for a in model.airports] == ["LGA", "LIT"]
+
+
+@pytest.mark.parametrize(
+    ("airports", "message"),
+    [
+        ([airport("LIT")], "LGA"),
+        ([airport("LIT"), airport("LGA"), airport("LGA")], "once"),
+        ([airport("LIT"), airport("LGA", lat=91.0)], "lat"),
+        ([airport("LIT"), airport("LGA", lon=-181.0)], "lon"),
+        ([airport("LIT"), airport("lga")], "code"),
+        ([airport("LIT"), airport("LGA", name="")], "name"),
+    ],
+)
+def test_index_airport_rules(airports: list[dict[str, Any]], message: str) -> None:
+    with pytest.raises(ValidationError, match=message):
+        ShowcaseIndex.model_validate(index(routes=[route("LIT", "LGA")], airports=airports))
+
+
+def schedule(**kw: Any) -> dict[str, Any]:
+    base: dict[str, Any] = {
+        "dep_local_min": 758,
+        "arr_local_min": 1153,
+        "layover_min": 99,
+        "travel_min": 327,
+        "nonstop_median_min": 175,
+        "nonstop_ratio": 1.9,
+        "hub_arr_local_min": 940,
+        "hub_dep_local_min": 1039,
+        "inbound_min": 122,
+        "outbound_min": 106,
+    }
+    base.update(kw)
+    return base
+
+
+def test_schedule_carries_hub_times_and_flight_durations() -> None:
+    model = Schedule.model_validate(schedule())
+    assert (model.hub_arr_local_min, model.hub_dep_local_min) == (940, 1039)
+    assert (model.inbound_min, model.outbound_min) == (122, 106)
+
+
+@pytest.mark.parametrize(
+    ("kw", "message"),
+    [
+        ({"hub_arr_local_min": 1440}, "hub_arr_local_min"),
+        ({"hub_dep_local_min": -1}, "hub_dep_local_min"),
+        ({"inbound_min": 0}, "inbound_min"),
+        ({"outbound_min": 0}, "outbound_min"),
+        ({"inbound_min": 300, "outbound_min": 300}, "travel"),
+    ],
+)
+def test_schedule_addition_rules(kw: dict[str, Any], message: str) -> None:
+    with pytest.raises(ValidationError, match=message):
+        Schedule.model_validate(schedule(**kw))

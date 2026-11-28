@@ -97,12 +97,29 @@ class Rate(_Model):
 
 
 class Schedule(_Model):
+    """Median scheduled times. Local minutes are clock times at each airport. The hub times and
+    flight durations (specs/004-explorer-core FR-002) are each flight's own median over its
+    slot's days, so the parts need not add up exactly to `travel_min`."""
+
     dep_local_min: LocalMinute
     arr_local_min: LocalMinute
     layover_min: NonNegInt
     travel_min: Annotated[int, Field(ge=1)]
     nonstop_median_min: int | None
     nonstop_ratio: float | None
+    hub_arr_local_min: LocalMinute
+    hub_dep_local_min: LocalMinute
+    inbound_min: Annotated[int, Field(ge=1)]
+    outbound_min: Annotated[int, Field(ge=1)]
+
+    @model_validator(mode="after")
+    def _flights_within_travel(self) -> Schedule:
+        if self.inbound_min + self.outbound_min > self.travel_min:
+            raise ValueError(
+                f"inbound_min + outbound_min ({self.inbound_min + self.outbound_min}) "
+                f"exceeds travel_min ({self.travel_min})"
+            )
+        return self
 
 
 class FailureBreakdown(_Model):
@@ -455,6 +472,16 @@ class Balance(_Model):
     shortfalls: list[str]
 
 
+class AirportInfo(_Model):
+    """An airport on the showcase map (specs/004-explorer-core FR-001), from airportsdata."""
+
+    code: Annotated[str, Field(pattern=r"^[A-Z0-9]{3}$")]
+    name: Annotated[str, Field(min_length=1)]
+    city: Annotated[str, Field(min_length=1)]
+    lat: Annotated[float, Field(ge=-90, le=90)]
+    lon: Annotated[float, Field(ge=-180, le=180)]
+
+
 class ShowcaseIndex(_Model):
     schema_version: str
     period: DataPeriod
@@ -462,6 +489,7 @@ class ShowcaseIndex(_Model):
     coverage: Coverage
     balance: Balance
     routes: list[RouteSummary]
+    airports: list[AirportInfo]
     landing: LandingRef
     definitions: list[Definition]
     attribution: list[Attribution]
@@ -482,6 +510,19 @@ class ShowcaseIndex(_Model):
             raise ValueError(f"attribution is missing {sorted(missing)}")
         if "connection_feasibility" not in {d.key for d in self.definitions}:
             raise ValueError("definitions must include connection_feasibility")
+        return self
+
+    @model_validator(mode="after")
+    def _airports(self) -> ShowcaseIndex:
+        codes = [a.code for a in self.airports]
+        if len(set(codes)) != len(codes):
+            raise ValueError("each airport must be listed once")
+        if codes != sorted(codes):
+            raise ValueError("airports must be sorted by code")
+        needed = {c for r in self.routes for c in (r.origin, r.dest)}
+        missing = sorted(needed - set(codes))
+        if missing:
+            raise ValueError(f"airports is missing route airports {missing}")
         return self
 
 

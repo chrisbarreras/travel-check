@@ -786,7 +786,7 @@ def stage_publish(con: duckdb.DuckDBPyConnection, cfg: Config, config_path: Path
         pairs={(p.itinerary_a, p.itinerary_b): p for p in pairs},
         missing_settings=missing,
         nonstop={(n.origin, n.dest): n for n in nonstop},
-        arrival_local_min=assemble.arrival_minutes(con, "slots_days", "flights"),
+        slot_times=assemble.slot_times(con, "slots_days", "flights"),
         insights=InsightsFile.model_validate(
             read_json(derived(cfg, "insights.json"), InsightsFile)
         ).itineraries,

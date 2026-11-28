@@ -37,7 +37,7 @@ from flight_pipeline.showcase.models import (
     ShowcaseIndex,
 )
 
-SCHEMA_VERSION = "1.0.0"
+SCHEMA_VERSION = "1.1.0"  # 1.1.0: airports and schedule hub times (specs/004)
 FLOAT_DECIMALS = 6
 
 # Phrases that describe a prediction or a passenger outcome rather than a historical
