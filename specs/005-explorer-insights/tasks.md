@@ -36,4 +36,4 @@ description: "Task list for the explorer insights"
 ## Phase 6: Polish
 
 - [X] T008 Visual references, axe and keyboard tests for the new controls; budgets; README, architecture and validation.md (FR-011, FR-012)
-- [ ] T009 Independent review rounds until APPROVE; review.md
+- [X] T009 Independent review rounds until APPROVE; review.md

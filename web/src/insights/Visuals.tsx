@@ -80,11 +80,6 @@ export function MonthChart({
                 <span className="month-fill" style={{ height: `${String(b.percent)}%` }} />
               ) : null}
             </span>
-            {b.kind === "ok" ? (
-              <span className="month-days" aria-hidden="true">
-                {b.days} d
-              </span>
-            ) : null}
             <span className="month-value">
               {b.kind === "ok"
                 ? `${String(b.percent)}%`
@@ -92,6 +87,11 @@ export function MonthChart({
                   ? "–"
                   : `${String(b.days)} d`}
             </span>
+            {b.kind === "ok" ? (
+              <span className="month-days" aria-hidden="true">
+                {b.days} d
+              </span>
+            ) : null}
             <span className="month-label">
               {b.label}
               {b.notes.length > 0 ? <sup aria-hidden="true"> *</sup> : null}

@@ -49,6 +49,7 @@ describe("points (signed whole points from a stored share)", () => {
     [0.223085, 22],
     [0.345678, 35],
     [0.005, 1],
+    [0.565, 57], // 0.565 * 100 is 56.49999… in floating point; exact rounding gives 57
     [-0.005, -1], // halves away from zero, symmetric
     [-0.015, -2],
     [0.004999, 0],

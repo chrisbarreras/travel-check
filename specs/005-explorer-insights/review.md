@@ -44,3 +44,23 @@ The reviewer confirmed every round 1 fix.
 | 7 | NIT | The method view showed keys reworded. | **Fixed.** Each definition shows its readable name and its raw key (`connection_feasibility`). |
 | 8 | NIT | The focus-outline walk skipped the new controls. | **Fixed.** A keyboard test tabs through every control on a selected itinerary, with all definitions open (over 40 stops), and requires the 3 px outline on each. |
 | 9 | NIT | Two counts said "in the period" without naming it. | **Fixed.** Both name the period. |
+
+## Round 3 (004-explorer-core...acf0d5b)
+
+**Verdict:** APPROVE. 0 blocking, 1 should-fix, 4 nits.
+
+**Automated checks, all passing:** format, lint and typecheck; 389 tests; build; size (95.5 KB first view); 113 browser tests in the pinned image; `schemas --check`; the pipeline's slack and slider tests.
+
+The reviewer also checked the published data: every faster alternative not on its route is the one shown as text, and every monthly rate gives back a whole number of days.
+
+### Findings and responses
+
+| # | Severity | Finding | Response |
+|---|---|---|---|
+| 1 | SHOULD-FIX | Choosing a faster alternative by keyboard dropped focus to the page body (WCAG 2.4.3). | **Fixed.** A selection from the panels moves focus to the new details: the detail slot is focusable (`tabIndex=-1`) and labelled. The keyboard test checks focus lands there after Enter. |
+| 2 | NIT | The month legend gave the opposite order to the drawing. | **Fixed.** The rate is drawn above the days, as the legend says. |
+| 3 | NIT | Buffer percentages used float rounding. | **Fixed.** They use `points()`, the exact half-away-from-zero rule. A unit case checks that 0.565 gives 57. |
+| 4 | NIT | A default or invalid `transfer` value stayed in the address on load. | **Fixed.** On load it is cleared with `replaceState` (FR-003). An e2e test checks 30, 62 and "abc", and keeps 60. |
+| 5 | NIT | design.md described panel icons and a meter on every card. | **design.md updated** to the build: the meter sits beside the slider's rate on the selected itinerary, and the panels have headings, with icons deferred. |
+
+**After the fixes:** 390 unit and component tests and 105 local browser tests pass. The container suite is rerun three times with the regenerated references. The verdict is APPROVE and every finding is fixed or answered, so the review loop ends. The owner decides on the merge.

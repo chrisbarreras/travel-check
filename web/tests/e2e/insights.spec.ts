@@ -68,3 +68,17 @@ test("How the numbers work is linked from the header and lists the definitions",
   await page.getByRole("link", { name: "Back to the explorer" }).click();
   await expect(page.getByRole("region", { name: /^The example:/ })).toBeVisible();
 });
+
+test("a default or invalid transfer setting is cleared from the address (FR-003)", async ({
+  page,
+}) => {
+  const base = "./?route=LIT-LGA&itinerary=LIT-ATL-LGA%3ADL1238%2BDL1700";
+  for (const value of ["30", "62", "abc"]) {
+    await page.goto(`${base}&transfer=${value}`);
+    await expect(page.getByRole("slider")).toHaveValue("30");
+    await expect.poll(() => new URL(page.url()).searchParams.has("transfer")).toBe(false);
+  }
+  await page.goto(`${base}&transfer=60`);
+  await expect(page.getByRole("slider")).toHaveValue("60");
+  expect(new URL(page.url()).searchParams.get("transfer")).toBe("60");
+});

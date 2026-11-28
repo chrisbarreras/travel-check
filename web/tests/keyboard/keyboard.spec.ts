@@ -133,6 +133,10 @@ test("the slider and a faster alternative work by keyboard (US1, US3)", async ({
     .poll(() => new URL(page.url()).searchParams.get("itinerary"))
     .toBe("COS-DEN-LGA:UA0530+UA0810");
   expect(target).toBe("COS-DEN-LGA:UA0530+UA0810");
+  // The chosen button is gone; focus moves to the new details, not the top of the page.
+  await expect
+    .poll(() => page.evaluate(() => document.activeElement?.classList.contains("detail-slot")))
+    .toBe(true);
 });
 
 test("every control on a selected itinerary shows a 3 px focus outline", async ({ page }) => {

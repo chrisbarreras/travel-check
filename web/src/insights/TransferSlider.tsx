@@ -15,6 +15,21 @@ import { Meter } from "./Visuals";
 /** The setting from the address, kept in it with replaceState (FR-003). */
 function useTransfer(defaultValue: number): [number, (value: number) => void] {
   const [value, setValue] = useState(() => parseTransfer(window.location.search) ?? defaultValue);
+  // FR-003: the parameter is left out at the default, and invalid values are dropped.
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const parsed = parseTransfer(window.location.search);
+    if (params.has("transfer") && (parsed === null || parsed === defaultValue)) {
+      params.delete("transfer");
+      const text = params.toString();
+      window.history.replaceState(
+        window.history.state,
+        "",
+        `${window.location.pathname}${text === "" ? "" : `?${text}`}${window.location.hash}`,
+      );
+    }
+  }, [defaultValue]);
+
   useEffect(() => {
     const onPop = () => {
       setValue(parseTransfer(window.location.search) ?? defaultValue);

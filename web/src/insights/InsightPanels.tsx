@@ -4,7 +4,15 @@ import type { RouteFile, ShowcaseIndex, ShowcaseItinerary } from "@contract";
 import type { ReactNode } from "react";
 import { Definition } from "../components/Definition";
 import { itineraryName } from "../components/ItineraryCard";
-import { airlineName, duration, intervalText, localTime, percentOf, rateText } from "../format";
+import {
+  airlineName,
+  duration,
+  intervalText,
+  localTime,
+  percentOf,
+  points,
+  rateText,
+} from "../format";
 import { findUrl } from "./find";
 import { FailureBar, MonthChart } from "./Visuals";
 
@@ -149,13 +157,13 @@ export function InsightPanels({
           </p>
         ) : (
           <p>
-            To have connected on {Math.round(itinerary.buffer.share * 100)}% of the{" "}
+            To have connected on {points(itinerary.buffer.share)}% of the{" "}
             {itinerary.buffer.operated_days} operated days in {period}, at the published{" "}
             {itinerary.min_connection_min}-minute minimum connection time, the scheduled layover
             needed to be at least {duration(itinerary.buffer.needed_layover_min)}. This
             itinerary&apos;s median is {duration(itinerary.buffer.actual_layover_min)}; it was
             scheduled at least {duration(itinerary.buffer.needed_layover_min)} on{" "}
-            {Math.round(itinerary.buffer.scheduled_at_least_share * 100)}% of those days.
+            {points(itinerary.buffer.scheduled_at_least_share)}% of those days.
           </p>
         )}
       </Panel>
