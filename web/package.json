@@ -1,0 +1,61 @@
+{
+  "name": "travel-check-web",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "license": "UNLICENSED",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "dev": "npm run gen && vite",
+    "gen": "node scripts/gen-validators.mjs",
+    "format:check": "prettier --check .",
+    "format": "prettier --write .",
+    "lint": "npm run gen && eslint --max-warnings 0 .",
+    "typecheck": "npm run gen && tsc --noEmit -p tsconfig.json",
+    "test": "npm run gen && vitest run",
+    "build": "npm run gen && vite build && node scripts/check-data-copy.mjs",
+    "size": "size-limit && node scripts/check-data-size.mjs",
+    "test:browser": "playwright test --project=e2e --project=visual --project=a11y --project=keyboard",
+    "test:browser:docker": "node scripts/docker-playwright.mjs test",
+    "test:visual:update": "node scripts/docker-playwright.mjs update",
+    "lighthouse": "lhci autorun",
+    "smoke": "node scripts/smoke.mjs"
+  },
+  "dependencies": {
+    "@fontsource-variable/inter": "5.3.0",
+    "@fontsource-variable/space-grotesk": "5.3.0",
+    "react": "19.3.1",
+    "react-dom": "19.3.1"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "4.14.0",
+    "@eslint/js": "9.39.5",
+    "@lhci/cli": "0.16.1",
+    "@playwright/test": "1.65.0",
+    "@size-limit/file": "14.3.0",
+    "@testing-library/jest-dom": "7.0.1",
+    "@testing-library/react": "16.3.3",
+    "@testing-library/user-event": "14.6.10",
+    "@types/node": "24.19.4",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "@vitejs/plugin-react": "6.3.0",
+    "ajv": "8.20.0",
+    "eslint": "9.39.5",
+    "eslint-plugin-jsx-a11y": "6.10.2",
+    "eslint-plugin-react-hooks": "7.1.1",
+    "globals": "17.14.0",
+    "jsdom": "31.0.0",
+    "prettier": "3.10.1",
+    "size-limit": "14.3.0",
+    "typescript": "6.0.3",
+    "typescript-eslint": "8.72.2",
+    "vite": "8.3.8",
+    "vitest": "5.1.0"
+  },
+  "overrides": {
+    "playwright-core": "1.65.0"
+  }
+}

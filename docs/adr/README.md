@@ -7,7 +7,7 @@ To change a decision, add a new ADR that supersedes the old one, and set the old
 | ADR | Decision | Status |
 |---|---|---|
 | [0001](0001-static-first-delivery.md) | Ship a static site first; add the API in Phase 2 | Accepted |
-| [0002](0002-technology-stack.md) | Technology stack | Accepted |
+| [0002](0002-technology-stack.md) | Technology stack | Accepted; frontend hosting superseded by 0015, styling and data fetching by 0016 |
 | [0003](0003-duckdb-parquet-before-postgres.md) | DuckDB/Parquet for v1; Postgres only once user data exists | Accepted |
 | [0004](0004-itinerary-definition.md) | What counts as an itinerary | Accepted; recurrence superseded by 0013, identity and layover application by 0014 |
 | [0005](0005-connection-outcome-label.md) | Connection outcome label and same-day delay pairing | Accepted |
@@ -20,6 +20,8 @@ To change a decision, add a new ADR that supersedes the old one, and set the old
 | [0012](0012-phase0-go-no-go.md) | Phase 0 go/no-go: GO | Accepted |
 | [0013](0013-sold-routings-and-connection-recurrence.md) | Itineraries must be sold routings (DB1B) that actually connect | Accepted; identity superseded by 0014 |
 | [0014](0014-schedule-slot-itinerary-identity.md) | Identify itineraries by schedule slot; apply layover limits per day | Accepted |
+| [0015](0015-static-hosting-github-pages.md) | Host the static site on GitHub Pages; block merges with a ruleset | Accepted |
+| [0016](0016-plain-css-and-own-data-hook.md) | Plain CSS with design tokens and no data-fetching library, until a measured need | Accepted |
 
 ## Template
 

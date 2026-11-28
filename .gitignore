@@ -24,3 +24,11 @@ Thumbs.db
 
 # marimo session cache (created when the notebook is opened)
 __marimo__/
+
+# web (feature 003)
+web/node_modules/
+web/dist/
+web/src/data/generated/
+web/test-results/
+web/playwright-report/
+web/.lighthouseci/
