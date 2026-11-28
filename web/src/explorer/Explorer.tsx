@@ -1,5 +1,5 @@
 import type { ShowcaseIndex } from "@contract";
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { itineraryName } from "../components/ItineraryCard";
 import { LandingComparison } from "../components/LandingComparison";
 import { LoadError } from "../components/LoadError";
@@ -10,7 +10,7 @@ import { resolveItinerary } from "../selection/url";
 import { useSelection } from "../selection/useSelection";
 import { DetailPanel } from "./DetailPanel";
 import { ItineraryList } from "./ItineraryList";
-import { MapPanel } from "./MapPanel";
+import { MapPanel, wideScreen } from "./MapPanel";
 import { airportLabel, RoutePicker } from "./RoutePicker";
 import { Timeline } from "./Timeline";
 
@@ -21,14 +21,19 @@ function LandingSection() {
   return <LandingComparison view={landing.view} />;
 }
 
+/** Route changes closer together than this are one choice (keyboard in the native select). */
+const ROUTE_KEYS_MS = 1000;
+
 /** One route in three linked views, with the selection in the address (US1, US2). */
 export function Explorer({ index }: { index: ShowcaseIndex }) {
   const { selection, note, choose, correct } = useSelection(index);
   const route = useRouteView(selection.routeId);
   const detailRef = useRef<HTMLDivElement>(null);
-  // Arrow keys in a native select change the route once per keypress; consecutive route
-  // changes replace one history entry instead of adding one each.
-  const lastWasRoute = useRef(false);
+  // Kept here, so the map stays shown or hidden across route changes (FR-013).
+  const [mapShown, setMapShown] = useState(wideScreen);
+  // Arrow keys in a native select change the route once per keypress. Changes less than a
+  // second apart are one choice, sharing one history entry; any later choice adds its own.
+  const lastRouteChange = useRef(Number.NEGATIVE_INFINITY);
 
   // An itinerary that is not on the route falls back, with a note (FR-010).
   useEffect(() => {
@@ -43,7 +48,7 @@ export function Explorer({ index }: { index: ShowcaseIndex }) {
 
   const select = useCallback(
     (itineraryId: string) => {
-      lastWasRoute.current = false;
+      lastRouteChange.current = Number.NEGATIVE_INFINITY;
       choose({ routeId: selection.routeId, itineraryId });
       detailRef.current?.scrollIntoView({ block: "start" });
     },
@@ -64,8 +69,10 @@ export function Explorer({ index }: { index: ShowcaseIndex }) {
         index={index}
         routeId={selection.routeId}
         onChoose={(routeId) => {
-          choose({ routeId, itineraryId: null }, lastWasRoute.current ? "replace" : "push");
-          lastWasRoute.current = true;
+          const now = Date.now();
+          const rapid = now - lastRouteChange.current < ROUTE_KEYS_MS;
+          choose({ routeId, itineraryId: null }, rapid ? "replace" : "push");
+          lastRouteChange.current = now;
         }}
       />
       {note !== null ? (
@@ -116,6 +123,10 @@ export function Explorer({ index }: { index: ShowcaseIndex }) {
               onSelect={select}
             />
             <MapPanel
+              shown={mapShown}
+              onToggle={() => {
+                setMapShown((s) => !s);
+              }}
               airports={index.airports}
               origin={originCode}
               dest={destCode}

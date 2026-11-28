@@ -29,9 +29,15 @@ describe("routePaths (pure map geometry, constitution II)", () => {
     expect(atHub).toBe(true);
   });
 
-  it("is curved, not two straight segments", () => {
+  it("is curved: the arc's middle leaves the straight line between its ends", () => {
+    // LIT to ATL is the first arc: 32 points (indexes 0 to 31).
     const coords = paths.features[0]?.geometry.coordinates ?? [];
-    expect(coords.length).toBeGreaterThan(10);
+    const [start, mid, end] = [coords[0], coords[16], coords[31]];
+    if (!start || !mid || !end) throw new Error("arc too short");
+    const chordLat = start[1] + ((mid[0] - start[0]) / (end[0] - start[0])) * (end[1] - start[1]);
+    // A great circle bends toward the pole: north of the straight line on the map.
+    expect(end).toEqual([expect.closeTo(-84.43, 2), expect.closeTo(33.64, 2)]);
+    expect(mid[1] - chordLat).toBeGreaterThan(0.01);
   });
 
   it("rejects an airport missing from the list", () => {

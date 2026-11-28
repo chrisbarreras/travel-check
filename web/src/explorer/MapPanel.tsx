@@ -1,5 +1,5 @@
 import type { AirportInfo, ShowcaseItinerary } from "@contract";
-import { Component, lazy, Suspense, useState, type ReactNode } from "react";
+import { Component, lazy, Suspense, type ReactNode } from "react";
 import { airportLabel } from "./RoutePicker";
 
 const MapView = lazy(() => import("../map/MapView"));
@@ -27,7 +27,7 @@ class MapBoundary extends Component<{ children: ReactNode }, { failed: boolean }
   }
 }
 
-function wideScreen(): boolean {
+export function wideScreen(): boolean {
   return typeof window.matchMedia !== "function" || window.matchMedia("(min-width: 768px)").matches;
 }
 
@@ -39,7 +39,11 @@ export function MapPanel({
   itineraries,
   selectedId,
   onSelect,
+  shown,
+  onToggle,
 }: {
+  shown: boolean;
+  onToggle: () => void;
   airports: readonly AirportInfo[];
   origin: string;
   dest: string;
@@ -47,7 +51,6 @@ export function MapPanel({
   selectedId: string | null;
   onSelect: (id: string) => void;
 }) {
-  const [shown, setShown] = useState(wideScreen);
   const hubs = [...new Set(itineraries.map((i) => i.hub))].sort();
   const label = (code: string) => airportLabel(airports, code);
   return (
@@ -59,9 +62,7 @@ export function MapPanel({
           className="map-toggle"
           aria-expanded={shown}
           aria-controls="map-area"
-          onClick={() => {
-            setShown((s) => !s);
-          }}
+          onClick={onToggle}
         >
           {shown ? "Hide map" : "Show map"}
         </button>

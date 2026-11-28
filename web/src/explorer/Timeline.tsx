@@ -7,12 +7,20 @@ import { timelineRows } from "../format/timeline";
 /** The visible times on a bar: each in its own airport's local time (spec US1-4). */
 export function barTimes(it: ShowcaseItinerary, originCode: string, destCode: string): string {
   const t = (m: number) => localTime(m).text;
-  const offset = arrivalDayOffset(it.schedule);
-  const day = offset === 0 ? "" : ` ${offset > 0 ? "+" : "−"}${String(Math.abs(offset))} day`;
+  const s = it.schedule;
+  const day = (offset: number) =>
+    offset === 0 ? "" : ` ${offset > 0 ? "+" : "−"}${String(Math.abs(offset))} day`;
+  // Days after the departure day, from clock times and the published durations only.
+  const hubArrDay = arrivalDayOffset({
+    dep_local_min: s.dep_local_min,
+    arr_local_min: s.hub_arr_local_min,
+    travel_min: s.inbound_min,
+  });
+  const hubDepDay = hubArrDay + (s.hub_arr_local_min + s.layover_min >= 1440 ? 1 : 0);
   return (
-    `${t(it.schedule.dep_local_min)} ${originCode} → ` +
-    `${t(it.schedule.hub_arr_local_min)}–${t(it.schedule.hub_dep_local_min)} ${it.hub} → ` +
-    `${t(it.schedule.arr_local_min)}${day} ${destCode}`
+    `${t(s.dep_local_min)} ${originCode} → ` +
+    `${t(s.hub_arr_local_min)}${day(hubArrDay)}–${t(s.hub_dep_local_min)}${day(hubDepDay)} ` +
+    `${it.hub} → ${t(s.arr_local_min)}${day(arrivalDayOffset(s))} ${destCode}`
   );
 }
 

@@ -29,6 +29,8 @@ The owner asked for recommended decisions to be adopted directly. Each answer be
 - Q: What does the page show before an itinerary is selected? → A: On the landing route, the landing comparison from feature 003, unchanged. On any other route, the route's itineraries with none selected, and a prompt to select one. The default address opens on the landing route.
 - Q: What does the timeline's horizontal axis show? → A: Hours after the first departure in the origin's local time. Each itinerary is a bar from its departure: the inbound flight, the layover at the hub, then the outbound flight, sized by their scheduled durations. Each end is labelled with its own airport's local time, so no time-zone arithmetic happens in the browser.
 - Q: How does the map stay within the page's performance budget? → A: The map library is loaded only after the first view has rendered. List and timeline work without it. The script budget is split into a first-view budget (unchanged, 150 KB gzip) and a map budget.
+- Q: Where does the selected itinerary appear, especially on phones? → A: In a detail slot above the list, below the route heading; selecting from any view scrolls it into view. The selection then needs no scrolling past a long list on a phone, and the timeline or map stays one scroll away (recorded in docs/design.md; review round 2).
+- Q: How does the route picker name routes? → A: By city and code, for example "Little Rock (LIT) to New York (LGA)". Full airport names are long on a phone, and the detail and map description use the airport data (review round 2).
 - Q: Where do basemap tiles come from, and what do tests use? → A: A free hosted vector style with no key (OpenFreeMap), with its attribution always visible. Tests replace the style with a local blank style, so they make no network requests and render identically everywhere.
 
 ## User Scenarios & Testing *(mandatory)*
@@ -68,7 +70,7 @@ A visitor or the project owner copies the address while looking at a route and i
 **Acceptance Scenarios**:
 
 1. **Given** an address naming a route and an itinerary, **When** it is opened, **Then** that route is shown with that itinerary selected in all views.
-2. **Given** a selection change, **When** the visitor presses back, **Then** the previous selection is shown. Choosing a route or itinerary adds one history entry.
+2. **Given** a selection change, **When** the visitor presses back, **Then** the previous selection is shown. Choosing a route or itinerary adds one history entry. Route changes less than a second apart, such as arrow keys moving through the route picker, are one choice and share one entry.
 3. **Given** an address with an unknown route, or an itinerary not on the route, **When** it is opened, **Then** the default view opens with a note that the linked example was not found. The address is corrected without adding a history entry.
 4. **Given** the default address with no parameters, **When** it is opened, **Then** the landing route and the landing comparison appear, as today.
 
@@ -76,7 +78,7 @@ A visitor or the project owner copies the address while looking at a route and i
 
 ### User Story 3 - Works by keyboard, with assistive technology and on phones (Priority: P2)
 
-A keyboard or screen-reader user reaches the route picker, every itinerary and every control. Selection is announced, and the map and timeline have text equivalents. On a phone the views stack: the list comes first, the map can be shown or hidden, and the selected itinerary expands in place.
+A keyboard or screen-reader user reaches the route picker, every itinerary and every control. Selection is announced, and the map and timeline have text equivalents. On a phone the views stack: the list comes first, the map can be shown or hidden, and the selected itinerary appears in the detail slot above the list, scrolled into view (Clarifications).
 
 **Why this priority**: constitution Principle V. Reviewers often open the demo on a phone. The map is the hardest part to make accessible, so it needs explicit equivalents.
 
@@ -94,7 +96,7 @@ A keyboard or screen-reader user reaches the route picker, every itinerary and e
 - **Route file missing or malformed:** that route shows the plain error message, and other routes still work.
 - **No basemap:** the basemap style or tiles fail to load. Routes, airports and labels still draw on a plain background.
 - **Map library fails to load:** the list and timeline still work, and the map area says the map could not be shown.
-- **Insufficient data:** an itinerary below the minimum sample appears in all views with "insufficient data". It is never placed above or below others by its rate.
+- **Insufficient data:** an itinerary below the minimum sample appears in all views, with "insufficient data" wherever a rate is shown (the list and the detail). The timeline and map show schedules, not rates, for every itinerary. It is never placed above or below others by its rate.
 - **Arrival after midnight:** the timeline bar extends past 24 hours and the arrival label says "+1 day".
 - **Several itineraries through one hub:** their paths overlap on the map. Selecting one draws it above the others, and the list and timeline still distinguish them.
 - **Very long route names or many itineraries:** the list scrolls with the page, with no nested scroll trap. The busiest route has 12 itineraries.
@@ -115,7 +117,7 @@ A keyboard or screen-reader user reaches the route picker, every itinerary and e
 
 **Explorer**
 
-- **FR-004**: A route picker MUST list the 12 showcase routes by origin and destination, with airport names. It is reachable by keyboard and labelled.
+- **FR-004**: A route picker MUST list the 12 showcase routes by origin and destination, with city names and codes. It is reachable by keyboard and labelled.
 - **FR-005**: The list MUST show the route's itineraries in scheduled-departure order, with the card content of User Story 1, scenario 2. Each card is one control that selects the itinerary, and shows its selected state by border, weight and text, not by color alone.
 - **FR-006**: The map MUST show the route's airports and the itineraries' paths, as in User Story 1, scenario 3. Path geometry and label placement are computed by pure, unit-tested functions. Paths are selectable by pointer. The basemap's attribution is always visible.
 - **FR-007**: The timeline MUST show each itinerary as in User Story 1, scenario 4. Each bar is a keyboard-operable control with a text label giving its local times and durations.

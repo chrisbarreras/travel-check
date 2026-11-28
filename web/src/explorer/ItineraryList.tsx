@@ -1,6 +1,6 @@
 import type { ShowcaseItinerary } from "@contract";
 import { itineraryName } from "../components/ItineraryCard";
-import { arrivalDayOffset, localTime, rateText } from "../format";
+import { arrivalDayOffset, duration, flightNumbers, localTime, rateText } from "../format";
 
 /** "12:38 pm to 7:13 pm, local times", with the arrival day when it differs. */
 export function timesText(itinerary: ShowcaseItinerary): string {
@@ -9,6 +9,13 @@ export function timesText(itinerary: ShowcaseItinerary): string {
   const offset = arrivalDayOffset(itinerary.schedule);
   const day = offset === 0 ? "" : ` ${offset > 0 ? "+" : "−"}${String(Math.abs(offset))} day`;
   return `${dep} to ${arr}${day}, local times`;
+}
+
+/** "Most often DL3080, then DL524; other numbers on some days", as on the detail card. */
+export function flightsText(itinerary: ShowcaseItinerary): string {
+  const flights = flightNumbers(itinerary.find.legs);
+  const numbers = flights.numbers.join(", then ");
+  return flights.varies ? `Most often ${numbers}; other numbers on some days` : numbers;
 }
 
 /** The route's itineraries in departure order; each card selects its itinerary (FR-005). */
@@ -45,7 +52,11 @@ export function ItineraryList({
                   {itineraryName(it)}
                   {selected ? <span className="selected-label"> · Selected</span> : null}
                 </span>
+                <span>{flightsText(it)}</span>
                 <span>{timesText(it)}</span>
+                <span>
+                  Layover {duration(it.schedule.layover_min)} at {it.hub}
+                </span>
                 <span
                   className={rate.kind === "ok" ? "list-card-rate" : "list-card-rate insufficient"}
                 >
