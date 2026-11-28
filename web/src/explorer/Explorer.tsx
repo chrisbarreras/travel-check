@@ -29,11 +29,22 @@ export function Explorer({ index }: { index: ShowcaseIndex }) {
   const { selection, note, choose, correct } = useSelection(index);
   const route = useRouteView(selection.routeId);
   const detailRef = useRef<HTMLDivElement>(null);
-  // Kept here, so the map stays shown or hidden across route changes (FR-013).
-  const [mapShown, setMapShown] = useState(wideScreen);
   // Arrow keys in a native select change the route once per keypress. Changes less than a
   // second apart are one choice, sharing one history entry; any later choice adds its own.
   const lastRouteChange = useRef(Number.NEGATIVE_INFINITY);
+  // Back and Forward end a run of route-picker changes: the next choice adds an entry.
+  useEffect(() => {
+    const onPop = () => {
+      lastRouteChange.current = Number.NEGATIVE_INFINITY;
+    };
+    window.addEventListener("popstate", onPop);
+    return () => {
+      window.removeEventListener("popstate", onPop);
+    };
+  }, []);
+
+  // Kept here, so the map stays shown or hidden across route changes (FR-013).
+  const [mapShown, setMapShown] = useState(wideScreen);
 
   // An itinerary that is not on the route falls back, with a note (FR-010).
   useEffect(() => {
@@ -112,6 +123,7 @@ export function Explorer({ index }: { index: ShowcaseIndex }) {
               itineraries={route.view.itineraries}
               selectedId={selection.itineraryId}
               period={periodText(route.view.route.period)}
+              definition={(key) => index.definitions.find((d) => d.key === key)}
               onSelect={select}
             />
             <Timeline

@@ -1,4 +1,5 @@
-import type { ShowcaseItinerary } from "@contract";
+import type { Definition as DefinitionRecord, ShowcaseItinerary } from "@contract";
+import { Definition } from "../components/Definition";
 import { itineraryName } from "../components/ItineraryCard";
 import { arrivalDayOffset, duration, flightNumbers, localTime, rateText } from "../format";
 
@@ -23,16 +24,28 @@ export function ItineraryList({
   itineraries,
   selectedId,
   period,
+  definition,
   onSelect,
 }: {
   itineraries: readonly ShowcaseItinerary[];
   selectedId: string | null;
   period: string;
+  /** Looks up a published definition by key. */
+  definition: (key: string) => DefinitionRecord | undefined;
   onSelect: (id: string) => void;
 }) {
   return (
     <section className="itinerary-list" aria-labelledby="list-heading">
       <h3 id="list-heading">Itineraries, by departure time</h3>
+      <div className="list-definitions">
+        <Definition
+          summary="What “worked” means"
+          definition={definition("connection_feasibility")}
+        />
+        <Definition summary="Which days count" definition={definition("paired_days")} />
+        <Definition summary="Layover" definition={definition("layover")} />
+        <Definition summary="Tight layover" definition={definition("tight_layover")} />
+      </div>
       <ul>
         {itineraries.map((it) => {
           const selected = it.itinerary_id === selectedId;

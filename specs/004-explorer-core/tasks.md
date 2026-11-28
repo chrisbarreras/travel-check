@@ -44,5 +44,5 @@ description: "Task list for the explorer core"
 
 ## Phase 6: Polish
 
-- [X] T017 Budgets and Lighthouse on the default view; README, docs/architecture.md and roadmap; specs/004-explorer-core/validation.md (SC-004)
-- [ ] T018 Independent review: a new `feature-reviewer` per round, given only `specs/004-explorer-core` and `main`, until APPROVE; save the rounds as review.md
+- [X] T017 Budgets and Lighthouse on the default view; README and docs/architecture.md; specs/004-explorer-core/validation.md (SC-004). The roadmap row is marked complete at merge, as for feature 003
+- [X] T018 Independent review: a new `feature-reviewer` per round, given only `specs/004-explorer-core` and `main`, until APPROVE; save the rounds as review.md

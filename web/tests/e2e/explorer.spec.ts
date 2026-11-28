@@ -100,9 +100,12 @@ test.describe("selection is shared by every view (SC-002)", () => {
         if (feature.geometry.type !== "LineString") continue;
         const coords = feature.geometry.coordinates;
         const p = map.project(coords[Math.floor(coords.length * 0.25)] as [number, number]);
-        const under = map.queryRenderedFeatures([p.x, p.y], { layers: ["paths-hit"] });
-        const id = (under[0]?.properties as { itinerary_id?: string } | undefined)?.itinerary_id;
-        if (id && id !== exclude) {
+        const under = map
+          .queryRenderedFeatures([p.x, p.y], { layers: ["paths-hit"] })
+          .map((f) => (f.properties as { itinerary_id: string }).itinerary_id);
+        // The click picks the earliest id under the pointer unless the selection is there.
+        const id = [...under].sort()[0];
+        if (id && !under.includes(exclude)) {
           const box = map.getCanvas().getBoundingClientRect();
           return { id, x: box.left + p.x, y: box.top + p.y };
         }
@@ -226,4 +229,59 @@ test.describe("every itinerary on every route selects in all views (SC-002)", ()
       }
     });
   }
+});
+
+test.describe("map airports (US1-3)", () => {
+  for (const routeId of routeIds) {
+    test(`${routeId}: hubs are outlined circles with labels, and the ends are labelled`, async ({
+      page,
+    }) => {
+      await page.setViewportSize({ width: 1280, height: 900 });
+      await page.goto(`./?route=${routeId}`);
+      await waitForMap(page);
+      const [origin, dest] = routeId.split("-");
+      const hubs = [...new Set(routeFile(routeId).itineraries.map((i) => i.hub))].sort();
+      await expect(page.locator(".map-airport.origin .map-label")).toHaveText(String(origin));
+      await expect(page.locator(".map-airport.destination .map-label")).toHaveText(String(dest));
+      const hubLabels = await page.locator(".map-airport.hub .map-label").allTextContents();
+      expect(hubLabels.sort()).toEqual(hubs);
+      const border = await page
+        .locator(".map-airport.hub .map-dot")
+        .first()
+        .evaluate((el) => getComputedStyle(el).borderTopWidth);
+      expect(border).toBe("3px");
+    });
+  }
+});
+
+test("clicking the selected path keeps the selection, even where paths overlap", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1280, height: 900 });
+  await page.goto("./?route=MCO-LAS");
+  await waitForMap(page);
+  // Three itineraries share the path through DFW; select the last of them.
+  const shared = routeFile("MCO-LAS").itineraries.filter((i) => i.hub === "DFW");
+  const chosen = shared.at(-1);
+  if (shared.length < 2 || !chosen) throw new Error("MCO-LAS needs a shared hub");
+  await list(page).locator(`[data-itinerary="${chosen.itinerary_id}"]`).click();
+  await expect.poll(async () => (await drawnPaths(page)).selected).toEqual([chosen.itinerary_id]);
+  const point = await page.evaluate((id) => {
+    const map = window.__travelCheckMap;
+    if (!map) throw new Error("no map");
+    const feature = map
+      .queryRenderedFeatures({ layers: ["paths-selected"] })
+      .find((f) => (f.properties as { itinerary_id: string }).itinerary_id === id);
+    if (feature?.geometry.type !== "LineString") throw new Error("no selected path");
+    const coords = feature.geometry.coordinates;
+    const p = map.project(coords[Math.floor(coords.length * 0.25)] as [number, number]);
+    const box = map.getCanvas().getBoundingClientRect();
+    return { x: box.left + p.x, y: box.top + p.y };
+  }, chosen.itinerary_id);
+  await page.mouse.click(point.x, point.y);
+  await page.waitForTimeout(200);
+  await expect(list(page).locator(`[data-itinerary="${chosen.itinerary_id}"]`)).toHaveAttribute(
+    "aria-pressed",
+    "true",
+  );
 });

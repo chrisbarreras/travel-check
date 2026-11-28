@@ -52,3 +52,28 @@ Each round is a new `feature-reviewer` agent, given only `specs/004-explorer-cor
 | 9 | NIT | The route picker shows city names, not airport names (FR-004). | **Spec amended** to "city names and codes". Full airport names are long on a phone; the airport data is used in the map description. |
 
 **After the fixes:** 181 unit and component tests pass. 78 browser tests pass in the pinned image, three runs in a row. The visual references were regenerated for the new card content.
+
+## Round 3 (main...7189cfa)
+
+**Verdict:** APPROVE. 0 blocking, 3 should-fix, 5 nits.
+
+**Automated checks, all passing:**
+- **Web:** format, lint and typecheck; 181 unit and component tests; build; size; 78 browser tests in the pinned image.
+- **Pipeline:** ruff, format and pyright; the feature's 43 pipeline tests; `schemas --check`. The full pipeline suite was still running at report time; it passed in the round 2 `verify` run (validation.md).
+
+The reviewer also checked all 144 published itineraries against the model's rules.
+
+### Findings and responses
+
+| # | Severity | Finding | Response |
+|---|---|---|---|
+| 1 | SHOULD-FIX | The map's airport labels, hub circles and text description were untested; the screenshots mask the map. | **Fixed.** An e2e test on every route checks the origin and destination labels, the hub labels (equal to the route's hubs) and the hubs' 3 px outlined circles. A component test on every route checks that the map's description names each end and every hub by city and code, and the itinerary count. |
+| 2 | SHOULD-FIX | A click where several itineraries share a path picked one by MapLibre's hit order and could drop the selection. | **Fixed.** A click on a path the current selection shares keeps it. Otherwise the earliest id under the pointer is chosen, never MapLibre's order. An e2e test selects one of three MCO-LAS itineraries through DFW, clicks its path, and keeps it. |
+| 3 | SHOULD-FIX | List rates and layovers had no definition on the page when nothing was selected (Principle I). | **Fixed.** The list has its own definitions under its heading: what "worked" means, which days count, layover and tight layover. The timeline keeps its own. |
+| 4 | NIT | The map chunk loaded during the first route render on wide screens. | **Fixed.** `MapPanel` mounts the map after the first frame has painted (`requestAnimationFrame`). No e2e timing test was added: request order against first paint isn't measurable reliably. The CI Lighthouse run measures the phone view, where the map is hidden. |
+| 5 | NIT | Back and Forward didn't reset the one-second route window. | **Fixed.** A `popstate` listener ends the run, so the next route choice adds an entry. |
+| 6 | NIT | The tight-layover badge on list cards was checked only by screenshots. | **Fixed.** The per-card test asserts the badge appears exactly when `tight_layover` is true, on all 12 routes. |
+| 7 | NIT | T017 claimed a roadmap update. | **Fixed.** T017 now says the roadmap row is marked at merge, as for feature 003. |
+| 8 | NIT | The route picker's text was cut off at 360 px. | **Fixed.** The select has room for its arrow; the reference image is regenerated. |
+
+**After the fixes:** 193 unit and component tests pass. 91 browser tests pass in the pinned image, three runs in a row. The verdict is APPROVE and every finding is fixed or answered, so the review loop ends. The owner decides on the merge.

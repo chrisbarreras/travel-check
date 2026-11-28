@@ -1,5 +1,5 @@
 import type { AirportInfo, ShowcaseItinerary } from "@contract";
-import { Component, lazy, Suspense, type ReactNode } from "react";
+import { Component, lazy, Suspense, useEffect, useState, type ReactNode } from "react";
 import { airportLabel } from "./RoutePicker";
 
 const MapView = lazy(() => import("../map/MapView"));
@@ -51,6 +51,16 @@ export function MapPanel({
   selectedId: string | null;
   onSelect: (id: string) => void;
 }) {
+  // The map's chunk is requested only after the first view has painted (FR-012).
+  const [painted, setPainted] = useState(false);
+  useEffect(() => {
+    const frame = requestAnimationFrame(() => {
+      setPainted(true);
+    });
+    return () => {
+      cancelAnimationFrame(frame);
+    };
+  }, []);
   const hubs = [...new Set(itineraries.map((i) => i.hub))].sort();
   const label = (code: string) => airportLabel(airports, code);
   return (
@@ -73,7 +83,7 @@ export function MapPanel({
         others as thin dashed lines. The list and timeline give the same itineraries as text.
       </p>
       <div id="map-area" className="map-area" hidden={!shown} aria-describedby="map-description">
-        {shown ? (
+        {shown && painted ? (
           <MapBoundary>
             <Suspense fallback={<p className="map-fallback">Loading the map…</p>}>
               <MapView

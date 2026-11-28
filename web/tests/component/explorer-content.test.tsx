@@ -40,6 +40,7 @@ describe("list cards (FR-005)", () => {
         expect(text).toContain(flightsText(it));
         expect(text).toContain(timesText(it));
         expect(text).toContain(`Layover ${duration(it.schedule.layover_min)} at ${it.hub}`);
+        expect(text.includes("Tight layover"), it.itinerary_id).toBe(it.tight_layover);
       }
     },
   );
@@ -119,4 +120,21 @@ describe("timeline labels (US1-4)", () => {
       "12:38 pm LIT → 3:13 pm–4:52 pm ATL → 7:13 pm LGA",
     );
   });
+});
+
+describe("the map's text description (US3-2)", () => {
+  it.each(index.routes.map((r) => r.route_id))(
+    "%s: names the ends and every hub",
+    async (routeId) => {
+      open(`?route=${routeId}`);
+      await screen.findByRole("region", { name: /Itineraries/ });
+      const description = document.getElementById("map-description")?.textContent ?? "";
+      const city = (code: string) => index.airports.find((a) => a.code === code)?.city ?? code;
+      const [origin = "", dest = ""] = routeId.split("-");
+      for (const code of [origin, dest, ...new Set(route(routeId).itineraries.map((i) => i.hub))]) {
+        expect(description, code).toContain(`${city(code)} (${code})`);
+      }
+      expect(description).toContain(`${String(route(routeId).itineraries.length)} itineraries`);
+    },
+  );
 });

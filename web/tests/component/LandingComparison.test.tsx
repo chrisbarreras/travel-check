@@ -95,7 +95,7 @@ describe("the landing comparison, from the committed data (US1)", () => {
     for (const key of ["connection_feasibility", "paired_days", "comparison_difference"]) {
       const definition = index.definitions.find((d) => d.key === key);
       if (!definition) throw new Error(`no definition ${key}`);
-      expect(screen.getByText(definition.text)).toBeInTheDocument();
+      expect(screen.getAllByText(definition.text).length).toBeGreaterThan(0);
     }
     const summaries = document.querySelectorAll("details > summary");
     expect(summaries.length).toBeGreaterThanOrEqual(3);

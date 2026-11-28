@@ -68,8 +68,15 @@ export default function MapView({
       interactiveLayerIds={["paths-hit"]}
       cursor="pointer"
       onClick={(e: MapLayerMouseEvent) => {
-        const id = e.features?.[0]?.properties.itinerary_id as unknown;
-        if (typeof id === "string") onSelect(id);
+        // Itineraries through one hub share a path. A click on a path the current selection
+        // shares keeps it; otherwise the earliest id under the pointer is chosen, so the result
+        // never depends on MapLibre's hit order.
+        const ids = (e.features ?? [])
+          .map((f) => f.properties.itinerary_id as unknown)
+          .filter((id): id is string => typeof id === "string");
+        if (ids.length === 0 || (selectedId !== null && ids.includes(selectedId))) return;
+        const first = [...ids].sort()[0];
+        if (first !== undefined) onSelect(first);
       }}
       onLoad={(e) => {
         // Fit again once the map has measured its panel, so the view does not depend on
