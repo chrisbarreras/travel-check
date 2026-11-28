@@ -82,4 +82,4 @@ Run on 2026-11-27. Local results are from Windows 11 with Docker Desktop. CI res
 | 11 | Breakages block merges (SC-005) | Pass: see Breakage tests above |
 | 13 | CI time (SC-007) | Pass: `web-checks` about 25 s, `web-browser` 50–56 s, `web-lighthouse` about 70 s; each web job is about a minute, against a 15-minute limit |
 | 14 | Reproducible screenshots (SC-006) | Pass: `web-browser` ran 3 times on commit adb7eff (run 46079716719, attempts 1–3), all passing. The CI screenshots matched the references made locally in the same pinned image |
-| 12 | Deployment and smoke check (SC-008) | After merge: recorded below |
+| 12 | Deployment and smoke check (SC-008) | Pass. PR #1 merged at 00:06:42 UTC on 2026-11-28. In run 46086126476, the required web checks finished at 00:07:37. `web-deploy` then tested the Pages build at `/travel-check/`, deployed it and smoke-checked https://chrisbarreras.github.io/travel-check/, finishing at 00:08:31. The site was live 54 s after the checks passed (limit 10 minutes) and 1 min 49 s after the merge |
