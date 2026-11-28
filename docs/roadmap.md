@@ -41,7 +41,7 @@ How Travel Check grows from a static showcase into a full-stack product. The lon
 
 ---
 
-## Phase 1: Static showcase explorer ← first deployed milestone
+## Phase 1: Static showcase explorer ← first deployed milestone (complete)
 
 **Goal:** a visually striking, real-data demo that a reviewer understands within seconds.
 
@@ -84,8 +84,10 @@ How Travel Check grows from a static showcase into a full-stack product. The lon
 |---|---|
 | `showcase-data-pipeline` | BTS → itineraries (schedule-based identity, ADR-0012 requirements) → slack distributions and traveler-insight data → validated JSON; Pydantic models and generated TypeScript types. **Complete** (merged 2026-11-27; [specs/002](../specs/002-showcase-data-pipeline/spec.md)); results in [validation.md](../specs/002-showcase-data-pipeline/validation.md) |
 | `web-foundation` | Vite/React scaffold, the full automated test setup (unit, component, Playwright end-to-end and visual in Docker, axe, Lighthouse CI), CI that blocks merges on failure, and a deployed placeholder page. **Complete** (merged 2026-11-28; [specs/003](../specs/003-web-foundation/spec.md)); live at https://chrisbarreras.github.io/travel-check/ |
-| `explorer-core` | Map, list and timeline with synced selection; selection in the URL. Deployable on its own |
-| `explorer-insights` | Risk visuals, transfer-time slider, traveler-insight panels and "Find this itinerary" links, landing example, "How the numbers work" page |
+| `explorer-core` | Map, list and timeline with synced selection; selection in the URL. **Complete** (merged 2026-11-28; [specs/004](../specs/004-explorer-core/spec.md)) |
+| `explorer-insights` | Risk visuals, transfer-time slider, traveler-insight panels and "Find this itinerary" links, landing example, "How the numbers work" page. **Complete** (merged 2026-11-28; [specs/005](../specs/005-explorer-insights/spec.md)) |
+
+**Status: complete (2026-11-28).** All four features are merged and the site is live at https://chrisbarreras.github.io/travel-check/. Exit criteria: the site is live and passes the performance, accessibility and phone-width checks in CI on every merge; every number on screen is checked against the published data in the component tests, and the published data is reproduced byte for byte by `flight-pipeline verify`; the README has the GIF, the link and a methodology summary.
 
 ---
 
