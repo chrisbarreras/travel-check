@@ -50,3 +50,11 @@ test("a route with nothing selected at 1280 px", async ({ page }) => {
     mask: [page.locator("#map-area")],
   });
 });
+
+test("the method view at 360 px", async ({ page }) => {
+  await page.setViewportSize({ width: 360, height: 800 });
+  await page.goto("./?view=method");
+  await expect(page.getByRole("heading", { name: "How the numbers work" })).toBeVisible();
+  await settle(page);
+  await expect(page).toHaveScreenshot("method-360.png", { fullPage: true });
+});

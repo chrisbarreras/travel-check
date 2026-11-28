@@ -97,5 +97,5 @@ test("the explorer works by keyboard alone (US3)", async ({ page }) => {
     "true",
   );
   // The selection is announced.
-  await expect(page.locator('[aria-live="polite"]')).toContainText("Selected:");
+  await expect(page.locator('p.visually-hidden[aria-live="polite"]')).toContainText("Selected:");
 });

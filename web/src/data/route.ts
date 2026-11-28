@@ -13,6 +13,14 @@ export const ROUTE_DEFINITIONS = [
   "travel_time",
   "tight_layover",
   "flight_times",
+  "faster_alternative",
+  "connecting_option",
+  "buffer",
+  "failure_types",
+  "monthly_rate",
+  "connect_share",
+  "schedule_change",
+  "sold_passengers",
 ] as const;
 
 export function buildRouteView(

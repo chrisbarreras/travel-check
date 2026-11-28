@@ -110,6 +110,8 @@ export function Explorer({ index }: { index: ShowcaseIndex }) {
               <DetailPanel
                 itinerary={selected}
                 index={index}
+                route={route.view.route}
+                onSelect={select}
                 period={periodText(route.view.route.period)}
               />
             ) : isLanding ? (
