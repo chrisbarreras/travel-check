@@ -186,8 +186,8 @@ description: "Task list for the web foundation"
 
 - [X] T039 [P] Write docs/architecture.md: the one-page system overview. It covers the data flow from the pipeline, through site-data/showcase/ and the copy into dist/, then the `DataSource` and validators, to the page. It also lists the CI jobs and the deployment, and where Phase 2's API plugs in (FR-027)
 - [X] T040 [P] Update README.md for Travel Check: status, live link, how to run, test and build web/ (the commands of contracts/checks.md), and the Docker requirement for browser tests (FR-027)
-- [ ] T041 [P] Mark `web-foundation` done in the docs/roadmap.md Phase 1 table once deployed, linking to specs/003-web-foundation/
-- [ ] T042 Run every quickstart scenario and record the results in specs/003-web-foundation/validation.md:
+- [X] T041 [P] Mark `web-foundation` done in the docs/roadmap.md Phase 1 table once deployed, linking to specs/003-web-foundation/
+- [X] T042 Run every quickstart scenario and record the results in specs/003-web-foundation/validation.md:
   - the budgets measured: JS and data gzip, the Lighthouse medians;
   - the CI job times (SC-007);
   - three reruns of `web-browser` on one commit (SC-006);
