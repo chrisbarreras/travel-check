@@ -146,13 +146,17 @@ describe("the address (US2)", () => {
   it("falls back to the default view with a note for an unknown route", async () => {
     open("?route=XXX-YYY");
     expect(await screen.findByRole("status")).toHaveTextContent("was not found");
-    expect(window.location.search).toBe("");
+    await waitFor(() => {
+      expect(window.location.search).toBe("");
+    });
   });
 
   it("drops an itinerary that is not on the route, with a note", async () => {
     open("?route=MCO-LAS&itinerary=nope");
     expect(await screen.findByText(/linked itinerary was not found/)).toBeInTheDocument();
-    expect(window.location.search).toBe("?route=MCO-LAS");
+    await waitFor(() => {
+      expect(window.location.search).toBe("?route=MCO-LAS");
+    });
   });
 
   it("goes back to the previous selection", async () => {

@@ -21,6 +21,8 @@ web/  (React, TypeScript, Vite)
   build: copies site-data/showcase/ unchanged into dist/data/showcase/ (checked by SHA-256)
          compiles standalone validators from the schema (npm run gen)
   page:  DataSource (web/src/data/)  →  validate  →  cross-check  →  format  →  components
+         selection in the address (?route=&itinerary=, web/src/selection/) shared by
+         route picker, list, timeline, map (MapLibre, loaded after the first view) and detail
         │
         ▼
 GitHub Pages: https://chrisbarreras.github.io/travel-check/
@@ -28,6 +30,8 @@ GitHub Pages: https://chrisbarreras.github.io/travel-check/
 
 - **One contract.** The pipeline's Pydantic models generate the JSON Schema and the TypeScript types. CI fails when they are stale. The web app imports the types through the `@contract` alias, and builds its runtime validators from the same schema. No data shape is written by hand anywhere ([constitution](../.specify/memory/constitution.md), Principle IV).
 - **One way in.** Screens read data only through `web/src/data/`, a `DataSource` with `getIndex`, `getLanding`, `getRoute` and `getManifest`. A lint rule forbids `fetch` anywhere else. Every file is validated whole before use, and a bad or missing file gives a plain error state, never partial figures ([contract](../specs/003-web-foundation/contracts/data-access.md)).
+- **One selection.** The address holds the route and itinerary (ADR-0010). The list, timeline, map and detail panel read it from there and write to it, so they can't disagree, and back and forward move between selections.
+- **Map.** MapLibre 5 with a local, muted style over OpenFreeMap's vector tiles. Path geometry and bounds are pure functions (`web/src/map/geometry.ts`). End-to-end tests read the rendered features from the map instance. Screenshots mask the map, because software rendering can move it by a pixel.
 - **Formatting only in the browser.** The page rounds and words values that the pipeline computed: whole percent, whole points, local clock times from the schedule. It does no statistics and no time-zone arithmetic. The transfer-time slider (feature `explorer-insights`) will be the first calculation in the browser, checked against the shared test cases in `shared/test-cases/`.
 
 ## Where Phase 2 plugs in
@@ -39,7 +43,7 @@ A future API implements the same `DataSource` interface and returns the same res
 | Workflow | Job | What it does |
 |---|---|---|
 | `pipeline` | `checks` | ruff, pyright, pytest, generated schema and types up to date |
-| `web` | `web-checks` | Prettier, ESLint, `tsc`, Vitest, build with the data-copy check, size budgets (JS ≤ 150 KB gzip, first-view data ≤ 150 KB gzip) |
+| `web` | `web-checks` | Prettier, ESLint, `tsc`, Vitest, build with the data-copy check, size budgets (first-view JS ≤ 150 KB gzip, map scripts ≤ 300 KB gzip, first-view data and each route file ≤ 150 KB gzip) |
 | `web` | `web-browser` | Playwright e2e, visual, axe (WCAG 2.2 AA) and keyboard tests, in the pinned `mcr.microsoft.com/playwright:v1.65.0-noble` image |
 | `web` | `web-lighthouse` | Lighthouse CI, median of 3 mobile runs: performance ≥ 0.90, accessibility 1.00, LCP ≤ 2.5 s, CLS ≤ 0.1 |
 | `web` | `web-deploy` | On `main` only, after the three web jobs: build for `/travel-check/`, deploy to GitHub Pages, smoke-check the live page |
